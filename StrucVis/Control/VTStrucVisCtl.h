@@ -7,7 +7,7 @@
 // VTStructVisCtl.cpp
 // 05/03/2002 - Warren Moore
 //
-// $Id: VTStrucVisCtl.h,v 1.1 2002/03/19 21:04:55 vap-warren Exp $
+// $Id: VTStrucVisCtl.h,v 1.2 2002/03/20 02:32:32 vap-warren Exp $
 
 #ifndef __VTSTRUCTVIS_CONTROL__
 #define __VTSTRUCTVIS_CONTROL__
@@ -15,6 +15,16 @@
 #if _MSC_VER > 1000
 #pragma once
 #endif // _MSC_VER > 1000
+
+// For category support
+#include <comcat.h>
+
+// Category support functions
+HRESULT CreateComponentCategory(CATID catid, WCHAR *catDescription);
+HRESULT RegisterCLSIDInCategory(REFCLSID clsid, CATID catid);
+HRESULT UnregisterCLSIDInCategory(REFCLSID clsid, CATID catid);
+HRESULT RegisterCLSIDInReqCategory(REFCLSID clsid, CATID catid);
+HRESULT UnregisterCLSIDInReqCategory(REFCLSID clsid, CATID catid);
 
 ////////////////////
 // CVTStrucVisCtrl
@@ -26,8 +36,11 @@ public:
 	CVTStrucVisCtrl();
 
 //#===--- Member Functions
+   bool GetCortona();
 
 //#===--- Member Variables
+protected:
+   CString m_oDrawText;
 
 //#===--- Windows Mappings
 
@@ -37,6 +50,7 @@ public:
 	virtual void OnDraw(CDC* pdc, const CRect& rcBounds, const CRect& rcInvalid);
 	virtual void DoPropExchange(CPropExchange* pPX);
 	virtual void OnResetState();
+	virtual DWORD GetControlFlags();
 	//}}AFX_VIRTUAL
 
 protected:
@@ -49,6 +63,7 @@ protected:
 
 // Message maps
 	//{{AFX_MSG(CVTStrucVisCtrl)
+	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 
