@@ -7,7 +7,7 @@ $(silent:
 <TITLE>Vapour Technology - Source Documentation</TITLE>
 <LINK REL=STYLESHEET HREF="/vapourtech.css" TYPE="text/css">
 </HEAD>
-<BODY LINK="#6363E9" ALINK="#C5C5F5" VLINK="#000080" BGCOLOR="#6363E9">
+<BODY LINK="#4B4FED" ALINK="#8385E5" VLINK="#171BBD" BGCOLOR="#6363E9">
 
 $(//:#===--- Top )
 $(include:../class/top.stmpl)

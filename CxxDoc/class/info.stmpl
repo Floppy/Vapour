@@ -1,6 +1,8 @@
 <P CLASS="CLASSTITLE">$(FullName)</P>
 <P>$(ifset:brief:$(brief))</P>
 
+<!-- FILENAME:$(file) -->
+
 <P CLASS="CLASSHEADING">File Info</P>
 <TABLE BORDER="0" CELLPADDING="2" CELLSPACING="2">
 	$(if:$NodeType!=namespace:<TR><TD BGCOLOR="#C0C0C0"><P><B>In Scope</B></P></TD><TD BGCOLOR="#C0C0F0"><P><A HREF="$(ParentScope).html">$(ParentScope)</A></P></TD></TR>)
@@ -12,6 +14,14 @@
 	$(ifset:userlevel:<TR><TD BGCOLOR="#C0C0C0"><P><B>User Level</B></P></TD><TD BGCOLOR="#C0C0F0"><P>$(userlevel)</P></TD></TR>)
 	$(ifset:example:<TR><TD BGCOLOR="#C0C0C0"><P><B>Example Source</B></P></TD><TD BGCOLOR="#C0C0F0"><P>$(example)</P></TD></TR>)
 </TABLE>
+
+<P CLASS="CLASSHEADING">Architectures</P>
+<?php
+	$doc_path = "$(docpath)";
+	include_once("vsrcdoc_core.php");
+				
+	make_arch_class_list("$(file)");
+?>
 
 $(ifset:detail:
 	<P CLASS="CLASSHEADING">Description</P>

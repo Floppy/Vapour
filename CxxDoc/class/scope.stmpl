@@ -20,7 +20,7 @@ $(ifany:class:<P CLASS="CLASSHEADING">Child Classes</P>
 	$(set:lastFilename=.)
 	$(forall:class:
 		$(checkview:
-			$(chk_header:)$(ident:<P><A HREF="$(MakeFilename:%.html)">$(ObjectName)</A> - $(brief)</P>)
+			$(chk_header:)$(ident:<P><A HREF="$(MakeFilename:%.php)">$(ObjectName)</A> - $(brief)</P>)
 		)
 	)
 )

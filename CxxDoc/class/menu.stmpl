@@ -11,8 +11,9 @@
 		<P CLASS="MENUITEM">
 		<A HREF="$(docroot)/user/tree/VALET.html">Manual</A><BR>
 		<A HREF="$(docroot)/doctree.html">Doc Tree</A><BR>
-		<A HREF="$(docroot)/todo.html">To Do List</A><BR>
-		<A HREF="$(docroot)/bugs.html">Known Bugs</A>
+		<A HREF="$(docroot)/$(if:$viewmode=developer:developer)$(else:user)/index.html">Class List</A><BR>
+		<A HREF="$(docroot)/todo.php">To Do List</A><BR>
+		<A HREF="$(docroot)/bugs.php">Known Bugs</A>
 		</P>
 		</TD></TR>
 		<TR><TD BGCOLOR="#C0C0F0">
@@ -23,22 +24,4 @@
 	</TABLE>
 	</TD></TR>
 </TABLE>
-<BR>
-<TABLE WIDTH="100%" BORDER="0" CELLPADDING="2" CELLSPACING="0" CLASS="MENUBORDER">
-	<TR><TD>
-	<P CLASS="MENUTITLE">
-	<FONT COLOR="#FFFFFF">Class List</FONT>
-	</P>
-	</TD></TR>
-	<TR><TD>
-	<TABLE WIDTH="100%" BORDER="0" CELLPADDING="2" CELLSPACING="0" CLASS="MENU">
-		<TR><TD>
-		<P CLASS="MENUITEM">
-		<A HREF="$(docroot)/$(if:$viewmode=developer:developer)$(else:user)/index.html">Default</A><BR>
-		</P>
-		</TD></TR>
-	</TABLE>
-	</TD></TR>
-</TABLE>
-</TD>
 

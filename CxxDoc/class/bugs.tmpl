@@ -1,11 +1,11 @@
-$(FileObject:one)$(FilePattern:bugs.html)
+$(FileObject:one)$(FilePattern:bugs.php)
 $(include:global.stmpl)
 <HTML>
 <HEAD>
 <TITLE>Vapour Technology - Source Documentation</TITLE>
 <LINK REL=STYLESHEET HREF="/vapourtech.css" TYPE="text/css">
 </HEAD>
-<BODY LINK="#6363E9" ALINK="#C5C5F5" VLINK="#000080" BGCOLOR="#6363E9">
+<BODY LINK="#4B4FED" ALINK="#8385E5" VLINK="#171BBD" BGCOLOR="#6363E9">
 
 $(//:#===--- Top )
 $(include:top.stmpl)
@@ -27,13 +27,22 @@ $(include:menu.stmpl)
 		<TR><TD>
 		<TABLE WIDTH="100%" BORDER="0" CELLPADDING="2" CELLSPACING="0" CLASS="ITEM" BGCOLOR="#FFFFFF">
 			<TR><TD>
+			
+			<P><B>Select Architecture</B></P>
+			<?php
+				$doc_path = "$(docpath)";
+				include_once("vsrcdoc_core.php");
+				
+				make_arch_bar("bugs.php");
+			?>
+
 			<TABLE BORDER="0" CELLPADDING="2" CELLSPACING="2">
 			<TR><TD BGCOLOR="#C0C0C0"><P><B>Class</B></P></TD><TD BGCOLOR="#C0C0C0"><P><B>Method</B></P></TD><TD BGCOLOR="#C0C0C0"><P><B>Description</B></P></TD></TR>
 			$(forall:class:
 				$(ifset:classbug:
-					<TR VALIGN="TOP"><TD COLSPAN="2" BGCOLOR="#C0C0F0"><P>Class <A HREF="$(docroot)/$(MakeFilename:developer/class/%.html)">$(ObjectName)</A></P></TD><TD BGCOLOR="#C0C0F0"><P>$(list:$(classbug))</P></TD></TR>
+					<TR VALIGN="TOP"><TD COLSPAN="2" BGCOLOR="#C0C0F0"><P>Class <A HREF="$(docroot)/$(MakeFilename:developer/class/%.php)">$(ObjectName)</A></P></TD><TD BGCOLOR="#C0C0F0"><P>$(list:$(classbug))</P></TD></TR>
 				)
-				$(set:inclass=$(ObjectName))$(set:infile=$docroot/$(MakeFilename:../developer/class/%.html))
+				$(set:inclass=$(ObjectName))$(set:infile=$docroot/$(MakeFilename:../developer/class/%.php))
 				$(forall:method:
 					$(ifset:bug:
 						<TR VALIGN="TOP"><TD BGCOLOR="#C0C0F0"><P><A HREF="$(infile)">$(inclass)</A></P></TD><TD BGCOLOR="#C0C0F0"><P><A HREF="$(infile)#$(href)">$(ObjectName)</A></P></TD><TD BGCOLOR="#C0C0F0"><P>$(list:$(bug))</P></TD></TR>
