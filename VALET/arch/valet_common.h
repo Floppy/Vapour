@@ -14,9 +14,10 @@
 //! author 		= "Warren Moore"
 //! date 		= "23/09/2001"
 //! lib 			= libVALET
-//! rcsid 		= "$Id: valet_common.h,v 1.1 2001/09/26 13:10:08 vap-warren Exp $"
+//! rcsid 		= "$Id: valet_common.h,v 1.2 2001/09/26 17:01:51 vap-warren Exp $"
 //! userlevel 	= Normal
 //! docentry 	= "VALET.Arch"
+//! maindoc		= 1
 
 //#===--- VALET Namespace
 //: Library Namespace
