@@ -10,7 +10,7 @@ It also contains an introduction to ActiveX and how the control works within the
 </P>
 
 <P CLASS=HEADING>
-<A HREF="VTStrucVis.Visualisation_Control.Scene_Management.VRML_Nodes.html">VRML Framework Overview</A>
+<A HREF="VTStrucVis.Visualisation_Control.VRML.html">VRML Framework Overview</A>
 </P>
 <P>
 Information on the VRML structures used to represent and manipulate the scene, and detailed

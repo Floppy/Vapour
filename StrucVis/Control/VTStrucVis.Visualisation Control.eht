@@ -1,14 +1,11 @@
 ! author="Warren Moore"
 : ActiveX Control Overview
 
-<P CLASS=HEADING>
-Design Process
-</P>
 <P>
 This document details the design decision made and the implications they have had on our current implementation.
 </P>
 
-<P CLASS=SUBHEADING>
+<P CLASS=HEADING>
 Files vs Dynamic Control
 </P>
 <P>
@@ -28,7 +25,7 @@ waiting period before the browser could display the first frame. Browser memory 
 the data for a single frame would be stored by the browser at any point.
 </P>
 
-<P CLASS=SUBHEADING>
+<P CLASS=HEADING>
 Java vs ActiveX
 </P>
 <P>
