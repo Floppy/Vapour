@@ -6,7 +6,7 @@
 // NodeSet.cpp
 // 19/03/2002 - James Smith
 //
-// $Id: NodeSet.cpp,v 1.1 2002/03/20 13:29:50 vap-james Exp $
+// $Id: NodeSet.cpp,v 1.2 2002/03/20 14:51:30 vap-james Exp $
 
 #include "stdafx.h"
 #include "NodeSet.h"
@@ -37,8 +37,8 @@ CNodeSet::~CNodeSet() {
 }
 
 void CNodeSet::SetDefault(float* pfNodePositions) {
-   memcpy(m_pfDefaultNodePositions,pfNodePositions,m_iNumNodes*sizeof(float));
-   memcpy(m_pfCurrentNodePositions,pfNodePositions,m_iNumNodes*sizeof(float));
+   memcpy(m_pfDefaultNodePositions,pfNodePositions,m_iNumNodes*3*sizeof(float));
+   memcpy(m_pfCurrentNodePositions,pfNodePositions,m_iNumNodes*3*sizeof(float));
 }
 
 void CNodeSet::Displace(float* pfDisplacements, float* pfScale) const {
