@@ -6,7 +6,7 @@
 // Viewpoint.cpp
 // 19/03/2002 - James Smith
 //
-// $Id: Viewpoint.cpp,v 1.3 2002/03/22 10:52:02 vap-james Exp $
+// $Id: Viewpoint.cpp,v 1.4 2002/03/22 19:05:51 vap-james Exp $
 
 #include "stdafx.h"
 #include "Viewpoint.h"
@@ -22,6 +22,24 @@ static char THIS_FILE[] = __FILE__;
 /////////////////
 // CViewpoint
 
+// Beginning of HUDView node
+const char pcViewStart[] = " \
+   EXTERNPROTO HUDView [ \
+      eventIn      SFBool set_bind \
+      eventIn      MFString set_description \
+      exposedField SFVec3f position \
+      exposedField SFRotation orientation \
+      exposedField SFVec3f textPosition \
+      exposedField SFBool jump \
+   ] \
+   [ \
+      \"HUDView.wrl\" \
+      \"file://D:\\Vapour\\Dev\\Src\\Research\\CortonaBase\\HUDView.wrl\" \
+      \"file://D:\\James\\vapour\\dev.local\\src\\Research\\CortonaBase\\HUDView.wrl\" \
+   ] \
+   HUDView { \
+";
+
 bool CViewpoint::Set(float* pfPosition, float* pfRotation) {
    // If the node isn't there yet
    if (m_poNodePtr == NULL) {
@@ -31,9 +49,8 @@ bool CViewpoint::Set(float* pfPosition, float* pfRotation) {
       char pcBuffer[2048];
       memset(pcBuffer,0, 2048);
       ostrstream strView(pcBuffer, 2048);
-      // Add the basic SlabElement syntax
-      strView << "Viewpoint { ";
-      strView << " description \"Camera\" ";
+      // Add the basic Viewpoint syntax
+      strView << pcViewStart;
       // Set animation mode      
       if (m_bAnimate) strView << " jump FALSE ";
       else strView << " jump TRUE ";
@@ -100,4 +117,13 @@ bool CViewpoint::Set(float* pfPosition, float* pfRotation) {
       delete poSFBool;
       return true;
    }
+}
+
+void CViewpoint::Animate(bool bAnimate) {
+   m_bAnimate = bAnimate;
+}
+
+bool CViewpoint::Connect(const CElement* pElement) {
+   m_poCortona->AddRoute(*(pElement->m_poNodePtr), "description_changed", *m_poNodePtr, "set_description");
+   return false;
 }

@@ -6,7 +6,7 @@
 // Viewpoint.h
 // 19/03/2002 - James Smith
 //
-// $Id: Viewpoint.h,v 1.3 2002/03/22 10:52:02 vap-james Exp $
+// $Id: Viewpoint.h,v 1.4 2002/03/22 19:05:51 vap-james Exp $
 
 #ifndef __VIEWPOINT__
 #define __VIEWPOINT__
@@ -16,6 +16,7 @@
 #endif // _MSC_VER > 1000
 
 #include "CortonaUtil.h"
+#include "Element.h"
 
 class CViewpoint {
 //#===--- Construction/Destruction
@@ -45,6 +46,10 @@ public:
 
    void Animate(bool bAnimate);
    // Animate smoothly betwen viewpoints?
+
+   bool Connect(const CElement* pElement);
+   // Connects the element to the viewpoint
+   // for description display purposes.
 
 //#===--- Member Variables
 protected:

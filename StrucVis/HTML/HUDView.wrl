@@ -1,0 +1,85 @@
+#VRML V2.0 utf8
+
+#VRML V2.0 utf8
+#=============---
+# Arup Simulation Visualisation System
+#-------------
+# Copyright 2002 Vapour Technology Ltd.
+#
+# HUDView.wrl
+# 19/03/2002 - James Smith
+#
+# $Id: HUDView.wrl,v 1.1 2002/03/22 19:05:51 vap-james Exp $
+
+PROTO HUDView [
+   eventIn      SFBool set_bind
+   eventIn      MFString set_description
+   exposedField SFVec3f position 0 0 10
+   exposedField SFRotation orientation 0 1 0 0
+   exposedField SFVec3f textPosition -0.12 -0.05 -0.2
+   exposedField SFBool jump TRUE
+]
+{
+   Group {
+      children [
+         DEF VIEW Viewpoint {
+            position IS position
+            orientation IS orientation
+            jump IS jump
+            set_bind IS set_bind
+         }
+         DEF SENSOR ProximitySensor {
+            size 100 100 100
+         }
+         DEF HUDTRANS Transform {
+            children [
+               Collision {
+                  collide FALSE
+                  children [
+                     DirectionalLight {
+                        ambientIntensity 0.8
+                     }
+                     Transform {
+                        translation IS textPosition
+                        children [
+                           Shape {
+                              appearance Appearance {
+                                 material Material {
+                                    diffuseColor 1 1 1
+                                 }
+                              }
+                              geometry Text {
+                                 set_string IS set_description                                 
+                                 fontStyle FontStyle {
+                                    family "SANS"
+                                    size 0.01
+                                    spacing 0.9
+                                 }
+                              }
+                           }
+                        ]
+                     }
+                  ]
+               }
+            ]
+         }  
+         DEF SCRIPT Script {
+            field SFNode sensor USE SENSOR
+            field SFNode transform USE HUDTRANS
+            field SFNode view USE VIEW
+            directOutput TRUE
+            url "javascript:
+               function initialize() {
+                  sensor.center = view.position;
+                  transform.translation = view.position;
+               }
+            "
+         }
+      ]
+   }
+   ROUTE SENSOR.orientation_changed TO HUDTRANS.set_rotation
+   ROUTE SENSOR.position_changed TO HUDTRANS.set_translation
+   ROUTE SENSOR.position_changed TO SENSOR.set_center
+}
+
+HUDView {}
