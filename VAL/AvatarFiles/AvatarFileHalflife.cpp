@@ -7,9 +7,8 @@
 // AvatarFileHalflife.cpp - 16/2/2000 - James Smith
 //	Halflife export filter implementation
 //
-// $Id: AvatarFileHalflife.cpp,v 1.8 2000/07/31 14:45:03 waz Exp $
+// $Id: AvatarFileHalflife.cpp,v 1.9 2000/07/31 17:41:58 waz Exp $
 //
-
 
 #include "stdafx.h"
 
@@ -25,6 +24,9 @@
 #include <errno.h>
 
 #include "Wedgie.h"
+#include "RCOpenGLBufferWin32.h"
+#include "RenderAvatar.h"
+#include "gl\gl.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -138,7 +140,7 @@ int CAvatarFileHalflife::Save(const char* pszFilename, CAvatar* pAvatar) const {
    }
    
    // Setup the export progress dialog
-	g_poVAL->SetProgressMax("HLSave", 17 + 2*pAvatar->NumTextures());
+	g_poVAL->SetProgressMax("HLSave", 17 + pAvatar->NumTextures());
    
    g_poVAL->StepProgress("HLSave");
    g_poVAL->SetProgressText("HLSave", "Saving MDL file");
@@ -150,27 +152,12 @@ int CAvatarFileHalflife::Save(const char* pszFilename, CAvatar* pAvatar) const {
 	if (!osOutputStream.fail()) {
    	iRetVal = Save(osOutputStream,pAvatar);
 	}
+	osOutputStream.close();
 
-   // Create thumbnail
-   g_poVAL->StepProgress("HLSave");
-   g_poVAL->SetProgressText("HLSave", "Rendering thumbnail");
-
-   // Write thumbnail
-   g_poVAL->StepProgress("HLSave");
-   g_poVAL->SetProgressText("HLSave", "Writing thumbnail");
    // Create filename
    strcpy(pszBaseFilename+iBaseFilenameLength,".bmp");
-   // Create filter and save
-   CImageFile* pThumbFilter = g_oImageFileStore.CreateByExtension("bmp");
-
-	//#===--- Edit here
-   CImage imThumbnail(IT_RGB,164,200);
-	 imThumbnail.Load("e:\\stuff\\waz.bmp", pThumbFilter);
-	 imThumbnail.Convert(IT_PALETTE, 256);
-
-   imThumbnail.Save(pszBaseFilename,pThumbFilter);
-   // Tidy up
-   delete pThumbFilter;
+	 // Save the thumbnail bitmap
+	 SaveThumbnail(pszBaseFilename, pAvatar);
 
    // Finish up
    g_poVAL->StepProgress("HLSave");
@@ -671,8 +658,26 @@ int CAvatarFileHalflife::Save(ofstream& osOutputStream, CAvatar* pAvatar) const 
          BodyPart bpPart = (BodyPart)pAvatar->GetVertexPart(i);
          // Get vertex position
          CVector3D vecVertex(pVertices[i]);
-         // Work out offset from bone centre
-         vecVertex -= CVector3D(pBodyParts[bpPart].m_pntCurrentCentre);
+         // Get bone centre
+         CVector3D vecOffset = CVector3D(pBodyParts[bpPart].m_pntCurrentCentre);
+         // Fix neck centre
+         if (bpPart == vc7) {
+            const double* pdCentre = pBodyParts[skullbase].m_pntCurrentCentre.m_dComponents;
+            vecOffset += CVector3D(pdCentre[0],pdCentre[1],vecOffset.Z()-((vecOffset.Z()-pdCentre[2])/2));
+            vecOffset /= 2;
+         }
+         // Fix lower torso offset
+         else if (bpPart == vl5) {
+            vecOffset += CVector3D(pBodyParts[sacroiliac].m_pntCurrentCentre);
+            vecOffset /= 2;
+         }
+         // Fix lower mid torso offset
+         else if (bpPart == vt12) {
+            vecOffset += CVector3D(pBodyParts[vl5].m_pntCurrentCentre);
+            vecOffset /= 2;
+         }
+         // Work out offset from local centre
+         vecVertex -= vecOffset;
          // Scale
          vecVertex *= dScaleFactor;
          // Write
@@ -858,8 +863,8 @@ int CAvatarFileHalflife::Save(ofstream& osOutputStream, CAvatar* pAvatar) const 
             // Write palette
             const CImagePalette* pPalette = pTexture->GetPalette();
             for (int iEntry=0; iEntry<256; iEntry++) {
-               /*memset(pcTextureDataChunk+iCurrentPos,iEntry,0x03);
-               iCurrentPos += 3;*/
+               //memset(pcTextureDataChunk+iCurrentPos,iEntry,0x03);
+               //iCurrentPos += 3;
                unsigned long uColour;
                pPalette->GetEntry(iEntry,uColour);
                *(pcTextureDataChunk+(iCurrentPos++)) = (uColour >> 16) & 0xFF;
@@ -955,6 +960,113 @@ std::vector<vTriStrip> CAvatarFileHalflife::CompressSubMesh(std::vector<STriFace
    delete [] pbUsedFaces;
    return vvTriStrips;
 } //CompressSubMesh(std::vector<STriFace> vSubMesh)
+
+void CAvatarFileHalflife::SaveThumbnail(const char *pcBitmap, CAvatar *poAvatar) const {
+	ASSERT(pcBitmap && poAvatar);
+	// Create thumbnail
+	g_poVAL->StepProgress("HLSave");
+	g_poVAL->SetProgressText("HLSave", "Rendering thumbnail");
+	// The render context
+	CRCOpenGLBufferWin32 oRC;
+	// Image size
+	oRC.SetSize(164, 200);
+	// Colour depth
+	oRC.SetOption(RCO_DEPTH, 24U);
+	// Black background
+	oRC.SetOption(RCO_BACKRED, 0.0F);
+	oRC.SetOption(RCO_BACKGREEN, 0.0F);
+	oRC.SetOption(RCO_BACKBLUE, 0.0F);
+	// Set the view planes and angle
+	oRC.SetOption(RCO_NEARPLANE, 0.5F);
+	oRC.SetOption(RCO_FARPLANE, 20.0F);
+	oRC.SetOption(RCO_VIEWANGLE, 10.0F);
+	oRC.SetProjectionMode(RCP_PERSPECTIVE);
+	// Create the context
+	if (oRC.Create() != RC_OK)
+		return;
+	// Create the avatar render object
+	CRenderAvatar oView(&oRC);
+	oView.SetAvatar(poAvatar, false);
+	// Move the avatar into position
+	oView.SetPosition(0.0F, -(poAvatar->Height() / 2.0F), -12.0F);
+	// Set the render mode to textured
+	oView.RenderMode(ROM_TEXTURE);
+	// Enable the context
+	oRC.Enable();
+	// Initialise the avatar
+	oView.Init();
+	// Clear the buffer
+	oRC.ClearBuffer(RCB_COLOUR | RCB_DEPTH);
+	// Reset the matrix
+	glLoadIdentity();
+	// Place the light
+	glEnable(GL_LIGHT0);
+	GLfloat fLAmbient[4] = {0.1F, 0.1F, 0.1F, 1.0F};
+	GLfloat fLWhite[4] = {1.0F, 1.0F, 1.0F, 1.0F};
+	glLightfv(GL_LIGHT0, GL_AMBIENT, fLAmbient);
+	glLightfv(GL_LIGHT0, GL_DIFFUSE, fLWhite);
+	glLightfv(GL_LIGHT0, GL_SPECULAR, fLWhite);
+	GLfloat fLPos[4] = { 0.0F, 0.0F, 0.0F, 1.0F};
+	glLightfv(GL_LIGHT0, GL_POSITION, fLPos);
+	// Render the avatar
+	oView.Execute();
+	// Disable the context
+	oRC.Disable();
+	// Get the snapshot image
+	CImage oImage(IT_RGB, 164, 200);
+	CImage *poImage = &oImage; // Hack for render context
+	oRC.Snapshot(poImage);
+	// Destroy the context
+	oRC.Destroy();
+
+	// Write thumbnail
+	g_poVAL->StepProgress("HLSave");
+	g_poVAL->SetProgressText("HLSave", "Writing thumbnail");
+	// Open the data wedgie file
+	char pcWJEName[STR_SIZE] = "";
+	strcpy(pcWJEName, g_poVAL->GetAppDir());
+	strcat(pcWJEName, "hldata.wje");
+	fstream oDataWJE;
+	oDataWJE.open(pcWJEName, ios::in|ios::binary|ios::nocreate);
+	if (oDataWJE.fail())
+		return;
+	// Open the wedgie data
+	CWedgie oWedgie;
+	if (oWedgie.Open(&oDataWJE) != WJE_OK)
+		return;
+	// Create the memory into which to decompress the raw logo image
+	unsigned int uLogoSize = AFHL_LOGO_WIDTH * AFHL_LOGO_HEIGHT * 3;
+	unsigned char *pcRawLogo = NULL;
+	NEWBEGIN
+	pcRawLogo = (unsigned char*) new unsigned char[uLogoSize];
+	NEWEND("CAvatarFile::SaveThumbnail - Raw logo image data")
+	if (pcRawLogo) {
+		// Decompress the logo
+		int iHandle = oWedgie.Open("logo.raw");
+		if (iHandle != -1) {
+			oWedgie.Read(iHandle, pcRawLogo, uLogoSize);
+			oWedgie.Close(iHandle);
+		}
+		// Import the logo into an image
+		CImage oLogo(IT_RGB, AFHL_LOGO_WIDTH, AFHL_LOGO_HEIGHT);
+		oLogo.ImportRawImage(pcRawLogo);
+		// Paste the logo into the image
+		oImage.Paste(oLogo, 0.5F, true, 0, 164 - AFHL_LOGO_WIDTH, 200 - AFHL_LOGO_HEIGHT);
+		// Convert the image to 256 colours
+		oImage.Convert(IT_PALETTE);
+		// Create the BMP save filter
+		CImageFile *poBMPFile = g_oImageFileStore.CreateByExtension("bmp");
+		if (poBMPFile) {
+			// Save the image
+			oImage.Save(pcBitmap, poBMPFile);
+			delete [] pcRawLogo;
+			delete poBMPFile;
+		}
+	}
+	// Close the wedgie file
+	oWedgie.Close();
+	oDataWJE.close();
+} // SaveThumbnail
 
 const char* CAvatarFileHalflife::m_pszJointNames[] =
 {

@@ -7,7 +7,7 @@
 // AvatarFileHalflife.h - 16/2/2000 - James Smith
 //	Halflife MDL export filter header
 //
-// $Id: AvatarFileHalflife.h,v 1.3 2000/07/15 10:39:23 waz Exp $
+// $Id: AvatarFileHalflife.h,v 1.4 2000/07/31 17:41:58 waz Exp $
 //
 
 #pragma once
@@ -22,6 +22,9 @@
 #include <vector>
 
 typedef std::vector<int> vTriStrip;
+
+#define AFHL_LOGO_WIDTH			90
+#define AFHL_LOGO_HEIGHT		23
 
 ////////////////////////
 // CAvatarFileHalflife
@@ -73,6 +76,7 @@ private:
    void CompressSkeleton(const BodyPart bpBodyPart, CAvatar* pAvatar) const;
    std::vector<vTriStrip> CompressSubMesh(std::vector<STriFace>& vSubMesh) const;
 
+	 void SaveThumbnail(const char *pcBitmap, CAvatar *poAvatar) const;
 };
 
 #endif // _VAL_AVATARFILEHALFLIFE_
