@@ -7,7 +7,7 @@
 // InterVAL.cpp - 23/11/2000 - Warren Moore
 //	  Main application
 //
-// $Id: InterVAL.cpp,v 1.1 2000/11/25 22:52:26 cvs Exp $
+// $Id: InterVAL.cpp,v 1.2 2000/12/03 13:26:36 warren Exp $
 //
 
 #include "StdAfx.h"
@@ -128,4 +128,3 @@ BEGIN_MESSAGE_MAP(CInterVALApp, CWinApp)
 	// Standard print setup command
 	ON_COMMAND(ID_FILE_PRINT_SETUP, CWinApp::OnFilePrintSetup)
 END_MESSAGE_MAP()
-
