@@ -11,7 +11,7 @@
 //! author 		= "James Smith"
 //! date 		= "02/10/2001"
 //! lib 		= libVALETmath
-//! rcsid 		= "$Id: quaternion.cpp,v 1.7 2001/10/27 13:06:09 vap-james Exp $"
+//! rcsid 		= "$Id: quaternion.cpp,v 1.8 2001/11/02 11:53:27 vap-james Exp $"
 //! userlevel 	        = Normal
 //! docentry 	        = "VALET.Math.Geometry"
 
@@ -61,8 +61,8 @@ namespace NVALET {
       CVector3D oEulerAngles = oRot.Angles();
       CEulerType oType = oRot.Type();
       int iFirstAxis = oType.InnerAxis();	
-      int iSecondAxis = NextAngle[iFirstAxis + oType.OddParity()];
-      int iThirdAxis = NextAngle[iFirstAxis + 1 - oType.OddParity()];
+      int iSecondAxis = NextAngle[iFirstAxis + (oType.OddParity() ? 1 : 0)];
+      int iThirdAxis = NextAngle[iFirstAxis + 1 - (oType.OddParity() ? 1 : 0)];
       if (oType.RotatingFrame()) {
          double dTemp = oEulerAngles.X();
          oEulerAngles.X() = oEulerAngles.Z();
