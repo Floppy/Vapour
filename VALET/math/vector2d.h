@@ -14,7 +14,7 @@
 //! author     = "James Smith"
 //! date       = "18/10/2001"
 //! lib        = libVALETmath
-//! rcsid      = "$Id: vector2d.h,v 1.2 2001/10/23 16:01:53 vap-warren Exp $"
+//! rcsid      = "$Id: vector2d.h,v 1.3 2001/10/24 18:16:59 vap-james Exp $"
 //! userlevel  = Normal
 //! docentry   = "VALET.Math.Geometry"
 
@@ -34,7 +34,7 @@ namespace NValet {
 	
    protected:
 	
-      double m_pComponents[2];
+      double m_pdComponents[2];
       //: Vector components
       // Stored in the order X Y
 
@@ -243,7 +243,7 @@ namespace NValet {
       //!param: dX = the new X component.
       //!param: dY = the new Y component.
 	
-      bool ParseString(const char* strInput, int* used = NULL);
+      bool ParseString(const char* pcInput, int* piUsed = NULL);
       //: Load values from a string
       //!todo: Document this properly - don't have time now, I can't remember
       //!todo: what the return and parameters mean. Oops!

@@ -14,7 +14,7 @@
 //! author     = "James Smith"
 //! date       = "01/10/2001"
 //! lib        = libVALETmath
-//! rcsid      = "$Id: vector3d.h,v 1.11 2001/10/23 16:01:52 vap-warren Exp $"
+//! rcsid      = "$Id: vector3d.h,v 1.12 2001/10/24 18:16:59 vap-james Exp $"
 //! userlevel  = Normal
 //! docentry   = "VALET.Math.Geometry"
 
@@ -34,7 +34,7 @@ namespace NValet {
 	
   protected:
 	
-    double m_pComponents[3];
+    double m_pdComponents[3];
     //: Vector components
     // Stored in the order X Y Z
 
@@ -164,7 +164,7 @@ namespace NValet {
     // See also Invert(), which changes the vector to it's inverse.
     //!param: return = a new vector equal to -this.
 	
-    CVector3D& Invert();
+    CVector3D& Invert(void);
     //: Invert this vector.
     // All components are inverted.
     //!param: return = reference to this vector
@@ -202,7 +202,7 @@ namespace NValet {
     //!param: oVec = the other vector to be used for the cross product
     //!param: return = the cross product of the two vectors.	
 		
-    double Length() const;
+    double Length(void) const;
     //: Length of the vector.
     //!param: return = double value representing the length of the vector.	
 	
@@ -212,7 +212,7 @@ namespace NValet {
     //!param: dLength = desired length
     //!param: return = reference to this vector
 	
-    CVector3D& Normalise();
+    CVector3D& Normalise(void);
     //: Normalise this vector.
     // i.e. make the length of the vector equal to 1.
     // Equivalent to calling SetLength(1)
@@ -269,7 +269,7 @@ namespace NValet {
     //!param: dY = the new Y component.
     //!param: dZ = the new Z component.
 	
-    bool ParseString(const char* strInput, int* used = NULL);
+    bool ParseString(const char* pcInput, int* piUsed = NULL);
     //: Load values from a string
     //!todo: Document this properly - don't have time now, I can't remember
     //!todo: what the return and parameters mean. Oops!
