@@ -14,12 +14,9 @@
 //! author 		= "James Smith"
 //! date 		= "01/10/2001"
 //! lib 		= libVALETmath
-//! rcsid 		= "$Id: Vector3D.h,v 1.2 2001/10/02 14:35:14 vap-james Exp $"
+//! rcsid 		= "$Id: Vector3D.h,v 1.3 2001/10/02 15:35:44 vap-james Exp $"
 //! userlevel 	        = Normal
 //! docentry 	        = "VALET.Math.Geometry"
-
-// Class declarations
-//class CAxisRotation;
 
 //#===--- Includes
 #include "../arch/valet.h"
@@ -28,13 +25,11 @@ namespace VALET {
 
 	//: 3D Vector
 	// A class representing a 3D vector - 3 components, X Y and Z.
+
 	class CVector3D {
 	
 	protected:
 	
-		//:-----
-		//: Data
-
 		double m_pComponents[3];
 		//: Vector components
 		// Stored in the order X Y Z
