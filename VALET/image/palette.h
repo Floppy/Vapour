@@ -14,7 +14,7 @@
 //! author 		= "Warren Moore"
 //! date 		= "17/10/2001"
 //! lib 			= libVALETimage
-//! rcsid 		= "$Id: palette.h,v 1.5 2001/10/17 22:28:40 vap-warren Exp $"
+//! rcsid 		= "$Id: palette.h,v 1.6 2001/10/18 10:42:33 vap-warren Exp $"
 //! userlevel 	= Advanced
 //! docentry 	= "VALET.Image.Palette"
 
@@ -28,7 +28,6 @@ namespace NValet {
 
    //#===--- CImagePalette
    //: Image Palette Storage and Manipulation
-   //!classtodo: Doesn't compile yet as colour quantisation not an issue yet
 
    class CImagePalette {
    public:
@@ -36,6 +35,8 @@ namespace NValet {
    	CImagePalette(int iSize = IPL_MAX_ENTRIES, unsigned int uColour = 0);
       //: Constructor
       // Create the palette of a specified size filled with a default colour
+      //!param: iSize = Size of palette
+      //!param: uColour = Default colour palette entries (format 0x00RRGGBB)
 
       CImagePalette(const CImagePalette &oCopy);
       //: Copy Constructor
@@ -58,25 +59,32 @@ namespace NValet {
       // Returns the max numbers of colour within the palette
 
       void Clear(unsigned int uColour = 0);
-      // Clears the palette with a default colour
+      // Clears the palette with a default colour (format 0x00RRGGBB)
 
    //:------
    //: Entry Manipulation
 
       int AddEntry(unsigned int uColour);
-      // Add an entry to the palette (maintains an internal counter, returns the index, -1 if invalid)
+      // Add an entry to the palette (format 0x00RRGGBB)
+      //!return: The colour index if added ok, -1 if palette full
 
       void SetEntry(int iIndex, unsigned int uColour);
       // Set a specific entry with a colour
+      //!param: iIndex = Index of palette entry to set
+      //!param: uColour = Colour of entry (format 0x00RRGGBB)
 
       void GetEntry(int iIndex, unsigned int &uColour) const;
       // Get a specific entry (0 if invalid index)
+      //!param: iIndex = Index of palette entry to get
+      //!param: uColour = Reference to colour in which palette entry is copied
 
    //:------
    //: Colour Matching
 
       int MatchColour(unsigned int uColour);
       // Returns a palette index closest matching the supplied colour
+      //!param: uColour = Colour to match (format 0x00RRGGBB)
+      //!return: Index of nearest matching colour
 
    protected:
 
@@ -93,7 +101,9 @@ namespace NValet {
       // Creates a cache for recently matched values
 
       int CheckCache(unsigned int uColour);
-      // Returns a palette index if the colour was cached, -1 of not
+      // Find the colour in the cache
+      //!param: uColour = Colour to match (format 0x00RRGGBB)
+      //!return: Returns palette index if found, -1 if not
 
       void AddCacheEntry(unsigned int uColour, int iIndex);
       // Adds a colour index to the cache
@@ -108,15 +118,19 @@ namespace NValet {
       // Creates a hash table of the palette entries
 
       int CheckHash(unsigned int uColour);
-      // Returns palette index if colour found, -1 if not
+      // Find the colour in the hash
+      //!param: uColour = Colour to match (format 0x00RRGGBB)
+      //!return: Returns palette index if found, -1 if not
 
       void DeleteHash();
       // Deletes the hash memory
 
-      /*#===--- Brute force colour matching */
+   //:------
+   //: Brute force colour matching
 
       int FindLowest(unsigned int uColour);
       // Finds the entry with the lowest error
+      //!param: uColour = Colour to match (format 0x00RRGGBB)
 
    	//: Colour matching cache
    	struct SCacheStruct {
@@ -125,14 +139,14 @@ namespace NValet {
          int m_iHits;
 
          SCacheStruct() {
-            m_uColour = 0xFF000000;          // Invalid colour
-            m_iIndex = -1;                   // Invalid index
-            m_iHits = -1;                    // Value guaranteed to be initially overwritten
+            m_uColour = 0xFF000000;          // Invalid colour = 0xFF000000
+            m_iIndex = -1;                   // Invalid index = -1
+            m_iHits = -1;                    // Value guaranteed to be initially overwritten = -1
          }
          // Inline constructor
 
       };
-      typedef struct SCacheStruct SCache;    // Cache structure typedef
+      typedef struct SCacheStruct SCache;             //: Cache structure typedef
 
       //: Hash table entries
       struct SHashEntryStruct {
@@ -140,7 +154,7 @@ namespace NValet {
          unsigned int m_uColour;
          int m_iR, m_iG, m_iB;
       };
-      typedef struct SHashEntryStruct SHashEntry; // Hash table entry typedef
+      typedef struct SHashEntryStruct SHashEntry;     //: Hash table entry typedef
 
       //: Palette hash table
       struct SHashStruct {
@@ -154,9 +168,7 @@ namespace NValet {
          // Inline constructor
 
       };
-      typedef struct SHashStruct SHash;      // Hash table typedef
-
-   protected:
+      typedef struct SHashStruct SHash;               //: Hash table typedef
 
       int m_iSize;                           // Max number of colour entries
       int m_iNextEntry;                      // Internal counter for AddEntry function
