@@ -7,7 +7,7 @@
 // SceneManager.cpp
 // 19/03/2002 - James Smith
 //
-// $Id: SceneManager.cpp,v 1.23 2002/03/26 17:45:45 vap-james Exp $
+// $Id: SceneManager.cpp,v 1.24 2002/03/27 10:14:20 vap-james Exp $
 
 #include "stdafx.h"
 #include "SceneManager.h"
@@ -162,6 +162,7 @@ void CSceneManager::SetVisibility(unsigned int iGroup, bool bVisible) {
 
 void CSceneManager::SetScaleFactor(float fX, float fY, float fZ) {
    m_oNodeSet.SetScaleFactor(fX,fY,fZ);
+   Update();
 }
 
 void CSceneManager::SetViewpoint(float pfPosition[3], float pfRotation[4]) {
