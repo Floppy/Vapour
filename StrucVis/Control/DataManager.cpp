@@ -6,7 +6,7 @@
 // DataManager.cpp
 // 19/03/2002 - James Smith
 //
-// $Id: DataManager.cpp,v 1.3 2002/03/22 17:04:37 vap-james Exp $
+// $Id: DataManager.cpp,v 1.4 2002/03/22 19:08:13 vap-james Exp $
 
 #include "stdafx.h"
 #include "DataManager.h"
@@ -307,11 +307,11 @@ unsigned int CDataManager::NumGroups(void) {
 }
 
 float CDataManager::GroupTemp(unsigned int iGroup) {
-   return g_pfGroupTemps[m_iCurrentFrame][iGroup];
+   return g_pfGroupTemps[m_iCurrentFrame][iGroup-1];
 }
 
 TElementType CDataManager::GroupType(unsigned int iGroup) {
-   return g_ptGroupTypes[iGroup];
+   return g_ptGroupTypes[iGroup-1];
 }
 
 void CDataManager::StressRange(float& fMin, float& fMax) {
@@ -324,11 +324,11 @@ unsigned int CDataManager::NumBeams(void) {
 }
 
 const unsigned int* CDataManager::BeamNodes(int iBeam) {
-   return g_piBeamNodes[iBeam];
+   return g_piBeamNodes[iBeam-1];
 }
 
 unsigned int CDataManager::BeamGroup(int iBeam) {
-   return g_piBeamGroups[iBeam];
+   return g_piBeamGroups[iBeam-1];
 }
 
 void CDataManager::BeamSizes(int iGroup, float& fHeight, float& fWidth, float& fFlange, float& fWeb) {
@@ -339,7 +339,7 @@ void CDataManager::BeamSizes(int iGroup, float& fHeight, float& fWidth, float& f
 }
 
 const float* CDataManager::BeamStresses(unsigned int iBeam) {
-   return g_pfBeamStresses[m_iCurrentFrame][iBeam];
+   return g_pfBeamStresses[m_iCurrentFrame][iBeam-1];
 }
 
 unsigned int CDataManager::NumSlabs(void) {
@@ -347,11 +347,11 @@ unsigned int CDataManager::NumSlabs(void) {
 }
 
 const unsigned int* CDataManager::SlabNodes(int iSlab) {
-   return g_piSlabNodes[iSlab];
+   return g_piSlabNodes[iSlab-1];
 }
 
 unsigned int CDataManager::SlabGroup(int iSlab) {
-   return g_piSlabGroups[iSlab];
+   return g_piSlabGroups[iSlab-1];
 }
 
 void CDataManager::SlabSizes(int iGroup, float& fThickness) {
@@ -359,9 +359,9 @@ void CDataManager::SlabSizes(int iGroup, float& fThickness) {
 }
 
 const float* CDataManager::SlabStresses(unsigned int iSlab) {
-   return g_pfSlabStresses[m_iCurrentFrame][iSlab];
+   return g_pfSlabStresses[m_iCurrentFrame][iSlab-1];
 }
 
 const unsigned char* CDataManager::SlabCracks(unsigned int iSlab, unsigned int) {
-   return g_pcSlabCracks[m_iCurrentFrame][iSlab];
+   return g_pcSlabCracks[m_iCurrentFrame][iSlab-1];
 }
