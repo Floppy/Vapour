@@ -1,0 +1,79 @@
+//===================================---
+// VT Structure Visualisation Control
+//-----------------------------------
+// ActiveX Control for structure visualisation
+// Copyright 2000 Vapour Technology Ltd.
+//
+// VTStructVis.odl
+// 05/03/2002 - Warren Moore
+//
+// $Id: VTStrucVis.odl,v 1.1 2002/03/19 21:04:55 vap-warren Exp $
+
+// Type library
+//    Processed by the Make Type Library (mktyplib) tool to generate
+//    the type library (VTStructVis.tlb) stored as a resource within the OCX
+
+#include <olectl.h>
+#include <idispids.h>
+
+[ uuid(8FC94F0F-F823-4EC7-91ED-63DE9C48BE7C), version(1.0),
+  helpfile("VTStrucVis.hlp"),
+  helpstring("VTStrucVis ActiveX Control module"),
+  control ]
+library VTSTRUCVISLib
+{
+	importlib(STDOLE_TLB);
+	importlib(STDTYPE_TLB);
+
+	//  Primary dispatch interface for CVTStrucVisCtrl
+
+	[ uuid(C9AE69BB-64D8-46CB-B4F5-49483D211744),
+	  helpstring("Dispatch interface for VT Structure Vis Control"), hidden ]
+	dispinterface _DVTStrucVis
+	{
+		properties:
+			// NOTE - ClassWizard will maintain property information here.
+			//    Use extreme caution when editing this section.
+			//{{AFX_ODL_PROP(CVTStrucVisCtrl)
+			[id(DISPID_READYSTATE), readonly] long ReadyState;
+			//}}AFX_ODL_PROP
+
+		methods:
+			// NOTE - ClassWizard will maintain method information here.
+			//    Use extreme caution when editing this section.
+			//{{AFX_ODL_METHOD(CVTStrucVisCtrl)
+			//}}AFX_ODL_METHOD
+
+			[id(DISPID_ABOUTBOX)] void AboutBox();
+	};
+
+	//  Event dispatch interface for CVTStrucVisCtrl
+
+	[ uuid(EC14F800-845F-4B98-9905-D1D1A1D1267F),
+	  helpstring("Event interface for VT Structure Vis Control") ]
+	dispinterface _DVTStrucVisEvents
+	{
+		properties:
+			//  Event interface has no properties
+
+		methods:
+			// NOTE - ClassWizard will maintain event information here.
+			//    Use extreme caution when editing this section.
+			//{{AFX_ODL_EVENT(CVTStrucVisCtrl)
+			[id(DISPID_READYSTATECHANGE)] void ReadyStateChange();
+			//}}AFX_ODL_EVENT
+	};
+
+	//  Class information for CVTStrucVisCtrl
+
+	[ uuid(AD64B056-E5E7-4C45-9243-755802D7CBF7),
+	  helpstring("VT Structure Vis Control"), control ]
+	coclass VTStrucVis
+	{
+		[default] dispinterface _DVTStrucVis;
+		[default, source] dispinterface _DVTStrucVisEvents;
+	};
+
+	//{{AFX_APPEND_ODL}}
+	//}}AFX_APPEND_ODL}}
+};
