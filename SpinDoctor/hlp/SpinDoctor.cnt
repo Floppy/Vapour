@@ -1,0 +1,9 @@
+:Base SpinDoctor.hlp
+1 Controls
+2 Main Window=HIDD_SPINDOCTOR_DIALOG
+2 Vector Tab=HIDD_VECTOR_TAB
+2 Scalar Tab=HIDD_SCALAR_TAB
+2 Rotation Tab=HIDD_ROTATION_TAB
+1 Using SpinDoctor
+2 Data Types=HID_DATA_TYPES
+2 All Operations=HID_OPERATIONS

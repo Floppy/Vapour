@@ -1,0 +1,5 @@
+:Base Dizzy.hlp
+1 Using Dizzy
+2 Usage=HID_USAGE
+2 Change History=HID_CHANGES
+2 Main Window=HIDD_DIZZY_DIALOG

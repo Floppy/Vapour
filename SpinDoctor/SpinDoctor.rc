@@ -1,0 +1,389 @@
+//Microsoft Developer Studio generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "afxres.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// English (U.S.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+#endif //_WIN32
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_ABOUT_DIALOG DIALOG DISCARDABLE  0, 0, 157, 103
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "About SpinDoctor"
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,53,82,50,14
+    ICON            IDR_MAINFRAME,IDC_STATIC,19,47,21,20
+    LTEXT           "SpinDoctor v1.0",IDC_STATIC,45,42,54,8
+    LTEXT           "Graphics Calculator",IDC_STATIC,45,51,62,8
+    LTEXT           "(C) 1999 Vapour Technology",IDC_STATIC,45,60,92,8
+    CONTROL         "Logo",IDC_CREDIT_BUTTON,"Button",BS_OWNERDRAW | 
+                    BS_BITMAP | WS_TABSTOP,7,7,56,14
+    LTEXT           "www.vapourtech.com",IDC_STATIC,45,69,70,8
+END
+
+IDD_SPINDOCTOR_DIALOG DIALOGEX 0, 0, 357, 151
+STYLE WS_MINIMIZEBOX | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
+EXSTYLE WS_EX_APPWINDOW
+CAPTION "SpinDoctor"
+FONT 8, "MS Sans Serif"
+BEGIN
+    EDITTEXT        IDC_INPUT_A,41,7,163,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_INPUT_B,41,37,163,14,ES_AUTOHSCROLL
+    PUSHBUTTON      "A",IDC_PASTE_A,203,7,16,14,BS_ICON
+    PUSHBUTTON      "B",IDC_PASTE_B,203,37,16,14,BS_ICON
+    EDITTEXT        IDC_PRECISION,41,66,19,14,ES_AUTOHSCROLL | ES_NUMBER
+    CONTROL         "Spin1",IDC_PRECISION_SPIN,"msctls_updown32",
+                    UDS_SETBUDDYINT | UDS_ALIGNRIGHT | UDS_AUTOBUDDY | 
+                    UDS_ARROWKEYS,55,66,9,14
+    PUSHBUTTON      "Move to A",IDC_MOVETO_A,113,65,16,14,BS_ICON
+    PUSHBUTTON      "Move to B",IDC_MOVETO_B,136,65,16,14,BS_ICON
+    PUSHBUTTON      "Swap",IDC_SWAP_AB,159,65,16,14,BS_ICON
+    CONTROL         "Radians",IDC_RAD_RADIO,"Button",BS_AUTORADIOBUTTON | 
+                    WS_GROUP,181,63,38,10
+    CONTROL         "Degrees",IDC_DEG_RADIO,"Button",BS_AUTORADIOBUTTON,181,
+                    73,38,10
+    EDITTEXT        IDC_RESULT,41,97,163,14,ES_AUTOHSCROLL | ES_READONLY
+    PUSHBUTTON      "",IDC_COPY_RESULT,203,97,16,14,BS_ICON
+    PUSHBUTTON      "&Help",ID_HELP,41,130,50,14
+    PUSHBUTTON      "&About",IDC_ABOUT_BUTTON,104,130,50,14
+    PUSHBUTTON      "Exit",IDOK,167,130,50,14
+    CONTROL         "Always\non top",IDC_ONTOP,"Button",BS_AUTOCHECKBOX | 
+                    BS_MULTILINE | WS_TABSTOP,71,64,36,16
+    CONTROL         "Tab1",IDC_TAB,"SysTabControl32",0x0,225,7,125,137
+    RTEXT           "Input A",IDC_STATIC,11,7,26,14,SS_CENTERIMAGE
+    RTEXT           "Input B",IDC_STATIC,11,37,26,14,SS_CENTERIMAGE
+    RTEXT           "Precision",IDC_STATIC,7,66,30,14,SS_CENTERIMAGE
+    RTEXT           "Result",IDC_STATIC,14,97,23,14,SS_CENTERIMAGE
+    ICON            IDR_MAINFRAME,IDC_STATIC,13,124,20,20
+END
+
+
+#ifndef _MAC
+/////////////////////////////////////////////////////////////////////////////
+//
+// Version
+//
+
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION 1,0,0,1
+ PRODUCTVERSION 1,0,0,1
+ FILEFLAGSMASK 0x3fL
+#ifdef _DEBUG
+ FILEFLAGS 0x1L
+#else
+ FILEFLAGS 0x0L
+#endif
+ FILEOS 0x4L
+ FILETYPE 0x1L
+ FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040904b0"
+        BEGIN
+            VALUE "Comments", "\0"
+            VALUE "CompanyName", "Vapour Technology\0"
+            VALUE "FileDescription", "SpinDoctor v1.0\0"
+            VALUE "FileVersion", "1, 0, 0, 1\0"
+            VALUE "InternalName", "SpinDoctor\0"
+            VALUE "LegalCopyright", "(C) Copyright 1999 Vapour Technology\0"
+            VALUE "LegalTrademarks", "\0"
+            VALUE "OriginalFilename", "SpinDoctor.exe\0"
+            VALUE "PrivateBuild", "\0"
+            VALUE "ProductName", "SpinDoctor\0"
+            VALUE "ProductVersion", "1, 0, 0, 1\0"
+            VALUE "SpecialBuild", "\0"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x409, 1200
+    END
+END
+
+#endif    // !_MAC
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO DISCARDABLE 
+BEGIN
+    IDD_ABOUT_DIALOG, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 150
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 96
+    END
+
+    IDD_SPINDOCTOR_DIALOG, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 350
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 144
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    IDS_ABOUTBOX            "&About SpinDoctor..."
+END
+
+#endif    // English (U.S.) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+/////////////////////////////////////////////////////////////////////////////
+// English (U.K.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENG)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_UK
+#pragma code_page(1252)
+#endif //_WIN32
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_VECTOR_TAB DIALOG DISCARDABLE  0, 0, 118, 121
+STYLE WS_CHILD
+FONT 8, "MS Sans Serif"
+BEGIN
+    PUSHBUTTON      "Add",IDC_ADD_V,7,7,50,14
+    PUSHBUTTON      "Subtract",IDC_SUB_V,61,7,50,14
+    PUSHBUTTON      "Multiply",IDC_MULTIPLY_V,7,30,50,14
+    PUSHBUTTON      "Divide",IDC_DIVIDE_V,61,30,50,14
+    PUSHBUTTON      "Dot",IDC_DOT,7,53,50,14
+    PUSHBUTTON      "Cross",IDC_CROSS_V,61,53,50,14
+    PUSHBUTTON      "Angle",IDC_ANGLE,7,76,50,14
+    PUSHBUTTON      "Normalise",IDC_NORM,61,76,50,14
+    PUSHBUTTON      "Reflect",IDC_REFLECT,7,100,50,14
+    PUSHBUTTON      "Length",IDC_LENGTH,61,100,50,14
+END
+
+IDD_SCALAR_TAB DIALOG DISCARDABLE  0, 0, 118, 121
+STYLE WS_CHILD
+FONT 8, "MS Sans Serif"
+BEGIN
+    PUSHBUTTON      "Add",IDC_ADD,7,7,50,14
+    PUSHBUTTON      "Subtract",IDC_SUBTRACT,61,7,50,14
+    PUSHBUTTON      "Multiply",IDC_MULTIPLY,7,30,50,14
+    PUSHBUTTON      "Divide",IDC_DIVIDE,61,30,50,14
+    PUSHBUTTON      "Pi",IDC_PI,7,53,50,14
+    PUSHBUTTON      "Convert",IDC_CONVERT,61,53,50,14
+    PUSHBUTTON      "Sin",IDC_SINE,7,76,50,14
+    PUSHBUTTON      "Cos",IDC_COSINE,61,76,50,14
+    PUSHBUTTON      "Tan",IDC_TANGENT,7,100,50,14
+    CONTROL         "Invert",IDC_INVERT,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,69,100,42,14
+END
+
+IDD_REFLECT DIALOG DISCARDABLE  0, 0, 100, 87
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Select axes to reflect"
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,24,67,52,14
+    CONTROL         "X",IDC_X_CHECK,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,39,
+                    7,21,10
+    CONTROL         "Y",IDC_Y_CHECK,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,39,
+                    27,21,10
+    CONTROL         "Z",IDC_Z_CHECK,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,39,
+                    47,21,10
+END
+
+IDD_ROTATION_TAB DIALOG DISCARDABLE  0, 0, 118, 121
+STYLE WS_CHILD
+FONT 8, "MS Sans Serif"
+BEGIN
+    PUSHBUTTON      "Add",IDC_ADDR,7,7,104,14
+    PUSHBUTTON      "Subtract",IDC_SUBR,7,30,104,14
+    PUSHBUTTON      "Normalise",IDC_NORM_R,7,53,104,14
+    PUSHBUTTON      "Invert",IDC_INVERT_ROTATION,7,76,104,14
+    PUSHBUTTON      "Rotate Vector",IDC_ROTATE,7,100,104,14
+END
+
+IDD_CREDITS_DIALOG DIALOG DISCARDABLE  0, 0, 155, 74
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Credits"
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,53,53,50,14
+    CTEXT           "SpinDoctor v1.0 Credits...",IDC_STATIC,7,7,141,8
+    CTEXT           "Programming: James Smith",IDC_STATIC,7,23,141,8
+    CTEXT           "Additional Programming: Warren Moore",IDC_STATIC,7,35,
+                    141,8
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO DISCARDABLE 
+BEGIN
+    IDD_VECTOR_TAB, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 111
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 114
+    END
+
+    IDD_SCALAR_TAB, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 111
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 114
+    END
+
+    IDD_REFLECT, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 93
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 80
+    END
+
+    IDD_ROTATION_TAB, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 111
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 114
+    END
+
+    IDD_CREDITS_DIALOG, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 148
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 67
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "#include ""afxres.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "#define _AFX_NO_SPLITTER_RESOURCES\r\n"
+    "#define _AFX_NO_OLE_RESOURCES\r\n"
+    "#define _AFX_NO_TRACKER_RESOURCES\r\n"
+    "#define _AFX_NO_PROPERTY_RESOURCES\r\n"
+    "\r\n"
+    "#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)\r\n"
+    "#ifdef _WIN32\r\n"
+    "LANGUAGE 9, 1\r\n"
+    "#pragma code_page(1252)\r\n"
+    "#endif //_WIN32\r\n"
+    "#include ""res\\SpinDoctor.rc2""  // non-Microsoft Visual C++ edited resources\r\n"
+    "#include ""afxres.rc""         // Standard components\r\n"
+    "#endif\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDR_MAINFRAME           ICON    DISCARDABLE     "res\\SpinDoctor.ico"
+IDI_PASTE               ICON    DISCARDABLE     "res\\paste.ico"
+IDI_COPY                ICON    DISCARDABLE     "res\\copy.ico"
+IDI_COPYA               ICON    DISCARDABLE     "res\\copya.ico"
+IDI_COPYB               ICON    DISCARDABLE     "res\\copyb.ico"
+IDI_SWAP                ICON    DISCARDABLE     "res\\swap.ico"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Bitmap
+//
+
+LOGOU                   BITMAP  DISCARDABLE     "res\\logou.bmp"
+LOGOD                   BITMAP  DISCARDABLE     "res\\logod.bmp"
+#endif    // English (U.K.) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+#define _AFX_NO_SPLITTER_RESOURCES
+#define _AFX_NO_OLE_RESOURCES
+#define _AFX_NO_TRACKER_RESOURCES
+#define _AFX_NO_PROPERTY_RESOURCES
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE 9, 1
+#pragma code_page(1252)
+#endif //_WIN32
+#include "res\SpinDoctor.rc2"  // non-Microsoft Visual C++ edited resources
+#include "afxres.rc"         // Standard components
+#endif
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+

@@ -1,0 +1,4 @@
+// Microsoft Developer Studio generated Help ID include file.
+// Used by SpinDoctor.rc
+//
+#define HIDC_MOVETO_A                   0x806603ee    // IDD_SPINDOCTOR_DIALOG [English (U.S.)]

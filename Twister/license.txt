@@ -1,0 +1,149 @@
+                  Twister - Rotation Converter
+
+                 Legal Information and License
+
+                       January 26, 1999
+
+                   GENERAL LICENSE AGREEMENT
+
+This document pertains to the use and distribution of the Twister Rotation
+Converter. It applies to all Twister executable (binary) files and
+documentation files. All of these are referred to here as "the software".
+
+All of this software is Copyright 1999 by Vapour Technology. Although it is 
+distributed as freeware, it is NOT PUBLIC DOMAIN.
+
+The copyrighted package may ONLY be distributed and/or modified according
+to the license granted herein.
+
+
+                         USAGE PROVISIONS
+
+Permission is granted to the user to use the software and associated files.
+The use of this software is completely free.
+
+
+                GENERAL RULES FOR ALL DISTRIBUTION
+
+The permission to distribute this software under certain very specific
+conditions is granted in advance, provided that the following conditions
+are met.
+
+The distribution file must not be renamed or rearchived without the explicit
+permission of Vapour Technology.  You may rename the file only to meet the
+file name conventions of your system or to avoid file name duplications but
+we ask that you try to keep file names as similar to the originals as
+possible.
+
+No portion of this package may be separated from the package and
+distributed separately other than under the conditions specified in the
+provisions given below. This means that the software must always be
+distributed with the accompanying files intact, including this license and
+the README file.
+
+Non-commercial distribution in which no money or compensation is charged
+(such as a user copying the software for a personal friend or colleague) is
+permitted with no other restrictions.
+
+Teachers and educational institutions may also distribute the material to
+students and may charge minimal copying costs if the software is to be used
+in a course.
+
+The executable files in the package may not be decompiled or reverse
+engineered in any way. This includes capturing of images from the
+application.
+
+
+       CONDITIONS FOR SHAREWARE/FREEWARE DISTRIBUTION COMPANIES
+
+Shareware and freeware distribution companies may distribute the software
+included in software-only compilations using media such as, but not limited
+to, floppy disk, CD-ROM, tape backup, optical disks, hard disks, or memory
+cards.  This section only applies to distributors of collected programs.
+Anyone wishing to bundle the package with a shareware product must use the
+commercial bundling rules.  Any bundling with books, magazines or other
+print media should also use the commercial rules.
+
+You must notify us that you are distributing this software and must provide
+us with information on how to contact you should any support issues arise.
+
+
+     CONDITIONS FOR ON-LINE SERVICES AND BBS'S INCLUDING INTERNET
+
+On-line services, BBS's and internet sites may distribute the software 
+under the conditions in this section.
+
+The site may only charge standard usage rates for the downloading of this
+software. A premium may not be charged for this package. I.E. CompuServe or
+America On-Line may make these archives available to their users, but they
+may only charge regular usage rates for the time required to download.
+
+
+                   CONDITIONS FOR COMMERCIAL BUNDLING
+
+Vendors wishing to bundle this software with commercial software (including
+shareware) or with publications must first obtain explicit permission from
+Vapour Technology.  This includes any commercial software or publications,
+such as, but not limited to, magazines, cover-disk distribution, books,
+newspapers, or newsletters in print or machine readable form.
+
+Vapour Technology will decide if such distribution will be allowed on a
+case-by-case basis and may impose certain restrictions as it sees fit.
+The minimum terms are given below. Other conditions may be imposed.
+
+	Purchasers of your product must not be led to believe that they are
+	paying for this software.  Any mention of Twister on the box, in advertising
+	or in instruction manuals must be clearly marked with a disclaimer that
+	this is free software and can be obtained for free or nominal cost from
+	various sources.
+
+	Include clear and obvious information on how to obtain the official
+	distribution.
+
+	Include a credit page or pages in your documentation for this software.
+
+
+                      RETAIL VALUE OF THIS SOFTWARE
+
+Although the software is, when distributed within the terms of this agreement,
+free of charge, the retail value (or price) of this program is determined
+as GBP5.00 (Pounds Sterling) per copy distributed, copied, or used. If the 
+software is distributed, copied, or used without authorisation you are legally
+liable to this debt to the copyright holder or any other person or organisation
+delegated by the copyright holder for the collection of this debt, and you
+agree that you are legally bound by the above and will pay this debt within
+30 days of the event.
+
+However, none of the above paragraph constitutes permission for you to
+distribute, copy or use this software outside of the terms of this agreement.
+In particular, the conditions and debt mentioned above (whether paid or unpaid)
+do not allow you to avoid statutory damages or other legal penalties and does
+not constitute any agreement that would allow you to avoid such other legal
+remedies as are available to the copyright holder.
+
+Put simply, this software is only free if you comply with our conditions ; it
+is not free otherwise. The copyright holder of this software chooses to give
+it away free under these and only these conditions.
+
+For the purpose of copyright regulations, the retail value of this software is
+GBP5.00 (Pounds Sterling) per copy.
+
+
+                           REVOCATION OF LICENSE
+
+VIOLATION OF THIS LICENSE IS A VIOLATION OF COPYRIGHT LAWS.  IT WILL RESULT
+IN REVOCATION OF ALL DISTRIBUTION PRIVILEGES AND MAY RESULT IN CIVIL OR
+CRIMINAL PENALTY.
+
+Such violators who are prohibited from distribution will be identified in
+this document.
+
+
+                                 DISCLAIMER
+
+This software is provided as is without any guarantees or warranty.
+Although the authors have attempted to find and correct any bugs in the
+package, they are not responsible for any damage or losses of any kind
+caused by the use or misuse of the package. The authors are under no
+obligation to provide service, corrections, or upgrades to this package.
+

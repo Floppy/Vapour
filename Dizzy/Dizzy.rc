@@ -1,0 +1,323 @@
+//Microsoft Developer Studio generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "afxres.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// English (U.S.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+#endif //_WIN32
+
+#ifndef _MAC
+/////////////////////////////////////////////////////////////////////////////
+//
+// Version
+//
+
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION 1,0,0,1
+ PRODUCTVERSION 1,0,0,1
+ FILEFLAGSMASK 0x3fL
+#ifdef _DEBUG
+ FILEFLAGS 0x1L
+#else
+ FILEFLAGS 0x0L
+#endif
+ FILEOS 0x4L
+ FILETYPE 0x1L
+ FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "000004b0"
+        BEGIN
+            VALUE "CompanyName", "Vapour Technology\0"
+            VALUE "FileDescription", "Dizzy - Rotation Merger\0"
+            VALUE "FileVersion", "1.0\0"
+            VALUE "InternalName", "Dizzy\0"
+            VALUE "LegalCopyright", "Copyright (C) 1998 Vapour Technology\0"
+            VALUE "OriginalFilename", "Dizzy.exe\0"
+            VALUE "ProductName", "Vapour Technology - Dizzy\0"
+            VALUE "ProductVersion", "1.0\0"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x0, 1200
+    END
+END
+
+#endif    // !_MAC
+
+#endif    // English (U.S.) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+/////////////////////////////////////////////////////////////////////////////
+// English (U.K.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENG)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_UK
+#pragma code_page(1252)
+#endif //_WIN32
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "#include ""afxres.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "#define _AFX_NO_SPLITTER_RESOURCES\r\n"
+    "#define _AFX_NO_OLE_RESOURCES\r\n"
+    "#define _AFX_NO_TRACKER_RESOURCES\r\n"
+    "#define _AFX_NO_PROPERTY_RESOURCES\r\n"
+    "\r\n"
+    "#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)\r\n"
+    "#ifdef _WIN32\r\n"
+    "LANGUAGE 9, 1\r\n"
+    "#pragma code_page(1252)\r\n"
+    "#endif\r\n"
+    "#include ""res\\Dizzy.rc2""  // non-Microsoft Visual C++ edited resources\r\n"
+    "#include ""afxres.rc""         // Standard components\r\n"
+    "#endif\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDR_MAINFRAME           ICON    DISCARDABLE     "res\\Dizzy.ico"
+IDI_COPY                ICON    DISCARDABLE     "res\\copy.ico"
+IDI_PASTE               ICON    DISCARDABLE     "res\\paste.ico"
+IDI_UPARROW             ICON    DISCARDABLE     "res\\uparrow.ico"
+IDI_DOWNARROW           ICON    DISCARDABLE     "res\\downarrow.ico"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO DISCARDABLE 
+BEGIN
+    IDD_ABOUT_DIALOG, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 151
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 96
+    END
+
+    IDD_DIZZY_DIALOG, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 324
+        TOPMARGIN, 6
+        BOTTOMMARGIN, 128
+    END
+
+    IDD_CREDITS_DIALOG, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 148
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 67
+    END
+
+    IDD_DIZZY_HELP, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 174
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 190
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_ABOUT_DIALOG DIALOG DISCARDABLE  0, 0, 158, 103
+STYLE DS_MODALFRAME | WS_POPUP | WS_VISIBLE | WS_CLIPSIBLINGS | WS_CAPTION | 
+    WS_SYSMENU
+CAPTION "About Dizzy"
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,53,82,50,14
+    ICON            IDR_MAINFRAME,IDC_STATIC,19,47,20,20
+    LTEXT           "Dizzy v1.1",IDC_STATIC,45,42,34,8
+    LTEXT           "Rotation Merger for VRML",IDC_STATIC,45,51,84,8
+    LTEXT           "(C) 1999 Vapour Technology",IDC_STATIC,45,60,92,8
+    CONTROL         "Logo",IDC_CREDIT_BUTTON,"Button",BS_OWNERDRAW | 
+                    BS_BITMAP | WS_TABSTOP,7,7,56,14
+    LTEXT           "www.vapourtech.com",IDC_STATIC,45,69,70,8
+END
+
+IDD_DIZZY_DIALOG DIALOGEX 0, 0, 331, 135
+STYLE WS_MINIMIZEBOX | WS_POPUP | WS_VISIBLE | WS_CLIPSIBLINGS | WS_CAPTION | 
+    WS_SYSMENU
+CAPTION "Dizzy"
+FONT 8, "MS Sans Serif"
+BEGIN
+    LTEXT           "Rotation:",IDC_STATIC,7,9,30,8
+    EDITTEXT        IDC_INPUT_BOX,41,6,148,14,ES_AUTOHSCROLL
+    PUSHBUTTON      "Paste",IDC_PASTE_BUTTON,189,6,16,15,BS_ICON | BS_CENTER | 
+                    BS_VCENTER
+    DEFPUSHBUTTON   "&Add",IDC_ADD_BUTTON,211,6,53,14
+    ICON            IDR_MAINFRAME,IDC_STATIC,13,57,21,20
+    LISTBOX         IDC_INPUT_LIST,41,26,163,82,LBS_NOINTEGRALHEIGHT | 
+                    WS_VSCROLL | WS_TABSTOP
+    PUSHBUTTON      "&Delete",IDC_DELETE_BUTTON,211,34,53,14
+    PUSHBUTTON      "up",IDC_UP_BUTTON,211,61,16,15,BS_ICON | BS_CENTER | 
+                    BS_VCENTER
+    PUSHBUTTON      "down",IDC_DOWN_BUTTON,249,61,16,15,BS_ICON | BS_CENTER | 
+                    BS_VCENTER
+    PUSHBUTTON      "&Clear",IDC_CLEAR_BUTTON,211,86,53,14
+    CTEXT           "Result:",IDC_STATIC,16,117,23,8,SS_CENTERIMAGE
+    EDITTEXT        IDC_RESULT_BOX,41,114,148,14,ES_AUTOHSCROLL | 
+                    ES_READONLY | NOT WS_BORDER,WS_EX_STATICEDGE
+    PUSHBUTTON      "Copy",IDC_COPY_BUTTON,189,114,16,15,BS_ICON | BS_CENTER | 
+                    BS_VCENTER
+    PUSHBUTTON      "&Help",ID_HELP,271,6,53,14
+    PUSHBUTTON      "A&bout",IDC_ABOUT_BUTTON,271,34,53,14
+    CONTROL         "Always on top",IDC_ONTOP,"Button",BS_AUTOCHECKBOX | 
+                    BS_CENTER | BS_MULTILINE | WS_TABSTOP,279,84,35,18
+    PUSHBUTTON      "E&xit",IDOK,271,115,53,14
+    EDITTEXT        IDC_PRECISION,243,115,21,14,ES_MULTILINE | 
+                    ES_AUTOHSCROLL
+    CONTROL         "Spin1",IDC_PRECISION_SPIN,"msctls_updown32",
+                    UDS_SETBUDDYINT | UDS_ALIGNRIGHT | UDS_AUTOBUDDY | 
+                    UDS_ARROWKEYS,249,115,9,14
+    LTEXT           "Precision",IDC_STATIC,211,117,30,8
+END
+
+IDD_CREDITS_DIALOG DIALOG DISCARDABLE  0, 0, 155, 74
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Credits"
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,53,53,50,14
+    CTEXT           "Dizzy v1.1 Credits...",IDC_STATIC,7,7,141,8
+    CTEXT           "Programming: James Smith",IDC_STATIC,7,23,141,8
+    CTEXT           "Additional Programming: Warren Moore",IDC_STATIC,7,35,
+                    141,8
+END
+
+IDD_DIZZY_HELP DIALOG DISCARDABLE  0, 0, 181, 197
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Dizzy Help"
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,65,176,50,14
+    LTEXT           "Dizzy v1.0 Help",IDC_STATIC,68,7,50,8
+    LTEXT           "For more information, see the README.TXT file.",
+                    IDC_STATIC,7,162,167,8
+    LTEXT           "Dizzy takes a sequence of VRML rotations and",
+                    IDC_STATIC,7,22,167,8
+    LTEXT           "converts them into a single rotation with the same",
+                    IDC_STATIC,7,32,167,8
+    LTEXT           "effect. To combine a seqence of rotations, type them ",
+                    IDC_STATIC,7,42,167,8
+    LTEXT           "in sequence into the 'Rotation' box at the top of the ",
+                    IDC_STATIC,7,52,167,8
+    LTEXT           "window and press the 'Add' button. When you add",
+                    IDC_STATIC,7,62,167,8
+    LTEXT           "a rotation, the combination of all the rotations in the ",
+                    IDC_STATIC,7,72,167,8
+    LTEXT           "list box is calculated and displayed at the bottom of",
+                    IDC_STATIC,7,82,167,8
+    LTEXT           "the window.",IDC_STATIC,7,92,167,8
+    LTEXT           "Both the input and output are in the same form: four",
+                    IDC_STATIC,7,102,167,8
+    LTEXT           "floating-point values representing a rotation. The first",
+                    IDC_STATIC,7,112,167,8
+    LTEXT           "three values define an axis, and the last value is the",
+                    IDC_STATIC,7,122,167,8
+    LTEXT           "amount (in radians) to rotate about this axis.",
+                    IDC_STATIC,7,132,167,8
+    LTEXT           "The copy button will copy the resulting rotation onto",
+                    IDC_STATIC,7,142,167,8
+    LTEXT           "the clipboard.",IDC_STATIC,7,152,167,8
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Bitmap
+//
+
+LOGOU                   BITMAP  DISCARDABLE     "res\\logou.bmp"
+LOGOD                   BITMAP  DISCARDABLE     "res\\logod.bmp"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    IDS_ABOUTBOX            "&About Dizzy"
+END
+
+#endif    // English (U.K.) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+#define _AFX_NO_SPLITTER_RESOURCES
+#define _AFX_NO_OLE_RESOURCES
+#define _AFX_NO_TRACKER_RESOURCES
+#define _AFX_NO_PROPERTY_RESOURCES
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE 9, 1
+#pragma code_page(1252)
+#endif
+#include "res\Dizzy.rc2"  // non-Microsoft Visual C++ edited resources
+#include "afxres.rc"         // Standard components
+#endif
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+

@@ -1,0 +1,306 @@
+//Microsoft Developer Studio generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "afxres.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// English (U.S.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+#endif //_WIN32
+
+#ifndef _MAC
+/////////////////////////////////////////////////////////////////////////////
+//
+// Version
+//
+
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION 1,0,0,1
+ PRODUCTVERSION 1,0,0,1
+ FILEFLAGSMASK 0x3fL
+#ifdef _DEBUG
+ FILEFLAGS 0x1L
+#else
+ FILEFLAGS 0x0L
+#endif
+ FILEOS 0x4L
+ FILETYPE 0x1L
+ FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040904b0"
+        BEGIN
+            VALUE "CompanyName", "Vapour Technology\0"
+            VALUE "FileDescription", "Peek MFC Application\0"
+            VALUE "FileVersion", "1, 0, 0, 1\0"
+            VALUE "InternalName", "Peek\0"
+            VALUE "LegalCopyright", "Copyright (C) 1998 Vapour Technology\0"
+            VALUE "OriginalFilename", "Peek.exe\0"
+            VALUE "ProductName", "Peek\0"
+            VALUE "ProductVersion", "1, 0, 0, 1\0"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x409, 1200
+    END
+END
+
+#endif    // !_MAC
+
+#endif    // English (U.S.) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+/////////////////////////////////////////////////////////////////////////////
+// English (U.K.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENG)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_UK
+#pragma code_page(1252)
+#endif //_WIN32
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "#include ""afxres.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "#define _AFX_NO_SPLITTER_RESOURCES\r\n"
+    "#define _AFX_NO_OLE_RESOURCES\r\n"
+    "#define _AFX_NO_TRACKER_RESOURCES\r\n"
+    "#define _AFX_NO_PROPERTY_RESOURCES\r\n"
+    "\r\n"
+    "#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)\r\n"
+    "#ifdef _WIN32\r\n"
+    "LANGUAGE 9, 1\r\n"
+    "#pragma code_page(1252)\r\n"
+    "#endif\r\n"
+    "#include ""res\\Peek.rc2""  // non-Microsoft Visual C++ edited resources\r\n"
+    "#include ""afxres.rc""         // Standard components\r\n"
+    "#endif\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDR_MAINFRAME           ICON    DISCARDABLE     "res\\Peek.ico"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_PEEK_DIALOG DIALOGEX 0, 0, 248, 124
+STYLE WS_MINIMIZEBOX | WS_POPUP | WS_VISIBLE | WS_CLIPSIBLINGS | WS_CAPTION | 
+    WS_SYSMENU
+CAPTION "Peek"
+FONT 8, "MS Sans Serif"
+BEGIN
+    EDITTEXT        IDC_POS_BOX,48,7,136,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_LOOK_BOX,48,31,136,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_UP_BOX,48,55,136,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_RESULT_BOX,48,77,136,40,ES_MULTILINE | 
+                    ES_AUTOVSCROLL | ES_READONLY | NOT WS_BORDER,
+                    WS_EX_STATICEDGE
+    DEFPUSHBUTTON   "&Update",IDC_UPDATE_BUTTON,191,7,50,14
+    PUSHBUTTON      "&Help",IDC_HELP_BUTTON,191,31,50,14
+    PUSHBUTTON      "&About",IDC_ABOUT_BUTTON,191,55,50,14
+    PUSHBUTTON      "E&xit",IDOK,191,103,50,14
+    LTEXT           "Position:",IDC_STATIC,7,7,29,14,SS_CENTERIMAGE
+    LTEXT           "Target:",IDC_STATIC,7,34,24,8
+    LTEXT           "Up:",IDC_STATIC,7,58,12,8
+    LTEXT           "Result:",IDC_STATIC,7,78,23,8
+    ICON            IDR_MAINFRAME,IDC_STATIC,220,76,20,20
+    CONTROL         "Copy",IDC_COPY_BUTTON,"Button",BS_OWNERDRAW | 
+                    WS_TABSTOP,191,79,16,14
+END
+
+IDD_ABOUT_DIALOG DIALOG DISCARDABLE  0, 0, 152, 103
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "About Peek"
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,50,81,50,14
+    ICON            IDR_MAINFRAME,IDC_STATIC,13,47,21,20
+    LTEXT           "Peek v1.0",IDC_STATIC,39,42,34,8
+    LTEXT           "VRML View Rotation Calculator",IDC_STATIC,39,51,100,8
+    LTEXT           "(C) 1999 Vapour Technology",IDC_STATIC,39,60,92,8
+    CONTROL         "Logo",IDC_CREDIT_BUTTON,"Button",BS_OWNERDRAW | 
+                    BS_BITMAP | WS_TABSTOP,6,7,56,14
+    LTEXT           "www.vapourtech.com",IDC_STATIC,39,69,70,8
+END
+
+IDD_CREDITS_DIALOG DIALOG DISCARDABLE  0, 0, 144, 82
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Credits"
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,46,61,50,14
+    CTEXT           "Peek v1.0 Credits...",IDC_STATIC,7,7,130,8
+    CTEXT           "Programming: James Smith",IDC_STATIC,7,21,130,8
+    CTEXT           "Additional Programming: Warren Moore",IDC_STATIC,7,32,
+                    130,8
+    CTEXT           "Inspired by 'orient' by Steve Chenney",IDC_STATIC,7,43,
+                    130,8
+END
+
+IDD_HELP_DIALOG DIALOG DISCARDABLE  0, 0, 174, 193
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Peek Help"
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,65,172,50,14
+    LTEXT           "Peek v1.0 Help",IDC_STATIC,65,7,50,8
+    LTEXT           "For more information, see the README.TXT file.",
+                    IDC_STATIC,7,154,160,8
+    LTEXT           "Peek converts a position/target/up camera model",
+                    IDC_STATIC,7,22,160,8
+    LTEXT           "into an axis-angle orientation for the camera. Enter",
+                    IDC_STATIC,7,33,160,8
+    LTEXT           "the position, target and up vectors into the",
+                    IDC_STATIC,7,44,160,8
+    LTEXT           "appropriate boxes and press 'Update'.  This will",
+                    IDC_STATIC,7,55,160,8
+    LTEXT           "calculate the resultant orientation and display it in",
+                    IDC_STATIC,7,66,160,8
+    LTEXT           "the result box at the bottom of the window.",IDC_STATIC,
+                    7,77,160,8
+    LTEXT           "The input values are triples of floating-point values",
+                    IDC_STATIC,7,88,160,8
+    LTEXT           "representing the x, y and z components of the",
+                    IDC_STATIC,7,99,160,8
+    LTEXT           "input points/vectors. The output is a VRML",IDC_STATIC,
+                    7,110,160,8
+    LTEXT           "Viewpoint node.",IDC_STATIC,7,121,160,8
+    LTEXT           "The copy button will copy the contents of the result",
+                    IDC_STATIC,7,132,162,8
+    LTEXT           "box onto the clipboard.",IDC_STATIC,7,143,73,8
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO DISCARDABLE 
+BEGIN
+    IDD_PEEK_DIALOG, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 241
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 117
+    END
+
+    IDD_ABOUT_DIALOG, DIALOG
+    BEGIN
+        LEFTMARGIN, 6
+        RIGHTMARGIN, 145
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 96
+    END
+
+    IDD_CREDITS_DIALOG, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 137
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 75
+    END
+
+    IDD_HELP_DIALOG, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 167
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 186
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Bitmap
+//
+
+LOGOU                   BITMAP  DISCARDABLE     "res\\logou.bmp"
+LOGOD                   BITMAP  DISCARDABLE     "res\\logod.bmp"
+COPYU                   BITMAP  DISCARDABLE     "res\\copyu.bmp"
+COPYD                   BITMAP  DISCARDABLE     "res\\copyd.bmp"
+COPYF                   BITMAP  DISCARDABLE     "res\\copyf.bmp"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    IDS_ABOUTBOX            "&About Peek"
+END
+
+#endif    // English (U.K.) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+#define _AFX_NO_SPLITTER_RESOURCES
+#define _AFX_NO_OLE_RESOURCES
+#define _AFX_NO_TRACKER_RESOURCES
+#define _AFX_NO_PROPERTY_RESOURCES
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE 9, 1
+#pragma code_page(1252)
+#endif
+#include "res\Peek.rc2"  // non-Microsoft Visual C++ edited resources
+#include "afxres.rc"         // Standard components
+#endif
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+
