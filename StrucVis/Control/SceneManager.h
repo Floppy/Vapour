@@ -7,7 +7,7 @@
 // SceneManager.h
 // 19/03/2002 - James Smith
 //
-// $Id: SceneManager.h,v 1.9 2002/03/24 13:52:01 vap-warren Exp $
+// $Id: SceneManager.h,v 1.10 2002/03/24 23:00:27 vap-james Exp $
 
 #ifndef __VTSTRUCVIS_SCENEMANAGER__
 #define __VTSTRUCVIS_SCENEMANAGER__
@@ -39,6 +39,9 @@ public:
    // When setup is complete (i.e. enough data has been sent in, the data is loaded 
    // and Setup() will return true.
    
+   void Empty(void);
+   // Deletes all information from the scene
+
    unsigned int NumFrames(void) {return m_oDataMgr.NumFrames();}
    // The number of frames
 
@@ -77,9 +80,6 @@ public:
    // Returns true if display is successful
 
 private:
-
-   void Empty(void);
-   // Deletes all information from the scene
 
    void Load(void);
    // Load initial data from data manager
