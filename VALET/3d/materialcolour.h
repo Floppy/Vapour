@@ -10,13 +10,13 @@
 #define _VALET_3D_MATERIALCOLOUR_
 
 ////////////////
-//! file 		= "VALET/3d/materialcolour.h"
-//! author 		= "James Smith"
-//! date 		= "09/10/2001"
-//! lib 		= libVALET3d
-//! rcsid 		= "$Id: materialcolour.h,v 1.7 2001/10/24 22:01:42 vap-james Exp $"
-//! userlevel 	        = Normal
-//! docentry 	        = "VALET.3D.Surface Materials"
+//! file       = "VALET/3d/materialcolour.h"
+//! author     = "James Smith"
+//! date       = "09/10/2001"
+//! lib        = libVALET3d
+//! rcsid      = "$Id: materialcolour.h,v 1.8 2001/10/24 22:23:54 vap-james Exp $"
+//! userlevel  = Normal
+//! docentry   = "VALET.3D.Surface Materials"
 
 //#===--- Includes
 #include "VALET/valet.h"
@@ -30,7 +30,7 @@ namespace NVALET {
 
   protected:
     
-    double m_pComponents[4];
+    double m_pdComponents[4];
     //: The colour itself, in the order RGBA
     // The values are in the range 0..1
 
@@ -43,13 +43,13 @@ namespace NVALET {
     //: Default Constructor
     // Creates a white colour
     
-    CMaterialColour(double dR, double dG, double dB, double dA=1.0);
+    CMaterialColour(double dRed, double dGreen, double dBlue, double dAlpha=1.0);
     //: Constructor
     // Creates a material colour of the appropriate colour 
-    //!param: dR = the red component.
-    //!param: dG = the green component.
-    //!param: dB = the blue component.
-    //!param: dA = the alpha component.
+    //!param: dRed = the red component.
+    //!param: dGreen = the green component.
+    //!param: dBlue = the blue component.
+    //!param: dAlpha = the alpha component.
    
     ~CMaterialColour();
     //: Destructor
@@ -57,43 +57,43 @@ namespace NVALET {
     //:-----------------
     //: Access functions
 
-    double R(void) const {return m_pComponents[0];}
+    double Red(void) const;
     //: Access the red component.
     //!param: return = the red component.
 
-    double& R(void) {return m_pComponents[0];}
+    double& Red(void);
     //: Non-const access to the red component.
     // This can be used to modify the red component.
     //!param: return = a reference to the red component.
 
-    double G(void) const {return m_pComponents[1];}
+    double Green(void) const;
     //: Access the green component.
     //!param: return = the green component.
 
-    double& G(void) {return m_pComponents[1];}
+    double& Green(void);
     //: Non-const access to the green component.
     // This can be used to modify the green component.
     //!param: return = a reference to the green component.
 
-    double B(void) const {return m_pComponents[2];}
+    double Blue(void) const;
     //: Access the blue component.
     //!param: return = the blue component.
 
-    double& B(void) {return m_pComponents[2];}
+    double& Blue(void);
     //: Non-const access to the blue component.
     // This can be used to modify the blue component.
     //!param: return = a reference to the blue component.
 
-    double A(void) const {return m_pComponents[3];}
+    double Alpha(void) const;
     //: Access the alpha component.
     //!param: return = the alpha component.
 
-    double& A(void) {return m_pComponents[3];}
+    double& Alpha(void);
     //: Non-const access to the alpha component.
     // This can be used to modify the alpha component.
     //!param: return = a reference to the alpha component.
 
-    const double* Array(void) const {return m_pComponents;}
+    const double* Array(void) const;
     //: Access the complete array.
     // Suitable for use with glColor4dv(), amongst others.
     //!param: return = an array of 4 double values, in the order RGBA.
