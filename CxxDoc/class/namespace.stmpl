@@ -27,9 +27,14 @@ $(include:menu.stmpl)
 		<TABLE WIDTH="100%" BORDER="0" CELLPADDING="2" CELLSPACING="0" CLASS="ITEM" BGCOLOR="#FFFFFF">
 			<TR><TD>
 			
-			$(include:info.stmpl)
-			$(//:<P CLASS="CLASSLARGETITLE">$(FullName)</P>)
-			
+         <P CLASS="CLASSTITLE">$(FullName)</P>
+         <P>$(ifset:brief:$(brief))</P>
+
+			$(ifset:detail:
+				<P CLASS="CLASSHEADING">Description</P>
+				<P>$(list:$(detail))</P>
+         )
+
 			$(include:scope.stmpl)
 			
 			</TD></TR>
