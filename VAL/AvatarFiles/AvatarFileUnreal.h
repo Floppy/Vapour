@@ -7,7 +7,7 @@
 // AvatarFileUnreal.h - 5/4/2000 - James Smith
 //	Unreal export filter header
 //
-// $Id: AvatarFileUnreal.h,v 1.2 2000/07/16 12:28:04 waz Exp $
+// $Id: AvatarFileUnreal.h,v 1.3 2000/07/21 17:00:09 waz Exp $
 //
 
 #pragma once
@@ -52,10 +52,6 @@ public:
 	static bool CanSaveStream() {return false;}
 	static bool CanLoadBPFile() {return false;}
 	static bool CanLoadBPStream() {return false;}
-
-private:
-
-   long PackVertex(const SPoint3D& pntVertex) const;
 
 };
 

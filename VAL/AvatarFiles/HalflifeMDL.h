@@ -7,7 +7,7 @@
 // HalflifeMDL.h - 16/02/2000 - James Smith
 //	Structures and definitions for halflife MDL export
 //
-// $Id: HalflifeMDL.h,v 1.4 2000/07/15 10:39:24 waz Exp $
+// $Id: HalflifeMDL.h,v 1.5 2000/07/21 17:00:08 waz Exp $
 //
 
 #ifndef _VAL_HALFLIFEMDL_
@@ -143,10 +143,10 @@ struct SHalflifeMDLHitbox {
    unsigned long iBone;
    // Group
    unsigned long iGroup;
-   // Minimum
-   HalflifeMDLVector vMinimum;
    // Maximum
    HalflifeMDLVector vMaximum;
+   // Minimum
+   HalflifeMDLVector vMinimum;
 };
 
 struct SHalflifeMDLSeqGroup {
