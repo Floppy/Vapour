@@ -13,7 +13,7 @@
 //! file 		= "VALET/arch/valet_common.h""
 //! author 		= "Warren Moore"
 //! date 		= "23/09/2001"
-//! rcsid 		= "$Id: valet_common.h,v 1.7 2001/10/21 14:28:51 vap-warren Exp $"
+//! rcsid 		= "$Id: valet_common.h,v 1.8 2001/10/21 14:56:06 vap-warren Exp $"
 //! userlevel 	= Normal
 //! docentry 	= "VALET.Arch"
 //! maindoc		= 1
@@ -24,12 +24,11 @@
 
 namespace NValet {
 
-   //#===--- Constrants
+   /*#===--- Constants */
    const unsigned int m_uiStrLength = 1024;	    // Default fixed string length
 
-   //#===--- File Results
    enum FILE_RESULT {
-      FR_OK,
+      FR_OK = 0,
       FR_DOES_NOT_EXIST,
       FR_FILE_ERROR,
       FR_WRONG_FILE_TYPE,
@@ -46,15 +45,15 @@ namespace NValet {
       FR_BAD_DATA,
       FR_ERROR
    };
+   //: File Results
 
-   //#===--- Logging
-   // Pre-declare class
+   /*#===--- Logging */
    class CLogManager;
    extern CLogManager g_oLogManager;
    
 }
 
-//#===--- Debug settings
+/*#===--- Debug settings */
 
 #define VDEBUG
 
@@ -62,7 +61,7 @@ namespace NValet {
 #define NDEBUG
 #endif
 
-//#===--- Inlines
+/*#===--- Inlines */
 
 #ifdef VDEBUG
 #define INLINE
