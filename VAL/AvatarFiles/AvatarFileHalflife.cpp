@@ -7,7 +7,7 @@
 // AvatarFileHalflife.cpp - 16/2/2000 - James Smith
 //	Halflife export filter implementation
 //
-// $Id: AvatarFileHalflife.cpp,v 1.13 2000/10/10 17:51:31 waz Exp $
+// $Id: AvatarFileHalflife.cpp,v 1.14 2000/10/31 00:55:44 waz Exp $
 //
 
 #include "stdafx.h"
@@ -796,7 +796,7 @@ FRESULT CAvatarFileHalflife::Save(ofstream& osOutputStream, CAvatar* pAvatar) co
 
    // Precalc a couple of texture vals
    const int iMaxU = HL_TEXTURE_WIDTH-1;
-   const int iMaxV = HL_TEXTURE_HEIGHT-1;      
+   const int iMaxV = HL_TEXTURE_HEIGHT-1;   
    // Split main mesh into two submeshes based on texture
    CDList<STriFace> pSubMeshes[2];
    for (i=0; i<iNumFaces; i++) {
