@@ -7,7 +7,7 @@
 // AvatarFileStore.cpp - 16/06/2000 - James Smith
 //	Avatar import/export filter speciality store implementation
 //
-// $Id: AvatarFileStore.cpp,v 1.2 2000/06/17 10:42:04 waz Exp $
+// $Id: AvatarFileStore.cpp,v 1.3 2000/11/21 16:40:06 waz Exp $
 //
 
 #include "stdafx.h"
@@ -100,20 +100,3 @@ CAvatarFile* CAvatarFileStore::CreateByExtension(const char* pszExtension) {
       else return NULL;
    }
 } // CreateByExtension
-
-bool CompareFilters(const CAvatarFileProxyBase* pFilterOne ,const CAvatarFileProxyBase* pFilterTwo) {
-   bool bRetVal = true;
-   CString strOne = pFilterOne->GetTitle();
-   CString strTwo = pFilterTwo->GetTitle();
-   if (strOne == strTwo) {
-      // Compare extensions
-      strOne = pFilterOne->GetExtension();
-      strTwo = pFilterTwo->GetExtension();
-      bRetVal = (strOne < strTwo) ? true : false;
-   }
-   else {
-      // Compare titles
-      bRetVal = (strOne < strTwo) ? true : false;
-   }
-   return bRetVal;
-} //CompareFilters(const CAvatarFileProxyBase* pFilterOne ,const CAvatarFileProxyBase* pFilterTwo)
