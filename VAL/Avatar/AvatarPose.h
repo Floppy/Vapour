@@ -7,7 +7,7 @@
 // AvatarPose.h - 21/2/2000 - James Smith
 //	Avatar pose class header
 //
-// $Id: AvatarPose.h,v 1.5 2000/08/22 11:30:20 waz Exp $
+// $Id: AvatarPose.h,v 1.6 2000/08/24 22:17:32 waz Exp $
 //
 
 #ifndef _VAL_AVATARPOSE_
@@ -69,6 +69,7 @@ public:
    void SetJointRotation(int iJoint, CAxisRotation& rotNewAngle);
 
    // Access Functions
+	int GetNumJoints() const;
    CVector3D GetRootTranslation(void);
    CAxisRotation GetJointRotation(int iJoint);
 
@@ -117,5 +118,12 @@ protected:
    friend class CAvatar;
 
 };
+
+/////////////////////
+// Inline Functions
+
+inline CAvatarPose::GetNumJoints() const {
+	return m_iNumJoints;
+} // GetNumJoints
 
 #endif //_VAL_AVATARPOSE_
