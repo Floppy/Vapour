@@ -7,7 +7,7 @@
 // DataManager.cpp
 // 19/03/2002 - James Smith
 //
-// $Id: DataManager.cpp,v 1.7 2002/03/24 13:52:00 vap-warren Exp $
+// $Id: DataManager.cpp,v 1.8 2002/03/25 13:18:18 vap-warren Exp $
 
 #include "stdafx.h"
 #include "DataManager.h"
@@ -292,7 +292,7 @@ bool CDataManager::Setup(const unsigned char* pcData, unsigned int iLength) {
 bool CDataManager::FrameInfo(unsigned int iFrame, unsigned int& iOffset, unsigned int& iLength) {
    if (iFrame < m_iNumFrames) {
       iOffset = 0;
-      iLength = 0;
+      iLength = 1;
       m_iCurrentFrame = iFrame;
       return true;
    }
