@@ -7,7 +7,7 @@
 // CortonaUtil.cpp
 // 07/03/2002 - Warren Moore
 //
-// $Id: CortonaUtil.cpp,v 1.2 2002/03/19 01:49:00 vap-warren Exp $
+// $Id: CortonaUtil.cpp,v 1.3 2002/03/20 21:57:19 vap-warren Exp $
 
 #include "stdafx.h"
 #include "CortonaBase.h"
@@ -53,7 +53,6 @@ bool CCortonaUtil::AddToScene(INodeObject *pNode) {
    if (FAILED(m_pEngine->get_RootNodes(&pRoots)))
       return false;
 
-   // NOTE: you can pass the next VARIANT if an operand in method is optional
    VARIANT varDef;
    VariantInit(&varDef);
    varDef.vt = VT_ERROR;
@@ -123,6 +122,23 @@ bool CCortonaUtil::GetField(INodeObject *pNode, const char *pcName, CCortonaFiel
 
    // Release the field collection
    pFields->Release();
+   return SUCCEEDED(hResult);
+}
+
+bool CCortonaUtil::CreateField(const char *pcType, CCortonaField **ppoField) {
+   // Check for pointers
+   if (!m_pEngine)
+      return false;
+
+   // Create the field
+   IFieldObject *pFieldObject = NULL;
+   COleVariant oFieldType(pcType);
+   HRESULT hResult = m_pEngine->CreateField(oFieldType.bstrVal, &pFieldObject);
+   if (SUCCEEDED(hResult)) {
+      // Create the field object
+      *ppoField = (CCortonaField*) new CCortonaField(pFieldObject);
+   }
+
    return SUCCEEDED(hResult);
 }
 

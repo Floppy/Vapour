@@ -6,7 +6,7 @@
 // BeamElement.cpp
 // 19/03/2002 - James Smith
 //
-// $Id: BeamElement.cpp,v 1.4 2002/03/20 14:52:11 vap-james Exp $
+// $Id: BeamElement.cpp,v 1.5 2002/03/20 21:57:19 vap-warren Exp $
 
 #include "stdafx.h"
 #include "BeamElement.h"
@@ -48,7 +48,7 @@ const char pcBeamStart[] = " \
       field MFVec3f nodes \
    ] \
    [ \
-      \"file://D:\\James\\vapour\\dev.local\\src\\Research\\CortonaBase\\BeamElement.wrl\" \
+      \"file://D:\\Vapour\\Dev\\Src\\Research\\CortonaBase\\BeamElement.wrl\" \
    ] \
    BeamElement { \
 ";
@@ -94,10 +94,12 @@ bool CBeamElement::Display(void) const {
    else {
       CCortonaField* pField;
       if (m_pCortona->GetField(m_pNodePtr,"nodes",&pField)) {
-         float fY;
-         pField->GetMFVec3f_Y(0,fY);
+         pField->GetMFVec3f();
+         float fX, fY, fZ;
+         pField->GetMFVec3f(0, fX, fY, fZ);
          fY -= 0.1f;
-         pField->GetMFVec3f_Y(0,fY);
+         // James, why does this get twice?
+         pField->GetMFVec3f(0, fX, fY, fZ);
          pField->Release();
          return true;
       }      

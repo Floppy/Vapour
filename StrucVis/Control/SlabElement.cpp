@@ -6,7 +6,7 @@
 // SlabElement.cpp
 // 19/03/2002 - James Smith
 //
-// $Id: SlabElement.cpp,v 1.3 2002/03/20 14:52:11 vap-james Exp $
+// $Id: SlabElement.cpp,v 1.4 2002/03/20 21:57:19 vap-warren Exp $
 
 #include "stdafx.h"
 #include "SlabElement.h"
@@ -54,10 +54,10 @@ bool CSlabElement::Display(void) const {
    else {
       CCortonaField* pTranslation;
       if (m_pCortona->GetField(m_pNodePtr,"translation",&pTranslation)) {
-         float fX;
-         pTranslation->GetSFVec3f_X(fX);
+         float fX, fY, fZ;
+         pTranslation->GetSFVec3f(fX, fY, fZ);
          fX += 0.1f;
-         pTranslation->SetSFVec3f_X(fX);
+         pTranslation->SetSFVec3f(fX, fY, fZ);
          pTranslation->Release();
          return true;
       }      

@@ -7,7 +7,7 @@
 // CortonaUtil.h
 // 07/03/2002 - Warren Moore
 //
-// $Id: CortonaUtil.h,v 1.2 2002/03/19 01:49:00 vap-warren Exp $
+// $Id: CortonaUtil.h,v 1.3 2002/03/20 21:57:19 vap-warren Exp $
 
 #ifndef __CORTONA_UTIL__
 #define __CORTONA_UTIL__
@@ -47,6 +47,9 @@ public:
    bool GetField(INodeObject *pNode, const char *pcName, CCortonaField **ppoField);
    // Creates a CCortonaField object for the specified field of the supplied node
    // Address of field object left in *ppoField
+
+   bool CreateField(const char *pcType, CCortonaField **ppoField);
+   // Create an empty field
 
 //#===--- Member Variables
 protected:
