@@ -144,7 +144,7 @@ BSC32=bscmake.exe
 LINK32=link.exe
 # ADD BASE LINK32 zlib.lib val.lib valwin32.lib /nologo /subsystem:windows /machine:I386 /nodefaultlib:"libc.lib" /nodefaultlib:"msvcrt.lib" /nodefaultlib:"libcd.lib" /nodefaultlib:"libcmtd.lib" /nodefaultlib:"msvcrtd.lib" /out:"Halflife/hlsfx.exe" /libpath:"..\VAL\Release" /libpath:"..\VALWin32\Release"
 # SUBTRACT BASE LINK32 /pdb:none
-# ADD LINK32 zlibd.lib /nologo /subsystem:windows /incremental:yes /debug /machine:I386 /nodefaultlib:"libcd.lib" /nodefaultlib:"nafxcwd.lib" /pdbtype:sept /libpath:"..\VAL\Release" /libpath:"..\VALWin32\Release"
+# ADD LINK32 zlibd.lib /nologo /subsystem:windows /incremental:yes /debug /machine:I386 /nodefaultlib:"libcd.lib" /nodefaultlib:"nafxcwd.lib" /pdbtype:sept /libpath:"..\VAL\Debug" /libpath:"..\VALWin32\Debug"
 # SUBTRACT LINK32 /pdb:none
 
 !ENDIF 
