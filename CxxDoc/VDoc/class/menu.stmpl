@@ -1,24 +1,19 @@
 <TD>
-<TABLE WIDTH="100%" BORDER="0" CELLPADDING="2" CELLSPACING="0" CLASS="MENUBORDER">
+<TABLE WIDTH="100%" BORDER=0 CELLPADDING=2 CELLSPACING=0 CLASS=MENUBORDER BGCOLOR="#000080">
 	<TR><TD>
-	<P CLASS="MENUTITLE">
-	<A HREF="$(docroot)/index.html"><FONT COLOR="#FFFFFF">Home</FONT></A>
+	<P CLASS=MENUTITLE>
+	<A HREF="$(docroot)/internal/"><FONT COLOR="#FFFFFF">Internal Home</FONT></A>
 	</P>
 	</TD></TR>
 	<TR><TD>
-	<TABLE WIDTH="100%" BORDER="0" CELLPADDING="2" CELLSPACING="0" CLASS="MENU">
+	<TABLE WIDTH="100%" BORDER=0 CELLPADDING=2 CELLSPACING=0 CLASS=MENU BGCOLOR="#FFFFFF">
 		<TR><TD>
-		<P CLASS="MENUITEM">
+		<P CLASS=MENUITEM>
 		<A HREF="$(docroot)/user/tree/VALET.html">Manual</A><BR>
 		<A HREF="$(docroot)/doctree.html">Doc Tree</A><BR>
 		<A HREF="$(docroot)/$(if:$viewmode=developer:developer)$(else:user)/index.html">Class List</A><BR>
 		<A HREF="$(docroot)/todo.php">To Do List</A><BR>
 		<A HREF="$(docroot)/bugs.php">Known Bugs</A>
-		</P>
-		</TD></TR>
-		<TR><TD BGCOLOR="#C0C0F0">
-		<P CLASS="MENUITEM">
-		<A HREF="/internal">Internal Site</A>
 		</P>
 		</TD></TR>
 	</TABLE>

@@ -1,31 +1,21 @@
 $(FileObject:one)$(FilePattern:doctree.html)
-$(include:../class/global.stmpl)
-<HTML>
-<HEAD>
-<TITLE>Vapour Technology - Source Documentation</TITLE>
-<LINK REL=STYLESHEET HREF="/vapourtech.css" TYPE="text/css">
-</HEAD>
-<BODY LINK="#4B4FED" ALINK="#8385E5" VLINK="#171BBD" BGCOLOR="#6363E9">
 
 $(//:#===--- Top )
 $(include:../class/top.stmpl)
-
-<TABLE WIDTH="100%" BORDER="0" CELLPADDING="0" CELLSPACING="4">
-	<TR VALIGN="TOP" WIDTH="10%">
 
 $(//:#===--- Menu)
 $(include:../class/menu.stmpl)
 
 	<!-- Main Start -->
 	<TD WIDTH="$(tablewidth)">
-	<TABLE WIDTH="100%" BORDER="0" CELLPADDING="2" CELLSPACING="0" CLASS="ITEMBORDER" BGCOLOR="#000080">
+	<TABLE WIDTH="100%" BORDER=0 CELLPADDING=2 CELLSPACING=0 CLASS=ITEMBORDER BGCOLOR="#000080">
 		<TR><TD>
-		<P CLASS="SECTIONTITLE">
+		<P CLASS=SECTIONTITLE>
 		Sitemap
 		</P>
 		</TD></TR>
 		<TR><TD>
-		<TABLE WIDTH="100%" BORDER="0" CELLPADDING="2" CELLSPACING="0" CLASS="ITEM" BGCOLOR="#FFFFFF">
+		<TABLE WIDTH="100%" BORDER=0 CELLPADDING=2 CELLSPACING=0 CLASS=ITEM BGCOLOR="#FFFFFF">
 			<TR><TD>
 			
 			$(set:parent=)$(set:gap=)
@@ -38,14 +28,5 @@ $(include:../class/menu.stmpl)
 	</TD>
 	<!-- Main End -->
 
-	</TR>
-	<TR>
-
 $(//:#===--- Footer)
 $(include:../class/footer.stmpl)
-
-	</TR>
-</TABLE>
-
-</BODY>
-</HTML>

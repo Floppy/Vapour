@@ -1,34 +1,23 @@
-$(silent:
-	$(include:../class/global.stmpl)
-	$(set:docentry_=$(subst: :_:$(docentry)))
-)
-<HTML>
-<HEAD>
-<TITLE>Vapour Technology - Source Documentation</TITLE>
-<LINK REL=STYLESHEET HREF="/vapourtech.css" TYPE="text/css">
-</HEAD>
-<BODY LINK="#4B4FED" ALINK="#8385E5" VLINK="#171BBD" BGCOLOR="#6363E9">
-
 $(//:#===--- Top )
 $(include:../class/top.stmpl)
-
-<TABLE WIDTH="100%" BORDER="0" CELLPADDING="0" CELLSPACING="4">
-	<TR VALIGN="TOP" WIDTH="10%">
+$(silent:
+	$(set:docentry_=$(subst: :_:$(docentry)))
+)
 
 $(//:#===--- Menu)
 $(include:../class/menu.stmpl)
 
 	<!-- Main Start -->
 	<TD WIDTH="$(tablewidth)">
-	<TABLE WIDTH="100%" BORDER="0" CELLPADDING="2" CELLSPACING="0" CLASS="ITEMBORDER" BGCOLOR="#000080">
+	<TABLE WIDTH="100%" BORDER=0 CELLPADDING=2 CELLSPACING=0 CLASS=ITEMBORDER BGCOLOR="#000080">
 		<TR><TD>
-		<P CLASS="SECTIONTITLE">
+		<P CLASS=SECTIONTITLE>
 		Documentation
 		</P>
 		</TD></TR>
 		<TR><TD>
-		<TABLE WIDTH="100%" BORDER="0" CELLPADDING="2" CELLSPACING="0" BGCOLOR="#C0C0C0">
-		<TR><TD><P>
+		<TABLE WIDTH="100%" BORDER=0 CELLPADDING=2 CELLSPACING=0 BGCOLOR="#C0C0C0">
+		<TR><TD>
 		$(ifset:docentry:
 			$(set:parent=)
 			$(for:.:$docentry:
@@ -38,25 +27,25 @@ $(include:../class/menu.stmpl)
 				$(if:$docentry_!=$parent:<A HREF="$(parent).html">%arg%</A> . )$(else:<B>%arg%</B>)
 			)
 		)
-		</P></TD>
+		</TD>
 		$(ifany:docnode:
-			<TD><P ALIGN="RIGHT"><B>Subtopics</B></P></TD>
+			<TD ALIGN=RIGHT><B>Subtopics</B></TD>
 		)
 		</TR>
 		</TABLE>
-		<TABLE WIDTH="100%" BORDER="0" CELLPADDING="2" CELLSPACING="0" CLASS="ITEM" BGCOLOR="#FFFFFF">
+		<TABLE WIDTH="100%" BORDER=0 CELLPADDING=2 CELLSPACING=0 CLASS=ITEM BGCOLOR="#FFFFFF">
 			<TR><TD>
 			$(ifany:docnode:
-				<TABLE BORDER="0" CELLPADDING="1" CELLSPACING="1" ALIGN="RIGHT">
+				<TABLE BORDER=0 CELLPADDING=1 CELLSPACING=1 ALIGN=RIGHT>
 					<TR><TD>
 					$(forall:docnode:
-						<P CLASS="CLASSHEADING"><A HREF="$(MakeFilename:%.html)"><B>$(subst:_: :$(ObjectName))</B></A>$(ifset:brief: - $(brief))</P>
+						<P CLASS=CLASSHEADING><A HREF="$(MakeFilename:%.html)"><B>$(subst:_: :$(ObjectName))</B></A>$(ifset:brief: - $(brief))</P>
 					)
 					</TD></TR>
 				</TABLE>
 			)			
 			
-			<P CLASS="CLASSTITLE">
+			<P CLASS=CLASSTITLE>
 			$(ifset:brief:$(brief))$(else:$(ObjectName))
 			</P>
 			
@@ -69,33 +58,33 @@ $(include:../class/menu.stmpl)
 			)
 
 			$(ifany:docleaf,$userlevel=Basic:
-				<P CLASS="CLASSHEADING">Basic Classes</P>
+				<P CLASS=CLASSHEADING>Basic Classes</P>
 				$(ident:
-					<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="0">
+					<TABLE BORDER=0 CELLPADDING=0 CELLSPACING=0>
 					$(forall:docleaf,$userlevel=Basic:
-						<TR><TD><P><A HREF="../class/$(content)">$(ObjectName)</A></P></TD><TD><P>$(ifset:brief:- $(brief))</P></TD></TR>
+						<TR><TD><A HREF="../class/$(content)">$(ObjectName)</A></TD><TD>$(ifset:brief:- $(brief))</TD></TR>
 					)
 					</TABLE>
 				)
 			)
 
 			$(ifany:docleaf,$userlevel=Normal:
-				<P CLASS="CLASSHEADING">Normal Classes</P>
+				<P CLASS=CLASSHEADING>Normal Classes</P>
 				$(ident:
-					<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="0">
+					<TABLE BORDER=0 CELLPADDING=0 CELLSPACING=0>
 					$(forall:docleaf,$userlevel=Normal:
-						<TR><TD><P><A HREF="../class/$(content)">$(ObjectName)</A></P></TD><TD><P>$(ifset:brief:- $(brief))</P></TD></TR>
+						<TR><TD><A HREF="../class/$(content)">$(ObjectName)</A></TD><TD>$(ifset:brief:- $(brief))</TD></TR>
 					)
 					</TABLE>
 				)
 			)
 
 			$(ifany:docleaf,$userlevel=Advanced:
-				<P CLASS="CLASSHEADING">Advanced Classes</P>
+				<P CLASS=CLASSHEADING>Advanced Classes</P>
 				$(ident:
-					<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="0">
+					<TABLE BORDER=0 CELLPADDING=0 CELLSPACING=0>
 					$(forall:docleaf,$userlevel=Advanced:
-						<TR><TD><P><A HREF="../class/$(content)">$(ObjectName)</A></P></TD><TD><P>$(ifset:brief:- $(brief))</P></TD></TR>
+						<TR><TD><A HREF="../class/$(content)">$(ObjectName)</A></TD><TD>$(ifset:brief:- $(brief))</TD></TR>
 					)
 					</TABLE>
 				)
@@ -103,11 +92,11 @@ $(include:../class/menu.stmpl)
 
 			$(if:$viewmode=developer:
 				$(ifany:docleaf,$userlevel=Develop:
-					<P CLASS="CLASSHEADING">Develop Classes</P>
+					<P CLASS=CLASSHEADING>Develop Classes</P>
 					$(ident:
-						<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="0">
+						<TABLE BORDER=0 CELLPADDING=0 CELLSPACING=0>
 						$(forall:docleaf,$userlevel=Develop:
-							<TR><TD><P><A HREF="../class/$(content)">$(ObjectName)</A></P></TD><TD><P>$(ifset:brief:- $(brief))</P></TD></TR>
+							<TR><TD><A HREF="../class/$(content)">$(ObjectName)</A></TD><TD>$(ifset:brief:- $(brief))</TD></TR>
 						)
 						</TABLE>
 					)
@@ -115,11 +104,11 @@ $(include:../class/menu.stmpl)
 			)
 
 			$(ifany:docleaf,$userlevel=Default:
-				<P CLASS="CLASSHEADING">Default Classes</P>
+				<P CLASS=CLASSHEADING>Default Classes</P>
 				$(ident:
-					<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="0">
+					<TABLE BORDER=0 CELLPADDING=0 CELLSPACING=0>
 					$(forall:docleaf,$userlevel=Default:
-						<TR><TD><P><A HREF="../class/$(content)">$(ObjectName)</A></P></TD><TD><P>$(ifset:brief:- $(brief))</P></TD></TR>
+						<TR><TD><A HREF="../class/$(content)">$(ObjectName)</A></TD><TD>$(ifset:brief:- $(brief))</TD></TR>
 					)
 					</TABLE>
 				)
@@ -139,16 +128,5 @@ $(include:../class/menu.stmpl)
 	</TD>
 	<!-- Main End -->
 
-	</TR>
-	<TR>
-
 $(//:#===--- Footer)
 $(include:../class/footer.stmpl)
-
-	</TR>
-</TABLE>
-
-</BODY>
-</HTML>
-
-

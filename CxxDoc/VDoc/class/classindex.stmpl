@@ -1,48 +1,37 @@
-$(include:global.stmpl)
-<HTML>
-<HEAD>
-<TITLE>Vapour Technology - Source Documentation</TITLE>
-<LINK REL=STYLESHEET HREF="/vapourtech.css" TYPE="text/css">
-</HEAD>
-<BODY LINK="#4B4FED" ALINK="#8385E5" VLINK="#171BBD" BGCOLOR="#6363E9">
-
 $(//:#===--- Top )
 $(include:top.stmpl)
-
-<TABLE WIDTH="100%" BORDER=0 CELLPADDING=0 CELLSPACING=4>
-	<TR VALIGN="TOP" WIDTH="10%">
 
 $(//:#===--- Menu)
 $(include:menu.stmpl)
 
 	<!-- Main Start -->
 	<TD WIDTH="$(tablewidth)">
-	<TABLE WIDTH="100%" BORDER="0" CELLPADDING="2" CELLSPACING="0" CLASS="ITEMBORDER" BGCOLOR="#000080">
+	<TABLE WIDTH="100%" BORDER=0 CELLPADDING=2 CELLSPACING=0 CLASS=ITEMBORDER BGCOLOR="#000080">
 		<TR><TD>
-		<P CLASS="SECTIONTITLE">
+		<P CLASS=SECTIONTITLE>
 		Class List
 		</P>
 		</TD></TR>
 		<TR><TD>
-		<TABLE WIDTH="100%" BORDER="0" CELLPADDING="2" CELLSPACING="0" CLASS="ITEM" BGCOLOR="#FFFFFF">
+		<TABLE WIDTH="100%" BORDER=0 CELLPADDING=2 CELLSPACING=0 CLASS=ITEM BGCOLOR="#FFFFFF">
 			<TR><TD>
-			<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="0">
-			<TR VALIGN="TOP"><TD>
-				<TABLE BORDER="0" CELLPADDING="2" CELLSPACING="2">
-				<TR><TD COLSPAN="2" BGCOLOR="#C0C0C0"><P><B>Namespaces</B></P></TD></TR>
+			<TABLE BORDER=0 CELLPADDING=0 CELLSPACING=0>
+			<TR VALIGN=TOP><TD>
+				<TABLE BORDER=0 CELLPADDING=2 CELLSPACING=2>
+				<TR><TD COLSPAN=2 BGCOLOR="#C0C0C0"><B>Namespaces</B></TD></TR>
 				$(forall:namespace:
 					$(if:$viewmode=developer|$userlevel!=Develop&$userlevel!=Obsolete:
-						<TR><TD BGCOLOR="#C0C0F0"><P><A HREF="$(MakeFilename:class/%.html)">$(ObjectName)</A></P></TD><TD BGCOLOR="#C0C0F0"><P>$(brief)</P></TD></TR>
+						<TR><TD BGCOLOR="#C0C0F0"><A HREF="$(MakeFilename:class/%.html)">$(ObjectName)</A></TD><TD BGCOLOR="#C0C0F0">$(brief)</TD></TR>
 					)
 				)
 				</TABLE>
 				</TD></TR>
 				<TR><TD>
-				<TABLE BORDER="0" CELLPADDING="2" CELLSPACING="2">
-				<TR><TD COLSPAN="2" BGCOLOR="#C0C0C0"><P><B>Classes</B></P></TD></TR>
+				<TABLE BORDER=0 CELLPADDING=2 CELLSPACING=2>
+				<TR><TD COLSPAN=2 BGCOLOR="#C0C0C0"><B>Classes</B></TD></TR>
 				$(forall:class:
 					$(if:$viewmode=developer|$userlevel!=Develop&$userlevel!=Obsolete:
-						<TR><TD BGCOLOR="#C0C0F0"><P><A HREF="$(MakeFilename:class/%.php)">$(ObjectName)</A></P></TD><TD BGCOLOR="#C0C0F0"><P>$(brief)</P></TD></TR>
+						<TR><TD BGCOLOR="#C0C0F0"><A HREF="$(MakeFilename:class/%.php)">$(ObjectName)</A></TD><TD BGCOLOR="#C0C0F0">$(brief)</TD></TR>
 					)
 				)
 				</TABLE>
@@ -55,14 +44,5 @@ $(include:menu.stmpl)
 	</TD>
 	<!-- Main End -->
 
-	</TR>
-	<TR>
-
 $(//:#===--- Footer)
 $(include:footer.stmpl)
-
-	</TR>
-</TABLE>
-
-</BODY>
-</HTML>
