@@ -13,7 +13,7 @@
 //! author 		= "James Smith"
 //! date 		= "10/10/2001"
 //! lib 		= libVALET3d
-//! rcsid 		= "$Id: heightfield.h,v 1.2 2001/10/18 13:06:59 vap-james Exp $"
+//! rcsid 		= "$Id: heightfield.h,v 1.3 2001/10/18 13:25:53 vap-james Exp $"
 //! userlevel 	        = Normal
 //! docentry 	        = "VALET.3D.Surface Representations"
 
@@ -71,6 +71,15 @@ namespace NValet {
       int Cols(void) const {return m_iNumCols;}
       //: How many columns?
       //!param: return = the number of columns (in the X direction).
+
+      const CVector3D& Scale(void) const {return m_vecScale;}
+      //: Access to the scale factor
+      //!param: return = a vector representing the scale factor of the heightfield.
+
+      CVector3D& Scale(void) {return m_vecScale;}
+      //: Non-const access to the scale factor
+      // This can be used to set the scale factor.
+      //!param: return = a reference to a vector representing the scale factor.
 
       const CMaterial& Material(void) const {return m_oMaterial;}
       //: Access the surface material
