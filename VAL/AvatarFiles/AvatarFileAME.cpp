@@ -7,18 +7,16 @@
 // AvatarFileAME.cpp - 17/06/2000 - James Smith
 //	AME import filter implementation
 //
-// $Id: AvatarFileAME.cpp,v 1.3 2000/07/10 09:13:00 waz Exp $
+// $Id: AvatarFileAME.cpp,v 1.4 2000/07/19 08:51:32 waz Exp $
 //
 
 #include "stdafx.h"
 
+#include "VAL.h"
 #include "AvatarFileAME.h"
 #include "AvatarFileProxy.h"
 #include "MathConstants.h"
 #include "Image.h"
-#include "ProgressControl.h"
-
-extern CProgressControl g_oProgressControl;
 
 // AvatarMe SDK include
 #include "cAvatar.h"
@@ -85,15 +83,15 @@ bool CAvatarFileAME::CanFilterLoadBPStream() const {
 
 CAvatar* CAvatarFileAME::Load(const char* pszFilename) const {
    // Setup the import progress dialog
-	g_oProgressControl.SetMaxProgress("AMELoad", 12);
-   g_oProgressControl.Step("AMELoad") ;
+	g_poVAL->SetProgressMax("AMELoad", 12);
+   g_poVAL->StepProgress("AMELoad") ;
    // Start loading
-   g_oProgressControl.SetText("AMELoad", "Loading AvatarMe file");
+   g_poVAL->SetProgressText("AMELoad", "Loading AvatarMe file");
    cAvatar AMeModel;
    CAvatar* pNewAvatar = NULL;
    if (AMeModel.Load(pszFilename) == 0) {
-      g_oProgressControl.Step("AMELoad") ;
-      g_oProgressControl.SetText("AMELoad", "Creating structures");
+      g_poVAL->StepProgress("AMELoad") ;
+      g_poVAL->SetProgressText("AMELoad", "Creating structures");
       pNewAvatar = new CAvatar(AMeModel.iTotalNumVertices,AMeModel.iTotalNumTriangles);
       bool bAllocError = false;
       if (pNewAvatar->Status() == CAvatar::AV_NOALLOC) {
@@ -140,8 +138,8 @@ CAvatar* CAvatarFileAME::Load(const char* pszFilename) const {
          else if (dScale < 0.25) dScale *= 3000.0/1280.0;
 
          //Load textures into CAvatar
-         g_oProgressControl.Step("AMELoad") ;
-         g_oProgressControl.SetText("AMELoad", "Loading textures");
+         g_poVAL->StepProgress("AMELoad") ;
+         g_poVAL->SetProgressText("AMELoad", "Loading textures");
          int iNumTextures = AMeModel.iTotalNumTextures;
          for (int t=0; t<iNumTextures; t++) {
             CImage* pNewImage = new CImage(IT_RGB);
@@ -178,14 +176,14 @@ CAvatar* CAvatarFileAME::Load(const char* pszFilename) const {
          //Load all data into "current" fields, ready for unposing
 
          //Load vertices
-         g_oProgressControl.Step("AMELoad") ;
-         g_oProgressControl.SetText("AMELoad", "Loading vertices");
+         g_poVAL->StepProgress("AMELoad") ;
+         g_poVAL->SetProgressText("AMELoad", "Loading vertices");
 			int iNumVertices = pNewAvatar->NumVertices();
 			for (int i=0; i<iNumVertices; i++) pNewAvatar->SetVertex(i,AMeModel.VerticesArr[i].fX*dScale,AMeModel.VerticesArr[i].fY*dScale,AMeModel.VerticesArr[i].fZ*dScale);
 
          //Load faces
-         g_oProgressControl.Step("AMELoad") ;
-         g_oProgressControl.SetText("AMELoad", "Loading faces");
+         g_poVAL->StepProgress("AMELoad") ;
+         g_poVAL->SetProgressText("AMELoad", "Loading faces");
 		   int iNumFaces = pNewAvatar->NumFaces();
 		   for (i=0; i<iNumFaces; i++) {
             pNewAvatar->SetFace(
@@ -204,8 +202,8 @@ CAvatar* CAvatarFileAME::Load(const char* pszFilename) const {
 		   }
 
          //Load body parts
-         g_oProgressControl.Step("AMELoad") ;
-         g_oProgressControl.SetText("AMELoad", "Loading body parts");
+         g_poVAL->StepProgress("AMELoad") ;
+         g_poVAL->SetProgressText("AMELoad", "Loading body parts");
          const STriFace* pFaces = pNewAvatar->Faces();
 			const SBodyPart* pBodyParts = pNewAvatar->BodyParts();
 
@@ -394,8 +392,8 @@ CAvatar* CAvatarFileAME::Load(const char* pszFilename) const {
          }
 
          //Create skeleton structure
-         g_oProgressControl.Step("AMELoad") ;
-         g_oProgressControl.SetText("AMELoad", "Creating skeleton");
+         g_poVAL->StepProgress("AMELoad") ;
+         g_poVAL->SetProgressText("AMELoad", "Creating skeleton");
          pNewAvatar->SetupSkeleton(root,unknown,sacroiliac);
          pNewAvatar->SetupSkeleton(sacroiliac,root,l_hip,r_hip,vl5);
 			pNewAvatar->SetupSkeleton(l_hip,sacroiliac,l_knee);
@@ -424,8 +422,8 @@ CAvatar* CAvatarFileAME::Load(const char* pszFilename) const {
          pNewAvatar->SetupSkeleton(r_wrist,r_elbow,r_hand_tip);
          pNewAvatar->SetupSkeleton(r_hand_tip,r_wrist);
 			// Set joint limits
-         g_oProgressControl.Step("AMELoad") ;
-         g_oProgressControl.SetText("AMELoad", "Setting skeleton limits");
+         g_poVAL->StepProgress("AMELoad") ;
+         g_poVAL->SetProgressText("AMELoad", "Setting skeleton limits");
          pNewAvatar->SetJointLimit(root,V_PI,V_PI,V_PI,V_MINUS_PI,V_MINUS_PI,V_MINUS_PI);
          pNewAvatar->SetJointLimit(sacroiliac,V_PI,V_PI,V_PI,V_MINUS_PI,V_MINUS_PI,V_MINUS_PI);
          pNewAvatar->SetJointLimit(l_hip,V_PI,V_PI,V_PI,V_MINUS_PI,V_MINUS_PI,V_MINUS_PI);
@@ -449,8 +447,8 @@ CAvatar* CAvatarFileAME::Load(const char* pszFilename) const {
          pNewAvatar->SetJointLimit(r_elbow,V_PI,V_PI,V_PI,V_MINUS_PI,V_MINUS_PI,V_MINUS_PI);
          pNewAvatar->SetJointLimit(r_wrist,V_PI,V_PI,V_PI,V_MINUS_PI,V_MINUS_PI,V_MINUS_PI);
          // Unpose model
-         g_oProgressControl.Step("AMELoad") ;
-         g_oProgressControl.SetText("AMELoad", "Unposing model");
+         g_poVAL->StepProgress("AMELoad") ;
+         g_poVAL->SetProgressText("AMELoad", "Unposing model");
          pNewAvatar->AlignDefaultCentres(l_knee,CVector3D(0,-1,0));
          pNewAvatar->AlignDefaultCentres(l_ankle,CVector3D(0,-1,0));
          pNewAvatar->AlignDefaultCentres(r_knee,CVector3D(0,-1,0));
@@ -467,15 +465,15 @@ CAvatar* CAvatarFileAME::Load(const char* pszFilename) const {
          pNewAvatar->SetJointAngle(r_wrist,pBodyParts[r_wrist].m_rotCurrentRotation.MergeOutside(rotRightWrist));
          pNewAvatar->CalculateDefaultVertices();
 			// Remove any x-axis translation on the model
-         g_oProgressControl.Step("AMELoad") ;
-         g_oProgressControl.SetText("AMELoad", "Repositioning model");
+         g_poVAL->StepProgress("AMELoad") ;
+         g_poVAL->SetProgressText("AMELoad", "Repositioning model");
          pNewAvatar->UnTranslateDefaultModel();
 			// Update the model
-         g_oProgressControl.Step("AMELoad") ;
-         g_oProgressControl.SetText("AMELoad", "Updating model");
+         g_poVAL->StepProgress("AMELoad") ;
+         g_poVAL->SetProgressText("AMELoad", "Updating model");
 			pNewAvatar->UpdateModel();
 			// Tell the avatar that loading is complete
-         g_oProgressControl.Step("AMELoad") ;
+         g_poVAL->StepProgress("AMELoad") ;
 			pNewAvatar->FinishLoad();
 		}
 		if (bAllocError) {
@@ -895,9 +893,9 @@ CAvatar* CAvatarFileAME::LoadSections(const char* pszFilename, int bsSections) c
    // Setup the import progress dialog
    CProgressDialog dlgProgress;
    dlgProgress.Setup(IDB_AVATARME,12);
-   g_oProgressControl.Step("AMELoad") ;
+   g_poVAL->StepProgress("AMELoad") ;
    // Start loading
-   g_oProgressControl.SetText("AMELoad", "Loading AvatarMe file");
+   g_poVAL->SetProgressText("AMELoad", "Loading AvatarMe file");
    cAvatar AMeModel;
    if (AMeModel.Load(pszFilename) == 0) {
       CAvatarPose poOldPose = pAvatar->ExportPose();

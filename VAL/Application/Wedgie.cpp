@@ -7,11 +7,12 @@
 // Wedgie.cpp - 02/07/2000 - Warren Moore
 //	Creation and reading of compressed Wedgie files
 //
-// $Id: Wedgie.cpp,v 1.7 2000/07/15 10:40:03 waz Exp $
+// $Id: Wedgie.cpp,v 1.8 2000/07/19 08:51:30 waz Exp $
 //
 
 #include "StdAfx.h"
 
+#include "VAL.h"
 #include "Wedgie.h"
 
 #include <string.h>
@@ -26,8 +27,6 @@
 #undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
 #endif
-
-extern CProgressControl g_oProgressControl;
 
 ////////////
 // CWedgie
@@ -631,14 +630,14 @@ WJERESULT CWedgie::ProcessFiles() {
 // Process each file in time
 	unsigned int uSize = 0;
 	unsigned int uTotal = 0;
-	g_oProgressControl.SetMaxProgress(WJE_TOTAL, m_uTotalSize);
+	g_poVAL->SetProgressMax(WJE_TOTAL, m_uTotalSize);
 	for (unsigned int uCount = 0; uCount < m_uFiles; uCount++) {
 		// Set the dialog info
 		uSize = 0;
 		sFileData &sEntry = m_psTable[uCount];
-		g_oProgressControl.SetText(WJE_FILE, sEntry.m_pcName); 
-		g_oProgressControl.SetProgress(WJE_FILE, uSize);
-		g_oProgressControl.SetMaxProgress(WJE_FILE, sEntry.m_uOrigSize);
+		g_poVAL->SetProgressText(WJE_FILE, sEntry.m_pcName); 
+		g_poVAL->SetProgressPos(WJE_FILE, uSize);
+		g_poVAL->SetProgressMax(WJE_FILE, sEntry.m_uOrigSize);
 		// Set the file offset
 		sEntry.m_uOffset = m_uOffsetPos;
 		// Create the path name
@@ -665,8 +664,8 @@ WJERESULT CWedgie::ProcessFiles() {
 
 				uSize += iRead;
 				uTotal += iRead;
-				g_oProgressControl.SetProgress(WJE_FILE, uSize);
-				g_oProgressControl.SetProgress(WJE_TOTAL, uTotal);
+				g_poVAL->SetProgressPos(WJE_FILE, uSize);
+				g_poVAL->SetProgressPos(WJE_TOTAL, uTotal);
 			}
 		// Finish it all off
 			oDeflate.End();
@@ -737,7 +736,7 @@ WJERESULT CWedgie::RemoveFiles(const char *pcDir) {
 					eResult = WJE_CANNOT_MOVE;
 					bFound = false;
 				}
-			}
+			} 
 		}
 	}
 	int iResult = _rmdir(pcDir);

@@ -7,7 +7,7 @@
 // AvatarFileSims.cpp - 16/2/2000 - James Smith
 //	Sims export filter implementation
 //
-// $Id: AvatarFileSims.cpp,v 1.2 2000/07/10 09:13:20 waz Exp $
+// $Id: AvatarFileSims.cpp,v 1.3 2000/07/19 08:51:31 waz Exp $
 //
 
 
@@ -93,7 +93,7 @@ int CAvatarFileSims::Save(const char* pszFilename, CAvatar* pAvatar) const {
    int iRetVal = 1;
 
    // Setup the export progress dialog
-	g_oProgressControl.SetMaxProgress("SimsSave", 10);
+	g_poVAL->SetProgressMax("SimsSave", 10);
 
    // Work out model name and target directory from passed filename
    char* pszInputName = strdup(pszFilename);
@@ -213,8 +213,8 @@ int CAvatarFileSims::Save(const char* pszFilename, CAvatar* pAvatar) const {
    strcpy(pszTextureName+10,pszName);
 
    // Save cranium info file
-   g_oProgressControl.Step("SimsSave");
-   g_oProgressControl.SetText("SimsSave", "Saving head info");
+   g_poVAL->StepProgress("SimsSave");
+   g_poVAL->SetProgressText("SimsSave", "Saving head info");
    int iTempLength = strlen(pszMeshName);
    char* pszTempFilename = new char[iDirLength+iTempLength+10];
    strcpy(pszTempFilename,pszTgtDir);
@@ -249,14 +249,14 @@ int CAvatarFileSims::Save(const char* pszFilename, CAvatar* pAvatar) const {
    else iRetVal = 0;
 
    // Save cranium texture
-   g_oProgressControl.Step("SimsSave");
-   g_oProgressControl.SetText("SimsSave", "Converting head texture");
+   g_poVAL->StepProgress("SimsSave");
+   g_poVAL->SetProgressText("SimsSave", "Converting head texture");
    CImage imgCranium(*(pAvatar->Texture(iFaceTexNum)));
    imgCranium.Scale(128,128);
    imgCranium.Flip();
    imgCranium.Convert(IT_PALETTE);
-   g_oProgressControl.Step("SimsSave");
-   g_oProgressControl.SetText("SimsSave", "Saving head texture");
+   g_poVAL->StepProgress("SimsSave");
+   g_poVAL->SetProgressText("SimsSave", "Saving head texture");
    CImageFile* pFilter = g_oImageFileStore.CreateByExtension("bmp");
    iTempLength = strlen(pszTextureName);
    pszTempFilename = new char[iDirLength+iTempLength+11];
@@ -275,8 +275,8 @@ int CAvatarFileSims::Save(const char* pszFilename, CAvatar* pAvatar) const {
    delete [] pszTempFilename;
 
    // Save cranium skin
-   g_oProgressControl.Step("SimsSave");
-   g_oProgressControl.SetText("SimsSave", "Saving head skin");
+   g_poVAL->StepProgress("SimsSave");
+   g_poVAL->SetProgressText("SimsSave", "Saving head skin");
    iTempLength = strlen(pszSkinName);
    pszTempFilename = new char[iDirLength+iTempLength+10];
    strcpy(pszTempFilename,pszTgtDir);
@@ -383,8 +383,8 @@ int CAvatarFileSims::Save(const char* pszFilename, CAvatar* pAvatar) const {
    strcpy(pszTextureName+13,pszName);
 
    // Save body info file
-   g_oProgressControl.Step("SimsSave");
-   g_oProgressControl.SetText("SimsSave", "Saving body info");
+   g_poVAL->StepProgress("SimsSave");
+   g_poVAL->SetProgressText("SimsSave", "Saving body info");
    iTempLength = strlen(pszMeshName);
    pszTempFilename = new char[iDirLength+iTempLength+10];
    strcpy(pszTempFilename,pszTgtDir);
@@ -413,8 +413,8 @@ int CAvatarFileSims::Save(const char* pszFilename, CAvatar* pAvatar) const {
    else iRetVal = 0;
 
    // Save body texture
-   g_oProgressControl.Step("SimsSave");
-   g_oProgressControl.SetText("SimsSave", "Creating body texture");
+   g_poVAL->StepProgress("SimsSave");
+   g_poVAL->SetProgressText("SimsSave", "Creating body texture");
    // Resize textures
    CImage** pImages = new CImage*[pAvatar->NumTextures()];
    int* pMinima = new int[pAvatar->NumTextures()];
@@ -465,11 +465,11 @@ int CAvatarFileSims::Save(const char* pszFilename, CAvatar* pAvatar) const {
    const int iTextureHeight = 256;
    imgTexture.Scale(iTextureWidth,iTextureHeight);
    // Save big image
-   g_oProgressControl.Step("SimsSave");
-   g_oProgressControl.SetText("SimsSave", "Converting body texture");
+   g_poVAL->StepProgress("SimsSave");
+   g_poVAL->SetProgressText("SimsSave", "Converting body texture");
    imgTexture.Convert(IT_PALETTE);
-   g_oProgressControl.Step("SimsSave");
-   g_oProgressControl.SetText("SimsSave", "Saving body texture");
+   g_poVAL->StepProgress("SimsSave");
+   g_poVAL->SetProgressText("SimsSave", "Saving body texture");
    pFilter = g_oImageFileStore.CreateByExtension("bmp");
    iTempLength = strlen(pszTextureName);
    pszTempFilename = new char[iDirLength+iTempLength+11];
@@ -500,8 +500,8 @@ int CAvatarFileSims::Save(const char* pszFilename, CAvatar* pAvatar) const {
    pAvatar->UpdateModel();
 
    // Save body skin
-   g_oProgressControl.Step("SimsSave");
-   g_oProgressControl.SetText("SimsSave", "Saving body skin");
+   g_poVAL->StepProgress("SimsSave");
+   g_poVAL->SetProgressText("SimsSave", "Saving body skin");
    iTempLength = strlen(pszSkinName);
    pszTempFilename = new char[iDirLength+iTempLength+10];
    strcpy(pszTempFilename,pszTgtDir);
@@ -765,8 +765,8 @@ int CAvatarFileSims::Save(const char* pszFilename, CAvatar* pAvatar) const {
    else iRetVal = 0;
 
    // Done!
-   g_oProgressControl.Step("SimsSave");
-   g_oProgressControl.SetText("SimsSave", "");
+   g_poVAL->StepProgress("SimsSave");
+   g_poVAL->SetProgressText("SimsSave", "");
    // Tidy up memory
    delete [] pMinima;
    delete [] pMaxima;

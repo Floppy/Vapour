@@ -7,7 +7,7 @@
 // AvatarFileUnreal.cpp - 16/2/2000 - James Smith
 //	Unreal export filter implementation
 //
-// $Id: AvatarFileUnreal.cpp,v 1.2 2000/07/16 12:28:05 waz Exp $
+// $Id: AvatarFileUnreal.cpp,v 1.3 2000/07/19 08:51:30 waz Exp $
 //
 
 #include "stdafx.h"
@@ -82,9 +82,9 @@ bool CAvatarFileUnreal::CanFilterLoadBPStream() const {
 int CAvatarFileUnreal::Save(const char* pszFilename, CAvatar* pAvatar) const {
 	int iRetVal = 1;
    // Setup the export progress
-   g_oProgressControl.SetMaxProgress("UTSave", 2);
-   g_oProgressControl.Step("UTSave");
-   g_oProgressControl.SetText("UTSave", "Saving Geometry file");
+   g_poVAL->SetProgressMax("UTSave", 2);
+   g_poVAL->StepProgress("UTSave");
+   g_poVAL->SetProgressText("UTSave", "Saving Geometry file");
    // Work out base filename and store it
    char* pszLocalFilename = strdup(pszFilename);
    char* pszTemp = pszLocalFilename;
@@ -196,6 +196,6 @@ int CAvatarFileUnreal::Save(const char* pszFilename, CAvatar* pAvatar) const {
    // Finish up
    pAvatar->ImportPose(poOldPose);
    delete [] pszBasename;
-   g_oProgressControl.Step("UTSave");
+   g_poVAL->StepProgress("UTSave");
    return iRetVal;
 } // Save(const char* pszFilename, CAvatar* pAvatar)

@@ -7,12 +7,13 @@
 // AvatarFileHalflife.cpp - 16/2/2000 - James Smith
 //	Halflife export filter implementation
 //
-// $Id: AvatarFileHalflife.cpp,v 1.3 2000/07/15 10:39:23 waz Exp $
+// $Id: AvatarFileHalflife.cpp,v 1.4 2000/07/19 08:51:31 waz Exp $
 //
 
 
 #include "stdafx.h"
 
+#include "VAL.h"
 #include "AvatarFileHalflife.h"
 #include "AvatarFileProxy.h"
 #include "HalflifeMDL.h"
@@ -23,9 +24,6 @@
 #include <float.h>
 #include <direct.h>
 #include <errno.h>
-
-#include "ProgressControl.h"
-extern CProgressControl g_oProgressControl;
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -136,9 +134,9 @@ int CAvatarFileHalflife::Save(const char* pszFilename, CAvatar* pAvatar) const {
    }
    
    // Setup the export progress dialog
-	g_oProgressControl.SetMaxProgress("HLSave", 17 + 2*pAvatar->NumTextures());
-   g_oProgressControl.Step("HLSave");
-   g_oProgressControl.SetText("HLSave", "Saving MDL file");
+	g_poVAL->SetProgressMax("HLSave", 17 + 2*pAvatar->NumTextures());
+   g_poVAL->StepProgress("HLSave");
+   g_poVAL->SetProgressText("HLSave", "Saving MDL file");
    
    // Create filename
    strcpy(pszBaseFilename+iBaseFilenameLength,".mdl");
@@ -149,13 +147,13 @@ int CAvatarFileHalflife::Save(const char* pszFilename, CAvatar* pAvatar) const {
 	}
 
    // Create thumbnail
-   g_oProgressControl.Step("HLSave");
-   g_oProgressControl.SetText("HLSave", "Rendering thumbnail");
+   g_poVAL->StepProgress("HLSave");
+   g_poVAL->SetProgressText("HLSave", "Rendering thumbnail");
    CImage imThumbnail(IT_PALETTE,164,200,256);
 
    // Write thumbnail
-   g_oProgressControl.Step("HLSave");
-   g_oProgressControl.SetText("HLSave", "Writing thumbnail");
+   g_poVAL->StepProgress("HLSave");
+   g_poVAL->SetProgressText("HLSave", "Writing thumbnail");
    // Create filename
    strcpy(pszBaseFilename+iBaseFilenameLength,".bmp");
    // Create filter and save
@@ -165,7 +163,7 @@ int CAvatarFileHalflife::Save(const char* pszFilename, CAvatar* pAvatar) const {
    delete pThumbFilter;
 
    // Finish up
-   g_oProgressControl.Step("HLSave");
+   g_poVAL->StepProgress("HLSave");
    // Delete strings
    delete [] pszBaseFilename;
    free(m_pszModelname);
@@ -260,8 +258,8 @@ int CAvatarFileHalflife::Save(ofstream& osOutputStream, CAvatar* pAvatar) const 
    //pAvatar->ResetPose();
    //pAvatar->UpdateModel();
    
-   g_oProgressControl.Step("HLSave");
-   g_oProgressControl.SetText("HLSave", "Creating header");
+   g_poVAL->StepProgress("HLSave");
+   g_poVAL->SetProgressText("HLSave", "Creating header");
 
    // Create Header & fill in some fields
    SHalflifeMDLHeader sHeader;
@@ -298,8 +296,8 @@ int CAvatarFileHalflife::Save(ofstream& osOutputStream, CAvatar* pAvatar) const 
    // Add header to file offset counter
    sHeader.iLength += sizeof(SHalflifeMDLHeader);
 
-   g_oProgressControl.Step("HLSave");
-   g_oProgressControl.SetText("HLSave", "Creating bones");
+   g_poVAL->StepProgress("HLSave");
+   g_poVAL->SetProgressText("HLSave", "Creating bones");
 
    // Prepare Skeleton
    CompressSkeleton(root,pAvatar);
@@ -351,8 +349,8 @@ int CAvatarFileHalflife::Save(ofstream& osOutputStream, CAvatar* pAvatar) const 
    }
    sHeader.iLength += sizeof(SHalflifeMDLBone) * sHeader.iNumBones;
 
-   g_oProgressControl.Step("HLSave");
-   g_oProgressControl.SetText("HLSave", "Creating bonecontrollers");
+   g_poVAL->StepProgress("HLSave");
+   g_poVAL->SetProgressText("HLSave", "Creating bonecontrollers");
 
    // Create BoneController Chunk
    sHeader.iNumBoneControllers = 4;
@@ -378,8 +376,8 @@ int CAvatarFileHalflife::Save(ofstream& osOutputStream, CAvatar* pAvatar) const 
    }
    sHeader.iLength += sizeof(SHalflifeMDLBoneController) * sHeader.iNumBoneControllers;
 
-   g_oProgressControl.Step("HLSave");
-   g_oProgressControl.SetText("HLSave", "Creating attachments");
+   g_poVAL->StepProgress("HLSave");
+   g_poVAL->SetProgressText("HLSave", "Creating attachments");
 
    // Create Attachments Chunk
    sHeader.iNumAttachments = 3;
@@ -433,8 +431,8 @@ int CAvatarFileHalflife::Save(ofstream& osOutputStream, CAvatar* pAvatar) const 
    }
    sHeader.iLength += sizeof(SHalflifeMDLAttachment) * sHeader.iNumAttachments;
 
-   g_oProgressControl.Step("HLSave");
-   g_oProgressControl.SetText("HLSave", "Creating hitboxes");
+   g_poVAL->StepProgress("HLSave");
+   g_poVAL->SetProgressText("HLSave", "Creating hitboxes");
 
    // Create Hitbox Chunk
    const int piHitGroups[] = {3,3,6,6,6,7,7,7,3,2,2,2,2,1,4,4,4,4,5,5,5,5};
@@ -471,8 +469,8 @@ int CAvatarFileHalflife::Save(ofstream& osOutputStream, CAvatar* pAvatar) const 
    }
    sHeader.iLength += sizeof(SHalflifeMDLHitbox) * sHeader.iNumHitboxes;
 
-   g_oProgressControl.Step("HLSave");
-   g_oProgressControl.SetText("HLSave", "Loading animations");
+   g_poVAL->StepProgress("HLSave");
+   g_poVAL->SetProgressText("HLSave", "Loading animations");
 
    // Create Animation Sequence Header Chunk
    sHeader.iNumSeqs = 77;
@@ -510,8 +508,8 @@ int CAvatarFileHalflife::Save(ofstream& osOutputStream, CAvatar* pAvatar) const 
       // Notify of progress
       char pszDisplay[32];
       sprintf(pszDisplay,"Converting texture %d", i);
-      g_oProgressControl.Step("HLSave");
-      g_oProgressControl.SetText("HLSave", pszDisplay);
+      g_poVAL->StepProgress("HLSave");
+      g_poVAL->SetProgressText("HLSave", pszDisplay);
       // Downsize images
       CImage* pTexture;
       NEWBEGIN
@@ -548,8 +546,8 @@ int CAvatarFileHalflife::Save(ofstream& osOutputStream, CAvatar* pAvatar) const 
       vpSmallTextures.push_back(pTexture);
    }
    
-   g_oProgressControl.Step("HLSave");
-   g_oProgressControl.SetText("HLSave", "Creating body parts");
+   g_poVAL->StepProgress("HLSave");
+   g_poVAL->SetProgressText("HLSave", "Creating body parts");
 
    // Create Body Part Header
    sHeader.iNumBodyParts = 1;
@@ -561,8 +559,8 @@ int CAvatarFileHalflife::Save(ofstream& osOutputStream, CAvatar* pAvatar) const 
    sHeader.iLength += sizeof(SHalflifeMDLBodyPart);
    sBodyPartHeader.iModelIndex = sHeader.iLength;
 
-   g_oProgressControl.Step("HLSave");
-   g_oProgressControl.SetText("HLSave", "Creating model");
+   g_poVAL->StepProgress("HLSave");
+   g_poVAL->SetProgressText("HLSave", "Creating model");
 
    // Create Model Header Chunk
    SHalflifeMDLModel sModelHeader;
@@ -646,8 +644,8 @@ int CAvatarFileHalflife::Save(ofstream& osOutputStream, CAvatar* pAvatar) const 
    // Update offset
    sHeader.iLength += iModelDataChunkLength;
    
-   g_oProgressControl.Step("HLSave");
-   g_oProgressControl.SetText("HLSave", "Creating meshes");
+   g_poVAL->StepProgress("HLSave");
+   g_poVAL->SetProgressText("HLSave", "Creating meshes");
 
    // Split main mesh into submeshes based on texture
    std::vector<STriFace>* vSubMeshes;
@@ -680,8 +678,8 @@ int CAvatarFileHalflife::Save(ofstream& osOutputStream, CAvatar* pAvatar) const 
    }
    sHeader.iLength += sizeof(SHalflifeMDLMesh) * sModelHeader.iNumMeshes;
    
-   g_oProgressControl.Step("HLSave");
-   g_oProgressControl.SetText("HLSave", "Creating mesh data");
+   g_poVAL->StepProgress("HLSave");
+   g_poVAL->SetProgressText("HLSave", "Creating mesh data");
 
    // Create Mesh Data Chunk
    int iMeshDataChunkLength = 0;
@@ -721,8 +719,8 @@ int CAvatarFileHalflife::Save(ofstream& osOutputStream, CAvatar* pAvatar) const 
    // Bin submesh and tristrip information
    delete [] vSubMeshes;
 
-   g_oProgressControl.Step("HLSave");
-   g_oProgressControl.SetText("HLSave", "Creating texture info");
+   g_poVAL->StepProgress("HLSave");
+   g_poVAL->SetProgressText("HLSave", "Creating texture info");
 
    // Create Texture Header Chunk
    sHeader.iNumTextures = pAvatar->NumTextures();
@@ -768,8 +766,8 @@ int CAvatarFileHalflife::Save(ofstream& osOutputStream, CAvatar* pAvatar) const 
    }
    sHeader.iLength += iTextureIndexChunkLength;
 
-   g_oProgressControl.Step("HLSave");
-   g_oProgressControl.SetText("HLSave", "Storing textures");
+   g_poVAL->StepProgress("HLSave");
+   g_poVAL->SetProgressText("HLSave", "Storing textures");
 
    // Create Texture Data Chunk
    sHeader.iTextureDataChunkOffset = sHeader.iLength;
@@ -808,8 +806,8 @@ int CAvatarFileHalflife::Save(ofstream& osOutputStream, CAvatar* pAvatar) const 
       delete pTexture;
    }
 
-   g_oProgressControl.Step("HLSave");
-   g_oProgressControl.SetText("HLSave", "Writing to file");
+   g_poVAL->StepProgress("HLSave");
+   g_poVAL->SetProgressText("HLSave", "Writing to file");
 
    // Write chunks to stream in correct order
    osOutputStream.write((char*)&sHeader,sizeof(SHalflifeMDLHeader));
@@ -831,8 +829,8 @@ int CAvatarFileHalflife::Save(ofstream& osOutputStream, CAvatar* pAvatar) const 
    // Close input files
    ifInputStream.close();
 
-   g_oProgressControl.Step("HLSave");
-   g_oProgressControl.SetText("HLSave", "Cleaning up");
+   g_poVAL->StepProgress("HLSave");
+   g_poVAL->SetProgressText("HLSave", "Cleaning up");
 
    // Clean up memory
    m_vCompressedSkeletonMap.clear();
