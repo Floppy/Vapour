@@ -7,7 +7,7 @@
 // Image.h - 21/12/1999 - Warren Moore
 //	Image implementation
 //
-// $Id: Image.cpp,v 1.3 2000/06/17 10:42:20 waz Exp $
+// $Id: Image.cpp,v 1.4 2000/07/10 09:09:40 waz Exp $
 //
 
 #include "stdafx.h"
@@ -629,7 +629,7 @@ CImage::sContribList *CImage::CalculateContributions(int iInputWidth, int iOutpu
     }
 
 	// Window size is the number of sampled pixels
-		int iWindow = 2 * (int) ceil(fWidth) + 1; 
+		int iWindow = 2 * ((int)ceil(fWidth) + 1); 
 
 	// Allocate the contributions
 		pList = AllocateContributions(iOutputWidth, iWindow); 
@@ -649,15 +649,6 @@ CImage::sContribList *CImage::CalculateContributions(int iInputWidth, int iOutpu
 				if (iRight >= iInputWidth)
 					iRight = iInputWidth - 1;
 				pList->m_pContrib[i].m_iRight = iRight;
-
-			// Cut edge points to fit in filter window in case of spill-off
-				if (iRight - iLeft + 1 > iWindow) {
-					iRight -= (iRight - iLeft + 1) - iWindow;
-					if (iLeft < (iInputWidth  / 2.0F))
-						iLeft++;
-					else
-						iRight--;
-				}
 
 				float fTotalWeight = 0.0;  // Zero sum of weights
 				for (int iSrc = iLeft; iSrc <= iRight; iSrc++) {
