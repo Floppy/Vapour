@@ -7,7 +7,7 @@
 // SceneManager.cpp
 // 19/03/2002 - James Smith
 //
-// $Id: SceneManager.cpp,v 1.22 2002/03/25 14:55:35 vap-james Exp $
+// $Id: SceneManager.cpp,v 1.23 2002/03/26 17:45:45 vap-james Exp $
 
 #include "stdafx.h"
 #include "SceneManager.h"
@@ -191,7 +191,8 @@ bool CSceneManager::ShowFrame(const unsigned char* pcData, unsigned int iLength)
          // Enter beam node stresses
          float pfStresses[2];
          for (int i=0; i<2; i++) {
-            pfStresses[i] = m_oDataMgr.BeamStresses((*pElem)->ID())[(*pElem)->Node(i)];
+            // Display X values of stresses
+            pfStresses[i] = m_oDataMgr.BeamStresses((*pElem)->ID())[i*3];
          }
          (*pElem)->SetStresses(pfStresses);
       }
@@ -199,7 +200,8 @@ bool CSceneManager::ShowFrame(const unsigned char* pcData, unsigned int iLength)
          // Enter slab node stresses and cracks
          float pfStresses[9];
          for (int i=0; i<9; i++) {
-            pfStresses[i] = m_oDataMgr.SlabStresses((*pElem)->ID())[(*pElem)->Node(i)];
+            // Display X values of stresses
+            pfStresses[i] = m_oDataMgr.SlabStresses((*pElem)->ID())[i*3];
          }
          (*pElem)->SetStresses(pfStresses);
          unsigned int iLayer = 0;
