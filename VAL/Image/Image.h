@@ -7,7 +7,7 @@
 // Image.h - 21/12/1999 - Warren Moore
 //	Image header
 //
-// $Id: Image.h,v 1.9 2000/07/30 20:56:46 waz Exp $
+// $Id: Image.h,v 1.10 2000/08/07 18:57:47 waz Exp $
 //
 
 #ifndef _VAL_IMAGE_
@@ -100,14 +100,14 @@ public:
 	// Returns pointer to image palette object
 	const CImagePalette* GetPalette(void) const;
 	// Returns pixel value at coords
-	UINT GetPixel(int iX, int iY) const;
-	UINT GetPixel(unsigned long uPixel) const;
+	unsigned int GetPixel(int iX, int iY) const;
+	unsigned int GetPixel(unsigned int uPixel) const;
 
 	//#===--- Conversion 
 	// Convert image type (if necessary, default 256 colours for IT_PALETTE)
 	IRESULT Convert(IMAGETYPE eType, int iColours = 256);
 	// Force an RGB image to the supplied palette
-	IRESULT ForceToPalette(const CImagePalette &oPalette);
+	IRESULT ForceToPalette(CImagePalette &oPalette);
 	// Change the image type and disregard the image data (palette colours supplied if necessary)
 	IRESULT ForceType(IMAGETYPE eType, int iColours = 256);
 
@@ -156,7 +156,6 @@ protected:
 
 	//#===--- Colour Quantisation
 	IRESULT CreatePaletteFromRGB(int iColours = 256);
-	int MatchColour(unsigned long uColour);
 
 	//#===--- Scaling
 	SContribList *AllocateContributions(int iWidth, int iWindow);
@@ -174,9 +173,9 @@ protected:
 	IMAGETYPE m_eImageType;
 	int m_iWidth, m_iHeight;
 	// these variable reference data in 32 bit blocks
-	UINT m_iDataSize;						// size of image data
-	UINT m_iLineSize;						// size of a scan line
-	UINT* m_pData;							// pointer to image data
+	unsigned int m_iDataSize;						// size of image data
+	unsigned int m_iLineSize;						// size of a scan line
+	unsigned int* m_pData;							// pointer to image data
 	CImagePalette *m_poPalette;	// pointer to palette object
 
 //#===--- Friends
@@ -199,16 +198,16 @@ inline const CImagePalette* CImage::GetPalette(void) const {
 	return m_poPalette;
 }
 
-inline UINT CImage::GetPixel(int iX, int iY) const {
-	unsigned long uPixel = iY*m_iWidth + iX;
+inline unsigned int CImage::GetPixel(int iX, int iY) const {
+	unsigned int uPixel = iY*m_iWidth + iX;
 	return GetPixel(uPixel);
 }
 
-inline UINT CImage::GetPixel(unsigned long uPixel) const {
+inline unsigned int CImage::GetPixel(unsigned int uPixel) const {
 	if (m_eImageType == IT_RGB) {
-		unsigned long uValue= 0;
+		unsigned int uValue= 0;
 		unsigned char *pPixel = (unsigned char*)m_pData + (uPixel * 3);
-		uValue = *((unsigned long*)pPixel) & 0x00FFFFFF;
+		uValue = *((unsigned int*)pPixel) & 0x00FFFFFF;
 		return uValue;
 	}
 	else 

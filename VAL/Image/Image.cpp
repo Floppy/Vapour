@@ -7,7 +7,7 @@
 // Image.h - 21/12/1999 - Warren Moore
 //	Image implementation
 //
-// $Id: Image.cpp,v 1.11 2000/08/06 19:19:21 waz Exp $
+// $Id: Image.cpp,v 1.12 2000/08/07 18:57:47 waz Exp $
 //
 
 #include "stdafx.h"
@@ -216,7 +216,7 @@ IRESULT CImage::CreateImage() {
 		// If valid, allocate the memory
 		if (m_iDataSize) {
 			NEWBEGIN
-			m_pData = (UINT*) new UINT[m_iDataSize];
+			m_pData = (unsigned int*) new unsigned int[m_iDataSize];
 			NEWEND("CImage::CreateImage - Image data")
 			if (!m_pData)
 				eResult = I_OUT_OF_MEMORY;
@@ -399,13 +399,13 @@ void CImage::Paste(const CImage &oCopy, float fAlpha, bool bTrans, unsigned int 
 void CImage::Flip() {
 	// Save the original image details
 	const int iLineSize = m_iLineSize * 4;
-	unsigned long *pInputData = (unsigned long*)m_pData;
-	unsigned long *pIData = pInputData + (m_iHeight - 1) * m_iLineSize;
+	unsigned int *pInputData = (unsigned int*)m_pData;
+	unsigned int *pIData = pInputData + (m_iHeight - 1) * m_iLineSize;
 	// Create the new image
 	IRESULT eResult = CreateImage();
 	// If image allocated ok, begin quantising
 	if (eResult == I_OK) {
-		unsigned long *pOData = (unsigned long*)m_pData;
+		unsigned int *pOData = (unsigned int*)m_pData;
 		// Enter each colour into the quantiser
 		register int iY = m_iHeight;
 		// For each line
@@ -448,7 +448,7 @@ IRESULT CImage::Convert(IMAGETYPE eType, int iColours) {
 	return eResult;
 } // Convert
 
-IRESULT CImage::ForceToPalette(const CImagePalette &oPalette) {
+IRESULT CImage::ForceToPalette(CImagePalette &oPalette) {
 	// Check for image
 	if ((m_iWidth == 0) || (m_iHeight == 0))
 		return I_NO_IMAGE;
@@ -461,9 +461,9 @@ IRESULT CImage::ForceToPalette(const CImagePalette &oPalette) {
 		return I_NO_PALETTE;
 	// Save the original image details
 	const int iInputLine = m_iLineSize;
-	unsigned long *pInputData = (unsigned long*)m_pData;
-	unsigned long *pIData = pInputData;
-	unsigned long *pIDataPtr = pInputData;
+	unsigned int *pInputData = (unsigned int*)m_pData;
+	unsigned int *pIData = pInputData;
+	unsigned int *pIDataPtr = pInputData;
 	const unsigned iWidth = m_iWidth / 4;
 	const unsigned int iLeft = m_iWidth % 4;
 	// Create the new image
@@ -480,7 +480,7 @@ IRESULT CImage::ForceToPalette(const CImagePalette &oPalette) {
 		unsigned char *pOData = (unsigned char*)m_pData;
 		unsigned char *pODataPtr = pOData;
 		register int iY = m_iHeight, iX = iWidth;
-		unsigned long uInput, uColour;
+		unsigned int uInput, uColour;
 		// Retreive every pixel from the original image, and match it in BGR format
 		// For each line
 		while (iY--) {
@@ -491,36 +491,36 @@ IRESULT CImage::ForceToPalette(const CImagePalette &oPalette) {
 			while (iX--) {
 				// First pixel
 				uColour = *pIDataPtr++;
-				*pODataPtr = MatchColour(uColour);
+				*pODataPtr = oPalette.MatchColour(uColour);
 				pODataPtr++;
 				// Second pixel
 				uInput = *pIDataPtr++;
 				uColour = (uColour >> 24) | (uInput << 8);
-				*pODataPtr = MatchColour(uColour);
+				*pODataPtr = oPalette.MatchColour(uColour);
 				pODataPtr++;
 				// Third pixel
 				uColour = uInput >> 16;
 				uInput = *pIDataPtr++;
 				uColour |= (uInput << 16);
-				*pODataPtr = MatchColour(uColour);
+				*pODataPtr = oPalette.MatchColour(uColour);
 				pODataPtr++;
 				// Fourth pixel
 				uColour = uInput >> 8;
-				*pODataPtr = MatchColour(uColour);
+				*pODataPtr = oPalette.MatchColour(uColour);
 				pODataPtr++;
 			}
 			// For any remaining pixels
 			if (iLeft > 0) {
 				// First pixel
 				uColour = *pIDataPtr++;
-				*pODataPtr = MatchColour(uColour);
+				*pODataPtr = oPalette.MatchColour(uColour);
 				pODataPtr++;
 			}
 			if (iLeft > 1) {
 				// Second pixel
 				uInput = *pIDataPtr++;
 				uColour = (uColour >> 24) | (uInput << 8);
-				*pODataPtr = MatchColour(uColour);
+				*pODataPtr = oPalette.MatchColour(uColour);
 				pODataPtr++;
 			}
 			if (iLeft > 2) {
@@ -528,7 +528,7 @@ IRESULT CImage::ForceToPalette(const CImagePalette &oPalette) {
 				uColour = uInput >> 16;
 				uInput = *pIDataPtr++;
 				uColour |= (uInput << 16);
-				*pODataPtr = MatchColour(uColour);
+				*pODataPtr = oPalette.MatchColour(uColour);
 				pODataPtr++;
 			}
 			// Add the line steps
@@ -578,9 +578,9 @@ IRESULT CImage::CreatePaletteFromRGB(int iColours) {
 	oQuant.SetSize(iColours);
 	// Save the original image details
 	const int iInputLine = m_iLineSize;
-	unsigned long *pInputData = (unsigned long*)m_pData;
-	unsigned long *pIData = pInputData;
-	unsigned long *pIDataPtr = pInputData;
+	unsigned int *pInputData = (unsigned int*)m_pData;
+	unsigned int *pIData = pInputData;
+	unsigned int *pIDataPtr = pInputData;
 	const unsigned iWidth = m_iWidth / 4;
 	const unsigned int iLeft = m_iWidth % 4;
 	// Create the new image
@@ -590,7 +590,7 @@ IRESULT CImage::CreatePaletteFromRGB(int iColours) {
 	if (eResult == I_OK) {
 		// Enter each colour into the quantiser
 		register int iY = m_iHeight, iX = m_iLineSize;
-		unsigned long uInput, uColour;
+		unsigned int uInput, uColour;
 		// For each line
 		while (iY--) {
 			pIDataPtr = pIData;
@@ -704,37 +704,6 @@ IRESULT CImage::CreatePaletteFromRGB(int iColours) {
 	delete [] pInputData;
 	return eResult;
 } // CreatePaletteFromRGB
-
-int CImage::MatchColour(unsigned long uColour) {
-	// Make sure it's a palettised image
-	if (m_eImageType != IT_PALETTE)
-		return -1;
-	// Match the colour
-	int iCount = 0;
-	unsigned long uPal = 0;
-	int iVal = -1;
-	int iLowestError = 8192;		// Huge error
-	while (iCount < m_poPalette->GetSize()) {
-		// Get the colour
-		m_poPalette->GetEntry(iCount, uPal);
-		// Calculate the error
-		int iR = (uColour >> 16) & 0x000000FF;
-		int iG = (uColour >>  8) & 0x000000FF;
-		int iB = (uColour      ) & 0x000000FF;
-		iR = abs(iR - ((uPal      ) & 0x000000FF));
-		iG = abs(iG - ((uPal >>  8) & 0x000000FF));
-		iB = abs(iB - ((uPal >> 16) & 0x000000FF));
-		int iError = iR + iG + iB;
-		// Record if lowest error
-		if (iError < iLowestError) {
-			iLowestError = iError;
-			iVal = iCount;
-		}
-		// Carry on through the palette
-		iCount++;
-	}
-	return iVal;
-} // MatchColour
 
 //#===--- Scaling Functions
 
@@ -926,8 +895,8 @@ void CImage::DeleteContributions(SContribList *psList) {
 IRESULT CImage::ScaleHorizontalRGB(int iWidth, IMAGEFILTERTYPE eFilter) {
 	// Remember the current image details
 	const int iOriginalWidth = m_iWidth;
-	const UINT iLineSize = m_iLineSize;
-	UINT *pInputData = m_pData;
+	const unsigned int iLineSize = m_iLineSize;
+	unsigned int *pInputData = m_pData;
 	// Allocate new image
 	m_iWidth = iWidth;
 	IRESULT eResult = CreateImage();
@@ -985,8 +954,8 @@ IRESULT CImage::ScaleHorizontalRGB(int iWidth, IMAGEFILTERTYPE eFilter) {
 IRESULT CImage::ScaleVerticalRGB(int iHeight, IMAGEFILTERTYPE eFilter) {
 	// Remember the current image details
 	const int iOriginalHeight = m_iHeight;
-	const UINT iLineSize = m_iLineSize;
-	UINT *pInputData = m_pData;
+	const unsigned int iLineSize = m_iLineSize;
+	unsigned int *pInputData = m_pData;
 	// Allocate new image
 	m_iHeight = iHeight;
 	IRESULT eResult = CreateImage();
@@ -1061,11 +1030,11 @@ FRESULT CImage::Load(const char *pFname, CImageFile *pImageFile) {
 	// Load the image
 	unsigned char *pData = NULL;
 	eFResult = pImageFile->Load(pFname, m_iWidth, m_iHeight, pData);
-	m_pData = (UINT*)pData;
+	m_pData = (unsigned int*)pData;
 
 	// If image loaded, adjust the other image variables
 	if (eFResult == F_OK) {
-		UINT iLineLength = m_iWidth;
+		unsigned int iLineLength = m_iWidth;
 		switch(m_eImageType) {
 			case IT_MONO:
 				break;

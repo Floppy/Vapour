@@ -7,7 +7,7 @@
 // AvatarFileHalflife.cpp - 16/2/2000 - James Smith
 //	Halflife export filter implementation
 //
-// $Id: AvatarFileHalflife.cpp,v 1.10 2000/08/02 18:05:04 waz Exp $
+// $Id: AvatarFileHalflife.cpp,v 1.11 2000/08/07 18:57:48 waz Exp $
 //
 
 #include "stdafx.h"
@@ -886,7 +886,7 @@ FRESULT CAvatarFileHalflife::Save(ofstream& osOutputStream, CAvatar* pAvatar) co
       for (int iEntry=0; iEntry<256; iEntry++) {
          //memset(m_pcTextureDataChunk+iCurrentPos,iEntry,0x03);
          //iCurrentPos += 3;
-         unsigned long uColour;
+         unsigned int uColour;
          pPalette->GetEntry(iEntry,uColour);
          *(m_pcTextureDataChunk+(iCurrentPos++)) = (uColour >> 16) & 0xFF;
          *(m_pcTextureDataChunk+(iCurrentPos++)) = (uColour >> 8) & 0xFF;
