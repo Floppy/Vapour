@@ -14,7 +14,7 @@
 //! author 		= "Warren Moore"
 //! date 		= "17/10/2001"
 //! lib 			= libVALETimage
-//! rcsid 		= "$Id: image.h,v 1.2 2001/10/18 11:22:30 vap-warren Exp $"
+//! rcsid 		= "$Id: image.h,v 1.3 2001/10/21 14:43:24 vap-warren Exp $"
 //! userlevel 	= Normal
 //! docentry 	= "VALET.Image"
 //! example 	= VALET/image/image.test.cpp
@@ -22,46 +22,62 @@
 //#===--- Includes
 #include "VALET/valet.h"
 #include "VALET/palette.h"
-//#include "CAvatar.h"
 
 namespace NValet {
 
    //#===--- Pre-declared classes
    class CImageFile;
 
-   //#===--- Defines
-   #define IMG_MAXWIDTH       1600
-   #define IMG_MAXHEIGHT      1200
-   // Maximum image size
-
-   enum IMAGETYPE {
-      IT_UNKNOWN,
-      IT_MONO,
-      IT_GREY,
-      IT_PALETTE,
-      IT_RGB,
+   //#===--- Image types
+   // IT_GREY     = Greyscale             - 1 x 8-bit plane
+   // IT_PALETTE  = Palette based         - 1 x 8-bit plane + colour palette
+   // IT_RGB      = True colour           - 3 x 8-bit planes
+   // IT_RGBA     = True colour + alpha   - 4 x 8-bit planes
+   enum IMAGE_TYPE {
+      IT_UNKNOWN = 0,
+      IT_GREY = 1,
+      IT_PALETTE = 2,
+      IT_RGB = 3,
+      IT_RGBA = 4
    };
-   // Image types
 
-   enum IMAGEFILTERTYPE {
-      IF_BOX,
+   //#===--- Image planes
+   // Referenced against m_pucPlaneNum
+   // IP_GREY     = Plane 0
+   // IP_RED      = Plane 0
+   // IP_GREEN    = Plane 1
+   // IP_BLUE     = Plane 2
+   // IP_ALPHA    = Plane 3
+   enum IMAGE_PLANE {
+      IP_GREY = 0,
+      IP_RED = 1,
+      IP_GREEN = 2,
+      IP_BLUE = 3,
+      IP_ALPHA = 4
+   };      
+
+   //#===--- Image result codes
+   enum IMAGE_RESULT {
+      IR_OK = 0,
+      IR_OUT_OF_RANGE,
+      IR_INVALID_PARAM,
+      IR_INCORRECT_TYPE,
+      IR_UNSUPPORTED_TYPE,
+      IR_NO_IMAGE,
+      IR_NO_PALETTE,
+      IR_OUT_OF_MEMORY,
+      IR_NO_DATA,
+      IR_ERROR,
+   };
+   
+   //#===--- Image scaling filter type
+   // Must be implemented, defined in VALET/image/filter.h
+   // IF_BOX      = Box filter, blocky pixel resize filter
+   // IT_BILINEAR = Bilinear filter, smooth resampling filter
+   enum IMAGE_FILTER {
+      IF_BOX = 0,
       IF_BILINEAR,
    };
-   // Scaling filter types
-
-   enum IRESULT {
-      I_OK,
-      I_OUT_OF_RANGE,
-      I_INVALID_PARAM,
-      I_INCORRECT_TYPE,
-      I_UNSUPPORTED_TYPE,
-      I_NO_IMAGE,
-      I_NO_PALETTE,
-      I_OUT_OF_MEMORY,
-      I_NO_DATA,
-      I_ERROR,
-   };
-   // Image operation results
 
    //#===--- CImage
    //: Image Class
@@ -74,143 +90,98 @@ namespace NValet {
 	//:------
    //: Image Creation
 
-      CImage(IMAGETYPE eType = IT_UNKNOWN, int iWidth = 0, int iHeight = 0, int iColours = 256);
-      //: Contructor
+      explicit CImage();
+      //: Empty constructor
+      explicit CImage(IMAGE_TYPE eType);
+      //: Empty typed constructor
+      explicit CImage(IMAGE_TYPE eType = IT_UNKNOWN, unsigned int uiWidth = 0,
+             unsigned int uiHeight = 0);
+      //: Allocating constructor
       CImage(const CImage &oCopy);
       //: Copy constructor
-      CImage(const CImage &oCopy, int iZoom);
-      // Scaling copy constructor (e.g. double size if iZoom = 1 : half size if iZoom = -1)
-      CImage(const CImage &oCopy, int iWidth, int iHeight, IMAGEFILTERTYPE eFilter = IF_BILINEAR);
-      // Scaling copy constructor (normal Scale params)
-      CImage(const CImage &oCopy, IMAGETYPE eImgType, int iColours = 256);
-      // Converting copy constructor
       ~CImage();
       //: Destructor
 
 	//:------ 
    //: Manipulation Functions
 
-      IMAGETYPE GetType() const;
+      IMAGE_TYPE GetType() const {
+         return m_eImageType;
+      }
       // Returns the current image type
-      void GetSize(int &iWidth, int &iHeight) const;
+      void GetSize(unsigned int &uiWidth, unsigned int &uiHeight) const {
+         uiWidth = m_uiWidth; uiHeight = m_uiHeight;
+      }
       // Returns the image size
-      IRESULT SetSize(int iWidth, int iHeight);
+      IMAGE_RESULT SetSize(unsigned int uiWidth, unsigned int uiHeight);
       // Change the size of the image (reallocating memory if necessary)
       //!todo: Copy over previous image contents
+      void SetClearColour(IMAGE_PLANE ePlane, unsigned char ucCol);
+      // Sets the clear colour for a plane
       void Clear();
-      // Sets the image black
-      void Paste(const CImage &oCopy, int iXOff = 0, int iYOff = 0);
-      // Paste an image into the calling image (image offset optional)
-      void Paste(const CImage &oCopy, float fAlpha, bool bTrans = false, 
-                 unsigned int uColour = 0, int iXOff = 0, int iYOff = 0);
-      // Paste an image into the calling image (transparent colour and image offset optional)
-      // If bTrans not set, uColour ignored, otherwise this colour is not drawn (uColour = 0x00RRGGBB)
-      void Flip();
-      // Vertically flips the image
-      unsigned int GetPixel(int iX, int iY) const;
-      // Get pixel at coord
-      unsigned int GetPixel(unsigned int uPixel) const;
-      // Get pixel at coord
+      // Clears the image using the table of plane clear colours
+      
+	//:------
+   //:  Image Importing
+
+      IMAGE_RESULT ImportRawRGB(unsigned char *pcRaw, bool bWordAlign = false,
+                                bool bReversePixels = false, bool bFlip = false);
+      // Import raw RGB888 image data
+      // Image must already be created with the correct size
+      //<B>NOTE: Does not bounds check the raw data</B>
+      //!todo: Currently reverse and flip are considered false, even if set otherwise
+      //!param: pucRaw = Pointer to start of raw data
+      //!param: bWordAlign = Lines are 32-bit word aligned
+      //!param: bReversePixels = Data is BGR formatted
+      //!param: bFlip = Lines are arranged bottom first
+
+      void Render(short sX, short sY);
+      // Warren's hacked in DC render function (DO NOT USE)
 
 	//:------
    //: Type Conversion Functions
- 
-      const CImagePalette* GetPalette(void) const;
-      // Returns pointer to image palette object
-      IRESULT Convert(IMAGETYPE eType, int iColours = 256);
-      // Convert image type (if necessary, default 256 colours for IT_PALETTE)
-      IRESULT ForceToPalette(CImagePalette &oPalette);
-      // Force an RGB image to the supplied palette
-      IRESULT ForceType(IMAGETYPE eType, int iColours = 256);
-      // Change the image type and disregard the image data (palette colours supplied if necessary)
 
+   
 	//:------
    //: Scaling Functions
 
-      IRESULT Scale(int iWidth, int iHeight, IMAGEFILTERTYPE eFilter = IF_BILINEAR);
-      // Scales image to specified height (default filter: bilinear)
 
 	//:------
    //: Loading and Saving
 
-      FRESULT Load(const char *pcFname, CImageFile *poImageFile);
-      // Requires a previously created file filter object
-      FRESULT Save(const char *pcFname, CImageFile *poImageFile) const;
-      // Requires a previously created file filter object
-
-	//:------
-   //:  Image Importing
-
-      IRESULT ImportRawImage(unsigned char *pcRaw, bool bWordAlign = false,
-                             bool bReversePixels = false, bool bFlip = false);
-	// Import an image from raw data (bounds checking not performed)
-
-/*
-//	IRESULT ImportAMETexture(stAMETexture &sAME);
-	Import an image from an AME texture structure
-*/
    protected:
-
-      //: Image Filter Precalculated Weights
-      struct SContribStruct {
-         float *m_pWeights;
-         int m_iLeft, m_iRight;
-
-         SContribStruct() {
-            m_pWeights = NULL;
-            m_iLeft = m_iRight = 0;
-         }
-         // Inline constructor
-
-      };
-
-      //: List of Filter Weights
-   	struct SContribListStruct {
-         struct SContribStruct *m_pContrib;
-         int m_iWidth, m_iWindow;
-
-         SContribListStruct() {
-            m_pContrib = NULL;
-            m_iWidth = m_iWindow = 0;
-         }
-      };
-
-      typedef struct SContribStruct SContrib;            // Filter weights typedef
-      typedef struct SContribListStruct SContribList;    // Weight List typedef
 
    //:------
    //: Internal Functions
  
-      IRESULT CreateImage();
+      IMAGE_RESULT CreateImage();
       // Image memory allocation
-
-      IRESULT CreatePaletteFromRGB(int iColours = 256);
-      // Colour quantisation
-
-      SContribList *AllocateContributions(int iWidth, int iWindow);
-      SContribList *CalculateContributions(int iInputWidth, int iOutputWidth, IMAGEFILTERTYPE eFilter);
-      void DeleteContributions(SContribList *psList);
-
-      IRESULT ScaleHorizontal(int iWidth, IMAGEFILTERTYPE eFilter);
-      IRESULT ScaleHorizontalRGB(int iWidth, IMAGEFILTERTYPE eFilter);
-
-      IRESULT ScaleVertical(int iHeight, IMAGEFILTERTYPE eFilter);
-      IRESULT ScaleVerticalRGB(int iHeight, IMAGEFILTERTYPE eFilter);
-
+      void DeleteImage();
+      // Deletes image memory and set member vars appropriately
+      
    protected:
 
-      IMAGETYPE m_eImageType;             // Image type
-      int m_iWidth, m_iHeight;            // Dimensions
-      unsigned int m_iDataSize;           // Size of image data (in 4 byte blocks)
-      unsigned int m_iLineSize;           // Size of a scan line (in 4 byte blocks)
-      unsigned int* m_pData;              // Pointer to image data
-      CImagePalette *m_poPalette;         // pointer to palette object
+      const static unsigned int m_uiMaxWidth = 1600;     // Maximum image width
+      const static unsigned int m_uiMaxHeight = 1200;    // Maximum image height
+      const static unsigned int m_uiNumTypes = 5;        // Number of IMAGE_TYPES's 
+      const static unsigned int m_uiNumPlanes = 4;       // Number of allocated planes
+      const static unsigned int m_uiNumPlaneTypes = 5;   // Number of IMAGE_PLANE's
+      const static unsigned char m_pucPlaneUse[m_uiNumTypes];
+      // Number of planes used for each image type
+      const static unsigned char m_pucPlaneNum[m_uiNumPlaneTypes];
+      // Index of plane names (in IMAGE_PLANE) to plane number
+      const static unsigned char m_pucDefClearCol[m_uiNumPlanes];
+      // Table of default clear colours
 
-/*
-   //#===--- Friends
-      friend class CRCOpenGLBufferWin32;
-      friend class CRCOpenGLWin32;
-*/
+      IMAGE_TYPE m_eImageType;                     // Image type
+      unsigned int m_uiWidth, m_uiHeight;          // Dimensions
+      unsigned int m_uiDataSize;                   // Size of image data (in 4 byte blocks)
+      unsigned int m_uiLineSize;                   // Size of a scan line (in 4 byte blocks)
+      unsigned int* m_ppuiData[m_uiNumPlanes];     // Pointer to image data
+                                                   // Lines are 32-bit word aligned
+      CImagePalette *m_poPalette;                  // Pointer to palette object
+      unsigned char m_pucClearCol[m_uiNumPlanes];  // List of clear colours
+      
    };
 
 }
