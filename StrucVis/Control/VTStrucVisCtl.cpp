@@ -7,7 +7,7 @@
 // VTStructVisCtl.cpp
 // 05/03/2002 - Warren Moore
 //
-// $Id: VTStrucVisCtl.cpp,v 1.7 2002/03/24 01:55:46 vap-warren Exp $
+// $Id: VTStrucVisCtl.cpp,v 1.8 2002/03/24 02:20:16 vap-warren Exp $
 
 #include "stdafx.h"
 #include "VTStrucVis.h"
@@ -396,7 +396,7 @@ bool CVTStrucVisCtl::GetCortona() {
    return bFound;
 }
 
-void CVTStrucVisCtl::DrawPlaceholder(CDC* pDC, const CRect& rcBounds, bool bRun) {
+void CVTStrucVisCtl::DrawPlaceholder(CDC *pDC, const CRect &rcBounds, bool bRun) {
    // Set the background white
    CBrush oBrush;
    oBrush.CreateSolidBrush(TranslateColor(RGB(0xFF, 0xFF, 0xFF)));
@@ -500,6 +500,12 @@ void CVTStrucVisCtl::DrawPlaceholder(CDC* pDC, const CRect& rcBounds, bool bRun)
    pDC->SelectObject(pOldFont);
 }
 
+void CVTStrucVisCtl::DrawUI(CDC *pDC, const CRect &rcBounds) {
+   // Check the UI is ok
+   // Get the UI state
+   // Render the UI
+}
+
 void CVTStrucVisCtl::UILoading() {
    // Set the async data flags
    m_uiAsyncFlags &= AD_UIMASK;
@@ -535,6 +541,13 @@ void CVTStrucVisCtl::SimLoaded() {
    InvalidateControl();
 }
 
+void CVTStrucVisCtl::GoInteractive() {
+   // Set the control interactive
+   InternalSetReadyState(READYSTATE_INTERACTIVE);
+   // Refresh the control
+   InvalidateControl();
+}
+
 /////////////////////
 // Message handlers
 
@@ -542,7 +555,9 @@ void CVTStrucVisCtl::SimLoaded() {
 void CVTStrucVisCtl::OnDraw(CDC* pdc, const CRect& rcBounds, const CRect& rcInvalid) {
    // Check our operating mode
    bool bRun = AmbientUserMode() && !AmbientUIDead();
-   if (bRun && (m_uiAsyncFlags & AD_UILOADED > 0) && (m_uiAsyncFlags & AD_SIMLOADING > 0)) {
+   // If we're in run mode, the UI is loaded and the ready state is marked interactive
+   // render the full-on interface
+   if (bRun && (m_uiAsyncFlags & AD_UILOADED) && (GetReadyState() == READYSTATE_INTERACTIVE)) {
       // Draw the full-on interface
    }
    else {

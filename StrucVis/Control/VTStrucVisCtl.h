@@ -7,7 +7,7 @@
 // VTStructVisCtl.cpp
 // 05/03/2002 - Warren Moore
 //
-// $Id: VTStrucVisCtl.h,v 1.7 2002/03/24 01:55:46 vap-warren Exp $
+// $Id: VTStrucVisCtl.h,v 1.8 2002/03/24 02:20:17 vap-warren Exp $
 
 #ifndef __VTSTRUCTVIS_CONTROL__
 #define __VTSTRUCTVIS_CONTROL__
@@ -65,6 +65,10 @@ public:
    void SimLoaded();
    // Called by CSimDataPath to indicate that the data is loaded
 
+   void GoInteractive();
+   // Called by CSimDataPath to indicate that enough data is present
+   // to go into interactive mode
+
 protected:
 
    bool InitCortona();
@@ -76,9 +80,12 @@ protected:
    bool GetCortona();
    // Searches for a Cortona control within the current container
 
-   void DrawPlaceholder(CDC* pDC, const CRect& rcBounds, bool bRun);
+   void DrawPlaceholder(CDC *pDC, const CRect &rcBounds, bool bRun);
    // Draws the control placeholder
    // bRun indicates that the control is in run mode, not dev mode
+
+   void DrawUI(CDC *pDC, const CRect &rcBounds);
+   // Render the VCR-style interface
 
 //#===--- Private Data Types
 protected:
