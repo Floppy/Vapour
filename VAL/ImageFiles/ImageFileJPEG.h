@@ -7,7 +7,7 @@
 // ImageFileJPEG.h - 22/12/1999 - Warren Moore
 //	JPEG file format image
 //
-// $Id: ImageFileJPEG.h,v 1.2 2000/06/17 10:42:21 waz Exp $
+// $Id: ImageFileJPEG.h,v 1.3 2000/06/17 11:40:27 waz Exp $
 //
 
 #ifndef _VAL_IMAGEFILEBMP_
@@ -23,11 +23,11 @@
 // CImageFileJPEG
 
 //#===--- Internal Defines
-#ifdef _IMAGEFILEJPEG_INTERNAL_
+#ifdef _VAL_IMAGEFILEJPEG_INTERNAL_
 
 #define JPEG_QUALITY		85
 
-#endif // _IMAGEFILEJPEG_INTERNAL_
+#endif // _VAL_IMAGEFILEJPEG_INTERNAL_
 
 class CImageFileJPEG : public CImageFile {
 public:
