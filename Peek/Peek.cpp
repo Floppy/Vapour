@@ -6,11 +6,17 @@
 #include "PeekDialog.h"
 #include "Vector3D.h"
 
+// VAL
+#include "Val.h"
+
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
 #endif
+
+// VAL management object
+CVAL *g_poVAL = NULL;
 
 /////////////////////////////////////////////////////////////////////////////
 // CPeekApp
