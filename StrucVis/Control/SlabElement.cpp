@@ -2,14 +2,14 @@
 // VT Structure Visualisation Control
 //-----------------------------------
 // ActiveX Control for structure visualisation
-// Copyright 2000 Vapour Technology Ltd.
+// Copyright 2002 Vapour Technology Ltd.
 //
 //! docentry  = "Visualisation Control.Scene Management.VRML Interface"
 //! userlevel =  Normal
 //! file      = "Control/SlabElement.cpp"
 //! author    = "James Smith"
 //! date      = "19/3/2002"
-//! rcsid     = "$Id: SlabElement.cpp,v 1.29 2002/04/03 11:14:31 vap-james Exp $"
+//! rcsid     = "$Id: SlabElement.cpp,v 1.30 2002/04/03 15:57:11 vap-warren Exp $"
 
 #include "stdafx.h"
 #include "SlabElement.h"

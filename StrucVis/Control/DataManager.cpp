@@ -2,14 +2,14 @@
 // VT Structure Visualisation Control
 //-----------------------------------
 // ActiveX Control for structure visualisation
-// Copyright 2000 Vapour Technology Ltd.
+// Copyright 2002 Vapour Technology Ltd.
 //
 //! docentry  = "Visualisation Control.Scene Management.VSV File IO"
 //! userlevel =  Normal
 //! file      = "Control/DataManager.cpp"
 //! author    = "James Smith"
 //! date      = "19/3/2002"
-//! rcsid     = "$Id: DataManager.cpp,v 1.18 2002/04/03 11:14:29 vap-james Exp $"
+//! rcsid     = "$Id: DataManager.cpp,v 1.19 2002/04/03 15:57:09 vap-warren Exp $"
 
 #include "stdafx.h"
 #include "DataManager.h"

@@ -2,14 +2,14 @@
 // VT Structure Visualisation Control
 //-----------------------------------
 // ActiveX Control for structure visualisation
-// Copyright 2000 Vapour Technology Ltd.
+// Copyright 2002 Vapour Technology Ltd.
 //
 //! docentry  = "Visualisation Control.ActiveX Control"
 //! userlevel =  Normal
 //! file      = "Control/SimDataPath.h"
 //! author    = "Warren Moore"
 //! date      = "27/3/2002"
-//! rcsid     = "$Id: SimDataPath.h,v 1.8 2002/04/03 11:14:31 vap-james Exp $"
+//! rcsid     = "$Id: SimDataPath.h,v 1.9 2002/04/03 15:57:10 vap-warren Exp $"
 
 #ifndef __VTSTUCVIS_SIMDATAPATH__
 #define __VTSTUCVIS_SIMDATAPATH__

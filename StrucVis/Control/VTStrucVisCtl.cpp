@@ -2,14 +2,14 @@
 // VT Structure Visualisation Control
 //-----------------------------------
 // ActiveX Control for structure visualisation
-// Copyright 2000 Vapour Technology Ltd.
+// Copyright 2002 Vapour Technology Ltd.
 //
 //! docentry  = "Visualisation Control.ActiveX Control"
 //! userlevel =  Normal
 //! file      = "Control/VTStrucVisCtl.cpp"
 //! author    = "Warren Moore"
 //! date      = "5/3/2002"
-//! rcsid     = "$Id: VTStrucVisCtl.cpp,v 1.25 2002/04/03 11:14:32 vap-james Exp $"
+//! rcsid     = "$Id: VTStrucVisCtl.cpp,v 1.26 2002/04/03 15:57:12 vap-warren Exp $"
 
 #include "stdafx.h"
 #include "VTStrucVis.h"

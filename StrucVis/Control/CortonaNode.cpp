@@ -2,14 +2,14 @@
 // VT Structure Visualisation Control
 //-----------------------------------
 // ActiveX Control for structure visualisation
-// Copyright 2000 Vapour Technology Ltd.
+// Copyright 2002 Vapour Technology Ltd.
 //
 //! docentry  = "Visualisation Control.Cortona Interface"
 //! userlevel =  Normal
 //! file      = "Control/CortonaNode.cpp"
 //! author    = "Warren Moore"
 //! date      = "10/3/2002"
-//! rcsid     = "$Id: CortonaNode.cpp,v 1.5 2002/04/03 11:14:29 vap-james Exp $"
+//! rcsid     = "$Id: CortonaNode.cpp,v 1.6 2002/04/03 15:57:08 vap-warren Exp $"
 
 #include "stdafx.h"
 
