@@ -7,7 +7,7 @@
 // CortonaControl.h
 // 17/03/2002 - Warren Moore
 //
-// $Id: CortonaControl.h,v 1.4 2002/03/25 02:34:54 vap-warren Exp $
+// $Id: CortonaControl.h,v 1.5 2002/03/27 13:10:44 vap-warren Exp $
 
 #ifndef __VTSTRUCVIS_CORTONACONTROL__
 #define __VTSTRUCVIS_CORTONACONTROL__
@@ -51,6 +51,9 @@ public:
 
    void Edit();
    // Enables direct scene modication
+
+   void Freeze(bool bVal);
+   // Freezes the Cortona rendering
 
    void Refresh();
    // Refreshes the Cortona render pipeline

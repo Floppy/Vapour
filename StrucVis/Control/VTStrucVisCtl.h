@@ -7,7 +7,7 @@
 // VTStructVisCtl.cpp
 // 05/03/2002 - Warren Moore
 //
-// $Id: VTStrucVisCtl.h,v 1.16 2002/03/27 11:45:15 vap-warren Exp $
+// $Id: VTStrucVisCtl.h,v 1.17 2002/03/27 13:10:45 vap-warren Exp $
 
 #ifndef __VTSTRUCTVIS_CONTROL__
 #define __VTSTRUCTVIS_CONTROL__
@@ -173,6 +173,9 @@ protected:
       RM_REWIND,                    // Rewind
       RM_FASTFORWARD,               // Fast forward
    } ERunMode;
+
+   // Animation speeds
+   const static int m_piAnimSpeed[5];
 
    // A virtual slider class
    class CSlider {

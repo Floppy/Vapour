@@ -7,7 +7,7 @@
 // CortonaControl.cpp
 // 17/03/2002 - Warren Moore
 //
-// $Id: CortonaControl.cpp,v 1.4 2002/03/25 02:34:53 vap-warren Exp $
+// $Id: CortonaControl.cpp,v 1.5 2002/03/27 13:10:44 vap-warren Exp $
 
 #include "stdafx.h"
 #include "VTStrucVis.h"
@@ -173,6 +173,25 @@ void CCortonaControl::Edit() {
                                           0,
                                           &dwDispID))) {
       m_oDispatch.InvokeHelper(dwDispID, DISPATCH_METHOD, VT_EMPTY, NULL, NULL);
+   }
+}
+
+void CCortonaControl::Freeze(bool bVal) {
+   // Check we have a dispatch interface
+   if (!m_bAttached)
+      return;
+
+   DISPID dwDispID;
+   USES_CONVERSION;
+   // Use Automation to set Cortona to Edit
+   LPCOLESTR lpOleStr = T2OLE("Freeze");
+   if (SUCCEEDED(m_pDispatch->GetIDsOfNames(IID_NULL,
+                                          (LPOLESTR*)&lpOleStr,
+                                          1,
+                                          0,
+                                          &dwDispID))) {
+      static BYTE parms[] = VTS_BOOL;
+      m_oDispatch.InvokeHelper(dwDispID, DISPATCH_PROPERTYPUT, VT_EMPTY, NULL, parms, bVal);
    }
 }
 

@@ -7,7 +7,7 @@
 // VTStructVisCtl.cpp
 // 05/03/2002 - Warren Moore
 //
-// $Id: VTStrucVisCtl.cpp,v 1.17 2002/03/27 11:45:15 vap-warren Exp $
+// $Id: VTStrucVisCtl.cpp,v 1.18 2002/03/27 13:10:44 vap-warren Exp $
 
 #include "stdafx.h"
 #include "VTStrucVis.h"
@@ -252,7 +252,7 @@ int CVTStrucVisCtl::CSlider::GetInt() {
 
 unsigned int CVTStrucVisCtl::CSlider::GetUnsignedInt() {
    const int fStep = (float)(m_uiHigh - m_uiLow);
-   return (int)((fStep * m_fPos) + (float)m_uiLow);
+   return (unsigned int)((fStep * m_fPos) + (float)m_uiLow);
 }
 
 float CVTStrucVisCtl::CSlider::GetFloat() {
@@ -262,6 +262,14 @@ float CVTStrucVisCtl::CSlider::GetFloat() {
 
 ///////////////////
 // CVTStrucVisCtl
+
+const int CVTStrucVisCtl::m_piAnimSpeed[5] = {
+   5000,
+   2000,
+   1000,
+   500,
+   30
+};
 
 IMPLEMENT_DYNCREATE(CVTStrucVisCtl, COleControl)
 
@@ -751,7 +759,7 @@ void CVTStrucVisCtl::DrawPlaceholder(CDC *pDC, const CRect &rcBounds, bool bRun)
 void CVTStrucVisCtl::DrawUI(CDC *pDC, const CRect &rcBounds, bool bRun) {
    // If we haven't started it already, start the timer
    if (!m_bRunning) {
-      SetTimer(TI_ANIMATE, 30, NULL);
+      SetTimer(TI_ANIMATE, m_piAnimSpeed[m_uiAnimSpeed], NULL);
       m_bRunning = true;
    }
 
@@ -1285,36 +1293,55 @@ bool CVTStrucVisCtl::CheckSliders(const CPoint oPoint, unsigned int &uiFrame) {
    }
 
    // Scale Tab
-   bool bScaleModified = false;
    if (m_uiUITab == 1) {
+      bool bScaleModified = false;
+      float fVal = 0.0f;
       // X Scale
       if (m_oSXScale.GetPosition(oPoint)) {
-         m_fXScale = m_oSXScale.GetFloat();
-         bScaleModified = true;
+         fVal = m_oSXScale.GetFloat();
+         if (fVal != m_fXScale) {
+            m_fXScale = fVal;
+            bScaleModified = true;
+         }
       }
       // Y Scale
       if (m_oSYScale.GetPosition(oPoint)) {
-         m_fYScale = m_oSYScale.GetFloat();
-         bScaleModified = true;
+         fVal = m_oSYScale.GetFloat();
+         if (fVal != m_fYScale) {
+            m_fYScale = fVal;
+            bScaleModified = true;
+         }
       }
       // Z Scale
       if (m_oSZScale.GetPosition(oPoint)) {
-         m_fZScale = m_oSZScale.GetFloat();
-         bScaleModified = true;
+         fVal = m_oSZScale.GetFloat();
+         if (fVal != m_fZScale) {
+            m_fZScale = fVal;
+            bScaleModified = true;
+         }
       }
       // Update the scale factor
       if (bScaleModified) {
+         m_oCortona.Freeze(true);
          m_poScene->SetScaleFactor(m_fXScale, m_fYScale, m_fZScale);
+         m_oCortona.Freeze(false);
+         bModified = true;
       }
    }
-   bModified &= bScaleModified;
 
    // Animation tab
    if (m_uiUITab == 2) {
       if (m_oSAnimSpeed.GetPosition(oPoint)) {
          m_uiAnimSpeed = m_oSAnimSpeed.GetUnsignedInt();
          bModified = true;
-      }
+         // Stop the timer, if it's running
+         if (m_bRunning) {
+            KillTimer(TI_ANIMATE);
+         }
+         // Restart the timer with the new animation speed
+         SetTimer(TI_ANIMATE, m_piAnimSpeed[m_uiAnimSpeed], NULL);
+         m_bRunning = true;
+      } 
    }
 
    return bModified;
@@ -1401,7 +1428,9 @@ void CVTStrucVisCtl::ShowFrame(const unsigned int uiFrame,
       return;
    // Pass the data through
    TRACE("ShowFrame(%d, data, offset)\n", uiFrame);
+   m_oCortona.Freeze(true);
    m_poScene->ShowFrame(pucData, uiLength);
+   m_oCortona.Freeze(false);
    m_uiFrame = uiFrame;
    // Refresh the display
    InvalidateControl();
