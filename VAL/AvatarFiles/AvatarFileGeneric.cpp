@@ -7,7 +7,7 @@
 // AvatarFileGeneric.cpp - 04/10/2000 - James Smith
 //	Generic avatar import filter implementation
 //
-// $Id: AvatarFileGeneric.cpp,v 1.1 2000/10/06 13:16:58 waz Exp $
+// $Id: AvatarFileGeneric.cpp,v 1.2 2000/11/21 16:42:23 waz Exp $
 //
 
 #include "stdafx.h"
@@ -124,8 +124,10 @@ CAvatar* CAvatarFileGeneric::Load(const char* pszFilename) const {
             }
             // Rescale texture
             pNewImage->Scale(iWidth,iHeight);
-            // And add to avatar
-            pNewAvatar->AddTexture(pNewImage);
+            // Create new material and set texture
+            int iNewMaterial = pNewAvatar->AddMaterial();
+            if (iNewMaterial > -1) pNewAvatar->Material(iNewMaterial)->SetTexture(pNewImage);
+            else delete pNewImage;
          }
       }
       
@@ -133,7 +135,13 @@ CAvatar* CAvatarFileGeneric::Load(const char* pszFilename) const {
 		
       //Load vertices
 		int iNumVertices = pNewAvatar->NumVertices();
-		for (int i=0; i<iNumVertices; i++) pNewAvatar->SetVertex(i,AMeModel.VerticesArr[i].fX,AMeModel.VerticesArr[i].fY,AMeModel.VerticesArr[i].fZ);
+      SPoint3D pntVertex;
+      for (int i=0; i<iNumVertices; i++) {
+         pntVertex.m_dComponents[0] = AMeModel.VerticesArr[i].fX;
+         pntVertex.m_dComponents[1] = AMeModel.VerticesArr[i].fY;
+         pntVertex.m_dComponents[2] = AMeModel.VerticesArr[i].fZ;
+         pNewAvatar->SetVertex(i,pntVertex);
+      }
 
       //Load faces
 		int iNumFaces = pNewAvatar->NumFaces();
@@ -303,8 +311,8 @@ CAvatar* CAvatarFileGeneric::Load(const char* pszFilename) const {
          enumBodyPartID amePart= ameParts[i];
   			int iNumFaces = AMeModel.NumTrianglesInBodyPart[amePart];
 			int iCurrentFace = AMeModel.FirstTriangleOfBodyPart[amePart];
-         // Associate texture
-         pNewAvatar->AssociateTexture(bpPart,pFaces[iCurrentFace].m_iTextureNumber);
+         // Associate material
+         pNewAvatar->AssociateMaterial(bpPart,pFaces[iCurrentFace].m_iMaterialNumber);
          // Associate faces
          if (bpPart == vl5) {
             // Deal specially with the torso - we need to split it into 4
@@ -328,20 +336,20 @@ CAvatar* CAvatarFileGeneric::Load(const char* pszFilename) const {
   		int iNumBPFaces = AMeModel.NumTrianglesInBodyPart[bp_Skirt];
       if (iNumBPFaces != 0) {
 			int iCurrentFace = AMeModel.FirstTriangleOfBodyPart[bp_Skirt];
-         pNewAvatar->AssociateTexture(skirt,pFaces[iCurrentFace].m_iTextureNumber);
+         pNewAvatar->AssociateMaterial(skirt,pFaces[iCurrentFace].m_iMaterialNumber);
 			for (int j=0; j<iNumBPFaces; j++) {
 				pNewAvatar->AssociateFace(skirt, iCurrentFace++);
 			}
       }
       // Fix face associations
       pNewAvatar->FixFaceAssociations();
-      // Associate torso texture with extra body parts
-		int iTorsoTexture = pNewAvatar->TextureIndex(vl5);
-		pNewAvatar->AssociateTexture(vt12,iTorsoTexture);
-		pNewAvatar->AssociateTexture(vt8,iTorsoTexture);
-		pNewAvatar->AssociateTexture(vt4,iTorsoTexture);
-		pNewAvatar->AssociateTexture(l_acromioclavicular,iTorsoTexture);
-		pNewAvatar->AssociateTexture(r_acromioclavicular,iTorsoTexture);
+      // Associate torso material with extra body parts
+		int iTorsoMaterial = pNewAvatar->MaterialIndex(vl5);
+		pNewAvatar->AssociateMaterial(vt12,iTorsoMaterial);
+		pNewAvatar->AssociateMaterial(vt8,iTorsoMaterial);
+		pNewAvatar->AssociateMaterial(vt4,iTorsoMaterial);
+		pNewAvatar->AssociateMaterial(l_acromioclavicular,iTorsoMaterial);
+		pNewAvatar->AssociateMaterial(r_acromioclavicular,iTorsoMaterial);
 
       // Load site positions
       BodyPart bpSites[] = {

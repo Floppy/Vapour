@@ -7,7 +7,7 @@
 // AvatarFileUnreal.cpp - 16/2/2000 - James Smith
 //	Unreal export filter implementation
 //
-// $Id: AvatarFileUnreal.cpp,v 1.15 2000/10/23 13:39:41 waz Exp $
+// $Id: AvatarFileUnreal.cpp,v 1.16 2000/11/21 16:44:32 waz Exp $
 //
 
 #include "stdafx.h"
@@ -44,17 +44,18 @@ CAvatarFileProxy<CAvatarFileUnreal> g_oAvatarProxyUnreal;
 ////////////////////
 // Store Functions
 
-CAvatarFileUnreal::CAvatarFileUnreal() {
-   m_pszName = NULL;
-   m_pszTgtDir = NULL;
-   m_pszTexPackageName = NULL;
-   m_pszTexBaseName = NULL;
-   m_puFirstPixel = NULL;
-   m_puImageHeight = NULL;
-   m_uTotalHeight = 0;
-   m_iSex = UNREAL_MALE;
-   m_dYOffset = 0;
-   m_dScale = 1;
+CAvatarFileUnreal::CAvatarFileUnreal() :
+   m_pszName(NULL),
+   m_pszTgtDir(NULL),
+   m_pszTexPackageName(NULL),
+   m_pszTexBaseName(NULL),
+   m_puFirstPixel(NULL),
+   m_puImageHeight(NULL),
+   m_uTotalHeight(0),
+   m_iSex(UNREAL_MALE),
+   m_dYOffset(0),
+   m_dScale(1)
+{
    return;
 } // CAvatarFileUnreal()
 
@@ -107,7 +108,7 @@ FRESULT CAvatarFileUnreal::Save(const char* pszFilename, CAvatar* pAvatar) const
    FRESULT eResult = F_OK;
 
    // Setup the export progress system
-   g_poVAL->SetProgressMax("UTSave", 7 + pAvatar->NumTextures());
+   g_poVAL->SetProgressMax("UTSave", 7 + pAvatar->NumMaterials());
 
    // Initialise
    // Notify of progress
@@ -401,12 +402,12 @@ FRESULT CAvatarFileUnreal::Init(const char* pszFilename, CAvatar* pAvatar) const
 
    // Allocate texture coordinate minima and maxima storage
    NEWBEGIN
-   m_puImageHeight = new unsigned int[pAvatar->NumTextures()];
+   m_puImageHeight = new unsigned int[pAvatar->NumMaterials()];
    NEWEND("CAvatarFileUnreal::Init - maxima storage allocation")
    if (m_puImageHeight == NULL) return F_OUT_OF_MEMORY;
 
    NEWBEGIN
-   m_puFirstPixel = new unsigned int[pAvatar->NumTextures()];
+   m_puFirstPixel = new unsigned int[pAvatar->NumMaterials()];
    NEWEND("CAvatarFileUnreal::Init - minima storage allocation")
    if (m_puFirstPixel == NULL) return F_OUT_OF_MEMORY;
 
@@ -416,7 +417,7 @@ FRESULT CAvatarFileUnreal::Init(const char* pszFilename, CAvatar* pAvatar) const
    pAvatar->UpdateModel();
    // Setup sizes & offsets etc
    SPoint3D pntMin, pntMax;
-   pAvatar->BoundingBox(unknown,pntMax,pntMin);
+   pAvatar->BoundingBox(pntMax,pntMin);
    m_dScale = 110 / (pntMax.m_dComponents[1] - pntMin.m_dComponents[1]);
    m_dYOffset = -((pntMax.m_dComponents[1] + pntMin.m_dComponents[1]) / 2 * m_dScale);
    
@@ -483,8 +484,8 @@ FRESULT CAvatarFileUnreal::SaveTextureUTX(const char* pszFilename, const CAvatar
       CImagePalette pPalettes[2];
 
       int t,i; // loop counters
-      const unsigned int uFaceTexIndex = pAvatar->TextureIndex(skullbase);
-      int iNumTextures = pAvatar->NumTextures();
+      const unsigned int uFaceTexIndex = pAvatar->MaterialIndex(skullbase);
+      int iNumTextures = pAvatar->NumMaterials();
       const unsigned int uNameLength = strlen(m_pszName);
 
       // We create two textures - head and body.
@@ -492,7 +493,7 @@ FRESULT CAvatarFileUnreal::SaveTextureUTX(const char* pszFilename, const CAvatar
       g_poVAL->StepProgress("UTSave");
       g_poVAL->SetProgressText("UTSave", "Converting head texture");
       // Copy texture out
-      CImage imgFace(*(pAvatar->Texture(uFaceTexIndex)));
+      CImage imgFace(*(pAvatar->Material(uFaceTexIndex)->Texture()));
       // Scale...
       imgFace.Scale(UNREAL_TEXTURE_WIDTH,UNREAL_TEXTURE_HEIGHT);
       // flip...
@@ -514,7 +515,7 @@ FRESULT CAvatarFileUnreal::SaveTextureUTX(const char* pszFilename, const CAvatar
       g_poVAL->StepProgress("UTSave");
       g_poVAL->SetProgressText("UTSave", "Creating body texture");
       // Store torso tex index for future reference
-      unsigned int uTorsoTexIndex = pAvatar->TextureIndex(vl5);
+      unsigned int uTorsoTexIndex = pAvatar->MaterialIndex(vl5);
       // Resize textures
       CImage** pImages = NULL;
       NEWBEGIN
@@ -538,7 +539,7 @@ FRESULT CAvatarFileUnreal::SaveTextureUTX(const char* pszFilename, const CAvatar
             CImage* pSmallerImage = NULL;
             // Create temporary image by copying current image
             NEWBEGIN
-            pSmallerImage = new CImage(*(pAvatar->Texture(t)));
+            pSmallerImage = new CImage(*(pAvatar->Material(t)->Texture()));
             NEWEND("CAvatarFileUnreal::Save - small image allocation");
             if (pSmallerImage == NULL) {
                // Dump data
@@ -1184,7 +1185,7 @@ FRESULT CAvatarFileUnreal::SaveMeshU(const char* pszFilename, CAvatar* pAvatar) 
       unsigned int* pTempAddressPtr = NULL;
 
       // Store old avatar pose
-      CAvatarPose poOldPose = pAvatar->ExportPose();
+      pAvatar->PushPose();
       pAvatar->ResetPose();
       pAvatar->UpdateModel();
 
@@ -1706,7 +1707,7 @@ FRESULT CAvatarFileUnreal::SaveMeshU(const char* pszFilename, CAvatar* pAvatar) 
          const int iMaxV = UNREAL_TEXTURE_HEIGHT-1;
          // Some other stuff we need
          const STriFace* pFaces = pAvatar->Faces();
-         const unsigned int uFaceTexIndex = pAvatar->TextureIndex(skullbase);
+         const unsigned int uFaceTexIndex = pAvatar->MaterialIndex(skullbase);
          // Cast pointer
          SUnrealTriangle* pFaceData = (SUnrealTriangle*)(pcMeshData + uMeshOffset);
          // Write faces
@@ -1720,7 +1721,7 @@ FRESULT CAvatarFileUnreal::SaveMeshU(const char* pszFilename, CAvatar* pAvatar) 
             // Write Flags
             pFaceData[f].uFlags = UNREAL_U_TRI_NORMAL1SIDE;
             // Texture coordinates
-            int iTextureNumber = pFace->m_iTextureNumber;
+            int iTextureNumber = pFace->m_iMaterialNumber;
             for (int tc=3; tc--!=0; ) {
                // Get tex coords
                double dU = pFace->m_sVertices[tc].m_sTexCoord.dU;
@@ -2789,7 +2790,7 @@ FRESULT CAvatarFileUnreal::SaveMeshU(const char* pszFilename, CAvatar* pAvatar) 
          const int iMaxV = UNREAL_TEXTURE_HEIGHT-1;
          // Some other stuff we need
          const STriFace* pFaces = pAvatar->Faces();
-         const unsigned int uFaceTexIndex = pAvatar->TextureIndex(skullbase);
+         const unsigned int uFaceTexIndex = pAvatar->MaterialIndex(skullbase);
          // Cast pointer
          SUnrealTriangle* pFaceData = (SUnrealTriangle*)(pcSelectMesh + uSelectOffset);
          // Write faces
@@ -2801,7 +2802,7 @@ FRESULT CAvatarFileUnreal::SaveMeshU(const char* pszFilename, CAvatar* pAvatar) 
             // Write Flags
             pFaceData[f].uFlags = UNREAL_U_TRI_NORMAL1SIDE;
             // Texture coordinates
-            int iTextureNumber = pFaces[f].m_iTextureNumber;
+            int iTextureNumber = pFaces[f].m_iMaterialNumber;
             for (int tc=3; tc--!=0; ) {
                // Get tex coords
                double dU = pFaces[f].m_sVertices[tc].m_sTexCoord.dU;
@@ -3278,7 +3279,8 @@ FRESULT CAvatarFileUnreal::SaveMeshU(const char* pszFilename, CAvatar* pAvatar) 
       delete [] pcNameTable;
 
       // Restore old pose
-      pAvatar->ImportPose(poOldPose);      
+      pAvatar->PopPose();
+      pAvatar->UpdateModel();
 
    }
    else eResult = F_FILE_ERROR;
@@ -3291,7 +3293,7 @@ FRESULT CAvatarFileUnreal::SaveMeshD3D(const char* pszFilename, CAvatar* pAvatar
    // Save mesh geometry file
    // This is documented on the nervedamage.com unreal page
    int i=0; // generic loop counter
-   const unsigned int uFaceTexIndex = pAvatar->TextureIndex(skullbase);
+   const unsigned int uFaceTexIndex = pAvatar->MaterialIndex(skullbase);
    ofstream osOutputStream(pszFilename,ios::binary|ios::out);   
 	if (!osOutputStream.fail()) {
       // Store texture info
@@ -3325,7 +3327,7 @@ FRESULT CAvatarFileUnreal::SaveMeshD3D(const char* pszFilename, CAvatar* pAvatar
          char cColour = 0x7F;
          osOutputStream.write(&cColour,1);
          // Texture coordinates
-         int iTextureNumber = pFaces[i].m_iTextureNumber;
+         int iTextureNumber = pFaces[i].m_iMaterialNumber;
          for (int tc=3; tc--!=0; ) {
             // Get tex coords
             double dU = pFaces[i].m_sVertices[tc].m_sTexCoord.dU;
@@ -3420,7 +3422,7 @@ FRESULT CAvatarFileUnreal::SaveSelectionMeshD3D(const char* pszFilename, CAvatar
    // Save selection mesh geometry file
    // This is documented on the nervedamage.com unreal page
    int i=0; // generic loop counter
-   const unsigned int uFaceTexIndex = pAvatar->TextureIndex(skullbase);
+   const unsigned int uFaceTexIndex = pAvatar->MaterialIndex(skullbase);
    ofstream osOutputStream(pszFilename,ios::binary|ios::out);
 	if (!osOutputStream.fail()) {
       // Store texture info
@@ -3452,7 +3454,7 @@ FRESULT CAvatarFileUnreal::SaveSelectionMeshD3D(const char* pszFilename, CAvatar
          char cColour = 0x7F;
          osOutputStream.write(&cColour,1);
          // Texture coordinates
-         int iTextureNumber = pFaces[i].m_iTextureNumber;
+         int iTextureNumber = pFaces[i].m_iMaterialNumber;
          for (int tc=3; tc--!=0; ) {
             // Get tex coords
             double dU = pFaces[i].m_sVertices[tc].m_sTexCoord.dU;

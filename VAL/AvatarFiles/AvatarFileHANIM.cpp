@@ -7,7 +7,7 @@
 // AvatarFileHANIM.cpp - 04/10/2000 - James Smith
 //	H-Anim 1.1 export filter implementation
 //
-// $Id: AvatarFileHANIM.cpp,v 1.0 2000/10/04 16:27:08 waz Exp $
+// $Id: AvatarFileHANIM.cpp,v 1.1 2000/11/21 16:44:32 waz Exp $
 //
 
 #include "stdafx.h"
@@ -230,8 +230,10 @@ static const char* pSegmentNames[] =
 ////////////////////
 // Store Functions
 
-CAvatarFileHANIM::CAvatarFileHANIM() {
-   m_pszBasename = NULL;
+CAvatarFileHANIM::CAvatarFileHANIM() :
+   m_pszBasename(NULL)
+{
+   return;
 } // CAvatarFileHANIM()
 
 float CAvatarFileHANIM::GetFilterVersion() const {
@@ -279,9 +281,9 @@ FRESULT CAvatarFileHANIM::Save(const char* pszFilename, CAvatar* pAvatar) const 
    FRESULT eResult = F_OK;
 
    // Reset pose
-   CAvatarPose poOld = pAvatar->ExportPose();
-   //pAvatar->ResetPose();
-   //pAvatar->UpdateModel();
+   pAvatar->PushPose();
+   pAvatar->ResetPose();
+   pAvatar->UpdateModel();
    // Work out base filename and store it
    char* pszLocalFilename = strdup(pszFilename);
    char* pszTemp = pszLocalFilename;
@@ -295,26 +297,26 @@ FRESULT CAvatarFileHANIM::Save(const char* pszFilename, CAvatar* pAvatar) const 
    free(pszLocalFilename);
    int iBaseNameLength = strlen(m_pszBasename);
    // Setup the export progress dialog
-   g_poVAL->SetProgressMax("HAnimSave",3 + 2*pAvatar->NumTextures());
+   g_poVAL->SetProgressMax("HAnimSave",3 + 2*pAvatar->NumMaterials());
    g_poVAL->StepProgress("HAnimSave");
    // Resize textures
    CString strMessage;
-   CImage** pImages = new CImage*[pAvatar->NumTextures()];
-   m_pMinima = new int[pAvatar->NumTextures()];
-   m_pMaxima = new int[pAvatar->NumTextures()];
+   CImage** pImages = new CImage*[pAvatar->NumMaterials()];
+   m_pMinima = new int[pAvatar->NumMaterials()];
+   m_pMaxima = new int[pAvatar->NumMaterials()];
    m_iTotalHeight = 0;
    const int iTextureWidth = 256;
-   for (int t=0; t<pAvatar->NumTextures(); t++) {
+   for (int t=0; t<pAvatar->NumMaterials(); t++) {
       g_poVAL->StepProgress("HAnimSave");
       strMessage.Format("Resizing texture %d", t);
       g_poVAL->SetProgressText("HAnimSave",strMessage);
       int iWidth = 0;
       int iHeight = 0;
-      CImage* pSmallerImage = new CImage(*(pAvatar->Texture(t)));
+      CImage* pSmallerImage = new CImage(*(pAvatar->Material(t)->Texture()));
       pSmallerImage->GetSize(iWidth,iHeight);
       iWidth = iTextureWidth;
       if (iHeight > iTextureWidth/2) iHeight = iTextureWidth/2;
-      if (t != pAvatar->TextureIndex(skullbase)) iHeight = iHeight >> 1;
+      if (t != pAvatar->MaterialIndex(skullbase)) iHeight = iHeight >> 1;
       pSmallerImage->Scale(iWidth,iHeight);
       pSmallerImage->Flip();
       m_pMinima[t] = m_iTotalHeight;
@@ -331,7 +333,7 @@ FRESULT CAvatarFileHANIM::Save(const char* pszFilename, CAvatar* pAvatar) const 
       ::AfxMessageBox("Could not create merged texture!",MB_ICONERROR|MB_OK);
    }
    else {
-      for (t=0; t<pAvatar->NumTextures(); t++) {
+      for (t=0; t<pAvatar->NumMaterials(); t++) {
          g_poVAL->StepProgress("HAnimSave");
          strMessage.Format("Merging texture %d", t);
          g_poVAL->SetProgressText("HAnimSave",strMessage);
@@ -487,7 +489,7 @@ FRESULT CAvatarFileHANIM::Save(const char* pszFilename, CAvatar* pAvatar) const 
    // Restore pose
    delete [] m_pMinima;
    delete [] m_pMaxima;
-   pAvatar->ImportPose(poOld);
+   pAvatar->PopPose();
    pAvatar->UpdateModel();
 	return eResult;
 } // Save(const char* pszFilename, CAvatar* pAvatar)
@@ -545,7 +547,7 @@ void CAvatarFileHANIM::WriteBodyPart(BodyPart bpCurrentPart, CAvatar* pAvatar, o
 			   sNewFace.m_sVertices[0].m_iVertex = piVertexIndices[0];
 			   sNewFace.m_sVertices[1].m_iVertex = piVertexIndices[1];
 			   sNewFace.m_sVertices[2].m_iVertex = piVertexIndices[2];
-            sNewFace.m_iTextureNumber = pFaces[iFace].m_iTextureNumber;
+            sNewFace.m_iMaterialNumber = pFaces[iFace].m_iMaterialNumber;
             sNewFace.m_sVertices[0].m_sTexCoord.dU = pFaces[iFace].m_sVertices[0].m_sTexCoord.dU;
             sNewFace.m_sVertices[0].m_sTexCoord.dV = pFaces[iFace].m_sVertices[0].m_sTexCoord.dV;
             sNewFace.m_sVertices[1].m_sTexCoord.dU = pFaces[iFace].m_sVertices[1].m_sTexCoord.dU;
@@ -600,7 +602,7 @@ void CAvatarFileHANIM::WriteBodyPart(BodyPart bpCurrentPart, CAvatar* pAvatar, o
 	   osOutputStream << "                     point [\n";
 	   // Write texture coordinates, translating as we go
 	   for (i=0; i<vFaceList.size(); i++) {
-         int t = vFaceList[i].m_iTextureNumber;
+         int t = vFaceList[i].m_iMaterialNumber;
          // Work out base positions and sizes in pixels
          int iBaseV = m_pMinima[t];
          int iHeight = m_pMaxima[t] - m_pMinima[t]+1;

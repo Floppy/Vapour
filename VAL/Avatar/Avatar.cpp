@@ -7,7 +7,7 @@
 // Avatar.cpp - 17/06/2000 - James Smith
 //	Avatar class implementation
 //
-// $Id: Avatar.cpp,v 1.11 2000/10/23 19:07:46 waz Exp $
+// $Id: Avatar.cpp,v 1.12 2000/11/21 16:43:54 waz Exp $
 //
 
 #include "stdafx.h"
@@ -33,64 +33,59 @@ static char THIS_FILE[] = __FILE__;
 // Construction/Destruction ///////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////
 
-CAvatar::CAvatar(int iNumVertices, int iNumFaces) {
+CAvatar::CAvatar(int iNumVertices, int iNumFaces) : CTriMesh(iNumVertices,iNumFaces) {
 	m_eStatus = AV_OK;
+   m_pBodyParts = NULL;
    NEWBEGIN
    m_pBodyParts = new SBodyPart[TOTAL_NUMBER_BODYPARTS];
    NEWEND("CAvatar::CAvatar() - body part allocation")
-	m_iNumVertices = iNumVertices;
+   m_pDefaultVertices = NULL;
    NEWBEGIN
    m_pDefaultVertices = new SPoint3D[m_iNumVertices];
    NEWEND("CAvatar::CAvatar() - default vertex allocation")
-   NEWBEGIN
-	m_pCurrentVertices = new SPoint3D[m_iNumVertices];
-   NEWEND("CAvatar::CAvatar() - current vertex allocation")
-   NEWBEGIN
-	m_pVertexNormals = new SPoint3D[m_iNumVertices];
-   NEWEND("CAvatar::CAvatar() - vertex normal allocation")
-   NEWBEGIN
-   m_plFacesPerVertexMap = new CDList<int>[m_iNumVertices];
-   NEWEND("CAvatar::CAvatar() - vertex->face map allocation")
-	m_iNumFaces = iNumFaces;
+   m_piPartPerFaceMap = NULL;
    NEWBEGIN
    m_piPartPerFaceMap = new int[m_iNumFaces];
    NEWEND("CAvatar::CAvatar() - face->part map allocation")
+   m_piPartPerVertexMap = NULL;
    NEWBEGIN
    m_piPartPerVertexMap = new int[m_iNumVertices];
    NEWEND("CAvatar::CAvatar() - vertex->part map allocation");
-   NEWBEGIN
-	m_pFaces = new STriFace[m_iNumFaces];
-   NEWEND("CAvatar::CAvatar() - face storage allocation")
    m_bDirtyTranslation = false;
-	if ((m_pBodyParts==NULL) | (m_pDefaultVertices==NULL) | (m_pCurrentVertices==NULL) | (m_pVertexNormals==NULL) | (m_pFaces==NULL) | (m_plFacesPerVertexMap==NULL) | (m_piPartPerFaceMap==NULL) | (m_piPartPerVertexMap==NULL)) {
+	if (m_pBodyParts          == NULL ||
+       m_pDefaultVertices    == NULL ||
+       m_piPartPerFaceMap    == NULL ||
+       m_piPartPerVertexMap  == NULL ) {
+      // Set the status to say that we have not managed to allocate memory
 		m_eStatus = AV_NOALLOC;
 	}
-   else {
-		//initialise pointers and joint limits in body parts
-		for (int i=0; i<TOTAL_NUMBER_BODYPARTS; i++) {
+   if (m_pBodyParts) {
+      //initialise pointers and joint limits in body parts
+	   for (int i=0; i<TOTAL_NUMBER_BODYPARTS; i++) {
          m_pBodyParts[i].m_bDirtyAngle = false;
-			m_pBodyParts[i].m_bDirtyShape = false;
-			m_pBodyParts[i].m_iNumVertices = 0;
+		   m_pBodyParts[i].m_bDirtyShape = false;
+		   m_pBodyParts[i].m_iNumVertices = 0;
          m_pBodyParts[i].m_pliVertices = NULL;
-			m_pBodyParts[i].m_piVertices = NULL;
-			m_pBodyParts[i].m_iNumFaces = 0;
+		   m_pBodyParts[i].m_piVertices = NULL;
+		   m_pBodyParts[i].m_iNumFaces = 0;
          m_pBodyParts[i].m_pliFaces = NULL;
-			m_pBodyParts[i].m_piFaces = NULL;
-			m_pBodyParts[i].m_dMaxX = V_PI;
-			m_pBodyParts[i].m_dMaxY = V_PI;
-			m_pBodyParts[i].m_dMaxZ = V_PI;
-			m_pBodyParts[i].m_dMinX = V_MINUS_PI;
-			m_pBodyParts[i].m_dMinY = V_MINUS_PI;
-			m_pBodyParts[i].m_dMinZ = V_MINUS_PI;
-			m_pBodyParts[i].m_dDampX = 1;
-			m_pBodyParts[i].m_dDampY = 1;
-			m_pBodyParts[i].m_dDampZ = 1;
+		   m_pBodyParts[i].m_piFaces = NULL;
+		   m_pBodyParts[i].m_dMaxX = V_PI;
+		   m_pBodyParts[i].m_dMaxY = V_PI;
+		   m_pBodyParts[i].m_dMaxZ = V_PI;
+		   m_pBodyParts[i].m_dMinX = V_MINUS_PI;
+		   m_pBodyParts[i].m_dMinY = V_MINUS_PI;
+		   m_pBodyParts[i].m_dMinZ = V_MINUS_PI;
+		   m_pBodyParts[i].m_dDampX = 1;
+		   m_pBodyParts[i].m_dDampY = 1;
+		   m_pBodyParts[i].m_dDampZ = 1;
          m_pBodyParts[i].m_bpChildren[0] = unknown;
          m_pBodyParts[i].m_bpChildren[1] = unknown;
          m_pBodyParts[i].m_bpChildren[2] = unknown;
          m_pBodyParts[i].m_bpParent = unknown;
       }
-	}
+   }
+   return;
 } //CAvatar()
 
 CAvatar::~CAvatar() {
@@ -102,49 +97,142 @@ CAvatar::~CAvatar() {
 		}
 		delete [] m_pBodyParts;
 	}
-   // Delete textures
-   int iNumTextures = m_lTextures.Length();
-   for (int t=0; t<iNumTextures; t++) {
-      delete m_lTextures[t];
-   }
    // Delete model data
-	if (m_pDefaultVertices) delete [] m_pDefaultVertices;
-	if (m_pCurrentVertices) delete [] m_pCurrentVertices;
-	if (m_pVertexNormals) delete [] m_pVertexNormals;
-	if (m_plFacesPerVertexMap) delete [] m_plFacesPerVertexMap;
-	if (m_piPartPerFaceMap) delete [] m_piPartPerFaceMap;
-	if (m_piPartPerVertexMap ) delete [] m_piPartPerVertexMap;
-   if (m_pFaces) delete [] m_pFaces;
+	if (m_pDefaultVertices)    delete [] m_pDefaultVertices;
+	if (m_piPartPerFaceMap)    delete [] m_piPartPerFaceMap;
+	if (m_piPartPerVertexMap)  delete [] m_piPartPerVertexMap;
+   // Done
+   return;
 } //~CAvatar()
 
 ///////////////////////////////////////////////////////////////////////
 // Loading Functions //////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////
 
-void CAvatar::SetVertex(int iVertex, double dX, double dY, double dZ) {
-   if (m_bLoading) {
-      m_pCurrentVertices[iVertex].m_dComponents[0] = dX;
-      m_pCurrentVertices[iVertex].m_dComponents[1] = dY;
-      m_pCurrentVertices[iVertex].m_dComponents[2] = dZ;
+// Adds the specified number of vertices
+// Returns true if addition is successful
+// Do not use this too much - it is very expensive.
+bool CAvatar::AddVertices(int iNumVertices) {
+   bool bResult = false;
+   // Store number of vertices
+   int iOldNumVertices = m_iNumVertices;
+   // and call base class allocator
+   bResult = CTriMesh::AddVertices(iNumVertices);
+   // If base class addition succeeds
+   if (bResult = true) {
+      if (iOldNumVertices == 0) {
+         // Allocate default vertex storage
+         NEWBEGIN
+         m_pDefaultVertices = new SPoint3D[m_iNumVertices];
+         NEWEND("CAvatar::AddVertices() - default vertex allocation")
+         // Allocate part per vertex map storage
+         NEWBEGIN
+         m_piPartPerVertexMap = new int[m_iNumVertices];
+         NEWEND("CAvatar::AddVertices() - vertex->part map allocation");
+         // Check to see if allocation has failed
+	      if (m_pDefaultVertices   == NULL ||
+             m_piPartPerVertexMap == NULL ) {
+            // Dispose of any data that may have been allocated
+            if (m_pVertices != NULL)           delete [] m_pVertices;
+	         if (m_pVertexNormals != NULL)      delete [] m_pVertexNormals;
+	         if (m_plFacesPerVertexMap != NULL) delete [] m_plFacesPerVertexMap;
+	         if (m_pDefaultVertices != NULL)    delete [] m_pDefaultVertices;
+	         if (m_piPartPerVertexMap != NULL)  delete [] m_piPartPerVertexMap;
+            m_pVertices = NULL;
+            m_pVertexNormals = NULL;
+            m_plFacesPerVertexMap = NULL;
+            m_pDefaultVertices = NULL;
+            m_piPartPerVertexMap = NULL;
+            m_iNumVertices = 0;
+            bResult = false;
+         }
+      }
+      else {
+         // Allocate default vertex storage
+         SPoint3D* pDefaultVertices = NULL;
+         NEWBEGIN
+         pDefaultVertices = new SPoint3D[m_iNumVertices];
+         NEWEND("CAvatar::AddVertices() - default vertex reallocation")
+         // Allocate part per vertex map storage
+         int* piPartPerVertexMap = NULL;
+         NEWBEGIN
+         piPartPerVertexMap = new int[m_iNumVertices];
+         NEWEND("CAvatar::AddVertices() - vertex->part map reallocation");
+         // Check to see if allocation has failed
+	      if (pDefaultVertices   == NULL ||
+             piPartPerVertexMap == NULL ) {
+            // Dispose of any data that may have been allocated
+	         if (pDefaultVertices != NULL)   delete [] pDefaultVertices;
+	         if (piPartPerVertexMap != NULL) delete [] piPartPerVertexMap;
+            m_iNumVertices = iOldNumVertices;
+            bResult = false;
+         }
+         else {
+            // Allocation successful - copy data
+            memcpy(pDefaultVertices,m_pDefaultVertices,iOldNumVertices*sizeof(SPoint3D));
+            memcpy(piPartPerVertexMap,m_piPartPerVertexMap,iOldNumVertices*sizeof(int));
+            // Delete old memory
+            delete [] m_pDefaultVertices;
+            delete [] m_piPartPerVertexMap;
+            // Store new memory
+            m_pDefaultVertices = pDefaultVertices;
+            m_piPartPerVertexMap = piPartPerVertexMap;
+         }
+      }
    }
-   return;
-} //SetVertex(int iVertex, double dX, double dY, double dZ)
+   return bResult;
+} //AddVertices(int iNumVertices)
 
-void CAvatar::SetFace(int iFace, int iVertex0, int iVertex1, int iVertex2, int iTextureIndex, double iVertex0U, double iVertex0V, double iVertex1U, double iVertex1V, double iVertex2U, double iVertex2V) {
-   if (m_bLoading) {
-	   m_pFaces[iFace].m_sVertices[0].m_iVertex = iVertex0;
-	   m_pFaces[iFace].m_sVertices[1].m_iVertex = iVertex1;
-	   m_pFaces[iFace].m_sVertices[2].m_iVertex = iVertex2;
-      m_pFaces[iFace].m_iTextureNumber = iTextureIndex;
-      m_pFaces[iFace].m_sVertices[0].m_sTexCoord.dU = iVertex0U;
-      m_pFaces[iFace].m_sVertices[0].m_sTexCoord.dV = iVertex0V;
-      m_pFaces[iFace].m_sVertices[1].m_sTexCoord.dU = iVertex1U;
-      m_pFaces[iFace].m_sVertices[1].m_sTexCoord.dV = iVertex1V;
-      m_pFaces[iFace].m_sVertices[2].m_sTexCoord.dU = iVertex2U;
-      m_pFaces[iFace].m_sVertices[2].m_sTexCoord.dV = iVertex2V;
+// Adds the specified number of faces
+// Returns true if addition is successful
+// Do not use this too much - it is very expensive.
+bool CAvatar::AddFaces(int iNumFaces) {
+   bool bResult = false;
+   // Store number of faces
+   int iOldNumFaces = m_iNumFaces;
+   // and call base class allocator
+   bResult = CTriMesh::AddFaces(iNumFaces);
+   // If base class addition succeeds
+   if (bResult = true) {
+      if (iOldNumFaces == 0) {
+         // Allocate part per face map storage
+         NEWBEGIN
+         m_piPartPerFaceMap = new int[m_iNumFaces];
+         NEWEND("CAvatar::AddFaces() - face->part map allocation")
+         // Check to see if allocation has failed
+	      if (m_piPartPerFaceMap == NULL) {
+            // Dispose of any data that may have been allocated
+            if (m_pFaces != NULL)           delete [] m_pFaces;
+	         if (m_piPartPerFaceMap != NULL) delete [] m_piPartPerFaceMap;
+            m_pFaces           = NULL;
+            m_piPartPerFaceMap = NULL;
+            m_iNumFaces = 0;
+            bResult = false;
+         }
+      }
+      else {
+         // Allocate part per face map storage
+         int* piPartPerFaceMap = NULL;
+         NEWBEGIN
+         piPartPerFaceMap = new int[m_iNumFaces];
+         NEWEND("CAvatar::AddFaces() - face->part map reallocation")
+         // Check to see if allocation has failed
+	      if (piPartPerFaceMap == NULL) {
+            m_iNumFaces = iOldNumFaces;
+            bResult = false;
+         }
+         else {
+            // Allocation successful - copy data
+            memcpy(piPartPerFaceMap,m_piPartPerFaceMap,iOldNumFaces*sizeof(int));
+            // Delete old memory
+            delete [] m_piPartPerFaceMap;
+            // Store new memory
+            m_piPartPerFaceMap = piPartPerFaceMap;
+         }
+      }
    }
-   return;
-} //SetFace(int iFace, int iVertex0, int iVertex1, int iVertex2, int iTextureIndex, double iVertex0U, double iVertex0V, double iVertex1U, double iVertex1V, double iVertex2U, double iVertex2V)
+   return bResult;
+} //AddFaces(int iNumFaces)
 
 void CAvatar::SetCentre(BodyPart bpPart, double dX, double dY, double dZ) {
    if (m_bLoading) {
@@ -159,9 +247,9 @@ void CAvatar::SetCentre(BodyPart bpPart, double dX, double dY, double dZ) {
    return;
 } //SetCentre(BodyPart bpPart, double dX, double dY, double dZ)
 
-void CAvatar::AssociateTexture(BodyPart bpPart, int iTextureIndex) {
-   m_pBodyParts[bpPart].m_iTextureIndex = iTextureIndex;
-} //AssociateTexture(BodyPart bpPart, int iTextureIndex)
+void CAvatar::AssociateMaterial(BodyPart bpPart, int iMaterialIndex) {
+   m_pBodyParts[bpPart].m_iMaterialIndex = iMaterialIndex;
+} //AssociateMaterial(BodyPart bpPart, int iMaterialIndex)
 
 void CAvatar::AssociateVertex(BodyPart bpPart, int iVertexIndex) {
    SBodyPart* pPart = &(m_pBodyParts[bpPart]);
@@ -267,7 +355,7 @@ void CAvatar::FinishLoad(int iMissingParts) {
    m_bLoading = false;
    // Calculate height
    SPoint3D pntMax, pntMin;
-   BoundingBox(unknown,pntMax,pntMin);
+   BoundingBox(pntMax,pntMin);
    m_dHeight = pntMax.m_dComponents[1];
    // Store missing sections
    m_iMissingParts = iMissingParts;
@@ -282,102 +370,35 @@ void CAvatar::FinishLoad(int iMissingParts) {
 // Texture Functions //////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////
 
-bool CAvatar::AddTexture(CImage* oTexture) {
-	bool bReturn = false;
-   if (m_bLoading) {
-      m_lTextures.AddBack(oTexture);
-   }
-	return bReturn;
-} //AddTexture(CImage& oTexture)
-
-bool CAvatar::ReplaceTexture(int iTextureIndex, CImage* oTexture) {
-	bool bReturn = false;
-   if (m_bLoading) {
-      if (m_lTextures[iTextureIndex]) delete m_lTextures[iTextureIndex];
-      m_lTextures[iTextureIndex] = oTexture;
-   }
-	return bReturn;
-} //ReplaceTexture(int iTextureIndex, CImage* oTexture)
-
-int CAvatar::TextureIndex(BodyPart bpPart) const {
-   return m_pBodyParts[bpPart].m_iTextureIndex;
-} //TextureIndex(BodyPart bpPart)
-
-CImage* CAvatar::Texture(int iTextureIndex) const {
-   return m_lTextures[iTextureIndex];
-} //Texture(int iTextureIndex)
-
-CImage* CAvatar::Texture(int iTextureIndex, bool& bMore) const {
-   if (iTextureIndex < NumTextures()-1) bMore = true;
-   else bMore = false;
-   return Texture(iTextureIndex);
-} //Texture(int iTextureIndex, bool& bMore)
+int CAvatar::MaterialIndex(BodyPart bpPart) const {
+   return m_pBodyParts[bpPart].m_iMaterialIndex;
+} //MaterialIndex(BodyPart bpPart)
 
 void CAvatar::BoundingBox(BodyPart bpBodyPart, SPoint3D& max, SPoint3D& min) const {
-   SPoint3D* pVertices = m_pCurrentVertices;
-   if (bpBodyPart==unknown) {
-      int iCurrentVertex = 0;
-      max.m_dComponents[0] = pVertices[iCurrentVertex].m_dComponents[0];
-      max.m_dComponents[1] = pVertices[iCurrentVertex].m_dComponents[1];
-      max.m_dComponents[2] = pVertices[iCurrentVertex].m_dComponents[2];
-      min.m_dComponents[0] = pVertices[iCurrentVertex].m_dComponents[0];
-      min.m_dComponents[1] = pVertices[iCurrentVertex].m_dComponents[1];
-      min.m_dComponents[2] = pVertices[iCurrentVertex].m_dComponents[2];
-      for (int i=0; i<m_iNumVertices; i++) {
-         if (pVertices[i].m_dComponents[0] > max.m_dComponents[0])
-            max.m_dComponents[0] = pVertices[i].m_dComponents[0];
-         else if (pVertices[i].m_dComponents[0] < min.m_dComponents[0])
-            min.m_dComponents[0] = pVertices[i].m_dComponents[0];
-         if (pVertices[i].m_dComponents[1] > max.m_dComponents[1])
-            max.m_dComponents[1] = pVertices[i].m_dComponents[1];
-         else if (pVertices[i].m_dComponents[1] < min.m_dComponents[1])
-            min.m_dComponents[1] = pVertices[i].m_dComponents[1];
-         if (pVertices[i].m_dComponents[2] > max.m_dComponents[2])
-            max.m_dComponents[2] = pVertices[i].m_dComponents[2];
-         else if (pVertices[i].m_dComponents[2] < min.m_dComponents[2])
-            min.m_dComponents[2] = pVertices[i].m_dComponents[2];
-      }
+   // Check we are using a valid body part
+   if (bpBodyPart<unknown || bpBodyPart>=TOTAL_NUMBER_BODYPARTS) return;
+   // If so, calculate bounding box of all attached faces
+   // Initialise results with the current centre position of the joint
+   for (int c=0; c<3; c++) {
+      max.m_dComponents[c] = m_pBodyParts[bpBodyPart].m_pntCurrentCentre.m_dComponents[c];
+      min.m_dComponents[c] = m_pBodyParts[bpBodyPart].m_pntCurrentCentre.m_dComponents[c];
    }
-   else if (m_pBodyParts[bpBodyPart].m_iNumFaces != 0) {
-      int iCurrentVertex = m_pFaces[m_pBodyParts[bpBodyPart].m_piFaces[0]].m_sVertices[0].m_iVertex;
-      max.m_dComponents[0] = pVertices[iCurrentVertex].m_dComponents[0];
-      max.m_dComponents[1] = pVertices[iCurrentVertex].m_dComponents[1];
-      max.m_dComponents[2] = pVertices[iCurrentVertex].m_dComponents[2];
-      min.m_dComponents[0] = pVertices[iCurrentVertex].m_dComponents[0];
-      min.m_dComponents[1] = pVertices[iCurrentVertex].m_dComponents[1];
-      min.m_dComponents[2] = pVertices[iCurrentVertex].m_dComponents[2];
-      for (int i=0; i<m_pBodyParts[bpBodyPart].m_iNumFaces; i++) {
-         for (int j=0; j<3; j++) {
-            iCurrentVertex = m_pFaces[m_pBodyParts[bpBodyPart].m_piFaces[i]].m_sVertices[j].m_iVertex;
-            if (pVertices[iCurrentVertex].m_dComponents[0] > max.m_dComponents[0])
-               max.m_dComponents[0] = pVertices[iCurrentVertex].m_dComponents[0];
-            else if (pVertices[iCurrentVertex].m_dComponents[0] < min.m_dComponents[0])
-               min.m_dComponents[0] = pVertices[iCurrentVertex].m_dComponents[0];
-            if (pVertices[iCurrentVertex].m_dComponents[1] > max.m_dComponents[1])
-               max.m_dComponents[1] = pVertices[iCurrentVertex].m_dComponents[1];
-            else if (pVertices[iCurrentVertex].m_dComponents[1] < min.m_dComponents[1])
-               min.m_dComponents[1] = pVertices[iCurrentVertex].m_dComponents[1];
-            if (pVertices[iCurrentVertex].m_dComponents[2] > max.m_dComponents[2])
-               max.m_dComponents[2] = pVertices[iCurrentVertex].m_dComponents[2];
-            else if (pVertices[iCurrentVertex].m_dComponents[2] < min.m_dComponents[2])
-               min.m_dComponents[2] = pVertices[iCurrentVertex].m_dComponents[2];
+   // Check all attached faces to find the bounding box
+   for (int i=0; i<m_pBodyParts[bpBodyPart].m_iNumFaces; i++) {
+      STriFace* pCurrentFace = m_pFaces + m_pBodyParts[bpBodyPart].m_piFaces[i];
+      for (int v=0; v<3; v++) {
+         int iCurrentVertex = pCurrentFace->m_sVertices[v].m_iVertex;
+         for (int c=0; c<3; c++) {
+            if (m_pVertices[iCurrentVertex].m_dComponents[c] > max.m_dComponents[c])
+               max.m_dComponents[c] = m_pVertices[iCurrentVertex].m_dComponents[c];
+            else if (m_pVertices[iCurrentVertex].m_dComponents[c] < min.m_dComponents[c])
+               min.m_dComponents[c] = m_pVertices[iCurrentVertex].m_dComponents[c];
          }
       }
    }
-   else {
-      max.m_dComponents[0] = m_pBodyParts[bpBodyPart].m_pntDefaultCentre.m_dComponents[0];
-      max.m_dComponents[1] = m_pBodyParts[bpBodyPart].m_pntDefaultCentre.m_dComponents[1];
-      max.m_dComponents[2] = m_pBodyParts[bpBodyPart].m_pntDefaultCentre.m_dComponents[2];
-      min.m_dComponents[0] = m_pBodyParts[bpBodyPart].m_pntDefaultCentre.m_dComponents[0];
-      min.m_dComponents[1] = m_pBodyParts[bpBodyPart].m_pntDefaultCentre.m_dComponents[1];
-      min.m_dComponents[2] = m_pBodyParts[bpBodyPart].m_pntDefaultCentre.m_dComponents[2];
-   }
+   // Done
    return;
 } //BoundingBox(BodyPart bpBodyPart, SPoint3D& max, SPoint3D& min) const
-
-const CDList<int>* CAvatar::FacesPerVertex(int iVertexIndex) const {
-   return &(m_plFacesPerVertexMap[iVertexIndex]);
-} //FacesPerVertex(int iVertexIndex) const
 
 ///////////////////////////////////////////////////////////////////////
 // Posing Functions ///////////////////////////////////////////////////
@@ -500,7 +521,7 @@ void CAvatar::Chop(BodyPart bpJoint, const CVector3D& vecPosition) {
    // Set vertices
    int iNumVertices = pPart->m_iNumVertices;
    for (int v=0; v<iNumVertices; v++) {
-      vecPosition.ToPoint3D(m_pCurrentVertices[pPart->m_piVertices[v]]);
+      vecPosition.ToPoint3D(m_pVertices[pPart->m_piVertices[v]]);
    }
    // Chop children
    for (int c=0; c<3; c++) {
@@ -625,12 +646,12 @@ int CAvatar::Merge(const CAvatar* pAvatar) {
    if (m_iMissingParts & BS_LEGS) {
    }
 
-   // Merge textures
+   // Merge materials
    if (m_iMissingParts & BS_HEAD) {
-      int iThisTexture = TextureIndex(skullbase);
-      int iThatTexture = pAvatar->TextureIndex(skullbase);
-      CImage* pNewSkullImage = new CImage(*(pAvatar->Texture(iThatTexture)));
-      ReplaceTexture(iThisTexture,pNewSkullImage);
+      int iThisMaterial = MaterialIndex(skullbase);
+      int iThatMaterial = pAvatar->MaterialIndex(skullbase);
+      CImage* pNewSkullImage = new CImage(*(pAvatar->Material(iThatMaterial)->Texture()));
+      Material(iThisMaterial)->SetTexture(pNewSkullImage);
    }
    if (m_iMissingParts & BS_TORSO) {
    }
@@ -688,7 +709,7 @@ void CAvatar::UpdateShape(enum BodyPart joint, CHomTransform& htTransform, bool 
 		int iNumPoints = pCurrentPart->m_iNumVertices;
 		while (iCurrentPoint<iNumPoints) {
 			int iCurrentVertex = pCurrentPart->m_piVertices[iCurrentPoint];
-			m_pCurrentVertices[iCurrentVertex] = pCurrentPart->m_htLowerTransform * m_pDefaultVertices[iCurrentVertex];
+			m_pVertices[iCurrentVertex] = pCurrentPart->m_htLowerTransform * m_pDefaultVertices[iCurrentVertex];
 			iCurrentPoint++;
 		}
 	}
@@ -705,29 +726,6 @@ void CAvatar::UpdateShape(enum BodyPart joint, CHomTransform& htTransform, bool 
 	return;
 } //UpdateShape(enum BodyPart joint, CHomTransform& htTransform, bool bDirty)
 
-void CAvatar::CalculateNormals(bool bVertex) {
-   // Calculate face normals
-   for (int f=0; f<m_iNumFaces; f++) {
-      CVector3D vectorOne(CVector3D(m_pCurrentVertices[m_pFaces[f].m_sVertices[1].m_iVertex]) - CVector3D(m_pCurrentVertices[m_pFaces[f].m_sVertices[0].m_iVertex]));
-      CVector3D vectorTwo(CVector3D(m_pCurrentVertices[m_pFaces[f].m_sVertices[2].m_iVertex]) - CVector3D(m_pCurrentVertices[m_pFaces[f].m_sVertices[0].m_iVertex]));
-      CVector3D vecNormal((vectorOne.Cross(vectorTwo)).Normalise());
-      vecNormal.ToDouble(m_pFaces[f].m_dNormal[0],m_pFaces[f].m_dNormal[1],m_pFaces[f].m_dNormal[2]);
-   }
-   // Calculate vertex normals if necessary
-   if (bVertex) {
-      for (int v=0; v<m_iNumVertices; v++) {
-         int iNumAdjoiningFaces = m_plFacesPerVertexMap[v].Length();
-         CVector3D vecNormal;
-         for (f=0; f<iNumAdjoiningFaces; f++) {
-            vecNormal += CVector3D(m_pFaces[m_plFacesPerVertexMap[v][f]].m_dNormal[0], m_pFaces[m_plFacesPerVertexMap[v][f]].m_dNormal[1], m_pFaces[m_plFacesPerVertexMap[v][f]].m_dNormal[2]);
-         }
-         vecNormal = vecNormal.Normalise();
-         vecNormal.ToDouble(m_pVertexNormals[v].m_dComponents[0], m_pVertexNormals[v].m_dComponents[1], m_pVertexNormals[v].m_dComponents[2]);
-      }
-   }
-	return;
-} //CalculateNormals(bool bVertex)
-
 ///////////////////////////////////////////////////////////////////////
 // PRIVATE functions //////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////
@@ -737,12 +735,9 @@ void CAvatar::CalculateNormals(bool bVertex) {
 ///////////////////////////////////////////////////////////////////////
 
 void CAvatar::BuildMaps(void) {
-   // Build faces per vertex map
-   for (int f=0; f<m_iNumFaces; f++) {
-      m_plFacesPerVertexMap[m_pFaces[f].m_sVertices[0].m_iVertex].AddBack(f);
-      m_plFacesPerVertexMap[m_pFaces[f].m_sVertices[1].m_iVertex].AddBack(f);
-      m_plFacesPerVertexMap[m_pFaces[f].m_sVertices[2].m_iVertex].AddBack(f);
-   }
+   // Call base class function
+   CTriMesh::BuildMaps();
+   // Done
    return;
 } //BuildMaps(void)
 
@@ -774,7 +769,7 @@ void CAvatar::UnRigidTransform(BodyPart joint, CHomTransform& htTransform) {
 	int iNumPoints = pCurrentPart->m_iNumVertices;
 	while (iCurrentPoint<iNumPoints) {
 		int iCurrentVertex = pCurrentPart->m_piVertices[iCurrentPoint];
-		m_pDefaultVertices[iCurrentVertex] = pCurrentPart->m_htLowerTransform * m_pCurrentVertices[iCurrentVertex];
+		m_pDefaultVertices[iCurrentVertex] = pCurrentPart->m_htLowerTransform * m_pVertices[iCurrentVertex];
 		iCurrentPoint++;
 	}
 	int iChild = 0;

@@ -7,7 +7,7 @@
 // AvatarFileSims.cpp - 16/2/2000 - James Smith
 //	Sims export filter implementation
 //
-// $Id: AvatarFileSims.cpp,v 1.5 2000/10/06 13:16:57 waz Exp $
+// $Id: AvatarFileSims.cpp,v 1.6 2000/11/21 16:44:25 waz Exp $
 //
 
 
@@ -40,11 +40,12 @@ CAvatarFileProxy<CAvatarFileSims> g_oAvatarProxySims;
 ////////////////////
 // Store Functions
 
-CAvatarFileSims::CAvatarFileSims() {
-   m_iAge = SIMS_ADULT;
-   m_iSex = SIMS_MALE;
-   m_iSkin = SIMS_MEDIUM;
-   m_iBuild = SIMS_FIT;
+CAvatarFileSims::CAvatarFileSims() :
+   m_iAge(SIMS_ADULT),
+   m_iSex(SIMS_MALE),
+   m_iSkin(SIMS_MEDIUM),
+   m_iBuild(SIMS_FIT)
+{
    return;
 } // CAvatarFileSims()
 
@@ -173,8 +174,8 @@ FRESULT CAvatarFileSims::Save(const char* pszFilename, CAvatar* pAvatar) const {
       break;
    }   
 
-   // Reset pose
-   CAvatarPose poOld = pAvatar->ExportPose();
+   // Store old poase
+   pAvatar->PushPose();
    pAvatar->ResetPose();
    pAvatar->UpdateModel();
    
@@ -182,10 +183,10 @@ FRESULT CAvatarFileSims::Save(const char* pszFilename, CAvatar* pAvatar) const {
    const double dScale = ((m_iAge == SIMS_CHILD) ? 4 : 5.25) / pAvatar->Height();
 
    // Store a few texture numbers for later use
-   int iFaceTexNum = pAvatar->TextureIndex(skullbase);
-   int iRHandTexNum = pAvatar->TextureIndex(r_wrist);
-   int iLHandTexNum = pAvatar->TextureIndex(l_wrist);
-   int iTorsoTexNum = pAvatar->TextureIndex(vl5);
+   int iFaceTexNum = pAvatar->MaterialIndex(skullbase);
+   int iRHandTexNum = pAvatar->MaterialIndex(r_wrist);
+   int iLHandTexNum = pAvatar->MaterialIndex(l_wrist);
+   int iTorsoTexNum = pAvatar->MaterialIndex(vl5);
 
    const STriFace* pFaces = pAvatar->Faces();
    SPoint3D pntMax, pntMin;
@@ -251,7 +252,7 @@ FRESULT CAvatarFileSims::Save(const char* pszFilename, CAvatar* pAvatar) const {
    // Save cranium texture
    g_poVAL->StepProgress("SimsSave");
    g_poVAL->SetProgressText("SimsSave", "Converting head texture");
-   CImage imgCranium(*(pAvatar->Texture(iFaceTexNum)));
+   CImage imgCranium(*(pAvatar->Material(iFaceTexNum)->Texture()));
    imgCranium.Scale(128,128);
    imgCranium.Flip();
    imgCranium.Convert(IT_PALETTE);
@@ -293,7 +294,7 @@ FRESULT CAvatarFileSims::Save(const char* pszFilename, CAvatar* pAvatar) const {
 	   std::vector<const STriFace*> vFaceList;
       // Create new face list
       for (int i=0; i<iNumFaces; i++) {
-         if (pFaces[i].m_iTextureNumber == iFaceTexNum) vFaceList.push_back(&(pFaces[i]));
+         if (pFaces[i].m_iMaterialNumber == iFaceTexNum) vFaceList.push_back(&(pFaces[i]));
       }
       iNumFaces = vFaceList.size();
       iNumVertices = iNumFaces * 3;
@@ -366,7 +367,7 @@ FRESULT CAvatarFileSims::Save(const char* pszFilename, CAvatar* pAvatar) const {
    pszMeshName = new char[11+iNameLength]; //B999MAFit_name
    pszMeshName[0] = 'B';
    strcpy(pszMeshName+1,"999");
-   pszMeshName[4] = cSex; //(m_iAge == SIMS_CHILD) ? 'U' : cSex;
+   pszMeshName[4] = cSex;
    pszMeshName[5] = cAge;
    strcpy(pszMeshName+6,pszBuild);
    pszMeshName[9] = '_';
@@ -377,7 +378,6 @@ FRESULT CAvatarFileSims::Save(const char* pszFilename, CAvatar* pAvatar) const {
    strcpy(pszSkinName+6+strlen(pszMeshName),"-PELVIS-BODY");
    pszTextureName = new char[14+iNameLength]; //"B999MAFitlgt_name
    strcpy(pszTextureName,pszMeshName);
-   //pszTextureName[4] = cSex;
    strcpy(pszTextureName+9,pszSkin);
    pszTextureName[12] = '_';
    strcpy(pszTextureName+13,pszName);
@@ -416,17 +416,17 @@ FRESULT CAvatarFileSims::Save(const char* pszFilename, CAvatar* pAvatar) const {
    g_poVAL->StepProgress("SimsSave");
    g_poVAL->SetProgressText("SimsSave", "Creating body texture");
    // Resize textures
-   CImage** pImages = new CImage*[pAvatar->NumTextures()];
-   int* pMinima = new int[pAvatar->NumTextures()];
-   int* pMaxima = new int[pAvatar->NumTextures()];
+   CImage** pImages = new CImage*[pAvatar->NumMaterials()];
+   int* pMinima = new int[pAvatar->NumMaterials()];
+   int* pMaxima = new int[pAvatar->NumMaterials()];
    int iTotalHeight = 0;
    const int iTextureWidth = 256;
    const SBodyPart* pBodyParts = pAvatar->BodyParts();
-   for (int t=0; t<pAvatar->NumTextures(); t++) {
+   for (int t=0; t<pAvatar->NumMaterials(); t++) {
       if ((t != iFaceTexNum) && (t != iRHandTexNum) && (t != iLHandTexNum)) {
          int iWidth = 0;
          int iHeight = 0;
-         CImage* pSmallerImage = new CImage(*(pAvatar->Texture(t)));
+         CImage* pSmallerImage = new CImage(*(pAvatar->Material(t)->Texture()));
          pSmallerImage->GetSize(iWidth,iHeight);
          iWidth = iTextureWidth;
          if (t == iTorsoTexNum) iHeight = iTextureWidth;
@@ -454,7 +454,7 @@ FRESULT CAvatarFileSims::Save(const char* pszFilename, CAvatar* pAvatar) const {
       return F_OUT_OF_MEMORY;
    }
    else {
-      for (t=0; t<pAvatar->NumTextures(); t++) {
+      for (t=0; t<pAvatar->NumMaterials(); t++) {
          if (pImages[t] != NULL) {
             imgTexture.Paste(*(pImages[t]),0,pMinima[t]);
             delete pImages[t];
@@ -575,13 +575,14 @@ FRESULT CAvatarFileSims::Save(const char* pszFilename, CAvatar* pAvatar) const {
       for (i=0; i<iNumBones+1; i++) {
          BodyPart bpPart = bpParts[i];
          int iPartFaces = pBodyParts[bpPart].m_iNumFaces;
+         //for (int f=0; (f<iPartFaces) && (iFace<iNumFaces); f++) {
          for (int f=0; f<iPartFaces; f++) {
             pFaceToPartMap[iFace] = bpPart;
             const STriFace* pFace = &pFaces[pBodyParts[bpPart].m_piFaces[f]];
             // Copy vertex indices
             for (int v=0; v<3; v++) pSubMesh[iFace].m_sVertices[v].m_iVertex = pFace->m_sVertices[v].m_iVertex;
             // Copy texture number and work out texture base positions and sizes
-            int t = pSubMesh[iFace].m_iTextureNumber = pFace->m_iTextureNumber;
+            int t = pSubMesh[iFace].m_iMaterialNumber = pFace->m_iMaterialNumber;
             double dBaseV = pMinima[t] * dTextureScale;
             double dHeight = (pMaxima[t] - pMinima[t]+1) * dTextureScale;
             // Copy and translate texture coordinates
@@ -596,14 +597,15 @@ FRESULT CAvatarFileSims::Save(const char* pszFilename, CAvatar* pAvatar) const {
             iFace++;
          }
          if (bpPart == vt12) {
-            int iPartFaces = pBodyParts[vt4].m_iNumFaces;
+            // Add faces used by vt8 to vt12
+            int iPartFaces = pBodyParts[vt8].m_iNumFaces;
             for (int f=0; f<iPartFaces; f++) {
                pFaceToPartMap[iFace] = bpPart;
-               const STriFace* pFace = &pFaces[pBodyParts[vt4].m_piFaces[f]];
+               const STriFace* pFace = &pFaces[pBodyParts[vt8].m_piFaces[f]];
                // Copy vertex indices
                for (int v=0; v<3; v++) pSubMesh[iFace].m_sVertices[v].m_iVertex = pFace->m_sVertices[v].m_iVertex;
                // Copy texture number and work out texture base positions and sizes
-               int t = pSubMesh[iFace].m_iTextureNumber = pFace->m_iTextureNumber;
+               int t = pSubMesh[iFace].m_iMaterialNumber = pFace->m_iMaterialNumber;
                double dBaseV = pMinima[t] * dTextureScale;
                double dHeight = (pMaxima[t] - pMinima[t]+1) * dTextureScale;
                // Copy and translate texture coordinates
@@ -612,8 +614,8 @@ FRESULT CAvatarFileSims::Save(const char* pszFilename, CAvatar* pAvatar) const {
                   dTexCoordV *= dHeight;
                   dTexCoordV += dBaseV;
                   dTexCoordV /= (double)iTextureHeight;
-                  pSubMesh[iFace].m_sVertices[v].m_sTexCoord.dU = pFace->m_sVertices[v].m_sTexCoord.dU ;
-                  pSubMesh[iFace].m_sVertices[v].m_sTexCoord.dV = dTexCoordV ;
+                  pSubMesh[iFace].m_sVertices[v].m_sTexCoord.dU = pFace->m_sVertices[v].m_sTexCoord.dU;
+                  pSubMesh[iFace].m_sVertices[v].m_sTexCoord.dV = dTexCoordV;
                }
                iFace++;
             }
@@ -622,9 +624,22 @@ FRESULT CAvatarFileSims::Save(const char* pszFilename, CAvatar* pAvatar) const {
       int iNumVertices = iNumFaces * 3;
 
       // Create new vertex list and map
-      int* pVertexList = new int[iNumVertices];
-      int* pVertexMap = new int[iNumVertices];
-      int* pVertexCounts = new int[iNumBones];
+      int* pVertexList = NULL;
+      int* pVertexMap = NULL;
+      int* pVertexCounts = NULL;
+      NEWBEGIN
+      pVertexList = new int[iNumVertices];
+      NEWEND("CAvatarFileSims::Save - pVertexList allocation")
+      NEWBEGIN
+      pVertexMap = new int[iNumVertices];
+      NEWEND("CAvatarFileSims::Save - pVertexMap allocation")
+      NEWBEGIN
+      pVertexCounts = new int[iNumBones];
+      NEWEND("CAvatarFileSims::Save - pVertexCounts allocation")
+      if ((pVertexList == NULL) || (pVertexMap == NULL) || (pVertexCounts == NULL)) {
+         // This doesn't dump out properly - it probably leaves memory hanging
+         return F_OUT_OF_MEMORY;
+      }
       int iCurrentVertex = 0;
       int iLastBoneCount = 0;
       for (i=0; i<iNumBones; i++) {
@@ -632,23 +647,11 @@ FRESULT CAvatarFileSims::Save(const char* pszFilename, CAvatar* pAvatar) const {
          for (int f=0; f<iNumFaces; f++) {
             for (int v=0; v<3; v++) {
                BodyPart bpVertexPart = (BodyPart)(pAvatar->GetVertexPart(pSubMesh[f].m_sVertices[v].m_iVertex));
-               if (bpVertexPart == bpPart) {
-                  pVertexList[iCurrentVertex] = pSubMesh[f].m_sVertices[v].m_iVertex;
-                  pVertexMap[(f*3)+v] = iCurrentVertex++;
-               }
-               else if ((bpPart == vt12) && (bpVertexPart == vt8)){
-                  pVertexList[iCurrentVertex] = pSubMesh[f].m_sVertices[v].m_iVertex;
-                  pVertexMap[(f*3)+v] = iCurrentVertex++;
-               }
-               else if ((bpPart == r_elbow) && (bpVertexPart == r_wrist)) {
-                  pVertexList[iCurrentVertex] = pSubMesh[f].m_sVertices[v].m_iVertex;
-                  pVertexMap[(f*3)+v] = iCurrentVertex++;
-               }
-               else if ((bpPart == l_elbow) && (bpVertexPart == l_wrist)) {
-                  pVertexList[iCurrentVertex] = pSubMesh[f].m_sVertices[v].m_iVertex;
-                  pVertexMap[(f*3)+v] = iCurrentVertex++;
-               }
-               else if ((bpPart == vc7) && (bpVertexPart == skullbase)) {
+               if ((bpVertexPart == bpPart) || 
+                   ((bpPart == vt12) && (bpVertexPart == vt8)) ||
+                   ((bpPart == r_elbow) && (bpVertexPart == r_wrist)) ||
+                   ((bpPart == l_elbow) && (bpVertexPart == l_wrist)) ||
+                   ((bpPart == vc7) && (bpVertexPart == skullbase))) {
                   pVertexList[iCurrentVertex] = pSubMesh[f].m_sVertices[v].m_iVertex;
                   pVertexMap[(f*3)+v] = iCurrentVertex++;
                }
@@ -699,10 +702,10 @@ FRESULT CAvatarFileSims::Save(const char* pszFilename, CAvatar* pAvatar) const {
       for (i=0; i<iNumVertices; i++) {
          int iVertexIndex = pVertexList[i];
          BodyPart bpPart = (BodyPart)pAvatar->GetVertexPart(iVertexIndex);
-         if (bpPart == l_wrist) bpPart = l_elbow;
-         else if (bpPart == r_wrist) bpPart = r_elbow;
+         if      (bpPart == l_wrist)   bpPart = l_elbow;
+         else if (bpPart == r_wrist)   bpPart = r_elbow;
          else if (bpPart == skullbase) bpPart = vc7;
-         else if (bpPart == vt8) bpPart = vt12;
+         else if (bpPart == vt8)       bpPart = vt12;
          double dX = pBodyParts[bpPart].m_pntCurrentCentre.m_dComponents[0];
          double dY = pBodyParts[bpPart].m_pntCurrentCentre.m_dComponents[1];
          // Correct leg positioning
@@ -776,7 +779,7 @@ FRESULT CAvatarFileSims::Save(const char* pszFilename, CAvatar* pAvatar) const {
    delete [] pszSkinName;
    delete [] pszTextureName;
    // Restore old pose
-   pAvatar->ImportPose(poOld);
+   pAvatar->PopPose();
    pAvatar->UpdateModel();
    return eResult;
 

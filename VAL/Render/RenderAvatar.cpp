@@ -7,7 +7,7 @@
 // RenderAvatar.cpp - 29/02/2000 - Warren Moore
 //	Avatar render object implementation
 //
-// $Id: RenderAvatar.cpp,v 1.4 2000/10/10 17:52:50 waz Exp $
+// $Id: RenderAvatar.cpp,v 1.5 2000/11/21 16:43:04 waz Exp $
 //
 
 #include "StdAfx.h"
@@ -153,7 +153,7 @@ void CRenderAvatar::RenderFlat() {
 			int iV1 = m_pAvatar->m_pFaces[iCurrentFace].m_sVertices[1].m_iVertex;
 			int iV2 = m_pAvatar->m_pFaces[iCurrentFace].m_sVertices[2].m_iVertex;
 			pNormal = m_pAvatar->m_pVertexNormals;
-			pVertex = m_pAvatar->m_pCurrentVertices;
+			pVertex = m_pAvatar->m_pVertices;
 			// Draw the triangle
 			glBegin(GL_TRIANGLES);
 				glNormal3f(pNormal[iV0].m_dComponents[0],
@@ -225,9 +225,9 @@ void CRenderAvatar::RenderTexture() {
 			int iV1 = m_pAvatar->m_pFaces[iCurrentFace].m_sVertices[1].m_iVertex;
 			int iV2 = m_pAvatar->m_pFaces[iCurrentFace].m_sVertices[2].m_iVertex;
 			pNormal = m_pAvatar->m_pVertexNormals;
-			pVertex = m_pAvatar->m_pCurrentVertices;
+			pVertex = m_pAvatar->m_pVertices;
 			// Find the texture
-			iTextureNum = m_pAvatar->m_pFaces[iCurrentFace].m_iTextureNumber;
+			iTextureNum = m_pAvatar->m_pFaces[iCurrentFace].m_iMaterialNumber;
 			ASSERT(m_iTexture[iTextureNum] != -1);
 			// Set the texture
 			m_poContext->UseTexture(m_iTexture[iTextureNum]);
@@ -293,17 +293,17 @@ void CRenderAvatar::RenderSelection() {
 			int iV2 = m_pAvatar->m_pFaces[iCurrentFace].m_sVertices[2].m_iVertex;
 			// Draw the triangle
 			glBegin(GL_TRIANGLES);
-				glVertex3f(m_pAvatar->m_pCurrentVertices[iV0].m_dComponents[0],
-									 m_pAvatar->m_pCurrentVertices[iV0].m_dComponents[1],
-									 m_pAvatar->m_pCurrentVertices[iV0].m_dComponents[2]);
+				glVertex3f(m_pAvatar->m_pVertices[iV0].m_dComponents[0],
+									 m_pAvatar->m_pVertices[iV0].m_dComponents[1],
+									 m_pAvatar->m_pVertices[iV0].m_dComponents[2]);
 
-				glVertex3f(m_pAvatar->m_pCurrentVertices[iV1].m_dComponents[0],
-									 m_pAvatar->m_pCurrentVertices[iV1].m_dComponents[1],
-									 m_pAvatar->m_pCurrentVertices[iV1].m_dComponents[2]);
+				glVertex3f(m_pAvatar->m_pVertices[iV1].m_dComponents[0],
+									 m_pAvatar->m_pVertices[iV1].m_dComponents[1],
+									 m_pAvatar->m_pVertices[iV1].m_dComponents[2]);
 
-				glVertex3f(m_pAvatar->m_pCurrentVertices[iV2].m_dComponents[0],
-									 m_pAvatar->m_pCurrentVertices[iV2].m_dComponents[1],
-									 m_pAvatar->m_pCurrentVertices[iV2].m_dComponents[2]);
+				glVertex3f(m_pAvatar->m_pVertices[iV2].m_dComponents[0],
+									 m_pAvatar->m_pVertices[iV2].m_dComponents[1],
+									 m_pAvatar->m_pVertices[iV2].m_dComponents[2]);
 			glEnd();
 		}
 	}
@@ -313,10 +313,10 @@ void CRenderAvatar::RenderSelection() {
 
 void CRenderAvatar::CreateTextures() {
 	if (m_pAvatar) {
-		const int iNumTextures = m_pAvatar->NumTextures();
+		const int iNumTextures = m_pAvatar->NumMaterials();
 		// For each texture in the model
 		for (int i = 0; i < iNumTextures; i++) {
-			CImage *pImg = m_pAvatar->Texture(i);
+			CImage *pImg = m_pAvatar->Material(i)->Texture();
 			m_iTexture[i] = m_poContext->ImportTexture(*pImg);
 			if (m_iTexture[i] >= 0)
 				m_iNumTextures++;

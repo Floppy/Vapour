@@ -7,7 +7,7 @@
 // AvatarFileHalflife.cpp - 16/2/2000 - James Smith
 //	Halflife export filter implementation
 //
-// $Id: AvatarFileHalflife.cpp,v 1.15 2000/11/01 13:26:37 waz Exp $
+// $Id: AvatarFileHalflife.cpp,v 1.16 2000/11/21 16:44:31 waz Exp $
 //
 
 #include "stdafx.h"
@@ -47,21 +47,22 @@ CAvatarFileProxy<CAvatarFileHalflife> g_oAvatarProxyHalflife;
 ////////////////////
 // Store Functions
 
-CAvatarFileHalflife::CAvatarFileHalflife() {
-   m_pszModelname         = NULL;
-   m_pcTextureDataChunk   = NULL;
-   m_pcTextureIndexChunk  = NULL;
-   m_pTextureHeaderChunk  = NULL;
-   m_pcMeshDataChunk      = NULL;
-   m_pMeshHeaderChunk     = NULL;
-   m_pcModelDataChunk     = NULL;
-   m_pSeqGroupsChunk      = NULL;
-   m_pEventChunk          = NULL;
-   m_pHitboxChunk         = NULL;
-   m_pAttachmentChunk     = NULL;
-   m_pBoneControllerChunk = NULL;
-   m_pBoneChunk           = NULL;
-   m_pPose                = NULL;
+CAvatarFileHalflife::CAvatarFileHalflife() :
+   m_pszModelname(NULL),
+   m_pcTextureDataChunk(NULL),
+   m_pcTextureIndexChunk(NULL),
+   m_pTextureHeaderChunk(NULL),
+   m_pcMeshDataChunk(NULL),
+   m_pMeshHeaderChunk(NULL),
+   m_pcModelDataChunk(NULL),
+   m_pSeqGroupsChunk(NULL),
+   m_pEventChunk(NULL),
+   m_pHitboxChunk(NULL),
+   m_pAttachmentChunk(NULL),
+   m_pBoneControllerChunk(NULL),
+   m_pBoneChunk(NULL)
+{
+      return;
 } // CAvatarFileHalflife()
 
 float CAvatarFileHalflife::GetFilterVersion() const {
@@ -149,7 +150,7 @@ FRESULT CAvatarFileHalflife::Save(const char* pszFilename, CAvatar* pAvatar) con
    if ((iResult == -1) && (errno != EEXIST)) return F_DIR_ERROR;
    
    // Setup the export progress dialog
-	g_poVAL->SetProgressMax("HLSave", 18 + pAvatar->NumTextures());
+	g_poVAL->SetProgressMax("HLSave", 18 + pAvatar->NumMaterials());
    
    g_poVAL->StepProgress("HLSave");
    g_poVAL->SetProgressText("HLSave", "Saving MDL file");
@@ -183,6 +184,11 @@ FRESULT CAvatarFileHalflife::Save(ofstream& osOutputStream, CAvatar* pAvatar) co
 
    FRESULT eResult = F_OK; // Return value
    
+   // Store old pose
+   pAvatar->PushPose();
+   pAvatar->ResetPose();
+   pAvatar->UpdateModel();
+
    // Load required data
    g_poVAL->StepProgress("HLSave");
    g_poVAL->SetProgressText("HLSave", "Loading external data");
@@ -215,12 +221,6 @@ FRESULT CAvatarFileHalflife::Save(ofstream& osOutputStream, CAvatar* pAvatar) co
    // Get avatar data
    const int iNumVertices = pAvatar->NumVertices();
    const int iNumFaces    = pAvatar->NumFaces();
-
-   // Store old pose
-   CAvatarPose oPose = pAvatar->ExportPose();
-   m_pPose = &oPose;
-   pAvatar->ResetPose();
-   pAvatar->UpdateModel();
 
    // Re-pose avatar
    CVector3D vecTarget(0,1,0);
@@ -626,14 +626,14 @@ FRESULT CAvatarFileHalflife::Save(ofstream& osOutputStream, CAvatar* pAvatar) co
    sHeader.iNumTransitions = 0;
    sHeader.iTransitionChunkOffset = sHeader.iLength;
    
-   const int uFaceTexIndex = pAvatar->TextureIndex(skullbase);
+   const int uFaceTexIndex = pAvatar->MaterialIndex(skullbase);
 
    // We create two textures - head and body.
    // Deal with head texture first: this is the easy bit...
    g_poVAL->StepProgress("HLSave");
    g_poVAL->SetProgressText("HLSave", "Converting head texture");
    // Copy texture out
-   CImage imgFace(*(pAvatar->Texture(uFaceTexIndex)));
+   CImage imgFace(*(pAvatar->Material(uFaceTexIndex)->Texture()));
    // Scale...
    imgFace.Scale(HL_TEXTURE_WIDTH,HL_TEXTURE_HEIGHT);
    // flip...
@@ -641,7 +641,7 @@ FRESULT CAvatarFileHalflife::Save(ofstream& osOutputStream, CAvatar* pAvatar) co
    // and convert to palette!
    imgFace.Convert(IT_PALETTE);
 
-   unsigned int uNumTextures = pAvatar->NumTextures();
+   unsigned int uNumTextures = pAvatar->NumMaterials();
 
    unsigned int* uFirstPixel = new unsigned int[uNumTextures];
    unsigned int* uImageHeight = new unsigned int[uNumTextures];
@@ -650,7 +650,7 @@ FRESULT CAvatarFileHalflife::Save(ofstream& osOutputStream, CAvatar* pAvatar) co
    g_poVAL->StepProgress("HLSave");
    g_poVAL->SetProgressText("HLSave", "Creating body texture");
    // Store torso tex index for future reference
-   unsigned int uTorsoTexIndex = pAvatar->TextureIndex(vl5);
+   unsigned int uTorsoTexIndex = pAvatar->MaterialIndex(vl5);
 
    // Resize textures
    CImage** pImages = NULL;
@@ -674,7 +674,7 @@ FRESULT CAvatarFileHalflife::Save(ofstream& osOutputStream, CAvatar* pAvatar) co
          CImage* pSmallerImage = NULL;
          // Create temporary image by copying current image
          NEWBEGIN
-         pSmallerImage = new CImage(*(pAvatar->Texture(t)));
+         pSmallerImage = new CImage(*(pAvatar->Material(t)->Texture()));
          NEWEND("CAvatarFileHalflife::Save - small image allocation");
          if (pSmallerImage == NULL) {
             // Dump data
@@ -760,7 +760,7 @@ FRESULT CAvatarFileHalflife::Save(ofstream& osOutputStream, CAvatar* pAvatar) co
    // Split main mesh into two submeshes based on texture
    CDList<STriFace> pSubMeshes[2];
    for (i=0; i<iNumFaces; i++) {
-      int iTextureNumber = pFaces[i].m_iTextureNumber;
+      int iTextureNumber = pFaces[i].m_iMaterialNumber;
       CDList<STriFace>* pSubMesh = (iTextureNumber==uFaceTexIndex) ? pSubMeshes : pSubMeshes+1;
       pSubMesh->AddBack(pFaces[i]);
       // Rescale texture coordinates
@@ -1144,10 +1144,10 @@ FRESULT CAvatarFileHalflife::Save(ofstream& osOutputStream, CAvatar* pAvatar) co
       // Fill in index in header
       m_pMeshHeaderChunk[i].iTriangleDataIndex = sHeader.iLength;
       // Work our mesh length
-      int iMeshLength = 2; //Space for terminating 0
+      int iMeshLength = 2; // Space for terminating 0
       for (int s=pStrippedSubMeshes[i].Length(); s--!=0; ) {
          iMeshLength += 2; // Space for number of points in strip
-         iMeshLength +=  (pStrippedSubMeshes[i])[s].size() * 8; // Space for points
+         iMeshLength += (pStrippedSubMeshes[i])[s].size() * 8; // Space for points
       }
       // Word align the mesh
       WORDALIGN(iMeshLength);
@@ -1413,10 +1413,8 @@ void CAvatarFileHalflife::Cleanup(CAvatar* pAvatar) const {
    if (m_pBoneControllerChunk != NULL) delete [] m_pBoneControllerChunk;
    if (m_pBoneChunk != NULL)           delete [] m_pBoneChunk;
    // Restore old pose
-   if (m_pPose != NULL) {
-      pAvatar->ImportPose(*m_pPose);
-      pAvatar->UpdateModel();
-   }
+   pAvatar->PopPose();
+   pAvatar->UpdateModel();
    // Close the wedgie and file stream
    m_oWedgie.Close();
    m_fsDataWJE.close();

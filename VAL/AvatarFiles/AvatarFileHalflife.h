@@ -7,7 +7,7 @@
 // AvatarFileHalflife.h - 16/2/2000 - James Smith
 //	Halflife MDL export filter header
 //
-// $Id: AvatarFileHalflife.h,v 1.7 2000/11/01 13:26:19 waz Exp $
+// $Id: AvatarFileHalflife.h,v 1.8 2000/11/21 16:44:32 waz Exp $
 //
 
 #pragma once
@@ -51,7 +51,6 @@ private:
    mutable SHalflifeBone* m_pBoneChunk;
    mutable fstream m_fsDataWJE;
    mutable CWedgie m_oWedgie;
-   mutable CAvatarPose* m_pPose;
 
    static const char* m_pszJointNames[];
 

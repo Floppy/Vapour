@@ -7,7 +7,7 @@
 // AvatarFileAME.cpp - 17/06/2000 - James Smith
 //	AME import filter implementation
 //
-// $Id: AvatarFileAME.cpp,v 1.9 2000/10/23 13:50:35 waz Exp $
+// $Id: AvatarFileAME.cpp,v 1.10 2000/11/21 16:44:31 waz Exp $
 //
 
 #include "stdafx.h"
@@ -173,8 +173,10 @@ CAvatar* CAvatarFileAME::Load(const char* pszFilename) const {
                }
                // Rescale texture
                pNewImage->Scale(iWidth,iHeight);
-               // And add to avatar
-               pNewAvatar->AddTexture(pNewImage);
+               // Create new material and set texture
+               int iNewMaterial = pNewAvatar->AddMaterial();
+               if (iNewMaterial > -1) pNewAvatar->Material(iNewMaterial)->SetTexture(pNewImage);
+               else delete pNewImage;
             }
          }
 
@@ -184,7 +186,13 @@ CAvatar* CAvatarFileAME::Load(const char* pszFilename) const {
          g_poVAL->StepProgress("AMELoad") ;
          g_poVAL->SetProgressText("AMELoad", "Loading vertices");
 			int iNumVertices = pNewAvatar->NumVertices();
-			for (int i=0; i<iNumVertices; i++) pNewAvatar->SetVertex(i,AMeModel.VerticesArr[i].fX*dScale,AMeModel.VerticesArr[i].fY*dScale,AMeModel.VerticesArr[i].fZ*dScale);
+         SPoint3D pntVertex;
+         for (int i=0; i<iNumVertices; i++) {
+            pntVertex.m_dComponents[0] = AMeModel.VerticesArr[i].fX;
+            pntVertex.m_dComponents[1] = AMeModel.VerticesArr[i].fY;
+            pntVertex.m_dComponents[2] = AMeModel.VerticesArr[i].fZ;
+            pNewAvatar->SetVertex(i,pntVertex);
+         }
 
          //Load faces
          g_poVAL->StepProgress("AMELoad") ;
@@ -358,8 +366,8 @@ CAvatar* CAvatarFileAME::Load(const char* pszFilename) const {
             enumBodyPartID amePart= ameParts[i];
   			   int iNumFaces = AMeModel.NumTrianglesInBodyPart[amePart];
 			   int iCurrentFace = AMeModel.FirstTriangleOfBodyPart[amePart];
-            // Associate texture
-            pNewAvatar->AssociateTexture(bpPart,pFaces[iCurrentFace].m_iTextureNumber);
+            // Associate material
+            pNewAvatar->AssociateMaterial(bpPart,pFaces[iCurrentFace].m_iMaterialNumber);
             // Associate faces
             if (bpPart == vl5) {
                // Deal specially with the torso - we need to split it into 4
@@ -373,7 +381,7 @@ CAvatar* CAvatarFileAME::Load(const char* pszFilename) const {
    	   		}
             }
             else {
-               // Associate faces & textures
+               // Associate faces
                for (int j=0; j<iNumFaces; j++) {
    				   pNewAvatar->AssociateFace(bpPart, iCurrentFace++);
 	   		   }
@@ -383,7 +391,7 @@ CAvatar* CAvatarFileAME::Load(const char* pszFilename) const {
   			int iNumBPFaces = AMeModel.NumTrianglesInBodyPart[bp_Skirt];
          if (iNumBPFaces != 0) {
 			   int iCurrentFace = AMeModel.FirstTriangleOfBodyPart[bp_Skirt];
-            pNewAvatar->AssociateTexture(skirt,pFaces[iCurrentFace].m_iTextureNumber);
+            pNewAvatar->AssociateMaterial(skirt,pFaces[iCurrentFace].m_iMaterialNumber);
 			   for (int j=0; j<iNumBPFaces; j++) {
 				   pNewAvatar->AssociateFace(skirt, iCurrentFace++);
 			   }
@@ -391,13 +399,13 @@ CAvatar* CAvatarFileAME::Load(const char* pszFilename) const {
          // Fix face associations
          pNewAvatar->FixFaceAssociations();
 
-         // Associate torso texture with extra body parts
-			int iTorsoTexture = pNewAvatar->TextureIndex(vl5);
-			pNewAvatar->AssociateTexture(vt12,iTorsoTexture);
-			pNewAvatar->AssociateTexture(vt8,iTorsoTexture);
-			pNewAvatar->AssociateTexture(vt4,iTorsoTexture);
-			pNewAvatar->AssociateTexture(l_acromioclavicular,iTorsoTexture);
-			pNewAvatar->AssociateTexture(r_acromioclavicular,iTorsoTexture);
+         // Associate torso material with extra body parts
+			int iTorsoMaterial = pNewAvatar->MaterialIndex(vl5);
+			pNewAvatar->AssociateMaterial(vt12,iTorsoMaterial);
+			pNewAvatar->AssociateMaterial(vt8,iTorsoMaterial);
+			pNewAvatar->AssociateMaterial(vt4,iTorsoMaterial);
+			pNewAvatar->AssociateMaterial(l_acromioclavicular,iTorsoMaterial);
+			pNewAvatar->AssociateMaterial(r_acromioclavicular,iTorsoMaterial);
 
          // Load site positions
          BodyPart bpSites[] = {
@@ -963,7 +971,7 @@ CAvatar* CAvatarFileAME::LoadSections(const char* pszFilename, int bsSections) c
    g_poVAL->SetProgressText("AMELoad", "Loading AvatarMe file");
    cAvatar AMeModel;
    if (AMeModel.Load(pszFilename) == 0) {
-      CAvatarPose poOldPose = pAvatar->ExportPose();
+      pAvatar->PopPose();
       pAvatar->ResetPose();
       pAvatar->UpdateModel();
       pAvatar->EnableAccess();
@@ -1324,7 +1332,7 @@ CAvatar* CAvatarFileAME::LoadSections(const char* pszFilename, int bsSections) c
 			pAvatar->UpdateModel();
       }
       pAvatar->DisableAccess();
-      pAvatar->ImportPose(poOldPose);
+      pAvatar->PopPose();
       pAvatar->UpdateModel();
    }
    else iRetVal = 0;
