@@ -7,7 +7,7 @@
 // Wrapper.h - 06/06/2000 - Warren Moore
 //	Global definitions for avatar converter wrappers
 //
-// $Id: Wrapper.h,v 1.2 2000/07/15 10:41:53 waz Exp $
+// $Id: Wrapper.h,v 1.3 2000/07/19 08:50:24 waz Exp $
 //
 
 #ifndef _WRAP_
@@ -16,6 +16,19 @@
 #pragma once
 
 //#===--- Defines
+
+// Definitions of standard class options and arguments
+// for Vapour Exported Models
+
+// Option IDs
+#define VEM_SGANAME				1
+#define VEM_MODELNAME			2
+#define VEM_DIRECTORY			3
+#define VEM_VERBOSE				4
+// Option values
+#define VEM_UNKNOWN				0
+#define VEM_TRUE					1
+#define VEM_FALSE					2
 
 //#===--- Data types
 
