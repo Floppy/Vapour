@@ -7,7 +7,7 @@
 # SlabElement.wrl
 # 19/03/2002 - James Smith
 #
-# $Id: SlabElement.wrl,v 1.10 2002/03/26 20:09:59 vap-james Exp $
+# $Id: SlabElement.wrl,v 1.11 2002/03/26 23:45:11 vap-james Exp $
 
 PROTO SlabElement [
    eventIn MFColor  set_colours
@@ -24,7 +24,7 @@ PROTO SlabElement [
 {
 
    PROTO Crack [
-      field SFFloat size 0.1
+      field SFVec3f size 0.1 0.2 0.1
       exposedField SFInt32 type 0
       exposedField SFVec3f translation 0 0 0
    ]
@@ -42,8 +42,8 @@ PROTO SlabElement [
                            diffuseColor 1 1 0
                         }
                      }
-                     geometry Sphere {
-                        radius IS size
+                     geometry DEF GEOM Box {
+                        size IS size
                      }
                   }
                   Shape {
@@ -52,9 +52,7 @@ PROTO SlabElement [
                            diffuseColor 1 0 0
                         }
                      }
-                     geometry Sphere {
-                        radius IS size
-                     }
+                     geometry USE GEOM
                   }
                   Shape {
                      appearance Appearance {
@@ -62,9 +60,7 @@ PROTO SlabElement [
                            diffuseColor 0 1 1
                         }
                      }
-                     geometry Sphere {
-                        radius IS size
-                     }
+                     geometry USE GEOM
                   }
                ]
             }
