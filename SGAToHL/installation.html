@@ -1,0 +1,77 @@
+<HTML>
+<TITLE>
+SGAToHL 1.1 - Converter Usage & Avatar Installation Instructions
+</TITLE>
+<BODY>
+<CENTER>
+<H1>SGAToHL 1.1</H1>
+<H2>Converter Usage & Avatar Installation Instructions</H2>
+</CENTER>
+<H3>Usage</H3>
+<P>
+The application <FONT FACE="courier new">sgatohl.exe</FONT> is a Win32 command-line app used to generate self-extracting executables containing 
+models for 'Half-Life', created from SGA1 avatars. 
+It is executed from the MS-DOS command prompt in the form:-
+</P>
+<P>
+<FONT FACE="courier new">sgatohl avatar_filename.ame [sfx_path\]sfx_name.exe {-option argument ...}</FONT>
+</P>
+<P>
+No model will be produced unless these options are specified:-
+</P>
+<P>
+<TABLE CELLSPACING=0 CELLPADDING=0 BORDER=0 WIDTH=80% COLS=2>
+<TR><TD WIDTH=40% VALIGN="top"><FONT FACE="courier new">avatar_filename.ame</FONT></TD><TD>Filename for the input SGA avatar</TD></TR>
+<TR><TD WIDTH=40% VALIGN="top"><FONT FACE="courier new">[sfx_path\]sfx_name.exe</FONT></TD><TD>Output filename of the self-extracting executable.
+The <FONT FACE="courier new">sfx_path\</FONT> is optional, and is independent of the <FONT FACE="courier new">-path</FONT> option</TD></TR>
+</TABLE>
+</P>
+<P>
+These options may be used to specify a model output directory and properties for the exported model.
+</P>
+<TABLE CELLSPACING=0 CELLPADDING=0 BORDER=0 WIDTH=80% COLS=2>
+<TR><TD WIDTH=40% VALIGN="top"><FONT FACE="courier new">-name [model_name]</FONT></TD><TD>Name to be used for model files - <I>Default: <FONT FACE="courier new">sfx_name</FONT></I></TD></TR>
+<TR><TD WIDTH=40% VALIGN="top"><FONT FACE="courier new">-path [pathname]</FONT></TD><TD>Directory in which to place temporary model files.
+The directory <FONT FACE="courier new">sga_temp</FONT> is created within the executable working directory and used if this option is not specified.</TD>
+<TR><TD WIDTH=40% VALIGN="top"><FONT FACE="courier new">-0</FONT></TD><TD>No text output</TD></TR>
+</TABLE>
+<P>
+This example set of command-line arguments will convert <FONT FACE="courier new">test.ame</FONT> into a Half-Life model. 
+The temporary model files (<FONT FACE="courier new">model\model.*</FONT>) will be placed in the directory <FONT FACE="courier new">d:\model_files</FONT>.
+These files will then be moved into a self-extracting executable called <FONT FACE="courier new">c:\sfx\test.exe</FONT>.
+</P>
+<P>
+<FONT FACE="courier new">sgatohl test.ame c:\sfx\test.exe -name model -path d:\model_files</FONT>
+</P>
+<H3>Files</H3>
+<P>
+The conversion process generates two files (using the above example):
+<UL>
+<LI><FONT FACE="courier new">d:\model_files\<B>name\name.mdl</B></FONT></LI>
+<LI><FONT FACE="courier new">d:\model_files\<B>name\name.bmp</B></FONT></LI>
+</UL>
+</P>
+<P>
+These files are then compressed into the self-extracting executable <FONT FACE="courier new">c:\sfx\test.exe</FONT>.
+<H3>Installing models into 'HalfLife'</H3>
+<P>
+The above files need to be installed in your game folder. This is normally <FONT FACE="courier new">
+C:\Sierra\Half-Life</FONT>, but you may have installed to a different place on
+your computer. Within this folder, there are the sub-folders <FONT FACE="courier new">valve\models\player</FONT>.
+The self-extracting executable can be run from any location on the computer on which you wish to install the model.
+If the game has been installed correctly, the game folder should be found automatically and the files installed into
+the correct subfolders without any other user intervention. Should the installer not be able to find the game folder,
+you will be prompted to specify the folder yourself. 
+</P>
+<H3>Use</H3>
+<P>
+In Half-Life, go to the 'Multiplayer\Customize' screen, then click the 'Next' and 'Previous' buttons in the 'Player Model' window until you find your avatar.
+The installed avatars are only used within multi-player games.
+</P>
+<P>
+Copyright &copy; 2000 <A HREF="http://www.vapourtech.com">Vapour Technology Ltd.</A><BR>
+Licensed to <A HREF="http://www.avatarme.com">AvatarMe Ltd.</A> under agreement.
+</P>
+</BODY>
+</HTML>
+
