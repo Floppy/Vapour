@@ -7,7 +7,7 @@
 // AvatarFileHalflife.cpp - 16/2/2000 - James Smith
 //	Halflife export filter implementation
 //
-// $Id: AvatarFileHalflife.cpp,v 1.12 2000/10/06 13:16:57 waz Exp $
+// $Id: AvatarFileHalflife.cpp,v 1.13 2000/10/10 17:51:31 waz Exp $
 //
 
 #include "stdafx.h"
@@ -23,11 +23,7 @@
 #include <direct.h>
 #include <errno.h>
 
-#include "RenderContextStore.h"
-#include "RenderContext.h"
-#include "RenderAvatar.h"
-
-#include "gl\gl.h"
+#include "SceneHLThumbnail.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -38,7 +34,6 @@ static char THIS_FILE[] = __FILE__;
 #define WORDALIGN(x) if (x & 0x03) x = (x + 0x04) & 0xfffffffc
 
 extern CImageFileStore g_oImageFileStore;
-extern CRenderContextStore g_oRenderContextStore;
 
 ////////////////////////
 // CAvatarFileHalflife
@@ -1236,68 +1231,19 @@ void CAvatarFileHalflife::SaveThumbnail(const char *pcBitmap, CAvatar *poAvatar)
 	g_poVAL->SetProgressText("HLSave", "Rendering thumbnail");
 	// Create the snapshot image
 	CImage oImage(IT_RGB, 164, 200);
-	// Set the render context options
-	g_oRenderContextStore.ClearContextOptions();
-	g_oRenderContextStore.SetContextOption(RCO_MODE, RCV_DONT_CARE);
-	g_oRenderContextStore.SetContextOption(RCO_MEDIUM, RCV_BUFFER);
-	g_oRenderContextStore.SetContextOption(RCO_VIEW, RCV_NORMAL);
-	g_oRenderContextStore.SetContextOption(RCO_WIDTH, 164U);
-	g_oRenderContextStore.SetContextOption(RCO_HEIGHT, 200U);
-	g_oRenderContextStore.SetContextOption(RCO_DEPTH, 24U);
-	// Check for a suitable context
-	CRenderContext *poRC = g_oRenderContextStore.CreateSuitableContext();
-	// If failed display error text
-	if (poRC == NULL) {
-		g_poVAL->SetProgressText("HLSave", "Unable to find suitable render context");
-	}
-	// Otherwise render the avatar
-	else {
-		// Black background
-		poRC->SetOption(RCO_BACKRED, 0.0F);
-		poRC->SetOption(RCO_BACKGREEN, 0.0F);
-		poRC->SetOption(RCO_BACKBLUE, 0.0F);
-		// Set the view planes and angle
-		poRC->SetOption(RCO_NEARPLANE, 0.5F);
-		poRC->SetOption(RCO_FARPLANE, 20.0F);
-		poRC->SetOption(RCO_VIEWANGLE, 10.0F);
-		poRC->SetProjectionMode(RCP_PERSPECTIVE);
-		// Create the avatar render object
-		CRenderAvatar oView(poRC);
-		oView.SetAvatar(poAvatar, false);
-		// Move the avatar into position
-		oView.SetPosition(0.0F, -(poAvatar->Height() / 2.0F), -12.0F);
-		// Set the render mode to textured
-		oView.RenderMode(ROM_TEXTURE);
-		// Enable the context
-		poRC->Enable();
-		// Initialise the avatar
-		oView.Init();
-		// Clear the buffer
-		poRC->ClearBuffer(RCB_COLOUR | RCB_DEPTH);
-		// Reset the matrix
-		glLoadIdentity();
-		// Place the light
-		glEnable(GL_LIGHT0);
-		GLfloat fLAmbient[4] = {0.1F, 0.1F, 0.1F, 1.0F};
-		GLfloat fLWhite[4] = {1.0F, 1.0F, 1.0F, 1.0F};
-		glLightfv(GL_LIGHT0, GL_AMBIENT, fLAmbient);
-		glLightfv(GL_LIGHT0, GL_DIFFUSE, fLWhite);
-		glLightfv(GL_LIGHT0, GL_SPECULAR, fLWhite);
-		GLfloat fLPos[4] = { 0.0F, 0.0F, 0.0F, 1.0F};
-		glLightfv(GL_LIGHT0, GL_POSITION, fLPos);
-		// Render the avatar
-		oView.Execute();
-		// Disable the context
-		poRC->Disable();
+	// Create the scene
+	CSceneHLThumbnail oScene;
+	// Create context
+	if (oScene.Create() == SC_OK) {
+		// Import the avatar
+		oScene.ImportAvatar(poAvatar);
+		// Render the scene
+		oScene.Render();
 		// Get a pointer reference for the snapshot
 		CImage *poImage = &oImage;
-		poRC->Snapshot(poImage);
-		// Destroy the context
-		poRC->Destroy();
-		// Delete the context
-		delete poRC;
+		// Get the snapshot
+		oScene.Snapshot(poImage);
 	}
-
 	// Write thumbnail
 	g_poVAL->StepProgress("HLSave");
 	g_poVAL->SetProgressText("HLSave", "Writing thumbnail");
