@@ -7,7 +7,7 @@
 // ViewAvatar.cpp - 23/11/2000 - Warren Moore
 //	  InterVAL associated Avatar document view
 //
-// $Id: ViewAvatar.cpp,v 1.1 2000/11/25 22:52:26 cvs Exp $
+// $Id: ViewAvatar.cpp,v 1.2 2000/11/26 17:08:31 waz Exp $
 //
 
 #include "StdAfx.h"
@@ -84,7 +84,7 @@ DCRESULT CViewAvatar::GetDisplayPointer(const int iValue, void *&pData) const {
 	// Temp variables
 	pData = NULL;
 	if (iValue == DC_WIN_DC)
-		pData = m_poDC;
+		pData = m_poDC->m_hDC;
 	return (pData ? DC_OK : DC_UNSUPPORTED_VALUE);
 } // GetDisplayPointer
 
