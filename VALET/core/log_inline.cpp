@@ -14,11 +14,11 @@
 //! author 		= "Warren Moore"
 //! date 		= "23/09/2001"
 //! lib 			= libVALETcore
-//! rcsid 		= "$Id: log_inline.cpp,v 1.1 2001/09/26 13:10:09 vap-warren Exp $"
+//! rcsid 		= "$Id: log_inline.cpp,v 1.2 2001/10/09 20:44:30 vap-james Exp $"
 
 //#===--- CLog Inline Functions
 
-namespace VALET {
+namespace NValet {
 	
 	INLINE void CLog::Trace(const char *pcMessage, int iLevel) {
 		ASSERT(pcMessage);

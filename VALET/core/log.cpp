@@ -11,14 +11,14 @@
 //! author		= "Warren Moore"
 //! date			= "23/09/2001"
 //! lib 			= libVALETcore
-//! rcsid		= "$Id: log.cpp,v 1.1 2001/09/26 13:10:09 vap-warren Exp $"
+//! rcsid		= "$Id: log.cpp,v 1.2 2001/10/09 20:44:29 vap-james Exp $"
 
 //#===--- Includes
 #include "log.h"
 
 //#===--- CLog
 
-namespace VALET {
+namespace NValet {
 	
 	CLog::CLog(const char* pcType, const char* pcFunction) :
 		m_iID(-1) {

@@ -14,7 +14,7 @@
 //! author 		= "Warren Moore"
 //! date 		= "23/09/2001"
 //! lib 			= libVALETcore
-//! rcsid 		= "$Id: log.h,v 1.1 2001/09/26 13:10:09 vap-warren Exp $"
+//! rcsid 		= "$Id: log.h,v 1.2 2001/10/09 20:44:30 vap-james Exp $"
 //! userlevel 	= Normal
 //! docentry 	= "VALET.Core.Log"
 //! example 	= VALET/core/log.test.cpp
@@ -25,7 +25,7 @@
 
 #include <string.h>
 
-namespace VALET {
+namespace NValet {
 	
 	//#===--- Externally linked objects
 	extern CLogManager g_oLogManager;

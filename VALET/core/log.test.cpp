@@ -11,7 +11,7 @@
 //! author 		= "Warren Moore"
 //! date 		= "23/09/2001"
 //! lib 			= libVALETcore
-//! rcsid 		= "$Id: log.test.cpp,v 1.1 2001/09/26 13:10:09 vap-warren Exp $"
+//! rcsid 		= "$Id: log.test.cpp,v 1.2 2001/10/09 20:44:30 vap-james Exp $"
 
 //#===--- Includes
 #include "../arch/valet.h"
@@ -21,14 +21,14 @@
 #include <stdio.h>
 
 //#===--- Namespaces
-using namespace VALET;
+using namespace NValet;
 	
 //#===--- Defines
 #define LOOP_MAX 1000
 
 //#===--- Globals
-// Instance of the global log manager (located in namespace VALET)
-VALET::CLogManager VALET::g_oLogManager(true);
+// Instance of the global log manager (located in namespace NValet)
+NValet::CLogManager NValet::g_oLogManager(true);
 
 //#===--- Test Functions
 
@@ -46,7 +46,7 @@ void AddOne(int &x) {
 int main(int argc, char *argv[]) {
 
 	// Set the log attributes
-	VALET::g_oLogManager.SetLog("test", true, 0);
+	NValet::g_oLogManager.SetLog("test", true, 0);
 
 	// Start the loop test
 	printf("Starting test...\n");

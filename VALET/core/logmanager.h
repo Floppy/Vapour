@@ -14,7 +14,7 @@
 //! author 		= "Warren Moore"
 //! date 		= "23/09/2001"
 //! lib 			= libVALETcore
-//! rcsid 		= "$Id: logmanager.h,v 1.2 2001/10/02 14:32:23 vap-warren Exp $"
+//! rcsid 		= "$Id: logmanager.h,v 1.3 2001/10/09 20:44:31 vap-james Exp $"
 //! userlevel 	= Develop
 //! docentry 	= "VALET.Core.Log"
 //! example 	= VALET/core/log.test.cpp
@@ -22,7 +22,7 @@
 //#===--- Includes
 #include "../arch/valet.h"
 
-namespace VALET {
+namespace NValet {
 
 	//#===--- Predeclared Classes
 	class CLogHandle;
