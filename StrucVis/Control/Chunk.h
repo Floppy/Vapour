@@ -9,7 +9,7 @@
 //! file      = "Control/Chunk.h"
 //! author    = "James Smith"
 //! date      = "19/3/2002"
-//! rcsid     = "$Id: Chunk.h,v 1.14 2002/04/04 11:01:32 vap-warren Exp $"
+//! rcsid     = "$Id: Chunk.h,v 1.15 2002/04/04 11:03:34 vap-warren Exp $"
 
 #ifndef __VTSTRUCVIS_CHUNK__
 #define __VTSTRUCVIS_CHUNK__
@@ -43,7 +43,7 @@ enum TChunkType {
    CHUNK_NODEDISP = 0x23,
    CHUNK_BEAMFORC = 0x24,
    CHUNK_SLABFORC = 0x25,
-   CHUNK_CRACKS   = 0x26,
+   CHUNK_CRACKS   = 0x26
 };
 
 //: An input data chunk
