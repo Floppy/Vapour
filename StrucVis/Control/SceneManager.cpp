@@ -6,7 +6,7 @@
 // SceneManager.cpp
 // 19/03/2002 - James Smith
 //
-// $Id: SceneManager.cpp,v 1.11 2002/03/22 13:33:36 vap-james Exp $
+// $Id: SceneManager.cpp,v 1.12 2002/03/22 13:44:06 vap-james Exp $
 
 #include "stdafx.h"
 #include "SceneManager.h"
@@ -194,7 +194,7 @@ void CSceneManager::Load(void) {
    }
 
    // Done
-   Update();
+   ShowFrame(0);
 
 }
 
@@ -260,7 +260,7 @@ void CSceneManager::ShowFrame(unsigned int iFrame) {
             pfStresses[i] = g_pfNodeStresses[iFrame][(*pElem)->Node(i)];
          }
          (*pElem)->SetStresses(pfStresses);
-         static_cast<CSlabElement*>(*pElem)->SetCracks(0,g_pcSlabCracks[iFrame][1]);
+         static_cast<CSlabElement*>(*pElem)->SetCracks(0,g_pcSlabCracks[iFrame][0]);
       }
    }
    // Render
