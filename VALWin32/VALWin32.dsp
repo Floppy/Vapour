@@ -41,7 +41,7 @@ RSC=rc.exe
 # PROP Intermediate_Dir "Release"
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /MD /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_AFXDLL" /Yu"stdafx.h" /FD /c
-# ADD CPP /nologo /MD /W3 /GX /O2 /I "..\VAL\Application" /I "..\VAL\Avatar" /I "..\VAL\AvatarFiles" /I "..\VAL\DataTypes" /I "..\VAL\Image" /I "..\VAL\ImageFiles" /I "..\VAL\Wrapper" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_LIB" /D "_MBCS" /D "VAL_BUILD" /Yu"stdafx.h" /FD /c
+# ADD CPP /nologo /MD /W3 /GX /O2 /I "Application" /I "Render" /I "..\VAL\Application" /I "..\VAL\Avatar" /I "..\VAL\AvatarFiles" /I "..\VAL\DataTypes" /I "..\VAL\Image" /I "..\VAL\Wrapper" /I "..\VAL\ImageFiles" /I "..\VAL\Render" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_LIB" /D "_MBCS" /D "VAL_BUILD" /Yu"stdafx.h" /FD /c
 # ADD BASE RSC /l 0x809 /d "NDEBUG" /d "_AFXDLL"
 # ADD RSC /l 0x809 /d "NDEBUG" /d "_AFXDLL"
 BSC32=bscmake.exe
