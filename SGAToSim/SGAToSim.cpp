@@ -8,7 +8,7 @@
 //	Main application source for command-line parsing, 
 //  export and progress bar updates
 //
-// $Id: SGAToSim.cpp,v 1.6 2000/07/23 16:28:42 waz Exp $
+// $Id: SGAToSim.cpp,v 1.7 2000/08/29 12:51:11 waz Exp $
 //
 
 // Pre-compiled header include
@@ -144,7 +144,7 @@ VARESULT SetOptions(CCommandLine &oCmdLine, VEM_CLASS &oExport) {
 		bOk = false;
 
 	// Check output filename has been supplied
-	if ((!bOk) && (!oCmdLine.GetValue(2)))
+	if (oCmdLine.GetValue(2) == NULL)
 		bOk = false;
 
 	// Check all filenames have been specified
@@ -266,10 +266,10 @@ VARESULT SetOptions(CCommandLine &oCmdLine, VEM_CLASS &oExport) {
 	// Set Sim sex
 	if (bOk && (pcTemp = oCmdLine.GetValue("sex"))) {
 		if (pcTemp) {
-			// Check for adult
+			// Check for male
 			if (stricmp(pcTemp, "male") == 0)
 				iSex = SIMS_MALE;
-			// Check for child
+			// Check for female
 			if (stricmp(pcTemp, "female") == 0)
 				iSex = SIMS_FEMALE;
 		}
