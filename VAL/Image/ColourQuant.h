@@ -7,7 +7,7 @@
 // ColourQuant.h - 26/12/1999 - Warren Moore
 //	Colour quantiser declaration
 //
-// $Id: ColourQuant.h,v 1.3 2000/08/06 19:21:46 waz Exp $
+// $Id: ColourQuant.h,v 1.4 2000/08/07 18:56:23 waz Exp $
 //
 
 #ifndef _VAL_COLOURQUANT_
@@ -34,6 +34,7 @@ public:
 	// Clear the quantiser
 	void Clear();
 
+	//#===--- Palette Functions
 	// Returns a pointer to the palette object
 	CImagePalette *GetPalette();
 
