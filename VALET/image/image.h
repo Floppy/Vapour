@@ -14,7 +14,7 @@
 //! author 		= "Warren Moore"
 //! date 		= "17/10/2001"
 //! lib 			= libVALETimage
-//! rcsid 		= "$Id: image.h,v 1.7 2001/10/24 23:39:26 vap-warren Exp $"
+//! rcsid 		= "$Id: image.h,v 1.8 2001/10/27 09:43:05 vap-warren Exp $"
 //! userlevel 	= Normal
 //! docentry 	= "VALET.Image"
 //! example 	= VALET/image/image.test.cpp
@@ -63,13 +63,13 @@ namespace NVALET {
       IR_NO_PALETTE,
       IR_OUT_OF_MEMORY,
       IR_NO_DATA,
-      IR_ERROR,
+      IR_ERROR
    };
    //: Image result codes
    
    enum EImageFilter {
       IF_BOX = 0,
-      IF_BILINEAR,
+      IF_BILINEAR
    };
    //: Image scaling filter type
    // Must be implemented, defined in VALET/image/filter.h
@@ -135,9 +135,6 @@ namespace NVALET {
       //!param: bReversePixels = Data is BGR formatted
       //!param: bFlip = Lines are arranged bottom first
 
-      void Render(short sX, short sY);
-      // Warren's hacked in DC render function (DO NOT USE)
-
 	//:------
    //: Type Conversion Functions
 
@@ -152,12 +149,22 @@ namespace NVALET {
    protected:
 
    //:------
-   //: Internal Functions
+   //: Allocation Functions
  
       EImageResult CreateImage();
       // Image memory allocation
+      
+      EImageResult CreatePlane(unsigned char ucPlane);
+      // Allocates an individual image plane
+      // m_uiDataSize must be set before this function is called
+      //!param: uiPlane = Number of plane to be allocated
+      
       void DeleteImage();
       // Deletes image memory and set member vars appropriately
+      
+      void DeletePlane(unsigned char ucPlane);
+      // Deletes an image plane
+      //!param: uiPlane = Number of plane to be deleted
       
    protected:
 

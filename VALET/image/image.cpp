@@ -15,7 +15,7 @@
 //! author		= "Warren Moore"
 //! date			= "17/10/2001"
 //! lib 			= libVALETimage
-//! rcsid		= "$Id: image.cpp,v 1.5 2001/10/24 23:39:26 vap-warren Exp $"
+//! rcsid		= "$Id: image.cpp,v 1.6 2001/10/27 09:43:05 vap-warren Exp $"
 
 namespace NVALET {
 
@@ -150,11 +150,9 @@ namespace NVALET {
          if (m_uiDataSize) {
             register char ucPlane = m_pucPlaneUse[m_eImageType];
             while (eResult == IR_OK && ucPlane--) {
-               m_ppuiData[ucPlane] = (unsigned int*) new unsigned int[m_uiDataSize];
-               if (!m_ppuiData[ucPlane]) {
-                  oLog.Trace("Error: Out of memory allocating bit plane", LL_ERROR);
-                  eResult = IR_OUT_OF_MEMORY;
-               }
+               eResult = CreatePlane(ucPlane);
+               if (eResult != IR_OK)
+                  break;
             }
          }
       }
@@ -169,12 +167,30 @@ namespace NVALET {
       }
       
       // If we ran out of memory allocating stuff, clean up allocated memory
-      if (eResult == IR_OUT_OF_MEMORY)
+      if (eResult != IR_OK)
          DeleteImage();
 
       return eResult;
    }
 
+   EImageResult CImage::CreatePlane(unsigned char ucPlane) {
+      CLog oLog("image", "CImage::CreatePlane");
+      // Check the plane number
+      if (ucPlane >= m_uiNumPlanes) {
+         oLog.Trace("Error: Invalid plane number set", LL_ERROR);
+         return IR_INVALID_PARAM;
+      }
+      // Allocate all the bit planes
+      if (m_uiDataSize) {
+         m_ppuiData[ucPlane] = (unsigned int*) new unsigned int[m_uiDataSize];
+         if (!m_ppuiData[ucPlane]) {
+            oLog.Trace("Error: Out of memory allocating image plane", LL_ERROR);
+            return IR_OUT_OF_MEMORY;
+         }
+      }
+      return IR_OK;
+   }
+   
    void CImage::DeleteImage() {
       CLog oLog("image", "CImage::DeleteImage");
       // Set the size variables
@@ -185,15 +201,25 @@ namespace NVALET {
       // Delete the image planes
       register unsigned char ucPlane = m_pucPlaneUse[m_eImageType];
       while (ucPlane--) {
-         if (m_ppuiData[ucPlane]) {
-            delete [] m_ppuiData[ucPlane];
-            m_ppuiData[ucPlane] = NULL;
-         }
+         DeletePlane(ucPlane);
       }
       // Delete the palette
       if (m_poPalette) {
          delete m_poPalette;
          m_poPalette = NULL;
+      }
+   }
+   
+   void CImage::DeletePlane(unsigned char ucPlane) {
+      CLog oLog("image", "CImage::DeletePlane");
+      // Check the plane number
+      if (ucPlane >= m_uiNumPlanes) {
+         oLog.Trace("Error: Invalid plane number set", LL_ERROR);
+         return;
+      }
+      if (m_ppuiData[ucPlane]) {
+         delete [] m_ppuiData[ucPlane];
+         m_ppuiData[ucPlane] = NULL;
       }
    }
 
