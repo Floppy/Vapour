@@ -7,7 +7,7 @@
 // CortonaField.h
 // 07/03/2002 - Warren Moore
 //
-// $Id: CortonaField.h,v 1.3 2002/03/20 21:57:19 vap-warren Exp $
+// $Id: CortonaField.h,v 1.4 2002/03/21 11:25:22 vap-warren Exp $
 
 #ifndef __CORTONA_FIELD__
 #define __CORTONA_FIELD__
@@ -31,6 +31,9 @@ public:
 
    FTYPE Type() const;
    // Returns the field type
+
+   IFieldObject *Interface() const;
+   // Returns the field object interface
 
    void Release();
    // Release the field object
@@ -83,6 +86,10 @@ protected:
 
 inline FTYPE CCortonaField::Type() const {
    return m_eType;
+}
+
+inline IFieldObject *CCortonaField::Interface() const {
+   return m_pField;
 }
 
 #endif // __CORTONA_UTIL__

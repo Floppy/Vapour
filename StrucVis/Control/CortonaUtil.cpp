@@ -7,7 +7,7 @@
 // CortonaUtil.cpp
 // 07/03/2002 - Warren Moore
 //
-// $Id: CortonaUtil.cpp,v 1.3 2002/03/20 21:57:19 vap-warren Exp $
+// $Id: CortonaUtil.cpp,v 1.4 2002/03/21 11:25:22 vap-warren Exp $
 
 #include "stdafx.h"
 #include "CortonaBase.h"
@@ -139,6 +139,42 @@ bool CCortonaUtil::CreateField(const char *pcType, CCortonaField **ppoField) {
       *ppoField = (CCortonaField*) new CCortonaField(pFieldObject);
    }
 
+   return SUCCEEDED(hResult);
+}
+
+bool CCortonaUtil::AssignEventIn(INodeObject *pNode, const char *pcName, const CCortonaField &oField) {
+   // Check for pointers
+   if (!m_pEngine || !pNode || !pcName)
+      return false;
+
+   // Get the node fields
+   IFieldsCollection *pFields = NULL;
+   HRESULT hResult = pNode->get_Fields(&pFields);
+   if (FAILED(hResult))
+      return false;
+
+   // Get the specified field
+   IFieldObject *pFieldObject = NULL;
+   COleVariant oFieldName(pcName);
+   hResult = pFields->get_Item(oFieldName, &pFieldObject);
+   if (SUCCEEDED(hResult)) {
+      // Check the field category
+      FCategory eCategory;
+      pFieldObject->get_Category(&eCategory);
+      if (eCategory == cEventIn) {
+         // Check the field type
+         FTYPE eType;
+         pFieldObject->get_Type(&eType);
+         if (eType == oField.Type()) {
+            // All checked, assign the value
+            pFieldObject->Assign(oField.Interface());
+         }
+      }
+      pFieldObject->Release();
+   }
+
+   // Release the field collection
+   pFields->Release();
    return SUCCEEDED(hResult);
 }
 

@@ -6,7 +6,7 @@
 // SlabElement.cpp
 // 19/03/2002 - James Smith
 //
-// $Id: SlabElement.cpp,v 1.5 2002/03/20 22:13:25 vap-james Exp $
+// $Id: SlabElement.cpp,v 1.6 2002/03/21 11:25:23 vap-warren Exp $
 
 #include "stdafx.h"
 #include "SlabElement.h"
@@ -40,7 +40,7 @@ const char pcSlabStart[] = " \
       field SFFloat thickness \
    ] \
    [ \
-      \"file://D:\\James\\vapour\\dev.local\\src\\Research\\CortonaBase\\SlabElement.wrl\" \
+      \"file://D:\\Vapour\\Dev\\Src\\Research\\CortonaBase\\SlabElement.wrl\" \
    ] \
    SlabElement { \
 ";

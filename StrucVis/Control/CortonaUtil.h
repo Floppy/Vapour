@@ -7,7 +7,7 @@
 // CortonaUtil.h
 // 07/03/2002 - Warren Moore
 //
-// $Id: CortonaUtil.h,v 1.3 2002/03/20 21:57:19 vap-warren Exp $
+// $Id: CortonaUtil.h,v 1.4 2002/03/21 11:25:23 vap-warren Exp $
 
 #ifndef __CORTONA_UTIL__
 #define __CORTONA_UTIL__
@@ -50,6 +50,9 @@ public:
 
    bool CreateField(const char *pcType, CCortonaField **ppoField);
    // Create an empty field
+
+   bool AssignEventIn(INodeObject *pNode, const char *pcField, const CCortonaField &oFIeld);
+   // Assigns the supplied field value to the named EventIn field
 
 //#===--- Member Variables
 protected:
