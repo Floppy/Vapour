@@ -50,13 +50,13 @@ $(include:../class/menu.stmpl)
 				<TABLE BORDER="0" CELLPADDING="1" CELLSPACING="1" ALIGN="RIGHT">
 					<TR><TD>
 					$(forall:docnode:
-						<P><A HREF="$(MakeFilename:%.html)"><B>$(subst:_: :$(ObjectName))</B></A>$(ifset:brief: - $(brief))</P>
+						<P CLASS="CLASSHEADING"><A HREF="$(MakeFilename:%.html)"><B>$(subst:_: :$(ObjectName))</B></A>$(ifset:brief: - $(brief))</P>
 					)
 					</TD></TR>
 				</TABLE>
 			)			
 			
-			<P CLASS="CLASSLARGETITLE">
+			<P CLASS="CLASSTITLE">
 			$(ifset:brief:$(brief))$(else:$(ObjectName))
 			</P>
 			

@@ -28,6 +28,7 @@ $(include:menu.stmpl)
 			<TR><TD>
 			
 			$(include:info.stmpl)
+			$(//:<P CLASS="CLASSLARGETITLE">$(FullName)</P>)
 			
 			$(include:scope.stmpl)
 			
