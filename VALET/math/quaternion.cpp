@@ -11,7 +11,7 @@
 //! author 		= "James Smith"
 //! date 		= "02/10/2001"
 //! lib 		= libVALETmath
-//! rcsid 		= "$Id: quaternion.cpp,v 1.1 2001/10/02 15:32:53 vap-james Exp $"
+//! rcsid 		= "$Id: quaternion.cpp,v 1.2 2001/10/02 17:00:50 vap-james Exp $"
 //! userlevel 	        = Normal
 //! docentry 	        = "VALET.Math.Geometry"
 
@@ -38,13 +38,14 @@ namespace VALET {
 		m_dScalar = dScalar;
 	} //CQuaternion(const double & dScalar, const CVector3D & oVector)
 
-	/*CQuaternion::CQuaternion(const CAxisRotation & oRot) {
-		CAxisRotation temp = oRot.Normalise();
-		double dHalfRotation = temp.GetAngle() / 2.0F;
+	CQuaternion::CQuaternion(const CAxisRotation & oRot) {
+		CAxisRotation temp = oRot;
+		temp.Normalise();
+		double dHalfRotation = temp.Angle() / 2.0F;
 		double dSinHalfRotation = sin(dHalfRotation);
-		m_oVector = temp.GetAxis() * dSinHalfRotation;
+		m_oVector = temp.Axis() * dSinHalfRotation;
 		m_dScalar = cos(dHalfRotation);
-	} //CQuaternion(const CAxisRotation & oRot)*/
+	} //CQuaternion(const CAxisRotation & oRot)
 
 	/*CQuaternion::CQuaternion(const CEulerRotation & oRot) {
 		int NextAngle[] = {Y_AXIS, Z_AXIS, X_AXIS, Y_AXIS};

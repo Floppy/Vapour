@@ -14,17 +14,20 @@
 //! author 		= "James Smith"
 //! date 		= "02/10/2001"
 //! lib 		= libVALETmath
-//! rcsid 		= "$Id: quaternion.h,v 1.1 2001/10/02 15:32:53 vap-james Exp $"
+//! rcsid 		= "$Id: quaternion.h,v 1.2 2001/10/02 17:00:50 vap-james Exp $"
 //! userlevel 	        = Normal
 //! docentry 	        = "VALET.Math.Geometry"
 
-#include "vector3d.h"
-//#include "AxisRotation.h"
-//#include "EulerRotation.h"
-//#include "HomTransform.h"
+namespace VALET {
+	class CQuaternion;
+}
 
 //#===--- Includes
 #include "../arch/valet.h"
+#include "vector3d.h"
+#include "axisrotation.h"
+//#include "EulerRotation.h"
+//#include "HomTransform.h"
 
 namespace VALET {
 
@@ -55,11 +58,10 @@ namespace VALET {
 
 		CQuaternion(const double dScalar, const CVector3D & oVector);
 		//: Constructor from vector/scalar
-		// Creates a quaternion from the passed data.
 		//!param: dScalar = the scalar part.
 		//!param: dVector = the vector part.
 
-		//explicit CQuaternion(const CAxisRotation &oRot);
+		explicit CQuaternion(const CAxisRotation &oRot);
 		//: Constructor from axis-angle rotation
 
 		//explicit CQuaternion(const CEulerRotation &oRot);
