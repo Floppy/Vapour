@@ -7,7 +7,7 @@
 // SceneHLThumbnail.h - 06/10/2000 - Warren Moore
 //	Scene rendering class for HalfLife thumbnail production
 //
-// $Id: SceneHLThumbnail.cpp,v 1.1 2000/10/10 17:51:46 waz Exp $
+// $Id: SceneHLThumbnail.cpp,v 1.2 2000/11/25 11:26:08 waz Exp $
 //
 
 #include "StdAfx.h"
@@ -58,8 +58,10 @@ SCRESULT CSceneHLThumbnail::Create() {
 } // Create
 
 SCRESULT CSceneHLThumbnail::Destroy() {
-	if (m_poRC)
+	if (m_poRC) {
 		delete m_poRC;
+		m_poRC = NULL;
+	}
 	return SC_OK;
 } // Destroy
 
