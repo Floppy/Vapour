@@ -7,7 +7,7 @@
 # SlabElement.wrl
 # 19/03/2002 - James Smith
 #
-# $Id: SlabElement.wrl,v 1.5 2002/03/22 11:09:56 vap-james Exp $
+# $Id: SlabElement.wrl,v 1.6 2002/03/22 11:38:24 vap-james Exp $
 
 PROTO SlabElement [
    eventIn MFColor set_colours
@@ -20,6 +20,55 @@ PROTO SlabElement [
    field SFFloat thickness 1
 ]
 {
+
+   PROTO Crack [
+      field SFFloat size 0.1
+      exposedField SFInt32 type 0
+      exposedField SFVec3f translation 0 0 0
+   ]
+   {
+      Transform {
+         translation IS translation
+         children [
+            Switch {
+               choice [
+                  Group {}
+                  Shape {
+                     appearance Appearance {
+                        material Material {
+                           diffuseColor 1 1 0
+                        }
+                     }
+                     geometry Sphere {
+                        radius IS size
+                     }
+                  }
+                  Shape {
+                     appearance Appearance {
+                        material Material {
+                           diffuseColor 1 0 0
+                        }
+                     }
+                     geometry Sphere {
+                        radius IS size
+                     }
+                  }
+                  Shape {
+                     appearance Appearance {
+                        material Material {
+                           diffuseColor 0 1 1
+                        }
+                     }
+                     geometry Sphere {
+                        radius IS size
+                     }
+                  }
+               ]
+            }
+         ]
+      }
+   }
+
    Group {
       children [
          DEF SLAB Shape {
@@ -94,6 +143,19 @@ PROTO SlabElement [
                ]
             }
          }
+         DEF CRACKS Group {
+            children [
+               Crack {}
+               Crack {}
+               Crack {}
+               Crack {}
+               Crack {}
+               Crack {}
+               Crack {}
+               Crack {}
+               Crack {}
+            ]
+         }
       ]
    }
    Script {
@@ -112,6 +174,7 @@ PROTO SlabElement [
       field SFNode  colourNode USE COLOURS
       field SFNode  steelmaterial USE STEELMATERIAL
       field SFNode  slabmaterial USE SLABMATERIAL
+      field SFNode  cracks USE CRACKS
       url "javascript:
          function initialize() {
             // Create points
@@ -138,17 +201,24 @@ PROTO SlabElement [
             update_nodes(value);
          }
          function update_nodes(nodeset) {
+            // Set node locations
             for (i=0; i<9; i++) {
                for (j=0; j<4; j++) {
                   coordNode.point[(i*4) + j] = nodeset[i].add(points[j]);
                }
             }
+            // Set crack locations
+            for (i=0; i<9; i++) {
+               //cracks.children[i].translation = nodeset[9].add(nodeset[i].subtract(nodeset[9]));
+            }
          }
          function set_cracks(value,time) {
             update_cracks(value);
          }
-         function update_cracks(nodeset) {
-            // Implement this
+         function update_cracks(crack_types) {
+            for (i=0; i<9; i++) {
+               //cracks.children[i].type = crack_types[i];
+            }
          }
          function set_visible(value,time) {
             if (value == true) {
