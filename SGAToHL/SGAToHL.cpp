@@ -8,7 +8,7 @@
 //	Main application source for command-line parsing, 
 //  export and progress bar updates
 //
-// $Id: SGAToHL.cpp,v 1.1 2000/08/01 23:10:31 waz Exp $
+// $Id: SGAToHL.cpp,v 1.2 2000/08/29 12:50:43 waz Exp $
 //
 
 // Pre-compiled header include
@@ -140,7 +140,7 @@ VARESULT SetOptions(CCommandLine &oCmdLine, VEM_CLASS &oExport) {
 		bOk = false;
 
 	// Check output filename has been supplied
-	if ((!bOk) && (!oCmdLine.GetValue(2)))
+	if (oCmdLine.GetValue(2) == NULL)
 		bOk = false;
 
 	// Check all filenames have been specified
