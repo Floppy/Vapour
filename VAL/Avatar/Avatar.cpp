@@ -7,7 +7,7 @@
 // Avatar.cpp - 17/06/2000 - James Smith
 //	Avatar class implementation
 //
-// $Id: Avatar.cpp,v 1.6 2000/08/22 11:30:20 waz Exp $
+// $Id: Avatar.cpp,v 1.7 2000/08/24 22:19:42 waz Exp $
 //
 
 #include "stdafx.h"
@@ -391,11 +391,20 @@ void CAvatar::SetJointAngle(enum BodyPart bpJoint, CAxisRotation& rotNewRotation
 	return;
 } //SetJointAngle(BodyPart bpJoint, CAxisRotation& rotNewRotation, bool bLimit, bool bDamp)
 
+CAxisRotation CAvatar::GetJointAngle(BodyPart bpJoint) const {
+   SBodyPart* pCurrentPart = &(m_pBodyParts[bpJoint]);
+	return (pCurrentPart->m_rotCurrentRotation);
+} //GetJointAngle(BodyPart bpJoint)
+
 void CAvatar::SetRootTranslation(CVector3D& vecNewTranslation) {
 	m_vecRootTranslation = vecNewTranslation;
    m_bDirtyTranslation = true;
 	return;
 } //SetRootTranslation(CVector3D& vecNewTranslation)
+
+CVector3D CAvatar::GetRootTranslation() const {
+	return m_vecRootTranslation;
+} //GetRootTranslation()
 
 void CAvatar::TargetBodyPart(enum BodyPart bpJoint, CVector3D& vecTarget, bool bLimit) {
    BodyPart bpParent = m_pBodyParts[bpJoint].m_bpParent;
@@ -449,6 +458,32 @@ void CAvatar::IKSetPose(BodyPart bpJoint, CVector3D& vecTarget, BodyPart bpFixed
    }
    return;
 } //IKSetPose(BodyPart bpJoint, CVector3D& vecTarget, BodyPart bpFixed, bool bTranslation, bool bLimit, bool bDamp)
+
+///////////////////////////////////////////////////////////////////////
+// Mutilation Functions ///////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////
+
+void CAvatar::Chop(BodyPart bpJoint) {
+   // Use specific position chop function to do work
+   Chop(bpJoint,m_pBodyParts[bpJoint].m_pntCurrentCentre);
+   // Done
+   return;
+} //Chop(BodyPart bpJoint)
+
+void CAvatar::Chop(BodyPart bpJoint, const CVector3D& vecPosition) {
+   SBodyPart* pPart = &(m_pBodyParts[bpJoint]);
+   // Set vertices
+   int iNumVertices = pPart->m_iNumVertices;
+   for (int v=0; v<iNumVertices; v++) {
+      vecPosition.ToPoint3D(m_pCurrentVertices[pPart->m_piVertices[v]]);
+   }
+   // Chop children
+   for (int c=0; c<3; c++) {
+      if (pPart->m_bpChildren[c] != unknown) Chop(pPart->m_bpChildren[c],vecPosition);
+   }
+   // Done
+   return;
+} //Chop(BodyPart bpJoint, const CVector3D& vecPosition)
 
 ///////////////////////////////////////////////////////////////////////
 // Pose Storage Functions /////////////////////////////////////////////

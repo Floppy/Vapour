@@ -7,11 +7,13 @@
 // Avatar.h - 16/06/2000 - James Smith
 //	Avatar class header
 //
-// $Id: Avatar.h,v 1.5 2000/08/21 23:07:50 waz Exp $
+// $Id: Avatar.h,v 1.6 2000/08/24 22:19:42 waz Exp $
 //
 
 #ifndef _VAL_AVATAR_
 #define _VAL_AVATAR_
+
+#pragma once
 
 //Standard includes
 #include <vector>
@@ -31,8 +33,6 @@
 
 // OpenGL includes
 #include <gl/gl.h>
-
-#pragma once
 
 // DLL import/export definitions
 #ifndef DLL_IMP_EXP
@@ -212,9 +212,15 @@ public:
 	// This new angle will only take effect when UpdateModel() is called.   
    void SetJointAngle(BodyPart bpJoint, CAxisRotation& rotNewRotation, bool bLimit = true, bool bDamp = true);
 
+	// Gets the angle for a particular joint
+	CAxisRotation GetJointAngle(BodyPart bpJoint) const;
+
 	// Sets a translation for the entire model
 	// This new translation will only take effect when UpdateModel() is called.
    void SetRootTranslation(CVector3D& vecNewTranslation);
+
+	// Gets the translation of the entire model
+	CVector3D GetRootTranslation() const;
 
    // Sets the angle for the joint so that it points as close as possible
 	// towards the target position.
@@ -231,6 +237,18 @@ public:
    // bDamp specified whether joint damping factors are used during joint limitation.
    void IKSetPose(BodyPart bpJoint, CVector3D& vecTarget, BodyPart bpFixed = unknown, bool bTranslation = false, bool bLimit = true, bool bDamp = true);
    
+   ///////////////////////////////////////////////////////////////////////
+   // Mutilation Functions ///////////////////////////////////////////////
+   ///////////////////////////////////////////////////////////////////////
+
+   // Sets all vertices attached to bpJoint and below to be at the position of bpJoint,
+   // with the effect of chopping the body off at that joint.
+   void Chop(BodyPart bpJoint);
+
+   // Sets all vertices attached to bpJoint and below to be at vecPosition,
+   // with the effect of chopping the body off at that joint.
+   void Chop(BodyPart bpJoint, const CVector3D& vecPosition);
+
    ///////////////////////////////////////////////////////////////////////
    // Pose Storage Functions /////////////////////////////////////////////
    ///////////////////////////////////////////////////////////////////////
