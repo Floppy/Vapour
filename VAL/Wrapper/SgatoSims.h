@@ -1,19 +1,21 @@
-//=========---
-// SGAToSim
-//---------
-// SGA1 Avatar to The Sims model exporter
+//====---
+// VAL
+//----
+// Vapour Technology All-Purpose Library
 // Copyright 2000 Vapour Technology Ltd.
 //
-// SGAToSims.h - 01/06/2000 - Warren Moore
-//	Sims export class
+// SGAToSims.h - 12/06/2000 - Warren Moore
+//	SGA Avatar to Sim converter wrapper 
 //
-// $Id: SgatoSims.h,v 1.3 2000/07/11 14:20:57 waz Exp $
+// $Id: SgatoSims.h,v 1.4 2000/07/14 19:59:04 waz Exp $
 //
 
 #ifndef _WRAP_SGATOSIMS_
 #define _WRAP_SGATOSIMS_
 
 #pragma once
+
+#include "Wrapper.h"
 
 //#===--- Defines
 
@@ -48,22 +50,6 @@
 #define SIMS_FALSE	2
 
 //#===--- Data types
-
-// Exporter status
-enum VARESULT {
-	VA_OK = 0,
-	VA_INVALID_OPTION = 1,
-	VA_INVALID_ARGUMENT = 2,
-	VA_MISSING_FILENAME = 3,
-	VA_MISSING_ARGUMENT = 4,
-	VA_AVATAR_LOAD_ERROR = 5,
-	VA_MODEL_SAVE_ERROR = 6,
-	VA_TIME_EXPIRED = 7,
-	VA_OUT_OF_MEMORY = 8,
-	VA_DIRECTORY_ERROR = 9,
-	VA_SFX_ERROR = 10,
-	VA_ERROR = 11,
-};
 
 ///////////////
 // CSGAToSims

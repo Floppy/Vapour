@@ -4,18 +4,18 @@
 // Vapour Technology All-Purpose Library
 // Copyright 2000 Vapour Technology Ltd.
 //
-// SGAToSim.cpp - 12/06/2000 - Warren Moore
+// SGAToSims.cpp - 12/06/2000 - Warren Moore
 //	SGA Avatar to Sim converter wrapper 
 //
-// $Id: SgatoSims.cpp,v 1.4 2000/07/11 14:20:57 waz Exp $
+// $Id: SgatoSims.cpp,v 1.5 2000/07/14 19:59:04 waz Exp $
 //
 
 #include "StdAfx.h"
 
+#include "VAL.h"
 #include "SGAToSims.h"
 
 #include <iostream.h>
-#include "VAL.h"
 #include "AvatarFileAME.h"
 #include "AvatarFileSims.h"
 #include "Avatar.h"
@@ -26,18 +26,7 @@
 // CSGAToSims
 
 const char *CSGAToSims::m_pcError[] = {
-	"Converter status OK",
-	"An invalid option has been supplied",
-	"Invalid argument for the option specified",
-	"A required filename has not been specified",
-	"A required option argument was not set",
-	"An error occured loading the SGA avatar",
-	"An error occured saving the Sims model",
-	"Evaluation time expired",
-	"Unable to allocate memory block",
-	"Error editing a model directory",
-	"Error opening self-extracting installer",
-	"Unknown error",
+	WRAP_ERROR_STRINGS
 };
 
 CSGAToSims::CSGAToSims() {
@@ -180,6 +169,9 @@ const int CSGAToSims::GetOptionInt(int iOption) {
 		case SIMS_BUILD:
 			iReturn = m_iBuild;
 			break;
+		case SIMS_VERBOSE:
+			iReturn = m_bVerbose ? SIMS_TRUE : SIMS_FALSE;
+			break;
 		default:
 			m_eResult = VA_INVALID_OPTION;
 	}
@@ -274,7 +266,7 @@ VARESULT CSGAToSims::Export() {
 			return m_eResult;
 		}
 
-	// Allocate the Sims complete filename
+	// Allocate the complete filename
 		int iLength = strlen(m_pcSimModelname) + 1;
 		if (m_pcSimPath)
 			iLength += strlen(m_pcSimPath);
@@ -284,7 +276,7 @@ VARESULT CSGAToSims::Export() {
 		NEWEND("CSGAToSims::Export - Temporary sim filename")
 		if (pcFilename) {
 			pcFilename[0] = 0;
-		// Generate the Sims complete filename
+		// Generate the complete filename
 			if (m_pcSimPath)
 				strcpy(pcFilename, m_pcSimPath);
 			strcat(pcFilename, m_pcSimModelname);
@@ -325,20 +317,16 @@ VARESULT CSGAToSims::Compress(const char *pcDir, const char *pcSFXName) {
 	fstream oWJEFile;
 	oWJEFile.open(pcWJEName, ios::in|ios::binary|ios::nocreate);
 	if (oWJEFile.fail())
-		return VA_SFX_ERROR;
+		return VA_WJE_MISSING;
 	// Decompress the sfx
 	CWedgie oWJE;
 	if (oWJE.Open(&oWJEFile, "") != WJE_OK) {
 		oWJEFile.close();
-		return VA_SFX_ERROR;
+		return VA_WJE_ERROR;
 	}
-	if (oWJE.Files() != 1) {
+	if (oWJE.Extract("simssfx.exe", pcSFXName) != WJE_OK) {
 		oWJEFile.close();
-		return VA_SFX_ERROR;
-	}
-	if (oWJE.Extract(0, pcSFXName) != WJE_OK) {
-		oWJEFile.close();
-		return VA_SFX_ERROR;
+		return VA_WJE_ERROR;
 	}
 	oWJE.Close();
 	oWJEFile.close();
@@ -352,7 +340,7 @@ VARESULT CSGAToSims::Compress(const char *pcDir, const char *pcSFXName) {
 	// Create the sfx from the model directory
 	if (oWJE.Open(&oSFXFile, pcDir, true, true) != WJE_OK) {
 		oWJEFile.close();
-		return VA_SFX_ERROR;
+		return VA_COMPRESS_ERROR;
 	}
 	oWJE.Close();
 	oSFXFile.close();
