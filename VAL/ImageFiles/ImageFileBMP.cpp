@@ -7,7 +7,7 @@
 // ImageFileBMP.cpp - 21/12/1999 - Warren Moore
 //	BMP file format image implementation
 //
-// $Id: ImageFileBMP.cpp,v 1.5 2000/08/07 18:57:47 waz Exp $
+// $Id: ImageFileBMP.cpp,v 1.6 2000/10/06 12:59:36 waz Exp $
 //
 
 #include "stdafx.h"
@@ -275,9 +275,11 @@ FRESULT CImageFileBMP::Save(const char *pFname, const int x, const int y,
 
 // Write if the palette (if necessary);
 	if (m_pPalette && (m_eSaveType == IT_PALETTE)) {
+		int iSize = m_pPalette->GetSize();
 		for (int i = 0; i < 256; i++) {
-			unsigned int uColour;
-			m_pPalette->GetEntry(i, uColour);
+			unsigned int uColour = 0;
+			if (i < iSize)
+				m_pPalette->GetEntry(i, uColour);
 			oFile.write((unsigned char*)&uColour, 4);
 		}
 	}
