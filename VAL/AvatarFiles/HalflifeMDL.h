@@ -7,7 +7,7 @@
 // HalflifeMDL.h - 16/02/2000 - James Smith
 //	Structures and definitions for halflife MDL export
 //
-// $Id: HalflifeMDL.h,v 1.7 2000/10/06 13:16:59 waz Exp $
+// $Id: HalflifeMDL.h,v 1.8 2000/11/01 13:25:34 waz Exp $
 //
 
 #ifndef _VAL_HALFLIFEMDL_
@@ -21,6 +21,8 @@
 
 #define HL_TEXTURE_WIDTH    256
 #define HL_TEXTURE_HEIGHT   256
+
+#define HL_MAX_STRIP_LENGTH 3//127
 
 typedef float HalflifeVector[3];
 
