@@ -7,7 +7,7 @@
 // BeamElement.cpp
 // 19/03/2002 - James Smith
 //
-// $Id: BeamElement.cpp,v 1.23 2002/03/26 17:45:20 vap-james Exp $
+// $Id: BeamElement.cpp,v 1.24 2002/03/26 19:22:27 vap-warren Exp $
 
 #include "stdafx.h"
 #include "BeamElement.h"
@@ -100,14 +100,15 @@ bool CBeamElement::Display(const char* pcURL) const {
    }
    else {
       bool bOK = true;
-      // Update node positions
+      //#===--- Update node positions
       // Create MFVec3f field
       CCortonaField* pField = m_poCortona->CreateField("MFVec3f");
-      if (pField==NULL) return false;
+      if (pField == NULL)
+         return false;
+      bOK = pField->SetMFCount(2);
       // Set values
       for (int i=0; i<2 && bOK; i++) {
-         if (bOK && !pField->AddMFVec3f(pfNodes[(i*3)], pfNodes[(i*3)+1], pfNodes[(i*3)+2]))
-            bOK = false;
+         bOK  = pField->SetMFVec3f(i, pfNodes[(i*3)], pfNodes[(i*3)+1], pfNodes[(i*3)+2]);
       }      
       // Send event
       if (bOK && !m_poNodePtr->AssignEventIn("set_nodes",*pField))
@@ -115,14 +116,17 @@ bool CBeamElement::Display(const char* pcURL) const {
       // Delete field
       pField->Release();
       delete pField;
-      // Update colours
+      pField = NULL;
+
+      //#===--- Update colours
       // Create MFColor field
       pField = m_poCortona->CreateField("MFColor");
-      if (pField==NULL) return false;
+      if (pField == NULL)
+         return false;
+      bOK = pField->SetMFCount(2);
       // Set values
       for (i=0; i<2 && bOK; i++) {
-         if (bOK && !pField->AddMFColor(pfColours[(i*3)], pfColours[(i*3)+1], pfColours[(i*3)+2]))
-            bOK = false;
+         bOK = pField->SetMFColor(i, pfNodes[(i*3)], pfNodes[(i*3)+1], pfNodes[(i*3)+2]);
       }      
       // Send event
       if (bOK && !m_poNodePtr->AssignEventIn("set_colours",*pField))
@@ -130,6 +134,8 @@ bool CBeamElement::Display(const char* pcURL) const {
       // Delete field
       pField->Release();
       delete pField;
+      pField = NULL;
+
       // Done
       return bOK;
    }

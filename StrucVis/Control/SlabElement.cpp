@@ -7,7 +7,7 @@
 // SlabElement.cpp
 // 19/03/2002 - James Smith
 //
-// $Id: SlabElement.cpp,v 1.24 2002/03/25 14:55:35 vap-james Exp $
+// $Id: SlabElement.cpp,v 1.25 2002/03/26 19:22:27 vap-warren Exp $
 
 #include "stdafx.h"
 #include "SlabElement.h"
@@ -98,13 +98,14 @@ bool CSlabElement::Display(const char* pcURL) const {
    }
    else {
       bool bOK = true;
-      // Update node positions
+      //#===--- Update node positions
       CCortonaField* pField = m_poCortona->CreateField("MFVec3f");
-      if (pField==NULL) return false;
+      if (pField == NULL)
+         return false;
+      bOK = pField->SetMFCount(9);
       // Set values
       for (int i=0; i<9 && bOK; i++) {
-         if (bOK && !pField->AddMFVec3f(pfNodes[(i*3)], pfNodes[(i*3)+1], pfNodes[(i*3)+2]))
-            bOK = false;
+         bOK = pField->SetMFVec3f(i, pfNodes[(i*3)], pfNodes[(i*3)+1], pfNodes[(i*3)+2]);
       }      
       // Send event
       if (bOK && !m_poNodePtr->AssignEventIn("set_nodes",*pField))
@@ -112,14 +113,16 @@ bool CSlabElement::Display(const char* pcURL) const {
       // Delete field
       pField->Release();
       delete pField;
+      pField = NULL;
 
-      // Update cracks
+      //#===--- Update cracks
       pField = m_poCortona->CreateField("MFInt32");
-      if (pField == NULL) return false;
+      if (pField == NULL)
+         return false;
+      bOK = pField->SetMFCount(9);
       // Set values
       for (i=0; i<9 && bOK; i++) {
-         if (bOK && !pField->AddMFInt32(m_pcCracks[i]))
-            bOK = false;
+         bOK = pField->SetMFInt32(i, m_pcCracks[i]);
       }      
       // Send event
       if (bOK && !m_poNodePtr->AssignEventIn("set_cracks",*pField))
@@ -127,14 +130,16 @@ bool CSlabElement::Display(const char* pcURL) const {
       // Delete field
       pField->Release();
       delete pField;
+      pField = NULL;
 
-      // Update colours
+      //#===--- Update colours
       pField = m_poCortona->CreateField("MFColor");
-      if (pField==NULL) return false;
+      if (pField == NULL)
+         return false;
+      bOK = pField->SetMFCount(9);
       // Set values
       for (i=0; i<9 && bOK; i++) {
-         if (bOK && !pField->AddMFColor(pfColours[(i*3)], pfColours[(i*3)+1], pfColours[(i*3)+2]))
-            bOK = false;
+         bOK = pField->SetMFColor(i, pfColours[(i*3)], pfColours[(i*3)+1], pfColours[(i*3)+2]);
       }      
       // Send event
       if (bOK && !m_poNodePtr->AssignEventIn("set_colours",*pField))
@@ -142,6 +147,7 @@ bool CSlabElement::Display(const char* pcURL) const {
       // Delete field
       pField->Release();
       delete pField;
+      pField = NULL;
 
       // Done
       return bOK;
