@@ -9,7 +9,7 @@
 //! file      = "Control/BeamElement.h"
 //! author    = "James Smith"
 //! date      = "19/3/2002"
-//! rcsid     = "$Id: BeamElement.h,v 1.17 2002/04/03 15:57:07 vap-warren Exp $"
+//! rcsid     = "$Id: BeamElement.h,v 1.18 2002/04/03 16:20:02 vap-james Exp $"
 
 #ifndef __VTSTRUCVIS_BEAMELEMENT__
 #define __VTSTRUCVIS_BEAMELEMENT__
@@ -73,7 +73,7 @@ public:
    //!param: piNodes - a pointer to a length-2 array of unsigned integers.
 
    void SetStresses(const float* pfStresses) const;
-   //: Sets stresses for individual nodes
+   //: Set stresses for individual nodes
    //!param: pfStresses - a pointer to a length-2 array of floats.
 
 private:

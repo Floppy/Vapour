@@ -9,7 +9,7 @@
 //! file      = "Control/Chunk.h"
 //! author    = "James Smith"
 //! date      = "19/3/2002"
-//! rcsid     = "$Id: Chunk.h,v 1.11 2002/04/03 15:57:08 vap-warren Exp $"
+//! rcsid     = "$Id: Chunk.h,v 1.12 2002/04/03 16:20:02 vap-james Exp $"
 
 #ifndef __VTSTRUCVIS_CHUNK__
 #define __VTSTRUCVIS_CHUNK__
@@ -20,6 +20,7 @@
 #pragma once
 #endif // _MSC_VER > 1000
 
+//: Chunk Types
 enum TChunkType {
    CHUNK_NONE     = 0xFF,
    CHUNK_ROOT     = 0x00,
@@ -45,35 +46,46 @@ enum TChunkType {
    CHUNK_CRACKS   = 0x26,
 };
 
+//: A data chunk
+// This class provides an interface to a VSV file data chunk.
+
 class CChunk {
-//#===--- Construction/Destruction
+
 public:
 
+   //:-------------------------
+   //: Construction/Destruction
+
    CChunk();
-   // Constructor
+   //: Constructor
    
    virtual ~CChunk();
-   // Destructor
+   //: Destructor
 
-//#===--- Data I/O
+   //:---------
+   //: Data I/O
 
    bool CreateChunk(const unsigned char* pcData, unsigned int iLength, unsigned int& iUsed, bool bLoadSubChunks = false);
-   // Adds data to the chunk
-   // Returns true if the chunk is complete
-   // Length of unused data is returned in iSpare
-   // Subchunks are loaded if bLoadSubChunks = true, otherwise only the TOC is loaded
+   //: Adds data to the chunk
+   //!param: pcData - raw input data
+   //!param: iLength - length of pcData
+   //!param: iUsed - amount of data used is returned in this parameter
+   //!param: bLoadSubChunks - if true, subchunks are loaded
+   //!param: return - true if the chunk is complete, false if more data is required
 
    TChunkType Type(void) {return m_oType;}
-   // The type of the chunk
+   //: The type of the chunk
 
    const unsigned char* Data(void) const;
-   // Raw chunk data
+   //: Access to raw chunk data
 
    const CChunk* SubChunk(TChunkType oType) const;
-   // Get a subchunk with the specified type
+   //: Get a subchunk with the specified type
 
-//#===--- Member Variables
 protected:
+
+   //:-----------------
+   //: Member Variables
 
    class CTOCEntry {
    public:
@@ -89,53 +101,65 @@ protected:
       unsigned int m_iLength;
       CChunk* m_pChunk;
    };
-   // TOC Information
+   //: TOC Information
 
    std::vector<CTOCEntry> m_oTOC;
-   // Table of contents
+   //: Table of contents
 
    unsigned char* m_pcBuffer;
-   // Data buffer
+   //: Data buffer
 
    unsigned int m_iBufferLength;
-   // The currently allocated size of the buffer
+   //: The currently allocated size of the buffer
 
    unsigned int m_iDataSize;
-   // The amount of data in the buffer
+   //: The amount of data in the buffer
 
    unsigned int m_iDataProcessed;
-   // The length of data that has been processed
+   //: The length of data that has been processed
 
    unsigned int m_iChunkLength;
-   // The length of the chunk
+   //: The length of the chunk
 
    TChunkType m_oType;
-   // The type of the chunk
+   //: The type of the chunk
 
    CChunk* m_pTempSubChunk;
-   // Temporary storage for currently-building subchunk
+   //: Temporary storage for currently-building subchunk
 
 };
+
+//: A specialised data chunk
+// This class provides an interface to a VSV file root data chunk.
 
 class CRootChunk : public CChunk {
 
 public:
 
+   //:-------------------------
+   //: Construction/Destruction
+
    CRootChunk();
-   // Constructor
+   //: Constructor
    
    virtual ~CRootChunk();
-   // Destructor
+   //: Destructor
 
-//#===--- Data I/O
+   //:---------
+   //: Data I/O
+
    bool FrameInfo(unsigned int iFrame, unsigned int& iOffset, unsigned int& iLength);
-   // Gets information for a particular frame
+   //: Frame location information
+   //!param: iFrame - the requested frame - between 0 and NumFrames-1.
+   //!param: iOffset - the offset of the frame data is placed here.
+   //!param: iLength - the length of the frame data is placed here.
+   //!param: return - false if an invalid frame is requested, true otherwise.
 
    unsigned int NumFrames(void);
-   // The number of frame chunks in the file
+   //: The number of frame chunks in the file
 
    void Reset(void);
-   // Resets all data
+   //: Resets all data
 
 };
 

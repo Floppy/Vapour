@@ -9,7 +9,7 @@
 //! file      = "Control/SlabElement.h"
 //! author    = "James Smith"
 //! date      = "19/3/2002"
-//! rcsid     = "$Id: SlabElement.h,v 1.16 2002/04/03 15:57:11 vap-warren Exp $"
+//! rcsid     = "$Id: SlabElement.h,v 1.17 2002/04/03 16:20:03 vap-james Exp $"
 
 #ifndef __VTSTRUCVIS_SLABELEMENT__
 #define __VTSTRUCVIS_SLABELEMENT__
@@ -20,78 +20,93 @@
 
 #include "Element.h"
 
+//: An interface to a Slab element in a VRML scene
+// This class provides an interface to the PROTO object contained SlabElement.wrl.
+
 class CSlabElement : public CElement {
-//#===--- Construction/Destruction
+
 public:
+
+   //:-------------------------
+   //: Construction/Destruction
+
    CSlabElement(CCortonaUtil *poCortona, CNodeSet* poNodeSet);
-   // Constructor
+   //: Constructor
+   //!param: poCortona - A pointer to a valid CortonaUtil object, used to communicate with the browser.
+   //!param: poNodeSet - A pointer to a set of node positions.
 
    ~CSlabElement();
-   // Destructor
+   //: Destructor
 
-//#===--- Member Functions
+   //:-----------------
+   //: Member Functions
 
    TElementType Type(void) const {return ELEMENT_SLAB;}
-   // Return the element type.
+   //: The element type
 
    unsigned int Node(int iIndex) {return m_piNodes[iIndex];}
-   // Get the control node with the passed index
+   //: Control node index.
+   //!param: iIndex - The node to return. Valid values are 0 to 8.
 
    bool Display(const char* pcURL) const;
-   // Updates all information and displays the object
-   // Returns true if successful, false otherwise.
+   //: Updates all information and displays the object
    // If the object is not already displayed, it is created.
-   // Parameter is a URL for the auxiliary VRML files
+   //!param: pcURL - a URL for the directory containing SlabElement.wrl (i.e. excluding the filename).
+   //!param: return - true if successful, false otherwise.
 
    bool SetVisible(bool bVisible) const;
-   // Set whether the beam is visible or not.
-   // Returns true if successful
-
-   void SetNodes(const unsigned int* piNodes);
-   // Sets which nodes the slab is controlled by
-   // This function expects a pointer to a 9-uint array
-
-   void SetCracks(unsigned int iLayer, const unsigned char* pcCracks) const;
-   // Sets crack information for the specified layer.
-   // Layer parameter isn't used at the moment.
-
-   void SetStresses(const float* pfStresses) const;
-   // Sets stresses for individual nodes
-   // This function expects a pointer to a 9-float array
+   //: Set whether the beam is visible or not.
+   //!param: return - true if successful, false otherwise.
 
    void SetTemp(float fTemp) const;
-   // Sets the temperature of the element
+   //: Set the temperature of the element
 
    void SetSize(float fThickness);
-   // Sets the sizes of the slab
+   //: Set the size of the slab
+   //!param: fThickness - the thickness of the slab
+
+   void SetNodes(const unsigned int* piNodes);
+   //: Set which nodes the beam is controlled by
+   //!param: piNodes - a pointer to a length-9 array of unsigned integers.
+
+   void SetStresses(const float* pfStresses) const;
+   //: Set stresses for individual nodes
+   //!param: pfStresses - a pointer to a length-9 array of floats.
+
+   void SetCracks(unsigned int iLayer, const unsigned char* pcCracks) const;
+   //: Set crack information for the specified layer.
+   //!param: iLayer - the layers to set information for. Unused at present.
+   //!param: pcCracks - a pointer to a length-9 array of unsigned chars.
 
 private:
 
    void CalculateColours(float* pfColours) const;
-   // Calculates a set of colours for the element.
-   // Expects an array of 27 floats in pfColours to return data in.
+   //: Calculates a set of colours for the element.
+   //!param: pfColours - an array of 27 floats in which the function will return data.
 
    void CalculateNodePositions(float* pfNodes) const;
-   // Calculates node positions for the element.
-   // Expects an array of 27 floats in pfNodes to return data in.
+   //: Calculates 3D node positions for the element.
+   //!param: pfColours - an array of 27 floats in which the function will return data.
 
-//#===--- Member Variables
 protected:
 
+   //:-----------------
+   //: Member Variables
+
    unsigned int m_piNodes[9];
-   // The node indices that define the slab
+   //: The node indices that define the slab
 
    mutable float m_pfStresses[9];
-   // Per-node stress values
+   //: Per-node stress values
    
    mutable unsigned char m_pcCracks[9];
-   // Crack values
+   //: Crack values
 
    float m_fThickness;
-   // Slab dimensions
+   //: Slab thickness
 
    mutable CCortonaField *m_ppoField[4];
-   // Field value caches
+   //: Field value caches
    // Positions, cracks, colours, visible
 };
 

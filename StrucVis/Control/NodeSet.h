@@ -9,7 +9,7 @@
 //! file      = "Control/NodeSet.h"
 //! author    = "James Smith"
 //! date      = "19/3/2002"
-//! rcsid     = "$Id: NodeSet.h,v 1.8 2002/04/03 15:57:10 vap-warren Exp $"
+//! rcsid     = "$Id: NodeSet.h,v 1.9 2002/04/03 16:20:02 vap-james Exp $"
 
 #ifndef __VTSTRUCVIS_NODESET__
 #define __VTSTRUCVIS_NODESET__
@@ -18,56 +18,71 @@
 #pragma once
 #endif // _MSC_VER > 1000
 
+//: A set of node positions
+
 class CNodeSet {
-//#===--- Construction/Destruction
+
 public:
 
+   //:-------------------------
+   //: Construction/Destruction
+
    CNodeSet();
-   // Constructor
+   //: Default Constructor
+   // Creates a node set with no allocated node storage.
    
    CNodeSet(int iNumNodes);
-   // Constructor
+   //: Constructor
+   //!param: iNumNodes - the number of nodes to allocate storage for.
    
    ~CNodeSet();
-   // Destructor
+   //: Destructor
 
-//#===--- Member Functions
+   //:-----------------
+   //: Member Functions
 
    void SetSize(int iNumNodes);
-   // Set the size of the node set
-   // All data will be dumped.
+   //: Set the size of the node set
+   // All existing data will be dumped.
+   //!param: iNumNodes - the number of nodes to allocate storage for.
 
    void SetDefault(const float* pfNodePositions);
-   // The default nodes are overwritten with the passed data.
-   // (NumNodes * 3) floats are assumed.
-   // This also overwrites current positions.
+   //: Set default node positions
+   // Both default and current nodes are overwritten with the passed data.
+   //!param: pfNodePositions - an array of (NumNodes * 3) floats, in order X Y Z.
 
    void Displace(const float* pfDisplacements) const;
-   // Adds the passed array of displacements onto the default nodes
-   // to create a new current node list.
-   // Displacements are multiplied by the scale factor.
-   // (NumNodes * 3) floats are assumed in the displacement list.
+   //: Set node displacements
+   // Adds the passed array of displacements onto the default nodes to create a new current node list.
+   //!param: pfDisplacements - an array of (NumNodes * 3) floats, in order X Y Z.
    
    void SetScaleFactor(float fX, float fY, float fZ) const;
-   // Sets the displacement scale factor.
+   //: Sets the displacement scale factor.
+   // This is used to multiply the displacements during the Displace() function
+   //!param: fX - X scale factor
+   //!param: fY - Y scale factor
+   //!param: fZ - Z scale factor
 
    const float* Node(unsigned int iIndex) const;
-   // Gets a pointer to a particular CURRENT node position.
+   //: Gets a pointer to a particular node position.
+   //!param: iIndex - an integer between 0 and NumNodes-1.
    
-//#===--- Member Variables
 protected:
 
+   //:-----------------
+   //: Member Variables
+
    unsigned int m_iNumNodes;
-   // How many nodes are there?
+   //: How many nodes are there?
 
    mutable float* m_pfCurrentNodePositions;
-   // Current node positions
+   //: Current node positions
    
    float* m_pfDefaultNodePositions;
-   // Default node positions
+   //: Default node positions
 
    mutable float m_pfScale[3];
-   // Displacement scale factor
+   //: Displacement scale factor
 
 };
 
