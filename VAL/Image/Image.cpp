@@ -7,7 +7,7 @@
 // Image.h - 21/12/1999 - Warren Moore
 //	Image implementation
 //
-// $Id: Image.cpp,v 1.10 2000/07/31 15:42:39 waz Exp $
+// $Id: Image.cpp,v 1.11 2000/08/06 19:19:21 waz Exp $
 //
 
 #include "stdafx.h"
@@ -706,18 +706,18 @@ IRESULT CImage::CreatePaletteFromRGB(int iColours) {
 } // CreatePaletteFromRGB
 
 int CImage::MatchColour(unsigned long uColour) {
-		// Make sure it's a palettised image
+	// Make sure it's a palettised image
 	if (m_eImageType != IT_PALETTE)
 		return -1;
-		// Match the colour
+	// Match the colour
 	int iCount = 0;
 	unsigned long uPal = 0;
 	int iVal = -1;
 	int iLowestError = 8192;		// Huge error
 	while (iCount < m_poPalette->GetSize()) {
-			// Get the colour
+		// Get the colour
 		m_poPalette->GetEntry(iCount, uPal);
-			// Calculate the error
+		// Calculate the error
 		int iR = (uColour >> 16) & 0x000000FF;
 		int iG = (uColour >>  8) & 0x000000FF;
 		int iB = (uColour      ) & 0x000000FF;
@@ -725,15 +725,14 @@ int CImage::MatchColour(unsigned long uColour) {
 		iG = abs(iG - ((uPal >>  8) & 0x000000FF));
 		iB = abs(iB - ((uPal >> 16) & 0x000000FF));
 		int iError = iR + iG + iB;
-			// Record if lowest error
+		// Record if lowest error
 		if (iError < iLowestError) {
 			iLowestError = iError;
 			iVal = iCount;
 		}
-			// Carry on through the palette
+		// Carry on through the palette
 		iCount++;
 	}
-	ASSERT(iVal != 255);
 	return iVal;
 } // MatchColour
 
