@@ -11,7 +11,7 @@
 //! author 	= "James Smith"
 //! date	= "02/10/2001"
 //! lib 	= libVALETmath
-//! rcsid 	= "$Id: homtransform.cpp,v 1.1 2001/10/02 22:08:30 vap-james Exp $"
+//! rcsid 	= "$Id: homtransform.cpp,v 1.2 2001/10/03 10:46:36 vap-james Exp $"
 //! userlevel	= Normal
 //! docentry	= "VALET.Math.Geometry"
 
@@ -26,18 +26,10 @@
 namespace VALET {
 
   CHomTransform::CHomTransform() {
+    memset(m_dMatrix,0,12*sizeof(double));
     m_dMatrix[0]  = 1;
-    m_dMatrix[1]  = 0;
-    m_dMatrix[2]  = 0;
-    m_dMatrix[3]  = 0;
-    m_dMatrix[4]  = 0;
     m_dMatrix[5]  = 1;
-    m_dMatrix[6]  = 0;
-    m_dMatrix[7]  = 0;
-    m_dMatrix[8]  = 0;
-    m_dMatrix[9]  = 0;
     m_dMatrix[10] = 1;
-    m_dMatrix[11] = 0;
     return;
   } //CHomTransform()
   
@@ -47,20 +39,13 @@ namespace VALET {
   } //CHomTransform(const CHomTransform& oTransform)
   
   CHomTransform::CHomTransform(const CVector3D& vecTranslation) {
-    double dX, dY, dZ;
-    vecTranslation.ToDouble(dX, dY, dZ);
+    memset(m_dMatrix,0,12*sizeof(double));
     m_dMatrix[0]  = 1;
-    m_dMatrix[1]  = 0;
-    m_dMatrix[2]  = 0;
-    m_dMatrix[3]  = dX;
-    m_dMatrix[4]  = 0;
+    m_dMatrix[3]  = vecTranslation.X();
     m_dMatrix[5]  = 1;
-    m_dMatrix[6]  = 0;
-    m_dMatrix[7]  = dY;
-    m_dMatrix[8]  = 0;
-    m_dMatrix[9]  = 0;
+    m_dMatrix[7]  = vecTranslation.Y();
     m_dMatrix[10] = 1;
-    m_dMatrix[11] = dZ;
+    m_dMatrix[11] = vecTranslation.Z();
     return;
   } //CHomTransform(const CVector3D& vecTranslation)
   
@@ -96,34 +81,8 @@ namespace VALET {
   } //CHomTransform(const CQuaternion& oQuat)
   
   CHomTransform::CHomTransform(const CQuaternion& oQuat, const CVector3D& vecCentre) {
-    CVector3D vecInvCentre = -vecCentre;
-    double dW = oQuat.Scalar();
-    double dX, dY, dZ = 0;
-    oQuat.Vector().ToDouble(dX, dY, dZ);
-    double d2X = dX + dX;
-    double d2Y = dY + dY;
-    double d2Z = dZ + dZ;
-    double dXX = dX * d2X;
-    double dXY = dX * d2Y;
-    double dXZ = dX * d2Z;
-    double dYY = dY * d2Y;
-    double dYZ = dY * d2Z;
-    double dZZ = dZ * d2Z;
-    double dWX = dW * d2X;
-    double dWY = dW * d2Y;
-    double dWZ = dW * d2Z;
-    m_dMatrix[0]  = 1 - (dYY + dZZ);
-    m_dMatrix[1]  = dXY - dWZ;
-    m_dMatrix[2]  = dXZ + dWY;
-    m_dMatrix[3]  = vecInvCentre.X() * m_dMatrix[0] + vecInvCentre.Y() * m_dMatrix[1] + vecInvCentre.Z() * m_dMatrix[2] + vecCentre.X();
-    m_dMatrix[4]  = dXY + dWZ;
-    m_dMatrix[5]  = 1 - (dXX + dZZ);
-    m_dMatrix[6]  = dYZ - dWX;
-    m_dMatrix[7]  = vecInvCentre.X() * m_dMatrix[4] + vecInvCentre.Y() * m_dMatrix[5] + vecInvCentre.Z() * m_dMatrix[6] + vecCentre.Y();
-    m_dMatrix[8]  = dXZ - dWY;
-    m_dMatrix[9]  = dYZ + dWX;
-    m_dMatrix[10] = 1 - (dXX + dYY);
-    m_dMatrix[11] = vecInvCentre.X() * m_dMatrix[8] + vecInvCentre.Y() * m_dMatrix[9] + vecInvCentre.Z() * m_dMatrix[10] + vecCentre.Z();
+    *this = CHomTransform(oQuat);
+    ChangeCentre(vecCentre);
     return;
   } //CHomTransform(const CQuaternion& oQuat, const CVector3D& vecCentre)
   
@@ -155,30 +114,8 @@ namespace VALET {
   } //CHomTransform(const CAxisRotation& rotRotation)
   
   CHomTransform::CHomTransform(const CAxisRotation& rotRotation, const CVector3D& vecCentre) {
-    CVector3D vecInvCentre = -vecCentre;
-    double dSinAngle = sin(rotRotation.Angle());
-    double dSinHalfAngle = sin(rotRotation.Angle()/2);
-    double dSinSquaredHalfAngle = dSinHalfAngle * dSinHalfAngle;
-    double dX, dY, dZ;
-    rotRotation.Axis().ToDouble(dX, dY, dZ);
-    double dXX = dX * dX;
-    double dTwoXY = 2 * dX * dY;
-    double dTwoXZ = 2 * dX * dZ;
-    double dYY = dY * dY;
-    double dTwoYZ = 2 * dY * dZ;
-    double dZZ = dZ * dZ;
-    m_dMatrix[0]  = 1 - (2 * dSinSquaredHalfAngle * (dYY + dZZ));
-    m_dMatrix[1]  = dTwoXY * dSinSquaredHalfAngle - dZ * dSinAngle;
-    m_dMatrix[2]  = dTwoXZ * dSinSquaredHalfAngle + dY * dSinAngle;
-    m_dMatrix[3]  = vecInvCentre.X() * m_dMatrix[0] + vecInvCentre.Y() * m_dMatrix[1] + vecInvCentre.Z() * m_dMatrix[2] + vecCentre.X();
-    m_dMatrix[4]  = dTwoXY * dSinSquaredHalfAngle + dZ * dSinAngle;
-    m_dMatrix[5]  = 1 - (2 * dSinSquaredHalfAngle * (dXX + dZZ));
-    m_dMatrix[6]  = dTwoYZ * dSinSquaredHalfAngle - dX * dSinAngle;
-    m_dMatrix[7]  = vecInvCentre.X() * m_dMatrix[4] + vecInvCentre.Y() * m_dMatrix[5] + vecInvCentre.Z() * m_dMatrix[6] + vecCentre.Y();
-    m_dMatrix[8]  = dTwoXZ * dSinSquaredHalfAngle - dY * dSinAngle;
-    m_dMatrix[9]  = dTwoYZ * dSinSquaredHalfAngle + dX * dSinAngle;
-    m_dMatrix[10] = 1 - (2 * dSinSquaredHalfAngle * (dXX + dYY));
-    m_dMatrix[11] = vecInvCentre.X() * m_dMatrix[8] + vecInvCentre.Y() * m_dMatrix[9] + vecInvCentre.Z() * m_dMatrix[10] + vecCentre.Z();
+    *this = CHomTransform(rotRotation);
+    ChangeCentre(vecCentre);
     return;
   } //CHomTransform(const CAxisRotation& rotRotation, const CVector3D& vecCentre)
   
@@ -211,5 +148,13 @@ namespace VALET {
     vecReturn.Z() = m_dMatrix[8] * oVec.X() + m_dMatrix[9] * oVec.Y() + m_dMatrix[10] * oVec.Z() + m_dMatrix[11];
     return vecReturn;
   } //operator*(const CVector3D& oVec) const
+
+  void CHomTransform::ChangeCentre(const CVector3D& vecCentre) {
+    CVector3D vecTranslation = (*this * -vecCentre) + vecCentre;
+    m_dMatrix[3]  = vecTranslation.X();
+    m_dMatrix[7]  = vecTranslation.Y();
+    m_dMatrix[11] = vecTranslation.Z();
+    return;
+  }
   
 }
