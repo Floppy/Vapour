@@ -7,7 +7,7 @@
 // Chunk.h
 // 19/03/2002 - James Smith
 //
-// $Id: Chunk.h,v 1.2 2002/03/27 02:19:31 vap-james Exp $
+// $Id: Chunk.h,v 1.3 2002/03/27 09:42:51 vap-james Exp $
 
 #ifndef __VTSTRUCVIS_CHUNK__
 #define __VTSTRUCVIS_CHUNK__
@@ -55,9 +55,11 @@ public:
 
 //#===--- Data I/O
 
-   bool CreateChunk(const unsigned char* pcData, unsigned int iLength);
+   bool CreateChunk(const unsigned char* pcData, unsigned int iLength, unsigned int& iUsed, bool bLoadSubChunks = false);
    // Adds data to the chunk
    // Returns true if the chunk is complete
+   // Length of unused data is returned in iSpare
+   // Subchunks are loaded if bLoadSubChunks = true, otherwise only the TOC is loaded
 
    TChunkType Type(void) {return m_oType;}
    // The type of the chunk
@@ -104,21 +106,11 @@ public:
    bool FrameInfo(unsigned int iFrame, unsigned int& iOffset, unsigned int& iLength);
    // Gets information for a particular frame
 
-   bool CreateTOC(const unsigned char* pcData, unsigned int iLength, unsigned int& iSpare);
-   // Adds data to the chunk
-   // Returns true when the TOC is complete
-   // Length of unused data is returned in iSpare
-
    unsigned int NumFrames(void);
    // The number of frame chunks in the file
 
    void Reset(void);
    // Resets all data
-
-protected:
-
-   unsigned int m_iNumFrames;
-   // The number of frame chunks
 
 };
 

@@ -7,7 +7,7 @@
 // DataManager.cpp
 // 19/03/2002 - James Smith
 //
-// $Id: DataManager.cpp,v 1.12 2002/03/27 02:20:38 vap-james Exp $
+// $Id: DataManager.cpp,v 1.13 2002/03/27 09:42:51 vap-james Exp $
 
 #include "stdafx.h"
 #include "DataManager.h"
@@ -329,7 +329,7 @@ bool CDataManager::Setup(const unsigned char* pcData, unsigned int iLength) {
    // Read TOC into root chunk
    unsigned int iUsed = 0;
    if (m_oState == VALID) {
-      if (!m_oRoot.CreateTOC(pcData,iLength,iUsed)) return false;
+      if (!m_oRoot.CreateChunk(pcData,iLength,iUsed)) return false;
       else {
          pcData += iUsed;
          iLength -= iUsed;
@@ -341,7 +341,8 @@ bool CDataManager::Setup(const unsigned char* pcData, unsigned int iLength) {
    // Read setup data
    if (m_oState == LOADING) {
       if (m_pChunk == NULL) m_pChunk = new CChunk();
-      if (!m_pChunk->CreateChunk(pcData,iLength)) return false;
+      unsigned int iUsed = 0;
+      if (!m_pChunk->CreateChunk(pcData,iLength,iUsed,true)) return false;
       else m_oState = READY;
    }
 
@@ -435,7 +436,8 @@ bool CDataManager::FrameInfo(unsigned int iFrame, unsigned int& iOffset, unsigne
 bool CDataManager::LoadFrame(const unsigned char* pcData, unsigned int iLength) {
    // Load frame data from passed memory chunk
    if (m_pChunk == NULL) m_pChunk = new CChunk();
-   if (!m_pChunk->CreateChunk(pcData,iLength) || m_pChunk->Type() != FRAME) {
+   unsigned int iUsed = 0;
+   if (!m_pChunk->CreateChunk(pcData,iLength,iUsed,true) || m_pChunk->Type() != FRAME) {
       delete m_pChunk;
       m_pChunk = NULL;
       return false;

@@ -7,7 +7,7 @@
 // Chunk.cpp
 // 19/03/2002 - James Smith
 //
-// $Id: Chunk.cpp,v 1.2 2002/03/27 02:19:31 vap-james Exp $
+// $Id: Chunk.cpp,v 1.3 2002/03/27 09:42:51 vap-james Exp $
 
 #include "stdafx.h"
 #include "Chunk.h"
@@ -35,7 +35,7 @@ CChunk::~CChunk() {
    if (m_pcBuffer) delete [] m_pcBuffer;
 }
 
-bool CChunk::CreateChunk(const unsigned char* pcData, unsigned int iLength) {
+bool CChunk::CreateChunk(const unsigned char* pcData, unsigned int iLength, unsigned int& iUsed, bool bLoadSubChunks) {
 
    // Is this the first lump of data?
    if (m_pcBuffer == NULL) {
@@ -62,41 +62,7 @@ bool CChunk::CreateChunk(const unsigned char* pcData, unsigned int iLength) {
    if (m_iDataSize < 5) return false;
    unsigned int iSize = *reinterpret_cast<unsigned int*>(m_pcBuffer+1);
 
-   // Is the chunk complete?
-   if (m_iDataSize < iSize) return false;
-
-   // Done
-   return true;
-}
-
-/////////////
-// CRootChunk
-
-CRootChunk::CRootChunk() :
-   m_iNumFrames(0)
-{
-}
-
-CRootChunk::~CRootChunk() {
-}
-
-bool CRootChunk::FrameInfo(unsigned int iFrame, unsigned int& iOffset, unsigned int& iLength) {
-   if (iFrame < m_iNumFrames) {
-      iOffset = m_oTOC[iFrame+1].m_iOffset;
-      iLength = m_oTOC[iFrame+1].m_iLength;
-      return true;
-   }
-   else return false;
-}
-
-bool CRootChunk::CreateTOC(const unsigned char* pcData, unsigned int iLength, unsigned int& iUsed) {
-   // Store data
-   CreateChunk(pcData,iLength);
-   // Check if we have any data
-   if (m_iDataSize == 0) return false;
-   // Check we have a root chunk
-   if (m_oType != ROOT) return false;
-   // Can we read the number of TOC entries?
+   // Read number of TOC entries?
    if (m_iDataSize < 6) return false;
    int iTOCLength = 6 + m_pcBuffer[5] * (1 + sizeof(unsigned int));
    // Check if we have all TOC data
@@ -105,6 +71,7 @@ bool CRootChunk::CreateTOC(const unsigned char* pcData, unsigned int iLength, un
       return false;   
    }
    iUsed = iLength - (m_iDataSize - iTOCLength);
+
    // Create TOC
    unsigned char* pcCurrent = m_pcBuffer + 6;
    for (int i=0; i<m_pcBuffer[5]; i++) {
@@ -120,14 +87,35 @@ bool CRootChunk::CreateTOC(const unsigned char* pcData, unsigned int iLength, un
       }
       m_oTOC.push_back(oEntry);
    }
-   // Number of frames is one less than the number of TOC entries
-   m_iNumFrames = m_oTOC.size() - 1;
+
+   // Load subchunks if necessary
+   if (bLoadSubChunks) {
+   }
+
    // Done
    return true;
 }
 
+/////////////
+// CRootChunk
+
+CRootChunk::CRootChunk() {
+}
+
+CRootChunk::~CRootChunk() {
+}
+
+bool CRootChunk::FrameInfo(unsigned int iFrame, unsigned int& iOffset, unsigned int& iLength) {
+   if (iFrame < m_oTOC.size()-1) {
+      iOffset = m_oTOC[iFrame+1].m_iOffset;
+      iLength = m_oTOC[iFrame+1].m_iLength;
+      return true;
+   }
+   else return false;
+}
+
 unsigned int CRootChunk::NumFrames(void) {
-   return m_iNumFrames;
+   return m_oTOC.size() - 1;
 }
 
 void CRootChunk::Reset(void) {
@@ -138,7 +126,5 @@ void CRootChunk::Reset(void) {
    m_iBufferLength = 0;
    // Empty TOC
    m_oTOC.empty();
-   // Dump extra data
-   m_iNumFrames = 0;
    return;
 }
