@@ -7,7 +7,7 @@
 // TimeLimit.h - 07/06/2000 - Warren Moore
 //	Time limit validation class 
 //
-// $Id: TimeLimit.h,v 1.3 2000/07/15 10:40:54 waz Exp $
+// $Id: TimeLimit.h,v 1.4 2000/10/10 17:50:29 waz Exp $
 //
 
 #ifndef _VAL_TIMELIMIT_
@@ -27,7 +27,10 @@ class CTimeLimit {
 public:
 
 // Constructor/destructor
-	CTimeLimit();		
+	// Set start time of time limit
+	//		1 < uDay < m_uDaysInMonth[uMonth - 1]
+	//		1 < uMonth < 12
+	CTimeLimit(unsigned int uDay, unsigned int uMonth, unsigned int uYear, unsigned int uDayLimit);		
 	~CTimeLimit();
 
 	bool Valid();
@@ -37,6 +40,12 @@ private:
 
 //#===--- Internal Data
 private:
+	static unsigned int m_uDaysInMonth[12];
+
+	const unsigned int m_uDay;
+	const unsigned int m_uMonth;
+	const unsigned int m_uYear;
+	const unsigned int m_uLimit;
 };
 
 #endif // _VAL_TIMELIMIT_
