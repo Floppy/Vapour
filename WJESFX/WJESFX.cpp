@@ -7,7 +7,7 @@
 // WJESFX.cpp - 11/07/2000 - Warren Moore
 //	Application and installation
 //
-// $Id: WJESFX.cpp,v 1.6 2000/08/29 12:49:57 waz Exp $
+// $Id: WJESFX.cpp,v 1.7 2000/11/29 15:54:25 warren Exp $
 //
 
 #include "stdafx.h"
@@ -75,7 +75,9 @@ BOOL CWJESFXApp::InitInstance() {
 void CWJESFXApp::InstallSims(CProgressDlg *poDlg) {
 // Find the game directory
 	CRegistry oReg;
-	CString strPath = oReg.ReadString(LOCAL_MACHINE, "Software\\Maxis\\The Sims", "SIMS_DATA", "");
+	char pcData[STR_SIZE] = "";
+	oReg.ReadString(LOCAL_MACHINE, "Software\\Maxis\\The Sims", "SIMS_DATA", "", pcData);
+	CString strPath = pcData;
 	if (strPath == "") {
 		AfxMessageBox("Unable to find The Sims directory. Please select The Sims directory.", MB_OK);
 		CFolderDialog oFolder;
@@ -155,7 +157,9 @@ void CWJESFXApp::InstallSims(CProgressDlg *poDlg) {
 void CWJESFXApp::InstallHL(CProgressDlg *poDlg) {
 // Find the game directory
 	CRegistry oReg;
-	CString strPath = oReg.ReadString(LOCAL_MACHINE, "Software\\Valve\\Half-Life", "InstallPath", "");
+	char pcData[STR_SIZE] = "";
+	oReg.ReadString(LOCAL_MACHINE, "Software\\Valve\\Half-Life", "InstallPath", "", pcData);
+	CString strPath = pcData;
 	if (strPath == "") {
 		AfxMessageBox("Unable to find the Half Life directory. Please select your Half Life directory.", MB_OK);
 		CFolderDialog oFolder;
@@ -235,9 +239,10 @@ void CWJESFXApp::InstallHL(CProgressDlg *poDlg) {
 void CWJESFXApp::InstallUT(CProgressDlg *poDlg) {
 // Find the game directory
 	CRegistry oReg;
-	CString strPath = oReg.ReadString(LOCAL_MACHINE,
-												 "Software\\Unreal Technology\\Installed Apps\\UnrealTournament", 
-												 "Folder", "");
+	char pcData[STR_SIZE] = "";
+	oReg.ReadString(LOCAL_MACHINE, "Software\\Unreal Technology\\Installed Apps\\UnrealTournament", 
+						 "Folder", "", pcData);
+	CString strPath = pcData;
 	if (strPath == "") {
 		AfxMessageBox("Unable to find the Unreal Tournament directory. Please select your directory.", MB_OK);
 		CFolderDialog oFolder;
