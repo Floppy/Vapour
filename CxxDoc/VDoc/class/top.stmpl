@@ -28,9 +28,6 @@ $(silent:
 	<P CLASS=COUNTER ALIGN=RIGHT>
 	<IMG SRC="/pics/place.gif" WIDTH=1 HEIGHT=65 BORDER=0 ALIGN=RIGHT ALT="">
 	</P>
-	<P CLASS=SECTIONTITLE ALIGN=RIGHT>
-	$(ifset:title:$(title))
-	</P>
 	</TD>
 	</TR>
 </TABLE>
