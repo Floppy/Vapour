@@ -14,18 +14,18 @@
 //! author     = "James Smith"
 //! date       = "18/10/2001"
 //! lib        = libVALETmath
-//! rcsid      = "$Id: vector2d.h,v 1.3 2001/10/24 18:16:59 vap-james Exp $"
+//! rcsid      = "$Id: vector2d.h,v 1.4 2001/10/24 21:33:27 vap-james Exp $"
 //! userlevel  = Normal
 //! docentry   = "VALET.Math.Geometry"
 
-namespace NValet {
+namespace NVALET {
    class CAxisRotation;
 }
 
 //#===--- Includes
 #include "VALET/valet.h"
 
-namespace NValet {
+namespace NVALET {
 
    //: 2D Vector
    // A class representing a 2D vector - 2 components, X and Y.

@@ -14,11 +14,11 @@
 //! author 		= "James Smith"
 //! date 		= "02/10/2001"
 //! lib 		= libVALETmath
-//! rcsid 		= "$Id: homtransform.h,v 1.5 2001/10/18 13:07:01 vap-james Exp $"
+//! rcsid 		= "$Id: homtransform.h,v 1.6 2001/10/24 21:33:26 vap-james Exp $"
 //! userlevel 	        = Normal
 //! docentry 	        = "VALET.Math.Geometry"
 
-namespace NValet {
+namespace NVALET {
   class CHomTransform;
 }
 
@@ -28,14 +28,14 @@ namespace NValet {
 #include "VALET/quaternion.h"
 #include "VALET/axisrotation.h"
 
-namespace NValet {
+namespace NVALET {
     
   //: Homogeneous Transformation Matrix
   class CHomTransform {
 
   protected:
     
-    double m_dMatrix[12];    
+    double m_pdMatrix[12];    
     // The matrix itself, stored row by row.
     
   public:
@@ -51,35 +51,37 @@ namespace NValet {
     //: Copy constructor
     //!param: oTransform = the transform to be copied
 
-    explicit CHomTransform(const CVector3D& vecTranslation);
+    explicit CHomTransform(const CVector3D& oTranslation);
     //: Translation constructor
     // Creates an matrix equivalent to a translation
-    //!param: vecTranslation = the translation to be converted.
+    //!param: oTranslation = the translation to be converted.
     
     explicit CHomTransform(const CQuaternion& oQuat);
     //: Constructor from a quaternion
     // Creates an matrix equivalent to a rotation (represented by a quaternion)
     //!param: oQuat = the quaternion to be converted.
     
-    CHomTransform(const CQuaternion& oQuat, const CVector3D& vecCentre);
+    CHomTransform(const CQuaternion& oQuat, const CVector3D& oCentre);
     //: Constructor from a quaternion about a centre
     // Creates an matrix equivalent to a rotation (represented by a quaternion)
     // about an arbitrary centre.
     //!param: oQuat = the quaternion to be converted.
-    //!param: vecCentre = the centre of rotation.
+    //!param: oCentre = the centre of rotation.
     
-    explicit CHomTransform(const CAxisRotation& rotRotation);
+    explicit CHomTransform(const CAxisRotation& oRotation);
     //: Constructor from an axis rotation
     // Creates an matrix equivalent to a rotation (represented by an axis-angle rotation)
-    //!param: oQuat = the axis rotation to be converted.
+    //!param: oRotation = the axis rotation to be converted.
     
-    CHomTransform(const CAxisRotation& rotRotation, const CVector3D& vecCentre);
+    CHomTransform(const CAxisRotation& oRotation, const CVector3D& oCentre);
     //: Constructor from an axis rotation about a centre
     // Creates an matrix equivalent to a rotation (represented by an axis-angle rotation)
     // about an arbitrary centre.
-    //!param: oQuat = the axis rotation to be converted.
-    //!param: vecCentre = the centre of rotation.
-    
+    //!param: oRotation = the axis rotation to be converted.
+    //!param: oCentre = the centre of rotation.    
+
+    ~CHomTransform();
+    //: Destructor
     
     //:----------
     //: Operators
@@ -108,7 +110,7 @@ namespace NValet {
     //:-----------------
     //: Access functions
 
-    double Item(const unsigned int iRow, const unsigned int iCol) const {return m_dMatrix[iRow*4 + iCol];}
+    double Element(const unsigned int iRow, const unsigned int iCol) const;
     //: Single element access
     // Gets a single element from the transform.
     //!param: iRow = the row of the desired element.
@@ -117,11 +119,11 @@ namespace NValet {
 
   private:
 
-    void ChangeCentre(const CVector3D& vecCentre);
+    void ChangeCentre(const CVector3D& oCentre);
     //: Change the centre of rotation
     // This can only be used on pure rotation matrices.
     // It is used by the rotation about arbitrary centre constructors.
-    //!param: vecCentre = centre of rotation.
+    //!param: oCentre = centre of rotation.
     
   };
 

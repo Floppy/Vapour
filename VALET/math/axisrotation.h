@@ -14,11 +14,11 @@
 //! author 		= "James Smith"
 //! date 		= "02/10/2001"
 //! lib 		= libVALETmath
-//! rcsid 		= "$Id: axisrotation.h,v 1.6 2001/10/18 13:07:01 vap-james Exp $"
+//! rcsid 		= "$Id: axisrotation.h,v 1.7 2001/10/24 21:33:25 vap-james Exp $"
 //! userlevel 	        = Normal
 //! docentry 	        = "VALET.Math.Geometry"
 
-namespace NValet {
+namespace NVALET {
   class CAxisRotation;
 }
 
@@ -28,7 +28,7 @@ namespace NValet {
 #include "VALET/quaternion.h"
 #include "VALET/eulerrotation.h"
 
-namespace NValet {
+namespace NVALET {
   
   //: 3D Axis-Angle rotation
   // A class representing a rotation about an arbitrary axis.
@@ -107,17 +107,17 @@ namespace NValet {
     //:-----------------
     //: Access functions
     
-    CVector3D Axis(void) const {return m_oAxis;}
+    CVector3D Axis(void) const;
     //: Access to the rotation axis
     
-    CVector3D& Axis(void) {return m_oAxis;}
+    CVector3D& Axis(void);
     //: Non-const access to the rotation axis
     // This can be used to modify the rotation axis
     
-    double Angle(void) const {return m_dAngle;}
+    double Angle(void) const;
     //: Access to the rotation angle
     
-    double& Angle(void) {return m_dAngle;}
+    double& Angle(void);
     //: Non-const access to the rotation angle
     // This can be used to modify the rotation angle
     
@@ -138,11 +138,7 @@ namespace NValet {
     //!param: dZ = the new Z component.
     //!param: dAngle = the new angle
     
-    void SetAngle(double dAngle);
-    //: Set the value of the angle
-    //!param: dAngle = the new angle
-    
-    bool ParseString(const char* strInput, int* used = NULL);
+    bool ParseString(const char* pcInput, int* piUsed = NULL);
     //: Load values from a string
     //!todo: Document this properly - don't have time now, and I can't remember
     //!todo: what the return and parameters mean. Oops!
@@ -151,7 +147,7 @@ namespace NValet {
     //:-----------------
     //: Output functions
     
-    char* ToString(int precision) const;
+    char* ToString(int iPrecision) const;
     //: Print to a string
     // Writes the components in the order X Y Z R to a string.
     //!param: iPrecision = maximum number of digits to print after the decimal point.

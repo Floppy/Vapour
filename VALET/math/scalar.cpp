@@ -11,7 +11,7 @@
 //! author 		= "James Smith"
 //! date 		= "01/10/2001"
 //! lib 		= libVALETmath
-//! rcsid 		= "$Id: scalar.cpp,v 1.3 2001/10/24 19:57:53 vap-james Exp $"
+//! rcsid 		= "$Id: scalar.cpp,v 1.4 2001/10/24 21:33:26 vap-james Exp $"
 //! userlevel 	        = Normal
 //! docentry 	        = "VALET.Math.Geometry"
 
@@ -27,7 +27,7 @@
 #include <ctype.h>
 #include <stdio.h>
 
-namespace NValet {
+namespace NVALET {
   
    CScalar::CScalar() :
       m_dScalar(0)

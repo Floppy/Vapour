@@ -7,18 +7,19 @@
 // Add confidentiality notice
 
 ////////////////
-//! file                = "VALET/math/axisrotation.cpp"
-//! author              = "James Smith"
-//! date                = "02/10/2001"
-//! lib                 = libVALETmath
-//! rcsid               = "$Id: axisrotation.cpp,v 1.4 2001/10/09 18:32:29 vap-james Exp $"
-//! userlevel           = Normal
-//! docentry            = "VALET.Math.Geometry"
+//! file       = "VALET/math/axisrotation.cpp"
+//! author     = "James Smith"
+//! date       = "02/10/2001"
+//! lib        = libVALETmath
+//! rcsid      = "$Id: axisrotation.cpp,v 1.5 2001/10/24 21:33:25 vap-james Exp $"
+//! userlevel  = Normal
+//! docentry   = "VALET.Math.Geometry"
 
-#include "axisrotation.h"
+#include "VALET/axisrotation.h"
 
 // VALET includes
-#include "scalar.h"
+#include "VALET/scalar.h"
+#include "VALET/log.h"
 
 // Standard includes
 #include <math.h>
@@ -26,193 +27,224 @@
 #include <alloc.h>
 #include <ctype.h>
 
-namespace NValet {
+namespace NVALET {
 
-  CAxisRotation::CAxisRotation() :
-    m_dAngle(0.0F),
-    m_oAxis(0,1,0)
-  {
-  } //CAxisRotation()	
+   CAxisRotation::CAxisRotation() :
+      m_dAngle(0.0F),
+      m_oAxis(0,1,0)
+   {
+      CLog oLog("math","CAxisRotation::Constructor (default)",LL_OBJECT);
+   } //CAxisRotation()	
   
-  CAxisRotation::CAxisRotation(const CAxisRotation & oRot) :
-    m_dAngle(oRot.m_dAngle),
-    m_oAxis(oRot.m_oAxis)
-  {
-  } //CAxisRotation(const CAxisRotation & rot)
+   CAxisRotation::CAxisRotation(const CAxisRotation & oRot) :
+      m_dAngle(oRot.m_dAngle),
+      m_oAxis(oRot.m_oAxis)
+   {
+      CLog oLog("math","CAxisRotation::Constructor (copy)",LL_OBJECT);
+   } //CAxisRotation(const CAxisRotation & rot)
   
-  CAxisRotation::CAxisRotation(const double dX, const double dY, const double dZ, const double dAngle) :
-    m_dAngle(dAngle),
-    m_oAxis(dX,dY,dZ)
-  {
-  } //CAxisRotation(const double dX, const double dY, const double dZ, const double dAngle)
+   CAxisRotation::CAxisRotation(const double dX, const double dY, const double dZ, const double dAngle) :
+      m_dAngle(dAngle),
+      m_oAxis(dX,dY,dZ)
+   {
+      CLog oLog("math","CAxisRotation::Constructor (doubles)",LL_OBJECT);
+   } //CAxisRotation(const double dX, const double dY, const double dZ, const double dAngle)
   
-  CAxisRotation::CAxisRotation(const CVector3D & oAxis, const double dAngle) :
-    m_dAngle(dAngle),
-    m_oAxis(oAxis)
-  {
-  } //CAxisRotation(const CVector3D & oAxis, const double dAngle)
+   CAxisRotation::CAxisRotation(const CVector3D & oAxis, const double dAngle) :
+      m_dAngle(dAngle),
+      m_oAxis(oAxis)
+   {
+      CLog oLog("math","CAxisRotation::Constructor (CVector3D,double)",LL_OBJECT);
+   } //CAxisRotation(const CVector3D & oAxis, const double dAngle)
   
-  CAxisRotation::CAxisRotation(const CQuaternion & oQuat) {
-    double dHalfAngle = acos(oQuat.Scalar());
-    double dSinHalfAngle = sin(dHalfAngle);
-    m_dAngle = 2.0F * dHalfAngle;
-    if (fabs(dSinHalfAngle) == 0) {
-      CVector3D temp(0,1,0);
-      m_oAxis = temp;
-    }
-    else {
-      m_oAxis = oQuat.Vector() / dSinHalfAngle;
-    }
-  } //CAxisRotation(const CQuaternion & quat)
-  
-  CAxisRotation::CAxisRotation(const CEulerRotation & oRot) {
-    CQuaternion oQuat(oRot);
-    *this = CAxisRotation(oQuat);
-  } //CAxisRotation(const CEulerRotation & oRot)
-  
-  CAxisRotation& CAxisRotation::operator=(const CAxisRotation& oRot) {
-    m_oAxis = oRot.m_oAxis;
-    m_dAngle = oRot.m_dAngle;
-    return *this;
-  } //operator=(const CAxisRotation& oRot)
-  
-  bool CAxisRotation::operator ==(const CAxisRotation& oRot) const {
-    return ((m_dAngle == oRot.m_dAngle) && (m_oAxis == oRot.m_oAxis));
-  }
-  
-  CAxisRotation CAxisRotation::MergeInside(const CAxisRotation & oRot) const{
-    CQuaternion first(*this);
-    CQuaternion second(oRot);
-    return CAxisRotation(first * second);
-  }
-  
-  CAxisRotation CAxisRotation::MergeOutside(const CAxisRotation & oRot) const{
-    return oRot.MergeInside(*this);
-  }
-  
-  CAxisRotation& CAxisRotation::Normalise() {
-    m_oAxis.Normalise();
-    return *this;
-  } //Normalise()
-  
-  void CAxisRotation::ToDouble(double& dX, double& dY, double& dZ, double& dAngle) const {
-    m_oAxis.ToDouble(dX, dY, dZ);
-    dAngle = m_dAngle;
-  } //ToDouble(double& dX, double& dY, double& dZ, double& dAngle) const
-  
-  void CAxisRotation::FromDouble(double dX, double dY, double dZ, double dAngle) {
-    m_dAngle = dAngle;
-    m_oAxis.FromDouble(dX, dY, dZ);
-    return;
-  } //FromDouble(double dX, double dY, double dZ, double dAngle)
-  
-  void CAxisRotation::SetAngle(double dAngle) {
-    m_dAngle = dAngle;
-    return;
-  } //SetAngle(double dAngle)
-  
-  bool CAxisRotation::ParseString(const char* strInput, int* used) {
-    double pdInputData[4];
-    const int iNumComponents = 4;
-    int iCurrentComponent = 0;
-    bool bFractionalPart = false;
-    bool bExponentPart = false;
-    int iStrLength = strlen(strInput);
-    bool bRetVal = (iStrLength == 0) ? false : true;
-    unsigned long int uliIntegerPart = 0;
-    unsigned long int uliFractionalPart = 0;
-    unsigned long int uliFractionalDivisor = 1;
-    long int liExponentPart = 0;
-    int iMantissaSign = 1;
-    int iExponentSign = 1;
-    int iCharIndex = 0;
-    bool waiting = false;
-    for (iCharIndex=0; (iCharIndex<iStrLength) && bRetVal && (iCurrentComponent < iNumComponents); iCharIndex++) {
-      if (waiting) {
-	// Assign to current component
-	liExponentPart *= iExponentSign;
-	pdInputData[iCurrentComponent] = (iMantissaSign * (uliIntegerPart + ((double)uliFractionalPart / (double)uliFractionalDivisor))) * pow(10,liExponentPart);
-	// Reset variables
-	bFractionalPart = false;
-	bExponentPart = false;
-	uliIntegerPart = 0;
-	uliFractionalPart = 0;
-	uliFractionalDivisor = 1;
-	liExponentPart = 0;
-	iMantissaSign = 1;
-	iExponentSign = 1;
-	// Move on
-	iCurrentComponent++;
-	waiting = false;
+   CAxisRotation::CAxisRotation(const CQuaternion & oQuat) {
+      CLog oLog("math","CAxisRotation::Constructor (CQuaternion)",LL_OBJECT);
+      double dHalfAngle = acos(oQuat.Scalar());
+      double dSinHalfAngle = sin(dHalfAngle);
+      m_dAngle = 2.0F * dHalfAngle;
+      if (fabs(dSinHalfAngle) == 0) {
+         CVector3D temp(0,1,0);
+         m_oAxis = temp;
       }
-      if (isdigit(strInput[iCharIndex])) {
-	if (bExponentPart) {
-	  liExponentPart *= 10;
-	  liExponentPart += strInput [iCharIndex] - '0';
-	}
-	else if (bFractionalPart) {
-	  uliFractionalPart *= 10;
-	  uliFractionalDivisor *= 10;
-	  uliFractionalPart += strInput[iCharIndex] - '0';
-	}
-	else {
-	  uliIntegerPart *= 10;
-	  uliIntegerPart += strInput[iCharIndex] - '0';
-	}
+      else {
+         m_oAxis = oQuat.Vector() / dSinHalfAngle;
       }
-      else if (strInput[iCharIndex] == '-') {
-	if (bExponentPart) {
-	  iExponentSign = -1;
-	}
-	else {
-	  iMantissaSign = -1;
-	}
-      }
-      else if (strInput[iCharIndex] == ' ') {
-	// Waiting for next component.
-	waiting = true;
-      }
-      else if (strInput[iCharIndex] == '.') {
-	bFractionalPart = true;
-      }
-      else if ((strInput[iCharIndex] == 'e') || (strInput[iCharIndex] == 'E')) {
-	bExponentPart = true;
-      }
-      else bRetVal = false;
-    }
-    // Assign last component
-    if (bRetVal && (iCurrentComponent != iNumComponents)) {
-      liExponentPart *= iExponentSign;
-      pdInputData[iCurrentComponent] = (iMantissaSign * (uliIntegerPart + ((double)uliFractionalPart / (double)uliFractionalDivisor))) * pow(10,liExponentPart);
-    }
-    if (iCurrentComponent != iNumComponents-1) bRetVal = false;
-    if (used != NULL) {
-      *used = iCharIndex;
-    }
-    m_oAxis.FromDouble(pdInputData[0],pdInputData[1],pdInputData[2]);
-    m_dAngle = pdInputData[3];
-    return bRetVal;
-  } //ParseString(const char* strInput, int& used)
+   } //CAxisRotation(const CQuaternion & quat)
   
-  char* CAxisRotation::ToString(int precision) const {
-    // Allocate output buffer space and initialise it to a null string.
-    char* output = (char*)malloc(512);
-    output[0] = 0;
-    char* str = 0;
-    // Create axis string
-    str = m_oAxis.ToString(precision);
-    strcat(output,str);
-    free(str);
-    strcat(output," ");
-    // Create angle string
-    CScalar sComponent(m_dAngle);
-    str = sComponent.ToString(precision);
-    strcat(output,str);
-    free(str);
-    // Chop string and return
-    int length = strlen(output) + 1;
-    output = (char*)realloc(output,length);
-    return output;
-  } //ToString(int precision) const
+   CAxisRotation::CAxisRotation(const CEulerRotation & oRot) {
+      CLog oLog("math","CAxisRotation::Constructor (CEulerRotation)",LL_OBJECT);
+      CQuaternion oQuat(oRot);
+      *this = CAxisRotation(oQuat);
+   } //CAxisRotation(const CEulerRotation & oRot)
+  
+   CAxisRotation& CAxisRotation::operator=(const CAxisRotation& oRot) {
+      CLog oLog("math","CAxisRotation::operator=",LL_FUNCTION);
+      m_oAxis = oRot.m_oAxis;
+      m_dAngle = oRot.m_dAngle;
+      return *this;
+   } //operator=(const CAxisRotation& oRot)
+  
+   bool CAxisRotation::operator ==(const CAxisRotation& oRot) const {
+      CLog oLog("math","CAxisRotation::operator==",LL_FUNCTION);
+      return ((m_dAngle == oRot.m_dAngle) && (m_oAxis == oRot.m_oAxis));
+   }
+  
+   CAxisRotation CAxisRotation::MergeInside(const CAxisRotation & oRot) const{
+      CLog oLog("math","CAxisRotation::MergeInside",LL_FUNCTION);
+      CQuaternion first(*this);
+      CQuaternion second(oRot);
+      return CAxisRotation(first * second);
+   }
+  
+   CAxisRotation CAxisRotation::MergeOutside(const CAxisRotation & oRot) const{
+      CLog oLog("math","CAxisRotation::MergeOutside",LL_FUNCTION);
+      return oRot.MergeInside(*this);
+   }
+  
+   CAxisRotation& CAxisRotation::Normalise() {
+      CLog oLog("math","CAxisRotation::Normalise",LL_FUNCTION);
+      m_oAxis.Normalise();
+      return *this;
+   } //Normalise()
+  
+   CVector3D CAxisRotation::Axis(void) const {
+      CLog oLog("math","CAxisRotation::Axis (const)",LL_FUNCTION);
+      return m_oAxis;
+   }
+    
+   CVector3D& CAxisRotation::Axis(void) {
+      CLog oLog("math","CAxisRotation::Axis",LL_FUNCTION);
+      return m_oAxis;
+   }
+    
+   double CAxisRotation::Angle(void) const {
+      CLog oLog("math","CAxisRotation::Angle (const)",LL_FUNCTION);
+      return m_dAngle;
+   }
+    
+   double& CAxisRotation::Angle(void) {
+      CLog oLog("math","CAxisRotation::Angle",LL_FUNCTION);
+      return m_dAngle;
+   }
+    
+
+   void CAxisRotation::ToDouble(double& dX, double& dY, double& dZ, double& dAngle) const {
+      CLog oLog("math","CAxisRotation::ToDouble",LL_FUNCTION);
+      m_oAxis.ToDouble(dX, dY, dZ);
+      dAngle = m_dAngle;
+   } //ToDouble(double& dX, double& dY, double& dZ, double& dAngle) const
+  
+   void CAxisRotation::FromDouble(double dX, double dY, double dZ, double dAngle) {
+      CLog oLog("math","CAxisRotation::FromDouble",LL_FUNCTION);
+      m_dAngle = dAngle;
+      m_oAxis.FromDouble(dX, dY, dZ);
+      return;
+   } //FromDouble(double dX, double dY, double dZ, double dAngle)
+  
+   bool CAxisRotation::ParseString(const char* pcInput, int* piUsed) {
+      CLog oLog("math","CAxisRotation::ParseString",LL_FUNCTION);
+      double pdInputData[4];
+      const int iNumComponents = 4;
+      int iCurrentComponent = 0;
+      bool bFractionalPart = false;
+      bool bExponentPart = false;
+      int iStrLength = strlen(pcInput);
+      bool bRetVal = (iStrLength == 0) ? false : true;
+      unsigned long int ulIntegerPart = 0;
+      unsigned long int ulFractionalPart = 0;
+      unsigned long int ulFractionalDivisor = 1;
+      long int lExponentPart = 0;
+      int iMantissaSign = 1;
+      int iExponentSign = 1;
+      int iCharIndex = 0;
+      bool waiting = false;
+      for (iCharIndex=0; (iCharIndex<iStrLength) && bRetVal && (iCurrentComponent < iNumComponents); iCharIndex++) {
+         if (waiting) {
+            // Assign to current component
+            lExponentPart *= iExponentSign;
+            pdInputData[iCurrentComponent] = (iMantissaSign * (ulIntegerPart + ((double)ulFractionalPart / (double)ulFractionalDivisor))) * pow(10,lExponentPart);
+            // Reset variables
+            bFractionalPart = false;
+            bExponentPart = false;
+            ulIntegerPart = 0;
+            ulFractionalPart = 0;
+            ulFractionalDivisor = 1;
+            lExponentPart = 0;
+            iMantissaSign = 1;
+            iExponentSign = 1;
+            // Move on
+            iCurrentComponent++;
+            waiting = false;
+         }
+         if (isdigit(pcInput[iCharIndex])) {
+            if (bExponentPart) {
+               lExponentPart *= 10;
+               lExponentPart += pcInput [iCharIndex] - '0';
+            }
+            else if (bFractionalPart) {
+               ulFractionalPart *= 10;
+               ulFractionalDivisor *= 10;
+               ulFractionalPart += pcInput[iCharIndex] - '0';
+            }
+            else {
+               ulIntegerPart *= 10;
+               ulIntegerPart += pcInput[iCharIndex] - '0';
+            }
+         }
+         else if (pcInput[iCharIndex] == '-') {
+            if (bExponentPart) {
+               iExponentSign = -1;
+            }
+            else {
+               iMantissaSign = -1;
+            }
+         }
+         else if (pcInput[iCharIndex] == ' ') {
+            // Waiting for next component.
+            waiting = true;
+         }
+         else if (pcInput[iCharIndex] == '.') {
+            bFractionalPart = true;
+         }
+         else if ((pcInput[iCharIndex] == 'e') || (pcInput[iCharIndex] == 'E')) {
+            bExponentPart = true;
+         }
+         else bRetVal = false;
+      }
+      // Assign last component
+      if (bRetVal && (iCurrentComponent != iNumComponents)) {
+         lExponentPart *= iExponentSign;
+         pdInputData[iCurrentComponent] = (iMantissaSign * (ulIntegerPart + ((double)ulFractionalPart / (double)ulFractionalDivisor))) * pow(10,lExponentPart);
+      }
+      if (iCurrentComponent != iNumComponents-1) bRetVal = false;
+      if (piUsed != NULL) {
+         *piUsed = iCharIndex;
+      }
+      m_oAxis.FromDouble(pdInputData[0],pdInputData[1],pdInputData[2]);
+      m_dAngle = pdInputData[3];
+      return bRetVal;
+   } //ParseString(const char* pcInput, int& piUsed)
+  
+   char* CAxisRotation::ToString(int iPrecision) const {       
+      CLog oLog("math","CAxisRotation::ToString",LL_FUNCTION);
+      // Allocate output buffer space and initialise it to a null string.
+      char* pcOutput = (char*)malloc(512);
+      pcOutput[0] = 0;
+      char* pcStr = 0;
+      // Create axis string
+      pcStr = m_oAxis.ToString(iPrecision);
+      strcat(pcOutput,pcStr);
+      free(pcStr);
+      strcat(pcOutput," ");
+      // Create angle string
+      CScalar oComponent(m_dAngle);
+      pcStr = oComponent.ToString(iPrecision);
+      strcat(pcOutput,pcStr);
+      free(pcStr);
+      // Chop string and return
+      int length = strlen(pcOutput) + 1;
+      pcOutput = (char*)realloc(pcOutput,length);
+      return pcOutput;
+   } //ToString(int iPrecision) const
   
 }

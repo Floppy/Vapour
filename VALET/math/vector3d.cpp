@@ -11,7 +11,7 @@
 //! author     = "James Smith"
 //! date       = "01/10/2001"
 //! lib        = libVALETmath
-//! rcsid      = "$Id: vector3d.cpp,v 1.9 2001/10/24 18:16:59 vap-james Exp $"
+//! rcsid      = "$Id: vector3d.cpp,v 1.10 2001/10/24 21:33:27 vap-james Exp $"
 //! userlevel  = Normal
 //! docentry   = "VALET.Math.Geometry"
 
@@ -30,7 +30,7 @@
 #include <alloc.h>
 #include <ctype.h>
 
-namespace NValet {
+namespace NVALET {
    
    CVector3D::CVector3D() {
       CLog("math","CVector3D::Constructor (default)", LL_OBJECT);

@@ -14,12 +14,12 @@
 //! author 		= "James Smith"
 //! date 		= "02/10/2001"
 //! lib 		= libVALETmath
-//! rcsid 		= "$Id: quaternion.h,v 1.7 2001/10/18 13:07:01 vap-james Exp $"
+//! rcsid 		= "$Id: quaternion.h,v 1.8 2001/10/24 21:33:26 vap-james Exp $"
 //! userlevel 	        = Normal
 //! docentry 	        = "VALET.Math.Geometry"
 
-namespace NValet {
-  class CQuaternion;
+namespace NVALET {
+   class CQuaternion;
 }
 
 //#===--- Includes
@@ -28,113 +28,113 @@ namespace NValet {
 #include "VALET/axisrotation.h"
 #include "VALET/eulerrotation.h"
 
-namespace NValet {
+namespace NVALET {
 
-  //: Quaternion
-  // A class representing a quaternion, a representation of a rotation.
-  // The rotation is represented by a point on the surface of a 4D sphere.
+   //: Quaternion
+   // A class representing a quaternion, a representation of a rotation.
+   // The rotation is represented by a point on the surface of a 4D sphere.
 
-  class CQuaternion {
+   class CQuaternion {
 	
-  protected:
+   protected:
 
-    double m_dScalar;
-    //: The scalar part
+      double m_dScalar;
+      //: The scalar part
 
-    CVector3D m_oVector;
-    //: The vector part
+      CVector3D m_oVector;
+      //: The vector part
 
-  public:
-    //:------------------------
-    //: Contruction/Destruction
+   public:
+      //:------------------------
+      //: Contruction/Destruction
 
-    CQuaternion();
-    //: Default constructor
+      CQuaternion();
+      //: Default constructor
 
-    CQuaternion(const CQuaternion &oQuat);
-    //: Copy constructor
-    //!param: oQuat = the quaternion to be copied.
+      CQuaternion(const CQuaternion &oQuat);
+      //: Copy constructor
+      //!param: oQuat = the quaternion to be copied.
 
-    CQuaternion(const double dScalar, const CVector3D & oVector);
-    //: Constructor from vector/scalar
-    //!param: dScalar = the scalar part.
-    //!param: dVector = the vector part.
+      CQuaternion(const double dScalar, const CVector3D & oVector);
+      //: Constructor from vector/scalar
+      //!param: dScalar = the scalar part.
+      //!param: dVector = the vector part.
 
-    explicit CQuaternion(const CAxisRotation &oRot);
-    //: Constructor from axis-angle rotation
+      explicit CQuaternion(const CAxisRotation &oRot);
+      //: Constructor from axis-angle rotation
 
-    explicit CQuaternion(const CEulerRotation &oRot);
-    //: Constructor from euler rotation
+      explicit CQuaternion(const CEulerRotation &oRot);
+      //: Constructor from euler rotation
 
-    ~CQuaternion();
-    //: Destructor
+      ~CQuaternion();
+      //: Destructor
 
-    //:---------------------
-    //: Arithmetic operators
+      //:---------------------
+      //: Arithmetic operators
 
-    CQuaternion& operator=(const CQuaternion& oQuat);
-    //: Assignment operator
-    //!param: oQuat = the quaternion to be assigned to this one.
+      CQuaternion& operator=(const CQuaternion& oQuat);
+      //: Assignment operator
+      //!param: oQuat = the quaternion to be assigned to this one.
 
-    CQuaternion operator*(const CQuaternion & oQuat) const;		
-    //: Quaternion multiplication
-    //!param: oQuat = the quaternion to multiply this one by.
-    //!param: return = a new quaternion equal to this * oQuat.
+      CQuaternion operator*(const CQuaternion & oQuat) const;		
+      //: Quaternion multiplication
+      //!param: oQuat = the quaternion to multiply this one by.
+      //!param: return = a new quaternion equal to this * oQuat.
 
-    CQuaternion operator/(const double dScalar) const;
-    //: Division
-    // This operator divides all components of the quaternion by the argument.
-    //!param: dScalar = the value to divide by.
-    //!param: return = a new quaternion equal to this / dScalar.
+      CQuaternion operator/(const double dScalar) const;
+      //: Division
+      // This operator divides all components of the quaternion by the argument.
+      //!param: dScalar = the value to divide by.
+      //!param: return = a new quaternion equal to this / dScalar.
 
-    //:--------------------
-    //: Geometric functions
+      //:--------------------
+      //: Geometric functions
 
-    CQuaternion Conjugate() const;
-    //: Conjugation
-    // Return the conjugate of this quaternion.
-    //!param: return = the conjugate.
-    //!todo: Explain what this means better in the documentation.
+      CQuaternion Conjugate() const;
+      //: Conjugation
+      // Return the conjugate of this quaternion.
+      //!param: return = the conjugate.
+      //!todo: Explain what this means better in the documentation.
 
-    double Norm() const;
-    //: Norm
-    // Return the norm of this quaternion.
-    //!param: return = the norm.
-    //!todo: Explain what this means better in the documentation.
+      double Norm() const;
+      //: Norm
+      // Return the norm of this quaternion.
+      //!param: return = the norm.
+      //!todo: Explain what this means better in the documentation.
 
-    CQuaternion Inverse() const;
-    //: Inversion
-    // Calculate the inverse of this quaternion
-    //!param: return = a new quaternion equal to the inverse of this one.
+      CQuaternion Inverse() const;
+      //: Inversion
+      // Calculate the inverse of this quaternion
+      //!param: return = a new quaternion equal to the inverse of this one.
 
-    //:--------------
-    //: Interpolation
+      //:--------------
+      //: Interpolation
 
-    CQuaternion SlerpTo(const CQuaternion& oQuat, double dAmount) const;
-    //: <B>S</B>pherical <B>L</B>inear int<B>ERP</B>olation
-    // Calculate a new quaternion that is an interpolation of this one and oQuat.		
-    //!param: oQuat = the target quaternion.
-    //!param: dAmount = value between 0..1 inclusive. 
-    //!param:           this.SlerpTo(oQuat,0) == this; 
-    //!param:           this.SlerpTo(oQuat,1) == oQuat;
+      CQuaternion SlerpTo(const CQuaternion& oQuat, double dAmount) const;
+      //: <B>S</B>pherical <B>L</B>inear int<B>ERP</B>olation
+      // Calculate a new quaternion that is an interpolation of this one and oQuat.		
+      //!param: oQuat = the target quaternion.
+      //!param: dAmount = value between 0..1 inclusive. 
+      //!param:           this.SlerpTo(oQuat,0) == this; 
+      //!param:           this.SlerpTo(oQuat,1) == oQuat;
 
-    //:-----------------
-    //: Access functions
+      //:-----------------
+      //: Access functions
 
-    double Scalar(void) const;
-    //: Access to scalar part
+      double Scalar(void) const;
+      //: Access to scalar part
 		
-    double& Scalar(void);
-    //: Non-const access to scalar part
-    // This can be used to modify the scalar part.
+      double& Scalar(void);
+      //: Non-const access to scalar part
+      // This can be used to modify the scalar part.
 
-    CVector3D Vector(void) const;
-    //: Access to vector part
+      CVector3D Vector(void) const;
+      //: Access to vector part
 
-    CVector3D& Vector(void);
-    //: Non-const access to vector part
-    // This can be used to modify the vector part.
-  };
+      CVector3D& Vector(void);
+      //: Non-const access to vector part
+      // This can be used to modify the vector part.
+   };
 }
 
 #endif // _VALET_MATH_QUATERNION_

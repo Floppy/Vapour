@@ -11,7 +11,7 @@
 //! author     = "James Smith"
 //! date       = "18/10/2001"
 //! lib        = libVALETmath
-//! rcsid      = "$Id: vector2d.cpp,v 1.3 2001/10/24 18:16:59 vap-james Exp $"
+//! rcsid      = "$Id: vector2d.cpp,v 1.4 2001/10/24 21:33:26 vap-james Exp $"
 //! userlevel  = Normal
 //! docentry   = "VALET.Math.Geometry"
 
@@ -27,7 +27,7 @@
 #include <alloc.h>
 #include <ctype.h>
 
-namespace NValet {
+namespace NVALET {
   
    CVector2D::CVector2D() {
       CLog("math","CVector2D::Constructor (default)", LL_OBJECT);
