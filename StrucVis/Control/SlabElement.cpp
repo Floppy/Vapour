@@ -9,7 +9,7 @@
 //! file      = "Control/SlabElement.cpp"
 //! author    = "James Smith"
 //! date      = "19/3/2002"
-//! rcsid     = "$Id: SlabElement.cpp,v 1.33 2002/04/22 10:42:05 vap-james Exp $"
+//! rcsid     = "$Id: SlabElement.cpp,v 1.34 2002/04/23 11:33:24 vap-james Exp $"
 
 #include "stdafx.h"
 #include "SlabElement.h"
@@ -56,6 +56,7 @@ const char pcSlabStart[] = " \
       field   MFInt32  cracks \
       field   MFString description \
       field   MFVec3f  nodes \
+      field   MFInt32  nodeIndex \
       field   SFFloat  thickness \
       eventOut MFString description_changed \
    ] \
@@ -66,9 +67,6 @@ bool CSlabElement::Display(const char* pcURL) const {
    // Calculate colours
    float pfColours[27];
    if (m_bDirtyColour) CalculateColours(pfColours);
-   // Calculate node positions
-   float pfNodes[27];
-   CalculateNodePositions(pfNodes);
    // If the slab isn't there yet
    if (m_poNodePtr == NULL) {
       // Create a slab and add it to the scene
@@ -93,9 +91,9 @@ bool CSlabElement::Display(const char* pcURL) const {
       for (int c=0; c<27; c++) strSlab << " " << pfColours[c];
       strSlab << " ] ";
       m_bDirtyColour = false;
-      // Setup node positions
-      strSlab << " nodes [ ";
-      for (int n=0; n<27; n++) strSlab << " " << pfNodes[n];
+      // Setup node indices
+      strSlab << " nodeIndex [ ";
+      for (int n=0; n<9; n++) strSlab << " " << m_piNodes[n]-1;
       strSlab << " ] ";
       // Setup cracks
       strSlab << " cracks [ ";
@@ -133,14 +131,6 @@ bool CSlabElement::Display(const char* pcURL) const {
    }
    else {
       bool bOK = true;
-      //#===--- Update node positions
-      // Set values
-      if (m_ppoField[0]) {
-         bOK = m_ppoField[0]->SetMFVec3f(pfNodes, 9);
-         // Send event
-         if (bOK && !m_poNodePtr->AssignEventIn("set_nodes", *(m_ppoField[0])))
-            bOK = false;
-      }
 
       //#===--- Update cracks
       // Set values
@@ -227,16 +217,6 @@ void CSlabElement::CalculateColours(float* pfColours) const {
          }
       }
       break;
-   }
-   return;
-}
-
-void CSlabElement::CalculateNodePositions(float* pfNodes) const {
-   for (int i=0; i<9; i++) {
-      const float* pNode = m_poNodeSet->Node(m_piNodes[i]);
-      pfNodes[(i*3) + 0] = pNode[0];
-      pfNodes[(i*3) + 1] = pNode[1];
-      pfNodes[(i*3) + 2] = pNode[2];
    }
    return;
 }

@@ -9,7 +9,7 @@
 //! file      = "Control/SlabElement.h"
 //! author    = "James Smith"
 //! date      = "19/3/2002"
-//! rcsid     = "$Id: SlabElement.h,v 1.18 2002/04/04 11:01:37 vap-warren Exp $"
+//! rcsid     = "$Id: SlabElement.h,v 1.19 2002/04/23 11:33:24 vap-james Exp $"
 
 #ifndef __VTSTRUCVIS_SLABELEMENT__
 #define __VTSTRUCVIS_SLABELEMENT__
@@ -82,10 +82,6 @@ private:
 
    void CalculateColours(float* pfColours) const;
    //: Calculates a set of colours for the element.
-   //!param: pfColours - an array of 27 floats in which the function will return data.
-
-   void CalculateNodePositions(float* pfNodes) const;
-   //: Calculates 3D node positions for the element.
    //!param: pfColours - an array of 27 floats in which the function will return data.
 
 protected:

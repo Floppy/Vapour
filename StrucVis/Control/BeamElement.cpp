@@ -9,7 +9,7 @@
 //! file      = "Control/BeamElement.cpp
 //! author    = "James Smith"
 //! date      = "19/3/2002"
-//! rcsid     = "$Id: BeamElement.cpp,v 1.34 2002/04/22 15:03:25 vap-warren Exp $"
+//! rcsid     = "$Id: BeamElement.cpp,v 1.35 2002/04/23 11:33:23 vap-james Exp $"
 
 #include "stdafx.h"
 #include "BeamElement.h"
@@ -58,6 +58,7 @@ const char pcBeamStart[] = " \
       field   SFFloat  web \
       field   SFFloat  width \
       field   MFVec3f  nodes \
+      field   MFInt32  nodeIndex \
       eventOut MFString description_changed \
    ] \
    [ \
@@ -67,9 +68,6 @@ bool CBeamElement::Display(const char* pcURL) const {
    // Calculate colours
    float pfColours[6];
    if (m_bDirtyColour) CalculateColours(pfColours);
-   // Calculate node positions
-   float pfNodes[6];
-   CalculateNodePositions(pfNodes);
    // If the beam isn't there yet
    if (m_poNodePtr == NULL) {
       // Create a beam and add it to the scene
@@ -97,9 +95,9 @@ bool CBeamElement::Display(const char* pcURL) const {
       for (int c=0; c<6; c++) strBeam << " " << pfColours[c];
       strBeam << " ] ";
       m_bDirtyColour = false;
-      // Setup node positions
-      strBeam << " nodes [ ";
-      for (int n=0; n<6; n++) strBeam << " " << pfNodes[n];
+      // Setup node indices
+      strBeam << " nodeIndex [ ";
+      for (int n=0; n<2; n++) strBeam << " " << m_piNodes[n]-1;
       strBeam << " ] ";
       // Close the BeamElement
       strBeam << "}";
@@ -136,14 +134,6 @@ bool CBeamElement::Display(const char* pcURL) const {
    }
    else {
       bool bOK = true;
-      //#===--- Update node positions
-      // Set values
-      if (m_ppoField[0]) {
-         bOK  = m_ppoField[0]->SetMFVec3f(pfNodes, 2);
-         // Send event
-         if (bOK && !m_poNodePtr->AssignEventIn("set_nodes",*(m_ppoField[0])))
-            bOK = false;
-      }
 
       //#===--- Update colours
       if (m_bDirtyColour) {
@@ -217,16 +207,6 @@ void CBeamElement::CalculateColours(float* pfColours) const {
          }
       }
       break;
-   }
-   return;
-}
-
-void CBeamElement::CalculateNodePositions(float* pfNodes) const {
-   for (int i=0; i<2; i++) {
-      const float* pNode = m_poNodeSet->Node(m_piNodes[i]);
-      pfNodes[(i*3) + 0] = pNode[0];
-      pfNodes[(i*3) + 1] = pNode[1];
-      pfNodes[(i*3) + 2] = pNode[2];
    }
    return;
 }

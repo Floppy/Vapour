@@ -9,7 +9,7 @@
 //! file      = "Control/BeamElement.h"
 //! author    = "James Smith"
 //! date      = "19/3/2002"
-//! rcsid     = "$Id: BeamElement.h,v 1.20 2002/04/04 13:59:15 vap-warren Exp $"
+//! rcsid     = "$Id: BeamElement.h,v 1.21 2002/04/23 11:33:24 vap-james Exp $"
 
 #ifndef __VTSTRUCVIS_BEAMELEMENT__
 #define __VTSTRUCVIS_BEAMELEMENT__
@@ -80,10 +80,6 @@ private:
 
    void CalculateColours(float* pfColours) const;
    //: Calculates a set of colours for the element.
-   //!param: pfColours - an array of 6 floats in which the function will return data.
-
-   void CalculateNodePositions(float* pfNodes) const;
-   //: Calculates 3D node positions for the element.
    //!param: pfColours - an array of 6 floats in which the function will return data.
 
 protected:
