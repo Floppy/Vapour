@@ -9,7 +9,7 @@
 //! file      = "Control/CortonaField.h"
 //! author    = "Warren Moore"
 //! date      = "12/3/2002"
-//! rcsid     = "$Id: CortonaField.h,v 1.21 2002/04/24 14:56:33 vap-warren Exp $"
+//! rcsid     = "$Id: CortonaField.h,v 1.22 2002/04/25 15:06:02 vap-warren Exp $"
 
 #ifndef __VTSTRUCVIS_CORTONAFIELD__
 #define __VTSTRUCVIS_CORTONAFIELD__
@@ -80,7 +80,6 @@ public:
 
    bool SetMFVec3f(const long liIndex, const float fX, const float fY, const float fZ);
    //: Set MFVec3f values
-   //!todo: This function is an application bottleneck
    //!param: liIndex - Index of field value
    //!param: fX - X value
    //!param: fY - Y value
@@ -131,7 +130,6 @@ public:
 
    bool SetMFColor(const long liIndex, const float fR, const float fG, const float fB);
    //: Set MFColor values
-   //!todo: This function is an application bottleneck
    //!param: liIndex - Index of field value
    //!param: fR - Red value
    //!param: fG - Blue value

@@ -2,39 +2,51 @@
 : ActiveX Control Overview
 
 <P CLASS=HEADING>
-Implementation Notes
+Design Process
 </P>
 <P>
-The ActiveX control is an Internet aware control developed using the MFC framework.
-An Automation interface is provided to allow control parameters to be set within HTML pages or
-other ActiveX containers such as Visual Basic or MS Excel.
-</P>
-<P>
-The single-threaded control is entirely event-driven i.e. functions are called in response to Windows messages indicating
-mouse movements, changes in the ActiveX container state or notifications that further streaming data has arrived.
-</P>
-<P>
-An instance of the Cortona VRML control is required in the same ActiveX container for 3D display.
-Through queries to the container, the control can obtain an interface to Cortona to allow direct communication
-through Cortona's Automation interface.
+This document details the design decision made and the implications they have had on our current implementation.
 </P>
 
-<P CLASS=HEADING>
-Extensions &amp; Improvements
+<P CLASS=SUBHEADING>
+Files vs Dynamic Control
+</P>
+<P>
+Given that the project brief was to visualise and animate a considerable amount of dynamic data with a web page,
+generating VRML files containing all the data was an unfeasible approach.
+</P>
+<P>The size of generated files would be restrictively large, given that all the coordinates would have to
+represented in text format. Compressing the files would reduce the physical file sizes, but they
+would still need to be uncompressed into memory by the VRML browser. The animation could not be streamed
+as VRML browsers require all data (excluding textures) to be downloaded before display. With larger simulations,
+increased memory usage would have a significant impact on browser performance.
+</P>
+<P>Using an external control to manage data was chosen to overcome all these problems. Through the use of an
+intermediate binary file format, the data file size could be significantly reduced. Data for individual frames
+could be sent to the VRML browser as more data was downloaded, allowing for animation streaming and a reduced
+waiting period before the browser could display the first frame. Browser memory usage would be reduced as only
+the data for a single frame would be stored by the browser at any point.
+</P>
+
+<P CLASS=SUBHEADING>
+Java vs ActiveX
+</P>
+<P>
+Only two options are available for running applications within a browser. Although ActiveX was chosen to
+remain inline with Arup's technology roadmap, here are the advantages, disadvantages and contraints of each
+method.
 </P>
 <UL>
-<LI><B>Speed</B><BR>
-Simulation data manipulation within the control and within Cortona are fast operations, however transfer of
-data from the control to Cortona is marshalled by Microsoft's Automation engine. This external mashalling
-results in a slow frame update. Through extensive use of Cortona's internal JavaScript engine it will be
-possible to work around this bottleneck and dramatically improve animation speed.</LI>
-<LI><B>Event Sinks</B><BR>
-The Cortona control does provide event callbacks for VRML events and therefore it will be possible for the
-control to react to user interactions with the VRML scene.</LI>
-<LI><B>Framebuffer Access</B><BR>
-It is possible to directly edit the image rendered by Cortona, allowing the possibility to add extra graphical
-elements such as improved tool-tips, a skinnable HUD and fire effects.</LI>
-<LI><B>Navigation Control</B><BR>
-It is also possible to directly control scene navigation, allowing to use of officially unsupported controllers
-such as 3D-mice or 6DOF 'space-balls'.</LI>
+<LI><B>Java</B>
+	<P>Java virtual machines are available for several operating systems,
+	and Java applets are capable of running within several browsers, such as Internet Explorer, Netscape and Opera.
+	As commercial quality VRML browsers are only really available for Windows or Silicon Graphics' Irix, you
+	have no real choice of OS when developing Internet 3D for desktop PC's, but could remain independent of any
+	Windows-based browsers.
+	<P>As the Java-based method of external communication with a VRML browser, the External Authoring Interface (EAI),
+	is part of the VRML standard, Java does not limit your choice of VRML browser.
+<LI><B>ActiveX</B>
+	<P>
+
 </UL>
+
