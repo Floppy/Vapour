@@ -7,7 +7,7 @@
 // SGAToHalfLife.cpp - 12/06/2000 - Warren Moore
 //	SGA Avatar to Half Life converter wrapper 
 //
-// $Id: SgatoHalfLife.cpp,v 1.9 2000/10/10 17:50:56 waz Exp $
+// $Id: SgatoHalfLife.cpp,v 1.10 2000/11/01 13:43:27 waz Exp $
 //
 
 #include "StdAfx.h"
@@ -25,7 +25,7 @@
 //#===--- Internal Defines
 
 #define VEM_GAMENAME			"Half Life"
-#define VEM_VERSION				"1.0"
+#define VEM_VERSION				"1.1"
 #define VEM_WJENAME				"hldata.wje"
 #define VEM_SFXNAME				"hlsfx.exe"
 
