@@ -6,7 +6,7 @@
 // BeamElement.h
 // 19/03/2002 - James Smith
 //
-// $Id: BeamElement.h,v 1.1 2002/03/20 02:06:24 vap-james Exp $
+// $Id: BeamElement.h,v 1.2 2002/03/20 12:46:30 vap-james Exp $
 
 #ifndef __BEAM_ELEMENT__
 #define __BEAM_ELEMENT__
@@ -39,11 +39,33 @@ public:
    void SetNodes(int iFirstNode, int iSecondNode);
    // Sets which nodes the beam is between
 
-//#===--- Member Variables
+   void SetStresses(float fFirstNode, float fSecondNode);
+   // Sets stresses for individual nodes
+
+private:
+
+   void CalculateColours(float* pfColours) const;
+   // Calculates a set of colours for the element.
+   // Expects an array of 6 floats in pfColours to return data in.
+
+   void CalculateNodePositions(float* pfNodes) const;
+   // Calculates node positions for the element.
+   // Expects an array of 6 floats in pfNodes to return data in.
+
+   //#===--- Member Variables
 protected:
 
    unsigned int m_piNodes[2];
    // The node indices that define the beam.
+
+   float m_pfStresses[2];
+   // Per-node stress values
+   
+   float m_fHeight;
+   float m_fWidth;
+   float m_fFlange;
+   float m_fWeb;
+   // Beam dimensions
 
 };
 

@@ -6,7 +6,7 @@
 // Element.h
 // 19/03/2002 - James Smith
 //
-// $Id: Element.h,v 1.1 2002/03/20 02:06:24 vap-james Exp $
+// $Id: Element.h,v 1.2 2002/03/20 12:46:30 vap-james Exp $
 
 #ifndef __ELEMENT__
 #define __ELEMENT__
@@ -22,23 +22,29 @@ enum TElementType {
    SLAB
 };
 
+enum TColourScheme {
+   SOLID,
+   STRESS
+};
+
 class CElement {
 //#===--- Construction/Destruction
 public:
 
    CElement(CCortonaUtil *pCortona) :
       m_pCortona(pCortona),
-      m_pNodePtr(NULL)
+      m_pNodePtr(NULL),
+      m_iElement(0),
+      m_iGroup(0),
+      m_fMinStress(0.0f),
+      m_fMaxStress(1000000.0f),
+      m_oColourScheme(SOLID)
    {
-      // Default values for the stress range
-      m_fMinStress = 0.0;
-      m_fMaxStress = 1000000.0;
-      // Default scale factor
-      m_pfDisplacementScale[0] = m_pfDisplacementScale[1] = m_pfDisplacementScale[2] = 1.0;
+         m_pfColour[0] = m_pfColour[1] = m_pfColour[2] = 0.5;
    }
    // Constructor
    
-   ~CElement() {
+   virtual ~CElement() {
       if (m_pNodePtr) m_pNodePtr->Release();
    }
    // Destructor
@@ -61,16 +67,29 @@ public:
    // Sets the range of possible stress values.
    // This will affect colouring of objects
    
-   void SetDisplacementScale(float fX, float fY, float fZ) const {
-      m_pfDisplacementScale[0] = fX;
-      m_pfDisplacementScale[1] = fY;
-      m_pfDisplacementScale[2] = fZ;
-      return;
-   }
-   // Set displacement scale factor.
+   unsigned int ID(void) {return m_iElement;}
+   // Get the element's ID number
+
+   unsigned int Group(void) {return m_iGroup;}
+   // Get the element's group number
+
+   void SetID(unsigned int iID) {m_iElement = iID;}
+   // Set element ID number.
 
    void SetGroup(unsigned int iGroup) {m_iGroup = iGroup;}
    // Set group membership.
+
+   void SetColour(float fRed, float fGreen, float fBlue) const {
+      m_pfColour[0] = fRed;
+      m_pfColour[1] = fGreen;
+      m_pfColour[2] = fBlue;
+   }
+   // Manually set a solid colour for the element
+
+   void SetColourScheme(TColourScheme oScheme) const {
+      m_oColourScheme = oScheme;
+   }
+   // Set the colour scheme to use
 
 //#===--- Member Variables
 protected:
@@ -81,15 +100,20 @@ protected:
    mutable INodeObject* m_pNodePtr;
    // Pointer to the node in the VRML world;
 
+   unsigned int m_iElement;
+   // A unique element ID.
    unsigned int m_iGroup;
-   // Which group the element belongs to
+   // Which group the element belongs to   
 
    mutable float m_fMinStress;
    mutable float m_fMaxStress;
    // Lower and upper limits on stress values.
 
-   mutable float m_pfDisplacementScale[3];
-   // Scale factors for node displacements.
+   mutable float m_pfColour[3];
+   // A manually set colour for the element
+
+   mutable TColourScheme m_oColourScheme;
+   // Which colouring scheme to use
 
 };
 
