@@ -6,7 +6,7 @@
 // BeamElement.cpp
 // 19/03/2002 - James Smith
 //
-// $Id: BeamElement.cpp,v 1.10 2002/03/21 21:55:00 vap-james Exp $
+// $Id: BeamElement.cpp,v 1.11 2002/03/21 22:56:57 vap-warren Exp $
 
 #include "stdafx.h"
 #include "BeamElement.h"
@@ -99,10 +99,12 @@ bool CBeamElement::Display(void) const {
       if (pField==NULL) return false;
       // Set values
       for (int i=0; i<2 && bOK; i++) {
-         if (bOK && !pField->SetMFVec3f(i,pfNodes[(i*3)],pfNodes[(i*3)+1],pfNodes[(i*3)+2])) bOK = false;
+         if (bOK && !pField->AddMFVec3f(pfNodes[(i*3)], pfNodes[(i*3)+1], pfNodes[(i*3)+2]))
+            bOK = false;
       }      
       // Send event
-      if (bOK && !m_poCortona->AssignEventIn(*m_poNodePtr,"set_nodes",*pField)) bOK = false;
+      if (bOK && !m_poNodePtr->AssignEventIn("set_nodes",*pField))
+         bOK = false;
       // Delete field
       pField->Release();
       delete pField;
@@ -112,10 +114,12 @@ bool CBeamElement::Display(void) const {
       if (pField==NULL) return false;
       // Set values
       for (i=0; i<2 && bOK; i++) {
-         if (bOK && !pField->SetMFColor(i,pfColours[(i*3)],pfColours[(i*3)+1],pfColours[(i*3)+2])) bOK = false;
+         if (bOK && !pField->SetMFColor(1, pfColours[(i*3)], pfColours[(i*3)+1], pfColours[(i*3)+2]))
+            bOK = false;
       }      
       // Send event
-      if (bOK && !m_poCortona->AssignEventIn(*m_poNodePtr,"set_colours",*pField)) bOK = false;
+      if (bOK && !m_poNodePtr->AssignEventIn("set_colours",*pField))
+         bOK = false;
       // Delete field
       pField->Release();
       delete pField;
@@ -179,15 +183,15 @@ void CBeamElement::CalculateNodePositions(float* pfNodes) const {
 bool CBeamElement::SetVisible(bool bVisible) const {
    if (m_poNodePtr!=NULL) {
       // Create boolean field
-      CCortonaField* pSFBool = m_poCortona->CreateField("SFBool");
-      if (pSFBool==NULL) return false;
+      CCortonaField* poSFBool = m_poCortona->CreateField("SFBool");
+      if (poSFBool==NULL) return false;
       // Set value
-      pSFBool->SetSFBool(bVisible);
+      poSFBool->SetSFBool(bVisible);
       // Send event
-      if (!m_poCortona->AssignEventIn(*m_poNodePtr,"set_visible",*pSFBool)) return false;
+      if (!m_poNodePtr->AssignEventIn("set_visible",*poSFBool)) return false;
       // Done!
-      pSFBool->Release();
-      delete pSFBool;
+      poSFBool->Release();
+      delete poSFBool;
       return true;
    }
    else return false;
