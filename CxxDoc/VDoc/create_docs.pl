@@ -5,7 +5,7 @@
 # script to check out the source modules and build docs for each supported arch
 
 # 13/09/2001 - Warren Moore
-# $Id: create_docs.pl,v 1.20 2001/11/04 15:59:12 vap-warren Exp $
+# $Id: create_docs.pl,v 1.1 2002/04/07 13:48:52 vap-warren Exp $
 # Copyright 2000-2001 Vapour Technology Ltd.
 
 # bring in the environment vars

@@ -48,4 +48,4 @@ method (such as moving it into vsrcdoc_core.php).
 Now this is all done, just run ./build_local_docs.sh in your temp directory and
 the whole thing should be built!
 
-$Id: README,v 1.2 2001/09/26 13:19:29 vap-warren Exp $
+$Id: README,v 1.1 2002/04/07 13:48:51 vap-warren Exp $
