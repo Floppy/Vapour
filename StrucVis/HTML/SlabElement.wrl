@@ -7,7 +7,7 @@
 # SlabElement.wrl
 # 19/03/2002 - James Smith
 #
-# $Id: SlabElement.wrl,v 1.12 2002/03/27 15:01:24 vap-james Exp $
+# $Id: SlabElement.wrl,v 1.13 2002/03/27 16:18:34 vap-james Exp $
 
 PROTO SlabElement [
    eventIn MFColor  set_colours
@@ -102,7 +102,6 @@ PROTO SlabElement [
                   14 30 31 15 -1
                   30 2 3 31 -1
                   0 28 32 16 -1
-                  4 28 32 16 -1
                   16 32 20 4 -1
                   32 24 8 20 -1
                   28 12 24 32 -1
