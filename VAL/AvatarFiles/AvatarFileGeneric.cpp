@@ -7,7 +7,7 @@
 // AvatarFileGeneric.cpp - 04/10/2000 - James Smith
 //	Generic avatar import filter implementation
 //
-// $Id: AvatarFileGeneric.cpp,v 1.2 2000/11/21 16:42:23 waz Exp $
+// $Id: AvatarFileGeneric.cpp,v 1.3 2000/11/29 23:43:51 james Exp $
 //
 
 #include "stdafx.h"
@@ -96,40 +96,8 @@ CAvatar* CAvatarFileGeneric::Load(const char* pszFilename) const {
       //Load info
       pNewAvatar->SetSex(CAvatar::SEX_UNKNOWN);
       pNewAvatar->SetAge(CAvatar::AGE_UNKNOWN);
-      //Load textures into CAvatar
-      int iNumTextures = AMeModel.iTotalNumTextures;
-      for (int t=0; t<iNumTextures; t++) {
-         CImage* pNewImage = new CImage(IT_RGB);
-         if (pNewImage != NULL) {
-            pNewImage->ImportAMETexture(AMeModel.TextureArr[t]);
-            int iWidth = 0;
-            int iHeight = 0;
-            pNewImage->GetSize(iWidth, iHeight);
-            // Find new size - lower power of 2 up to 512
-            if (iWidth > 512) iWidth = 512;
-            else {
-               int iMax = 512;
-               while ((iWidth & iMax) == 0) {
-                  iMax = iMax>>1;
-               }
-               iWidth = iMax;
-            }
-            if (iHeight > 512) iHeight = 512;
-            else {
-               int iMax = 512;
-               while ((iHeight & iMax) == 0) {
-                  iMax = iMax>>1;
-               }
-               iHeight = iMax;
-            }
-            // Rescale texture
-            pNewImage->Scale(iWidth,iHeight);
-            // Create new material and set texture
-            int iNewMaterial = pNewAvatar->AddMaterial();
-            if (iNewMaterial > -1) pNewAvatar->Material(iNewMaterial)->SetTexture(pNewImage);
-            else delete pNewImage;
-         }
-      }
+      //Create a material
+      pNewAvatar->AddMaterial();
       
       //Load all data into "current" fields, ready for unposing
 		
@@ -151,7 +119,7 @@ CAvatar* CAvatarFileGeneric::Load(const char* pszFilename) const {
             AMeModel.TrianglesArr[i].iVIndex[0],
             AMeModel.TrianglesArr[i].iVIndex[1],
             AMeModel.TrianglesArr[i].iVIndex[2],
-            AMeModel.TrianglesArr[i].iTArrIndex,
+            0,
             0,
             0,
             0,
