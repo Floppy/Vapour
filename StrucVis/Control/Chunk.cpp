@@ -7,7 +7,7 @@
 // Chunk.cpp
 // 19/03/2002 - James Smith
 //
-// $Id: Chunk.cpp,v 1.7 2002/03/27 11:19:46 vap-james Exp $
+// $Id: Chunk.cpp,v 1.8 2002/03/27 15:07:49 vap-james Exp $
 
 #include "stdafx.h"
 #include "Chunk.h"
@@ -150,8 +150,12 @@ bool CChunk::CreateChunk(const unsigned char* pcData, unsigned int iLength, unsi
    return true;
 }
 
-const CChunk* CChunk::SubChunk(TChunkType oType) {
-   for (std::vector<CTOCEntry>::iterator pEntry=m_oTOC.begin(); pEntry!=m_oTOC.end(); pEntry++) {
+const unsigned char* CChunk::Data(void) const {
+   return m_pcBuffer + 6;
+}
+
+const CChunk* CChunk::SubChunk(TChunkType oType) const {
+   for (std::vector<CTOCEntry>::const_iterator pEntry=m_oTOC.begin(); pEntry!=m_oTOC.end(); pEntry++) {
       if (pEntry->m_oType == oType) return pEntry->m_pChunk;
    }
    return NULL;

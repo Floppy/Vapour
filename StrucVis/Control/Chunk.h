@@ -7,7 +7,7 @@
 // Chunk.h
 // 19/03/2002 - James Smith
 //
-// $Id: Chunk.h,v 1.7 2002/03/27 11:19:46 vap-james Exp $
+// $Id: Chunk.h,v 1.8 2002/03/27 15:07:49 vap-james Exp $
 
 #ifndef __VTSTRUCVIS_CHUNK__
 #define __VTSTRUCVIS_CHUNK__
@@ -64,7 +64,10 @@ public:
    TChunkType Type(void) {return m_oType;}
    // The type of the chunk
 
-   const CChunk* SubChunk(TChunkType oType);
+   const unsigned char* Data(void) const;
+   // Raw chunk data
+
+   const CChunk* SubChunk(TChunkType oType) const;
    // Get a subchunk with the specified type
 
 //#===--- Member Variables
