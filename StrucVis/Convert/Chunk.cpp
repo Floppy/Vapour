@@ -7,11 +7,13 @@
 // Chunk.cpp
 // 19/03/2002 - James Smith
 //
-// $Id: Chunk.cpp,v 1.1 2002/03/26 00:51:55 vap-james Exp $
+// $Id: Chunk.cpp,v 1.2 2002/03/27 15:00:35 vap-james Exp $
 
 #include "Chunk.h"
 
 #include <vector>
+
+#define SCALE_FACTOR 0.01;
 
 CChunk::CChunk(TChunkType oType) :
    m_iFrame(0),
@@ -92,9 +94,9 @@ bool CChunk::ReadNodes(CInputData& oInput) {
       pEntry = new float[3];
       if (pEntry == NULL) return false;
       // Load positions
-      pEntry[2] = oInput.GetFloat();
-      pEntry[1] = oInput.GetFloat();
-      pEntry[0] = oInput.GetFloat();
+      pEntry[2] = oInput.GetFloat() * SCALE_FACTOR;
+      pEntry[1] = oInput.GetFloat() * SCALE_FACTOR;
+      pEntry[0] = oInput.GetFloat() * SCALE_FACTOR;
       // Load onto list
       oList.push_back(pEntry);
    }
@@ -143,10 +145,10 @@ bool CChunk::ReadBeamSizes(CInputData& oInput) {
       pEntry = new float[4];
       if (pEntry == NULL) return false;
       // Load positions
-      pEntry[0] = oInput.GetFloat();
-      pEntry[1] = oInput.GetFloat();
-      pEntry[2] = oInput.GetFloat();
-      pEntry[3] = oInput.GetFloat();
+      pEntry[0] = oInput.GetFloat() * SCALE_FACTOR;
+      pEntry[1] = oInput.GetFloat() * SCALE_FACTOR;
+      pEntry[2] = oInput.GetFloat() * SCALE_FACTOR;
+      pEntry[3] = oInput.GetFloat() * SCALE_FACTOR;
       // Load onto list
       oList.push_back(pEntry);
    }
@@ -202,9 +204,9 @@ bool CChunk::ReadSlabSizes(CInputData& oInput) {
       if (pEntry == NULL) return false;
       // Load thicknesses
       float fTop, fBottom;
-      fBottom = oInput.GetFloat();
+      fBottom = oInput.GetFloat() * SCALE_FACTOR;
       for (i=0; i<iNumLayers-1; i++) oInput.GetFloat();
-      fTop = oInput.GetFloat();
+      fTop = oInput.GetFloat() * SCALE_FACTOR;
       pEntry[0] = fTop - fBottom;
       // Load onto list
       oList.push_back(pEntry);
@@ -437,9 +439,9 @@ bool CChunk::ReadNodeDisplacements(CInputData& oInput) {
       pEntry = new float[3];
       if (pEntry == NULL) return false;
       // Load positions
-      pEntry[2] = oInput.GetFloat();
-      pEntry[1] = oInput.GetFloat();
-      pEntry[0] = oInput.GetFloat();
+      pEntry[2] = oInput.GetFloat() * SCALE_FACTOR;
+      pEntry[1] = oInput.GetFloat() * SCALE_FACTOR;
+      pEntry[0] = oInput.GetFloat() * SCALE_FACTOR;
       // Discard next 8 numbers
       for (int i=0; i<8; i++) oInput.GetFloat();
       // Load onto list
