@@ -7,7 +7,7 @@
 // Wedgie.cpp - 02/07/2000 - Warren Moore
 //	Creation and reading of compressed Wedgie files
 //
-// $Id: Wedgie.cpp,v 1.11 2000/08/21 23:06:12 waz Exp $
+// $Id: Wedgie.cpp,v 1.12 2000/12/03 13:25:12 warren Exp $
 //
 
 #include "StdAfx.h"
@@ -724,10 +724,14 @@ unsigned int CWedgie::Count(const char *pcDir) {
 	while (bFound) {
 		bFound = oFind.FindNextFile() == TRUE;
 		if (!oFind.IsDots()) {
+			// Process subdirectories, or count it as a file
 			if (oFind.IsDirectory()) {
-				// Process subdirectories
-				strSearch.Format("%s%s\\", pcDir, oFind.GetFileName());
-				uCount += Count(strSearch);
+				// Don't count CVS directories
+				if (oFind.GetFileName() != "CVS") {
+					// Process subdirectories
+					strSearch.Format("%s%s\\", pcDir, oFind.GetFileName());
+					uCount += Count(strSearch);
+				}
 			}
 			else {
 				// Count another file
@@ -757,9 +761,11 @@ WJERESULT CWedgie::FillTable(const char *pcDir, int &iIndex) {
 		bFound = oFind.FindNextFile() == TRUE;
 		if (!oFind.IsDots()) {
 			if (oFind.IsDirectory()) {
-				// Process subdirectories
-				strSearch.Format("%s%s\\", pcDir, oFind.GetFileName());
-				eResult = FillTable(strSearch, iIndex);
+				if (oFind.GetFileName() != "CVS") {
+					// Process subdirectories (if it's not a CVS subdirectory)
+					strSearch.Format("%s%s\\", pcDir, oFind.GetFileName());
+					eResult = FillTable(strSearch, iIndex);
+				}
 			}
 			else {
 				// Process another file
