@@ -7,7 +7,7 @@
 // SceneManager.cpp
 // 19/03/2002 - James Smith
 //
-// $Id: SceneManager.cpp,v 1.25 2002/03/27 12:23:40 vap-james Exp $
+// $Id: SceneManager.cpp,v 1.26 2002/03/27 15:09:19 vap-james Exp $
 
 #include "stdafx.h"
 #include "SceneManager.h"
@@ -195,22 +195,28 @@ bool CSceneManager::ShowFrame(const unsigned char* pcData, unsigned int iLength)
       if ((*pElem)->Type() == BEAM) {
          // Enter beam node stresses
          float pfStresses[2];
+         int iID = (*pElem)->ID();
+         const float* fStress = m_oDataMgr.BeamStresses(iID);
          for (int i=0; i<2; i++) {
             // Display X values of stresses
-            pfStresses[i] = m_oDataMgr.BeamStresses((*pElem)->ID())[i*3];
+            pfStresses[i] = (fStress != NULL) ? fStress[i*3] : 0;
          }
-         (*pElem)->SetStresses(pfStresses);
+         if (pfStresses) (*pElem)->SetStresses(pfStresses);
       }
       else if ((*pElem)->Type() == SLAB) {
          // Enter slab node stresses and cracks
          float pfStresses[9];
+         int iID = (*pElem)->ID();
+         const float* fStress = m_oDataMgr.SlabStresses(iID);
          for (int i=0; i<9; i++) {
             // Display X values of stresses
-            pfStresses[i] = m_oDataMgr.SlabStresses((*pElem)->ID())[i*3];
+            pfStresses[i] = (fStress != NULL) ? fStress[i*3] : 0;
          }
-         (*pElem)->SetStresses(pfStresses);
+         if (pfStresses) (*pElem)->SetStresses(pfStresses);
          unsigned int iLayer = 0;
-         static_cast<CSlabElement*>(*pElem)->SetCracks(iLayer,m_oDataMgr.SlabCracks((*pElem)->ID(),iLayer));
+         const unsigned char* pcCracks = m_oDataMgr.SlabCracks((*pElem)->ID(),iLayer);
+         if (pcCracks != NULL) 
+            static_cast<CSlabElement*>(*pElem)->SetCracks(iLayer,pcCracks);
       }
    }
    // Render
