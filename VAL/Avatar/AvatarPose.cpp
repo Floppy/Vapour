@@ -7,7 +7,7 @@
 // AvatarPose.cpp - 21/2/2000 - James Smith
 //	Avatar pose class implementation
 //
-// $Id: AvatarPose.cpp,v 1.4 2000/08/22 11:30:20 waz Exp $
+// $Id: AvatarPose.cpp,v 1.5 2000/08/24 22:17:16 waz Exp $
 //
 
 
@@ -225,7 +225,8 @@ double CAvatarPose::AddAcceleration(double dAmount) const {
 
 FRESULT CAvatarPose::Load(const char* pszFilename) {
 	FRESULT eResult = F_OK;
-   ifstream isInputStream(pszFilename,ios::in|ios::nocreate|ios::binary);
+   ifstream isInputStream;
+	isInputStream.open(pszFilename,ios::in|ios::binary|ios::nocreate);
 	if (!isInputStream.fail()) {
 		eResult = Load(isInputStream);
    	isInputStream.close();
@@ -266,9 +267,9 @@ FRESULT CAvatarPose::Load(const char *pcFilename, CWedgie &oWedgie) {
             // Read root translation
             dX = *((double*)pcTemp);
 				pcTemp += 8;
-            dY = *((double*)pcBuffer);
+            dY = *((double*)pcTemp);
 				pcTemp += 8;
-            dZ = *((double*)pcBuffer);
+            dZ = *((double*)pcTemp);
 				pcTemp += 8;
             m_vecRootTranslation.FromDouble(dX,dY,dZ);
             // Read joint rotations
