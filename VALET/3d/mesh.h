@@ -13,13 +13,14 @@
 //! author 		= "James Smith"
 //! date 		= "15/10/2001"
 //! lib 		= libVALET3d
-//! rcsid 		= "$Id: mesh.h,v 1.7 2001/10/17 22:50:15 vap-james Exp $"
+//! rcsid 		= "$Id: mesh.h,v 1.8 2001/10/18 12:24:18 vap-james Exp $"
 //! userlevel 	        = Normal
 //! docentry 	        = "VALET.3D.Surface Representations"
 
 //#===--- Includes
 #include "VALET/valet.h"
 #include "VALET/material.h"
+#include "VALET/vector3d.h"
 
 #include <vector>
 #include <map>
@@ -36,29 +37,30 @@ namespace NValet {
    protected:
       
       // Predeclare private classes
-      class CEdge;
-      class CFace;
-      class CVertex;
+      class CWEEdge;
+      class CWEFace;
+      class CWEVertex;
       
       // Iterator typedefs
-      typedef vector<CEdge>::iterator   EdgeIter;
-      typedef vector<CFace>::iterator   FaceIter;
-      typedef map<int,CVertex>::iterator VertIter;
+      typedef vector<CWEEdge>::iterator        EdgeIter;
+      typedef vector<CWEFace>::iterator        FaceIter;
+      typedef vector<CVector3D>::iterator      VecIter;
+      typedef map<VecIter,CWEVertex>::iterator VertIter;
       
       //: A face in a winged-edge mesh
-      class CFace {
+      class CWEFace {
          EdgeIter m_pEdge;
          //: The first incident edge on this face
       };
       
       //: A vertex in a winged-edge mesh
-      class CVertex {
+      class CWEVertex {
          EdgeIter m_pEdge;
          //: The first incident edge on this vertex
       };
       
       //: An edge in a winged-edge mesh
-      class CEdge {
+      class CWEEdge {
          VertIter m_pStart;
          //: The starting vertex
          VertIter m_pEnd;
@@ -77,15 +79,16 @@ namespace NValet {
          //: The next edge in a right traverse
       };
       
-      vector<CEdge> m_oEdgeList;
+      vector<CWEEdge> m_oEdgeList;
       //: The edge list.
       
-      vector<CFace> m_oFaceList;
+      vector<CWEFace> m_oFaceList;
       //: The face list.
       
-      map<int,CVertex> m_oVertexList;
+      map<VecIter,CWEVertex> m_oVertexList;
       //: The vertex list.
-      // This is a map - the first element (the key) is an iterator into a vertex array.
+      // This is a map - the first element (the key) is an iterator into a vector of CVector3ds.
+      // The second is a CWEVertex data structure.
       
       CMaterial m_oMaterial;
       //: Surface material
@@ -102,6 +105,36 @@ namespace NValet {
       ~CMesh();
       //: Destructor
       
+      //:-----------------------
+      //: Manipulation functions
+
+      bool AddTriFace(VecIter pV1, VecIter pV2, VecIter pV3);
+      //: Adds a triangular face.
+      
+
+      //:----------------
+      //: Query functions
+
+      vector<VecIter> AdjVertices(VecIter pVertex);
+      //: Returns the vertices adjoining this vertex.
+      //!param: pVertex = The vertex to query
+      //!param: return = a vector of the adjoining vertices.
+
+      vector<VecIter> AdjVertices(FaceIter pFace);
+      //: Returns the vertices sharing this face.
+      //!param: pFace = The face to query
+      //!param: return = a vector of the adjoining vertices.
+
+      vector<FaceIter> AdjFaces(VecIter pVertex);
+      //: Returns the faces adjoining this vertex.
+      //!param: pVertex = The vertex to query
+      //!param: return = a vector of the adjoining faces.      
+
+      vector<FaceIter> AdjFaces(FaceIter pFace);
+      //: Returns the faces adjoining this face.
+      //!param: pFace = The face to query
+      //!param: return = a vector of the adjoining faces.
+
       //:-----------------
       //: Access functions
       
