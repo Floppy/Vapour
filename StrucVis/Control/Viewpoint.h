@@ -6,7 +6,7 @@
 // Viewpoint.h
 // 19/03/2002 - James Smith
 //
-// $Id: Viewpoint.h,v 1.2 2002/03/22 10:40:21 vap-james Exp $
+// $Id: Viewpoint.h,v 1.3 2002/03/22 10:52:02 vap-james Exp $
 
 #ifndef __VIEWPOINT__
 #define __VIEWPOINT__
@@ -23,9 +23,10 @@ public:
 
    CViewpoint(CCortonaUtil *pCortona) :
       m_poCortona(pCortona),
-      m_poNodePtr(NULL)
+      m_poNodePtr(NULL),
+      m_bAnimate(false)
    {
-      Set();
+      //Set();
    }
    // Constructor
 
@@ -42,6 +43,9 @@ public:
    // Set viewpoint position.
    // If NULL pointers are passed, default values are used.
 
+   void Animate(bool bAnimate);
+   // Animate smoothly betwen viewpoints?
+
 //#===--- Member Variables
 protected:
 
@@ -50,6 +54,9 @@ protected:
 
    mutable CCortonaNode *m_poNodePtr;
    // Pointer to the node in the VRML world;   
+
+   bool m_bAnimate;
+   // Smooth animation?
 
 };
 

@@ -6,7 +6,7 @@
 // Viewpoint.cpp
 // 19/03/2002 - James Smith
 //
-// $Id: Viewpoint.cpp,v 1.2 2002/03/22 10:40:21 vap-james Exp $
+// $Id: Viewpoint.cpp,v 1.3 2002/03/22 10:52:02 vap-james Exp $
 
 #include "stdafx.h"
 #include "Viewpoint.h"
@@ -34,7 +34,9 @@ bool CViewpoint::Set(float* pfPosition, float* pfRotation) {
       // Add the basic SlabElement syntax
       strView << "Viewpoint { ";
       strView << " description \"Camera\" ";
-      strView << " jump TRUE ";
+      // Set animation mode      
+      if (m_bAnimate) strView << " jump FALSE ";
+      else strView << " jump TRUE ";
       // Set position
       if (pfPosition != NULL) {
          strView << " position ";
@@ -51,7 +53,7 @@ bool CViewpoint::Set(float* pfPosition, float* pfRotation) {
       if (m_poNodePtr = m_poCortona->CreateVrmlFromString(pcBuffer)) {
          m_poCortona->AddToScene(*m_poNodePtr);
       }
-      // Bind node
+      // Bind node to move the camera
       // Create boolean field
       CCortonaField* poSFBool = m_poCortona->CreateField("SFBool");
       if (poSFBool==NULL) return false;
@@ -65,27 +67,33 @@ bool CViewpoint::Set(float* pfPosition, float* pfRotation) {
       return true;
    }
    else {
+      // Set animation mode
+      CCortonaField* poAnimation = m_poNodePtr->GetField("jump");
+      poAnimation->SetSFBool(m_bAnimate);
+      poAnimation->Release();
+      delete poAnimation;
+      // Set position
       if (pfPosition) {
          CCortonaField* poPosition = m_poNodePtr->GetField("position");
          poPosition->SetSFVec3f(pfPosition[0],pfPosition[1],pfPosition[2]);
          poPosition->Release();
          delete poPosition;
       }
+      // Set orientation
       if (pfRotation) {
          CCortonaField* poRotation = m_poNodePtr->GetField("orientation");
          poRotation->SetSFRotation(pfRotation[0],pfRotation[1],pfRotation[2],pfRotation[3]);
          poRotation->Release();
          delete poRotation;
       }
+      // Rebind the viewpoint to move the camera
       CCortonaField* poSFBool = m_poCortona->CreateField("SFBool");
       if (poSFBool==NULL) return false;
-      // Set value
+      // Unbind
       poSFBool->SetSFBool(false);
-      // Send event
       if (!m_poNodePtr->AssignEventIn("set_bind",*poSFBool)) return false;
-      // Set value
+      // Rebind
       poSFBool->SetSFBool(true);
-      // Send event
       if (!m_poNodePtr->AssignEventIn("set_bind",*poSFBool)) return false;
       // Done!
       poSFBool->Release();
