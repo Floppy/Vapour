@@ -14,11 +14,11 @@
 //! author 		= "James Smith"
 //! date 		= "01/10/2001"
 //! lib 		= libVALETmath
-//! rcsid 		= "$Id: Vector3D.h,v 1.6 2001/10/09 18:32:31 vap-james Exp $"
+//! rcsid 		= "$Id: Vector3D.h,v 1.7 2001/10/09 18:34:46 vap-james Exp $"
 //! userlevel 	        = Normal
 //! docentry 	        = "VALET.Math.Geometry"
 
-namespace VALET {
+namespace NValet {
   class CAxisRotation;
 }
 
