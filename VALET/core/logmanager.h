@@ -14,7 +14,7 @@
 //! author 		= "Warren Moore"
 //! date 		= "23/09/2001"
 //! lib 			= libVALETcore
-//! rcsid 		= "$Id: logmanager.h,v 1.8 2001/10/21 15:01:29 vap-warren Exp $"
+//! rcsid 		= "$Id: logmanager.h,v 1.9 2001/10/21 15:51:48 vap-warren Exp $"
 //! userlevel 	= Develop
 //! docentry 	= "VALET.Core.Log"
 //! example 	= VALET/core/log.test.cpp
@@ -23,9 +23,6 @@
 #include "VALET/valet.h"
 
 namespace NValet {
-
-	//#===--- Predeclared Classes
-	class CLogHandle;
 
    enum LOG_LEVEL {
       LL_ALL = 0,
@@ -43,11 +40,15 @@ namespace NValet {
    //	LL_ERROR       = Logging of errors only
    // LL_CRITICAL    = Logging of fatal errors only
    
+	//#===--- Predeclared Classes
+	class CLogHandle;
+
 	//#===--- CLogManager
 	//: Central manager for log output
 	// Object that controls the output of CLog objects
 	// Should only be one global log manager per application
-	//!classtodo: Move arrays to dynamically allocated list? (perf. worries)
+   // (automatically include in VALET/valet.h &amp; library VALETarch
+	//!classtodo: Move arrays to dynamically allocated lists if it is a performance issue
 
 	class CLogManager {
 	public:

@@ -6,7 +6,6 @@
 <P>
 All Vapour code should be well documented. The VALET source tree is documented using CxxDoc, a basic tutorial of which
 can be found <A HREF="http://ravl.sourceforge.net/doc/Auto/Basic/Tree/Ravl.Introduction.Documentation.html" TARGET=_blank">here</A>.
-Our usage of CxxDoc does have some modifications, and these will be documented soon.
 </P>
 
 <P CLASS="HEADING">
@@ -27,27 +26,57 @@ and confidentiality information must be included in EVERY file within the reposi
 // Add confidentiality notice
 </PRE>
 
-<P>
-The file, author, date and rcsid CxxDoc tags must also be included in every file. Note that particular attention
-must be paid to class header files, as they are essential for correct documentation generation. The following lines
-(taken from VALET/3d/material.h) can be used as a template, and should appear below the standard header.
-</P>
-
-<PRE>
-////////////////
-//! file 		= "VALET/3d/material.h"
-//! author 		= "James Smith"
-//! date 		= "09/10/2001"
-//! lib 		= libVALET3d
-//! rcsid 		= "$Id: VALET.Introduction.Documentation.eht,v 1.2 2001/10/10 13:53:46 vap-james Exp $"
-//! userlevel 	        = Normal
-//! docentry 	        = "VALET.3D.Surface Materials"
-</PRE>
-
 <P CLASS="HEADING">
 C++ Requirements
 </P>
 <P>
 Classes should have a description, as should all functions. Functions should have descriptions of their parameters and return types, describing what they 
 represent, and the range of vaild values if appropriate. For larger classes, functions should be divided into sensible sections.
+</P>
+
+<P>
+The file, author, date and rcsid CxxDoc tags must also be included in every file.
+</P>
+<P>
+Particular attention must be paid to class header files, as they are essential for correct documentation generation.
+The following lines (taken from VALET/3d/material.h) can be used as a template, and should appear below the 
+standard header and other included files.
+</P>
+
+<PRE>
+////////////////
+//! file       = "VALET/3d/material.h"
+//! author     = "James Smith"
+//! date       = "09/10/2001"
+//! lib        = libVALET3d
+//! rcsid      = "$Id: VALET.Introduction.Documentation.eht,v 1.3 2001/10/21 15:52:05 vap-warren Exp $"
+//! userlevel  = Normal
+//! docentry   = "VALET.3D.Surface Materials"
+</PRE>
+
+<P CLASS="HEADING">
+To Do's and Bugs
+</P>
+<P>
+Classes and functions that are either incomplete, buggy or need reworking can be marked by these
+CxxDoc tags. Class tags must be placed with the class definition information. Non class tags must
+be placed with the function description.
+</P>
+
+<P>Class tags must be 
+<PRE>
+//!classtodo: Class to do details...
+//!classbug: Class bug or missing implementation details...
+
+//!todo: To do details...
+//!bug: Bug or missing implementation details...
+</PRE>
+
+<P>
+<B>What is a bug?</B><BR>
+A bug is a function that does not completely or correctly implement what is it's supposed to.
+This means classes functions under development and not completely implemented are considered
+<B>buggy</B>, and should not be marked under a 'To Do' tag. Only classes or functions that are completely
+and correctly (as much as they can be) implemented, but could do with some rewriting, extra functionality
+or optimisation should be marked with 'To Do' tags.
 </P>
