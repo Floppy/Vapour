@@ -9,7 +9,7 @@
 //! file      = "Control/Chunk.cpp"
 //! author    = "James Smith"
 //! date      = "19/3/2002"
-//! rcsid     = "$Id: Chunk.cpp,v 1.14 2002/04/04 11:01:32 vap-warren Exp $"
+//! rcsid     = "$Id: Chunk.cpp,v 1.15 2002/04/04 11:28:08 vap-warren Exp $"
 
 #include "stdafx.h"
 #include "Chunk.h"
@@ -67,7 +67,7 @@ bool CIChunk::CreateChunk(const unsigned char* pcData, unsigned int iLength, uns
 
       // Read type from data chunk
       if (m_iDataSize < 1) return false;
-      m_oType = static_cast<TChunkType>(m_pcBuffer[0]);
+      m_oType = static_cast<TIChunkType>(m_pcBuffer[0]);
    
       // Read chunk size
       if (m_iDataSize < 5) return false;
@@ -98,7 +98,7 @@ bool CIChunk::CreateChunk(const unsigned char* pcData, unsigned int iLength, uns
          unsigned char* pcCurrent = m_pcBuffer + 6;
          for (int i=0; i<m_pcBuffer[5]; i++) {
             CTOCEntry oEntry;
-            oEntry.m_oType = static_cast<TChunkType>(*pcCurrent++);
+            oEntry.m_oType = static_cast<TIChunkType>(*pcCurrent++);
             oEntry.m_iOffset = *reinterpret_cast<unsigned int*>(pcCurrent);
             pcCurrent += sizeof(unsigned int);
             if (i > 0) {
@@ -156,7 +156,7 @@ const unsigned char* CIChunk::Data(void) const {
    return m_pcBuffer + 6;
 }
 
-const CIChunk* CIChunk::SubChunk(TChunkType oType) const {
+const CIChunk* CIChunk::SubChunk(TIChunkType oType) const {
    for (std::vector<CTOCEntry>::const_iterator pEntry=m_oTOC.begin(); pEntry!=m_oTOC.end(); pEntry++) {
       if (pEntry->m_oType == oType) return pEntry->m_pChunk;
    }

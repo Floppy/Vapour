@@ -6,13 +6,13 @@
 //
 //! docentry  = "VTStrucVis.File Converter.VSV File IO"
 //! userlevel =  Normal
-//! file      = "Convert/Chunk.h"
+//! file      = "Convert/OChunk.h"
 //! author    = "James Smith"
 //! date      = "19/3/2002"
-//! rcsid     = "$Id: OChunk.h,v 1.3 2002/04/04 11:18:18 vap-warren Exp $"
+//! rcsid     = "$Id: OChunk.h,v 1.4 2002/04/04 11:28:08 vap-warren Exp $"
 
-#ifndef __VTSTRUCVIS_CHUNK__
-#define __VTSTRUCVIS_CHUNK__
+#ifndef __VTSTRUCVIS_OCHUNK__
+#define __VTSTRUCVIS_OCHUNK__
 
 #include "InputData.h"
 #include <fstream>
@@ -192,4 +192,4 @@ protected:
    //: Length of chunk data
 };
 
-#endif //__VTSTRUCVIS_CHUNK__
+#endif //__VTSTRUCVIS_OCHUNK__

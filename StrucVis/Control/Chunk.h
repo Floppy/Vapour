@@ -6,13 +6,13 @@
 //
 //! docentry  = "VTStrucVis.Visualisation Control.Scene Management.VSV File IO"
 //! userlevel =  Normal
-//! file      = "Control/Chunk.h"
+//! file      = "Control/IChunk.h"
 //! author    = "James Smith"
 //! date      = "19/3/2002"
-//! rcsid     = "$Id: Chunk.h,v 1.15 2002/04/04 11:03:34 vap-warren Exp $"
+//! rcsid     = "$Id: Chunk.h,v 1.16 2002/04/04 11:28:08 vap-warren Exp $"
 
-#ifndef __VTSTRUCVIS_CHUNK__
-#define __VTSTRUCVIS_CHUNK__
+#ifndef __VTSTRUCVIS_ICHUNK__
+#define __VTSTRUCVIS_ICHUNK__
 
 #include <vector>
 
@@ -21,7 +21,7 @@
 #endif // _MSC_VER > 1000
 
 //: Chunk Types
-enum TChunkType {
+enum TIChunkType {
    CHUNK_NONE     = 0xFF,
    CHUNK_ROOT     = 0x00,
    //-------------
@@ -73,13 +73,13 @@ public:
    //!param: bLoadSubChunks - if true, subchunks are loaded
    //!param: return - true if the chunk is complete, false if more data is required
 
-   TChunkType Type(void) {return m_oType;}
+   TIChunkType Type(void) {return m_oType;}
    //: The type of the chunk
 
    const unsigned char* Data(void) const;
    //: Access to raw chunk data
 
-   const CIChunk* SubChunk(TChunkType oType) const;
+   const CIChunk* SubChunk(TIChunkType oType) const;
    //: Get a subchunk with the specified type
 
 protected:
@@ -96,7 +96,7 @@ protected:
          if (m_pChunk) delete m_pChunk;
       }
 
-      TChunkType m_oType;
+      TIChunkType m_oType;
       unsigned int m_iOffset;
       unsigned int m_iLength;
       CIChunk* m_pChunk;
@@ -121,7 +121,7 @@ protected:
    unsigned int m_iChunkLength;
    //: The length of the chunk
 
-   TChunkType m_oType;
+   TIChunkType m_oType;
    //: The type of the chunk
 
    CIChunk* m_pTempSubChunk;
@@ -164,4 +164,4 @@ public:
 };
 
 
-#endif // __VTSTRUCVIS_CHUNK__
+#endif // __VTSTRUCVIS_ICHUNK__
