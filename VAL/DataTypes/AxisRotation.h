@@ -7,7 +7,7 @@
 // AxisRotation.h - 12/04/2000 - James Smith
 //	Axis-Angle rotation header
 //
-// $Id: AxisRotation.h,v 1.2 2000/06/17 10:42:15 waz Exp $
+// $Id: AxisRotation.h,v 1.3 2000/08/10 22:44:40 waz Exp $
 //
 
 #ifndef _VAL_AXISROTATION_
@@ -80,6 +80,9 @@ public:
 
 	// Sets the rotation from a set of double values.
    void FromDouble(double dX, double dY, double dZ, double dR);
+
+	// Sets the rotation angle
+   void SetAngle(double dR);
 
    // Parses a string anc converts it into an axis rotation
 	// The string must be only numbers in the format <X> <Y> <Z> <R>

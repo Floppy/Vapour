@@ -7,7 +7,7 @@
 // AvatarPose.cpp - 21/2/2000 - James Smith
 //	Avatar pose class implementation
 //
-// $Id: AvatarPose.cpp,v 1.1 2000/06/16 21:58:17 waz Exp $
+// $Id: AvatarPose.cpp,v 1.2 2000/08/10 22:44:40 waz Exp $
 //
 
 
@@ -111,40 +111,71 @@ CAxisRotation CAvatarPose::GetJointRotation(int iJoint) {
 //////////////////////////////////////////////////////////////////////
 
 int CAvatarPose::InitInterpolation(const CAvatarPose& poTarget, bool bAccel) const {
-   int iRetVal = 0;
-   m_bAccel = bAccel;
-   if ((m_pSourceQuats == NULL) && (m_pTargetQuats == NULL) && (m_iNumJoints == poTarget.m_iNumJoints)) {
-      // Store target translation
-      m_pTargetTranslation = new CVector3D(poTarget.m_vecRootTranslation);
-      // Precalc source quaternions
-      m_pSourceQuats = new CQuaternion[m_iNumJoints];
-      for (int i=0; i<m_iNumJoints; i++) {
-         m_pSourceQuats[i] = CQuaternion(m_pJointRotations[i]);
-      }
-      // Precalc target quaternions
-      m_pTargetQuats = new CQuaternion[m_iNumJoints];
-      for (i=0; i<m_iNumJoints; i++) {
-         m_pTargetQuats[i] = CQuaternion(poTarget.m_pJointRotations[i]);
-      }
+   // Check number of joints
+   if (m_iNumJoints == poTarget.m_iNumJoints) return 0;
+   // Make sure we're ready to start a new interpolation
+   if ((m_pSourceQuats != NULL) || (m_pTargetQuats != NULL) || (m_pTargetTranslation != NULL)) {
+      // A previous interpolation was not stopped - so stop it
+      EndInterpolation();
    }
-   return iRetVal;
+   // Store acceleration value
+   m_bAccel = bAccel;
+   // Store target translation
+   m_pTargetTranslation = new CVector3D(poTarget.m_vecRootTranslation);
+   // Precalc source quats
+   m_pSourceQuats = new CQuaternion[m_iNumJoints];
+   for (int i=0; i<m_iNumJoints; i++) {
+      m_pSourceQuats[i] = CQuaternion(m_pJointRotations[i]);
+   }
+   // Precalc target quats
+   m_pTargetQuats = new CQuaternion[m_iNumJoints];
+   for (i=0; i<m_iNumJoints; i++) {
+      m_pTargetQuats[i] = CQuaternion(poTarget.m_pJointRotations[i]);
+   }
+   // Done
+   return 1;
 } //InitInterpolation(const CAvatarPose& poTarget) const
 
 CAvatarPose CAvatarPose::CalcInterpolationFrame(double dAmount) const {
-   if (m_bAccel) dAmount = AddAcceleration(dAmount);
-   double dCoeff = 1.0 - dAmount;
+   // Create result storage
    CAvatarPose poResult(m_iNumJoints);
-   if ((m_pSourceQuats != NULL) && (m_pTargetQuats != NULL)) {
-      poResult.m_vecRootTranslation = (m_vecRootTranslation * dCoeff) + (*m_pTargetTranslation * dAmount);
-      for (int i=0; i<m_iNumJoints; i++) {
-         CQuaternion qResult = m_pSourceQuats[i].SlerpTo(m_pTargetQuats[i],dAmount);
-         poResult.m_pJointRotations[i] = CAxisRotation(qResult);
-      }
+   // Make sure we're ready to go
+   if ((m_pSourceQuats == NULL) || (m_pTargetQuats == NULL)) return poResult;
+   // If we're accelerating, account for it
+   if (m_bAccel) dAmount = AddAcceleration(dAmount);
+   // Work out inverse of amount
+   double dCoeff = 1.0 - dAmount;
+   //  Interpolate translation
+   poResult.m_vecRootTranslation = (m_vecRootTranslation * dCoeff) + (*m_pTargetTranslation * dAmount);
+   // Interpolate joint rotations
+   for (int i=0; i<m_iNumJoints; i++) {
+      CQuaternion qResult = m_pSourceQuats[i].SlerpTo(m_pTargetQuats[i],dAmount);
+      poResult.m_pJointRotations[i] = CAxisRotation(qResult);
    }
+   // Done!
    return poResult;
 } //CalcInterpolationFrame(double dAmount) const
 
+void CAvatarPose::CalcInterpolationFrame(double dAmount, CAvatarPose* poResult) const {
+   // Make sure we're ready to go
+   if ((m_pSourceQuats == NULL) || (m_pTargetQuats == NULL) || (poResult == NULL)) return;
+   // If we're accelerating, account for it
+   if (m_bAccel) dAmount = AddAcceleration(dAmount);
+   // Work out inverse of amount
+   double dCoeff = 1.0 - dAmount;
+   //  Interpolate translation
+   poResult->m_vecRootTranslation = (m_vecRootTranslation * dCoeff) + (*m_pTargetTranslation * dAmount);
+   // Interpolate joint rotations
+   for (int i=0; i<m_iNumJoints; i++) {
+      CQuaternion qResult = m_pSourceQuats[i].SlerpTo(m_pTargetQuats[i],dAmount);
+      poResult->m_pJointRotations[i] = CAxisRotation(qResult);
+   }
+   // Done!
+   return;
+} //CalcInterpolationFrame(double dAmount, CAvatarPose* pResult) const
+
 void CAvatarPose::EndInterpolation(void) const {
+   // Dump and reset all stored data
    if (m_pSourceQuats != NULL) {
       delete [] m_pSourceQuats;
       m_pSourceQuats = NULL;
@@ -157,38 +188,27 @@ void CAvatarPose::EndInterpolation(void) const {
       delete m_pTargetTranslation;
       m_pTargetTranslation = NULL;
    }
+   // Done
    return;
 } //EndInterpolation(void) const
 
-/*CAvatarPose CAvatarPose::InterpolateTo(const CAvatarPose& poTarget, double dAmount) const {
-   double dCoeff = 1.0 - dAmount;
-   CAvatarPose poResult(m_iNumJoints);
-   if (m_iNumJoints == poTarget.m_iNumJoints) {
-      poResult.m_vecRootTranslation = m_vecRootTranslation * dCoeff;
-      for (int i=0; i<m_iNumJoints; i++) {
-         if (!(m_pJointRotations[i] == poTarget.m_pJointRotations[i])) {
-            CQuaternion qSource(m_pJointRotations[i]);
-            CQuaternion qTarget(poTarget.m_pJointRotations[i]);
-            CQuaternion qResult = qSource.SlerpTo(qTarget,dAmount);
-            poResult.m_pJointRotations[i] = CAxisRotation(qResult);
-         }
-      }
-   }
-   return poResult;
-} //InterpolateTo(const CAvatarPose& poTarget, double dAmount) const*/
-
 CAvatarPose CAvatarPose::InterpolateToZero(double dAmount, bool bAccel) const {
+   // If we're accelerating, account for it   
    if (bAccel) dAmount = AddAcceleration(dAmount);
-   double dX, dY, dZ, dR;
+   // Predeclare a double variable
+   double dR;
+   // Work out inverse of amount
    double dCoeff = 1.0 - dAmount;
+   // Create result storage
    CAvatarPose poResult(m_iNumJoints);
+   //  Interpolate translation
    poResult.m_vecRootTranslation = m_vecRootTranslation * dCoeff;
+   // Interpolate joint rotations
    for (int i=0; i<m_iNumJoints; i++) {
-      m_pJointRotations[i].ToDouble(dX,dY,dZ,dR);
-      if (dR != 0) {
-         poResult.m_pJointRotations[i].FromDouble(dX,dY,dZ,dCoeff*dR);
-      }
+      dR = m_pJointRotations[i].GetAngle();
+      poResult.m_pJointRotations[i].SetAngle(dCoeff*dR);
    }
+   // Done!
    return poResult;
 } //InterpolateToZero(double dAmount) const
 

@@ -7,7 +7,7 @@
 // AxisRotation.cpp - 12/04/2000 - James Smith
 //	Axis-Angle rotation implementation
 //
-// $Id: AxisRotation.cpp,v 1.1 2000/06/16 21:59:22 waz Exp $
+// $Id: AxisRotation.cpp,v 1.2 2000/08/10 22:44:40 waz Exp $
 //
 
 // Windows includes/defines
@@ -144,7 +144,13 @@ void CAxisRotation::FromDouble(double dX, double dY, double dZ, double dR) {
    m_dRotation = dR;
    m_oAxis.FromDouble(dX, dY, dZ);
    return;
-}
+} //FromDouble(double dX, double dY, double dZ, double dR)
+
+// Sets the rotation angle
+void CAxisRotation::SetAngle(double dR) {
+   m_dRotation = dR;
+   return;
+} //SetAngle(double dR)
 
 // Parses a string anc converts it into an axis rotation
 // The string must be only numbers in the format <X> <Y> <Z> <R>

@@ -7,7 +7,7 @@
 // AvatarPose.h - 21/2/2000 - James Smith
 //	Avatar pose class header
 //
-// $Id: AvatarPose.h,v 1.2 2000/06/17 10:42:10 waz Exp $
+// $Id: AvatarPose.h,v 1.3 2000/08/10 22:44:39 waz Exp $
 //
 
 #ifndef _VAL_AVATARPOSE_
@@ -69,10 +69,15 @@ public:
    CAxisRotation GetJointRotation(int iJoint);
 
    // Animation Functions
+   // Initialises a pose interpolation
    int InitInterpolation(const CAvatarPose& poTarget, bool bAccel = false) const;
+   // Calculates 1 frame of a pose interpolation and returns the result.
    CAvatarPose CalcInterpolationFrame(double dAmount) const;
+   // Calculates 1 frame of a pose interpolation and stores the result in poResult.
+   void CalcInterpolationFrame(double dAmount, CAvatarPose* poResult) const;
+   // Cleans up after a pose interpolation
    void EndInterpolation(void) const;
-   //CAvatarPose InterpolateTo(const CAvatarPose& poTarget, double dAmount) const;
+
    CAvatarPose InterpolateToZero(double dAmount, bool bAccel = false) const;
    
    // Load functions return 1 if successful, 0 if not
