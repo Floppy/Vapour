@@ -1,0 +1,11 @@
+# modules.list
+#
+# List of modules to be documented by CxxDoc, read by create_docs.pl
+# All documented modules must use the VMake system
+# All module names are prefixed with 'Vapour/'
+#
+# 09/09/2001 - Warren Moore
+# $Id: modules.list,v 1.1 2001/09/14 09:53:26 vap-warren Exp $
+# Copyright 2001 Vapour Technology Ltd.
+
+VALET
