@@ -7,7 +7,7 @@
 // DocAvatar.cpp - 23/11/2000 - Warren Moore
 //	  InterVAL Avatar document type
 //
-// $Id: DocAvatar.cpp,v 1.1 2000/11/25 22:52:26 cvs Exp $
+// $Id: DocAvatar.cpp,v 1.1.1.1 2000/11/25 22:52:26 cvs Exp $
 //
 
 #include "StdAfx.h"

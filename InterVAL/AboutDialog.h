@@ -7,7 +7,7 @@
 // AboutDialog.h - 23/11/2000 - Warren Moore
 //	  InterVAL About dialog box
 //
-// $Id: AboutDialog.h,v 1.1 2000/11/25 22:52:26 cvs Exp $
+// $Id: AboutDialog.h,v 1.1.1.1 2000/11/25 22:52:26 cvs Exp $
 //
 
 #ifndef _INTERVAL_ABOUTDLG_

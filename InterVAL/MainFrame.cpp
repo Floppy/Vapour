@@ -7,7 +7,7 @@
 // MainFrame.cpp - 23/11/2000 - Warren Moore
 //	  Derived main frame window
 //
-// $Id: MainFrame.cpp,v 1.1 2000/11/25 22:52:26 cvs Exp $
+// $Id: MainFrame.cpp,v 1.1.1.1 2000/11/25 22:52:26 cvs Exp $
 //
 
 #include "stdafx.h"

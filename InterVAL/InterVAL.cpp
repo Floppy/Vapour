@@ -7,7 +7,7 @@
 // InterVAL.cpp - 23/11/2000 - Warren Moore
 //	  Main application
 //
-// $Id: InterVAL.cpp,v 1.1 2000/11/25 22:52:26 cvs Exp $
+// $Id: InterVAL.cpp,v 1.1.1.1 2000/11/25 22:52:26 cvs Exp $
 //
 
 #include "StdAfx.h"

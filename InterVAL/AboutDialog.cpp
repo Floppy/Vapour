@@ -7,7 +7,7 @@
 // AboutDialog.cpp - 23/11/2000 - Warren Moore
 //	  InterVAL About dialog box
 //
-// $Id: AboutDialog.cpp,v 1.1 2000/11/25 22:52:26 cvs Exp $
+// $Id: AboutDialog.cpp,v 1.1.1.1 2000/11/25 22:52:26 cvs Exp $
 //
 
 #include "StdAfx.h"

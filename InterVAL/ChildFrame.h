@@ -7,7 +7,7 @@
 // ChildFrame.h - 23/11/2000 - Warren Moore
 //	  Derived child frame window
 //
-// $Id: ChildFrame.h,v 1.1 2000/11/25 22:52:26 cvs Exp $
+// $Id: ChildFrame.h,v 1.1.1.1 2000/11/25 22:52:26 cvs Exp $
 //
 
 #ifndef _INTERVAL_CHILDFRAME_

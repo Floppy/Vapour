@@ -7,7 +7,7 @@
 // ViewAvatar.cpp - 23/11/2000 - Warren Moore
 //	  InterVAL associated Avatar document view
 //
-// $Id: ViewAvatar.cpp,v 1.1 2000/11/25 22:52:26 cvs Exp $
+// $Id: ViewAvatar.cpp,v 1.1.1.1 2000/11/25 22:52:26 cvs Exp $
 //
 
 #include "StdAfx.h"

@@ -7,7 +7,7 @@
 // InterVAL.h - 23/11/2000 - Warren Moore
 //	  Main application
 //
-// $Id: InterVAL.h,v 1.1 2000/11/25 22:52:26 cvs Exp $
+// $Id: InterVAL.h,v 1.1.1.1 2000/11/25 22:52:26 cvs Exp $
 //
 
 #ifndef _INTERVAL_INTERVALAPP_
