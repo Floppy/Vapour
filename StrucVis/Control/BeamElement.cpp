@@ -7,7 +7,7 @@
 // BeamElement.cpp
 // 19/03/2002 - James Smith
 //
-// $Id: BeamElement.cpp,v 1.27 2002/03/27 17:08:15 vap-warren Exp $
+// $Id: BeamElement.cpp,v 1.28 2002/03/28 13:06:16 vap-james Exp $
 
 #include "stdafx.h"
 #include "BeamElement.h"
@@ -200,6 +200,9 @@ void CBeamElement::CalculateColours(float* pfColours) const {
             pfColours[(i*3) + 0] = fStress * 2;
             pfColours[(i*3) + 1] = 2 - (fStress * 2);
             pfColours[(i*3) + 2] = 0;
+            // Clip to 0..1
+            if (pfColours[(i*3) + 0] > 1) pfColours[(i*3) + 0] = 1;
+            if (pfColours[(i*3) + 1] > 1) pfColours[(i*3) + 1] = 1;
          }
       }
       break;
