@@ -7,7 +7,7 @@
 // Avatar.cpp - 17/06/2000 - James Smith
 //	Avatar class implementation
 //
-// $Id: Avatar.cpp,v 1.7 2000/08/24 22:19:42 waz Exp $
+// $Id: Avatar.cpp,v 1.8 2000/08/29 12:47:41 waz Exp $
 //
 
 #include "stdafx.h"
@@ -508,6 +508,22 @@ bool CAvatar::ImportPose(CAvatarPose& apNewPose) {
    }
    return true;
 } //ImportPose(CAvatarPose& apNewPose)
+
+bool CAvatar::ImportPosePart(BodyPart bpJoint, CAvatarPose& apNewPose) {
+   if (apNewPose.m_iNumJoints != TOTAL_NUMBER_BODYPARTS)
+		return false;
+	// Params
+	bool bReturn = true;
+	SBodyPart sPart = m_pBodyParts[bpJoint];
+	// Loop through children
+	for (int i=0; i<3; i++) {
+		if (sPart.m_bpChildren[i] > 0)
+			bReturn = ImportPosePart(sPart.m_bpChildren[i], apNewPose);
+	}
+	// Copy the joint data
+	SetJointAngle((BodyPart)bpJoint, apNewPose.m_pJointRotations[bpJoint], false, false);
+	return bReturn;
+} //ImportPosePart(BodyPart bpJoint, CAvatarPose& apNewPose)
 
 ///////////////////////////////////////////////////////////////////////
 // Post-Load Functions ////////////////////////////////////////////////

@@ -7,7 +7,7 @@
 // Avatar.h - 16/06/2000 - James Smith
 //	Avatar class header
 //
-// $Id: Avatar.h,v 1.6 2000/08/24 22:19:42 waz Exp $
+// $Id: Avatar.h,v 1.7 2000/08/29 12:47:42 waz Exp $
 //
 
 #ifndef _VAL_AVATAR_
@@ -259,6 +259,10 @@ public:
    // Copies in all the rotations and translations from the passed CAvatarPose.
    // returns true if successful, false if not
    bool ImportPose(CAvatarPose& apNewPose);
+
+   // Copies in some of the rotations and translations from the passed CAvatarPose.
+   // returns true if successful, false if not
+   bool ImportPosePart(BodyPart bpJoint, CAvatarPose& apNewPose);
 
    ///////////////////////////////////////////////////////////////////////
    // Post-Load Functions ////////////////////////////////////////////////
