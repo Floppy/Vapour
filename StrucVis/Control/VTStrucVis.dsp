@@ -227,6 +227,10 @@ SOURCE=.\StdAfx.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\UIDataPath.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\VTStrucVis.cpp
 # End Source File
 # Begin Source File
@@ -268,6 +272,10 @@ SOURCE=.\SimDataPath.h
 # Begin Source File
 
 SOURCE=.\StdAfx.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\UIDataPath.h
 # End Source File
 # Begin Source File
 
