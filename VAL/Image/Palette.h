@@ -7,7 +7,7 @@
 // Palette.h - 19/03/2000 - Warren Moore
 //	Palette header
 //
-// $Id: Palette.h,v 1.2 2000/06/17 10:42:17 waz Exp $
+// $Id: Palette.h,v 1.3 2000/07/10 09:15:38 waz Exp $
 //
 
 #ifndef _VAL_PALETTE_
@@ -16,7 +16,7 @@
 #pragma once
 
 //#===--- Includes
-#include "Defs.h"
+#include "VAL.h"
 
 /////////////
 // CPalette

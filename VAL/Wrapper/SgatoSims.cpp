@@ -7,7 +7,7 @@
 // SGAToSim.cpp - 12/06/2000 - Warren Moore
 //	SGA Avatar to Sim converter wrapper 
 //
-// $Id: SgatoSims.cpp,v 1.2 2000/06/17 10:42:03 waz Exp $
+// $Id: SgatoSims.cpp,v 1.3 2000/07/10 09:15:37 waz Exp $
 //
 
 #include "StdAfx.h"
@@ -15,7 +15,7 @@
 #include "SGAToSims.h"
 
 #include <iostream.h>
-#include "Defs.h"
+#include "VAL.h"
 #include "AvatarFileAME.h"
 #include "AvatarFileSims.h"
 #include "Avatar.h"
@@ -213,7 +213,7 @@ VARESULT CSGAToSims::Export() {
 */
 // Show star-up text
 	if (m_bVerbose) {
-		cout << "SGA Avatar To The Sims model converter v1.1 (15/06/2000)" << endl;
+		cout << "SGA Avatar To The Sims model converter v1.2 (03/07/2000)" << endl;
 		cout << "Copyright 2000 Vapour Technology Ltd." << endl << endl;
 		cout << "Exclusively licensed to AvatarMe Ltd." << endl << endl;
 	}

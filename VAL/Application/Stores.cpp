@@ -7,12 +7,12 @@
 // Stores.cpp - 01/06/2000 - Warren Moore
 //	VAL Specialty stores for external linkage
 //
-// $Id: Stores.cpp,v 1.1 2000/06/16 21:57:48 waz Exp $
+// $Id: Stores.cpp,v 1.2 2000/07/10 09:15:37 waz Exp $
 //
 
 #include "StdAfx.h"
 
-#include "Defs.h"
+#include "VAL.h"
 
 //#===--- Image file format speciality store
 #include "ImageFileStore.h"

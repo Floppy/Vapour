@@ -7,14 +7,15 @@
 // CommandLine.cpp - 01/06/2000 - Warren Moore
 //	Command line parsing class 
 //
-// $Id: CommandLine.cpp,v 1.1 2000/06/16 21:57:49 waz Exp $
+// $Id: CommandLine.cpp,v 1.2 2000/07/10 09:15:37 waz Exp $
 //
 
 #include "StdAfx.h"
 
 #include "CommandLine.h"
 
-#include "Defs.h"
+//#===--- Includes
+#include "VAL.h"
 #include <string.h>
 
 /////////////////

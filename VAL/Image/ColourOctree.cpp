@@ -7,12 +7,12 @@
 // ColourOctree.cpp - 26/12/1999 - Warren Moore
 //	Octree colour cube implementation
 //
-// $Id: ColourOctree.cpp,v 1.2 2000/06/17 09:30:53 waz Exp $
+// $Id: ColourOctree.cpp,v 1.3 2000/07/10 09:15:39 waz Exp $
 //
 
 #include "stdafx.h"
 
-#include "Defs.h"
+#include "VAL.h"
 #include "ColourOctree.h"
 
 #ifdef _DEBUG

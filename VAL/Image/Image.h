@@ -7,7 +7,7 @@
 // Image.h - 21/12/1999 - Warren Moore
 //	Image header
 //
-// $Id: Image.h,v 1.2 2000/06/17 10:42:20 waz Exp $
+// $Id: Image.h,v 1.3 2000/07/10 09:15:38 waz Exp $
 //
 
 #ifndef _VAL_IMAGE_
@@ -16,7 +16,7 @@
 #pragma once
 
 //#===--- Includes
-#include "Defs.h"
+#include "VAL.h"
 #include "ImageFile.h"
 #include "CAvatar.h"
 #include "Palette.h"
