@@ -98,15 +98,6 @@ SOURCE=.\AvatarFiles\AvatarFile3DS.cpp
 # Begin Source File
 
 SOURCE=.\AvatarFiles\AvatarFileAME.cpp
-
-!IF  "$(CFG)" == "VAL - Win32 Release"
-
-!ELSEIF  "$(CFG)" == "VAL - Win32 Debug"
-
-# SUBTRACT CPP /FA<none>
-
-!ENDIF 
-
 # End Source File
 # Begin Source File
 
@@ -255,6 +246,10 @@ SOURCE=.\Render\Scene.cpp
 # Begin Source File
 
 SOURCE=.\Render\SceneAvatarPose.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\Render\SceneAvatarSaver.cpp
 # End Source File
 # Begin Source File
 
@@ -540,6 +535,10 @@ SOURCE=.\Render\Scene.h
 # Begin Source File
 
 SOURCE=.\Render\SceneAvatarPose.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\Render\SceneAvatarSaver.h
 # End Source File
 # Begin Source File
 
