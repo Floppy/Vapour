@@ -11,7 +11,7 @@
 //! author 		= "James Smith"
 //! date			= "02/10/2001"
 //! lib 		   = libVALETmath
-//! rcsid 		= "$Id: axisrotation.cpp,v 1.1 2001/10/02 17:00:15 vap-james Exp $"
+//! rcsid 		= "$Id: axisrotation.cpp,v 1.2 2001/10/02 22:15:30 vap-james Exp $"
 //! userlevel	= Normal
 //! docentry	= "VALET.Math.Geometry"
 
@@ -65,19 +65,10 @@ namespace VALET {
 		}
 	} //CAxisRotation(const CQuaternion & quat)
 
-	/*CAxisRotation::CAxisRotation(const CEulerRotation & oRot) {
-	   CQuaternion oQuat(oRot);
-	   double dHalfRotation = acos(oQuat.GetScalar());
-		double dSinHalfRotation = sin(dHalfRotation);
-		m_dAngle = 2.0F * dHalfRotation;
-		if (abs(dSinHalfRotation < 1e-8)) {
-			CVector3D temp(0, 1, 0);
-			m_oAxis = temp;
-		}
-		else {
-			m_oAxis = oQuat.GetVector() / dSinHalfRotation;
-		}
-	} //CAxisRotation(const CEulerRotation & oRot)*/
+	CAxisRotation::CAxisRotation(const CEulerRotation & oRot) {
+	  CQuaternion oQuat(oRot);
+	  *this = CAxisRotation(oQuat);
+	} //CAxisRotation(const CEulerRotation & oRot)
 
 	CAxisRotation& CAxisRotation::operator=(const CAxisRotation& oRot) {
 		m_oAxis = oRot.m_oAxis;
