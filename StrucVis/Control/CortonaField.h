@@ -7,7 +7,7 @@
 // CortonaField.h
 // 12/03/2002 - Warren Moore
 //
-// $Id: CortonaField.h,v 1.10 2002/03/24 13:51:59 vap-warren Exp $
+// $Id: CortonaField.h,v 1.11 2002/03/26 19:21:43 vap-warren Exp $
 
 #ifndef __VTSTRUCVIS_CORTONAFIELD__
 #define __VTSTRUCVIS_CORTONAFIELD__
@@ -31,6 +31,12 @@ public:
 
    FTYPE Type() const;
    // Returns the field type
+
+   long GetMFCount();
+   // Returns the number of fields in the MF object
+
+   bool SetMFCount(const long liCount);
+   // Creates the number of fields within the MF object
 
    void Release();
    // Release the field object
@@ -67,6 +73,7 @@ public:
 
    bool AddMFColor(const float fR, const float fG, const float fB);
    // Appends the RGB colour values
+   // NOTE: For some damn reason, it won't use the blue value - Use SetMFCount and SetMFColor instead
 
    //--- SFBool
 

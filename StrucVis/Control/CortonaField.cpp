@@ -7,7 +7,7 @@
 // CortonaField.cpp
 // 07/03/2002 - Warren Moore
 //
-// $Id: CortonaField.cpp,v 1.13 2002/03/26 15:02:28 vap-warren Exp $
+// $Id: CortonaField.cpp,v 1.14 2002/03/26 19:21:43 vap-warren Exp $
 
 #include "stdafx.h"
 
@@ -33,6 +33,47 @@ CCortonaField::CCortonaField(IFieldObject *pField) : m_pField(pField) {
 CCortonaField::~CCortonaField() {
 }
 
+long CCortonaField::GetMFCount() {
+   // Make sure we have an MF type
+   if (((int)m_eType) < 216)
+      return false;
+
+   // Get the IMField interface
+   IMFieldObject *pMField = NULL;
+   HRESULT hResult = m_pField->QueryInterface(IID_IMFieldObject, (void**)&pMField);
+   if (FAILED(hResult))
+      return false;
+
+   // Get the field count
+   long liCount = 0;
+   hResult = pMField->get_Count(&liCount);
+
+   // Release the interface
+   pMField->Release();
+
+   return liCount;
+}
+
+bool CCortonaField::SetMFCount(const long liCount) {
+   // Make sure we have an MF type
+   if (((int)m_eType) < 216 || (liCount < 0))
+      return false;
+
+   // Get the IMField interface
+   IMFieldObject *pMField = NULL;
+   HRESULT hResult = m_pField->QueryInterface(IID_IMFieldObject, (void**)&pMField);
+   if (FAILED(hResult))
+      return false;
+
+   // Set the count value
+   hResult = pMField->put_Count(liCount);
+
+   // Release the interface
+   pMField->Release();
+
+   return SUCCEEDED(hResult);
+}
+
 void CCortonaField::Release() {
    // If we have a field, set it free
    if (m_pField)
@@ -41,7 +82,7 @@ void CCortonaField::Release() {
 
 bool CCortonaField::GetMFVec3f(const long liIndex, float &fX, float &fY, float &fZ) {
    // Check the field pointer
-   if (!m_pField || liIndex < 1)
+   if (!m_pField || liIndex < 0)
       return false;
 
    // Check the type
@@ -84,13 +125,19 @@ bool CCortonaField::GetMFVec3f(const long liIndex, float &fX, float &fY, float &
    // Clear the variant
    VariantClear(&sVar);
 
-   // Release the MFVec3f interface
+   // Release the interface
    pMFVec3f->Release();
 
    return bOk;
 }
 
 bool CCortonaField::GetMFVec3f() {
+   return false;
+
+   /*
+
+   Experimental function to get entire MFVec3f array using undocument interface
+
    // Check the field pointer
    if (!m_pField)
       return false;
@@ -103,16 +150,17 @@ bool CCortonaField::GetMFVec3f() {
    IVariable *pMFVec3f = NULL;
    HRESULT hResult = m_pField->QueryInterface(IID_IVariable, (void**)&pMFVec3f);
    if (SUCCEEDED(hResult)) {
-      // Release the MFVec3f interface
+      // Release the interface
       pMFVec3f->Release();
    }
 
    return SUCCEEDED(hResult);
+   */
 }
 
 bool CCortonaField::SetMFVec3f(const long liIndex, const float fX, const float fY, const float fZ) {
    // Check the field pointer
-   if (!m_pField || liIndex < 1)
+   if (!m_pField || liIndex < 0)
       return false;
 
    // Check the type
@@ -122,7 +170,7 @@ bool CCortonaField::SetMFVec3f(const long liIndex, const float fX, const float f
    // Get the IMFVec3f interface
    IMFVec3fObject *pMFVec3f = NULL;
    HRESULT hResult = m_pField->QueryInterface(IID_IMFVec3fObject, (void**)&pMFVec3f);
-   if (FAILED(hResult)) {
+   if (SUCCEEDED(hResult)) {
       // Create the safe array
       const int iCount = 3;
       SAFEARRAYBOUND sSABound[1];
@@ -165,7 +213,7 @@ bool CCortonaField::SetMFVec3f(const long liIndex, const float fX, const float f
       // Add the value
       hResult = pMFVec3f->put_Value(liIndex, sVarArray);
 
-      // Release the MFVec3f interface
+      // Release the interface
       pMFVec3f->Release();
    }
 
@@ -233,7 +281,7 @@ bool CCortonaField::AddMFVec3f(const float fX, const float fY, const float fZ) {
       // Add the value
       hResult = pMFVec3f->Add(&sVarArray, &sVarBefore);
 
-      // Release the MFVec3f interface
+      // Release the interface
       pMFVec3f->Release();
    }
 
@@ -249,7 +297,7 @@ bool CCortonaField::GetSFVec3f(float &fX, float &fY, float &fZ) {
    if (m_eType != tSFVec3f)
       return false;
 
-   // Get the IMFVec3f interface
+   // Get the ISFVec3f interface
    ISFVec3fObject *pSFVec3f = NULL;
    HRESULT hResult = m_pField->QueryInterface(IID_ISFVec3fObject, (void**)&pSFVec3f);
    if (FAILED(hResult))
@@ -282,7 +330,7 @@ bool CCortonaField::GetSFVec3f(float &fX, float &fY, float &fZ) {
       SafeArrayUnaccessData(sVar.parray);
    }
 
-   // Release the MFVec3f interface
+   // Release the interface
    pSFVec3f->Release();
 
    return bOk;
@@ -343,7 +391,7 @@ bool CCortonaField::SetSFVec3f(const float fX, const float fY, const float fZ) {
       // Add the value
       hResult = pSFVec3f->put_Value(sVarArray);
 
-      // Release the MFVec3f interface
+      // Release the interface
       pSFVec3f->Release();
    }
 
@@ -392,7 +440,7 @@ bool CCortonaField::GetMFColor(const long liIndex, float &fR, float &fG, float &
       SafeArrayUnaccessData(sVar.parray);
    }
 
-   // Release the MFVec3f interface
+   // Release the interface
    pMFColor->Release();
 
    return bOk;
@@ -400,14 +448,14 @@ bool CCortonaField::GetMFColor(const long liIndex, float &fR, float &fG, float &
 
 bool CCortonaField::SetMFColor(const long liIndex, const float fR, const float fG, const float fB) {
    // Check the field pointer
-   if (!m_pField || liIndex < 1)
+   if (!m_pField || liIndex < 0)
       return false;
 
    // Check the type
    if (m_eType != tMFColor)
       return false;
 
-   // Get the IMFVec3f interface
+   // Get the IMFColor interface
    IMFColorObject *pMFColor = NULL;
    HRESULT hResult = m_pField->QueryInterface(IID_IMFColorObject, (void**)&pMFColor);
    if (SUCCEEDED(hResult)) {
@@ -453,7 +501,7 @@ bool CCortonaField::SetMFColor(const long liIndex, const float fR, const float f
       // Add the value
       hResult = pMFColor->put_Value(liIndex, sVarArray);
 
-      // Release the MFVec3f interface
+      // Release the interface
       pMFColor->Release();
    }
 
@@ -469,7 +517,7 @@ bool CCortonaField::AddMFColor(const float fR, const float fG, const float fB) {
    if (m_eType != tMFColor)
       return false;
 
-   // Get the IMFVec3f interface
+   // Get the IMFColor interface
    IMFColorObject *pMFColor = NULL;
    HRESULT hResult = m_pField->QueryInterface(IID_IMFColorObject, (void**)&pMFColor);
    if (SUCCEEDED(hResult)) {
@@ -521,7 +569,7 @@ bool CCortonaField::AddMFColor(const float fR, const float fG, const float fB) {
       // Add the value
       hResult = pMFColor->Add(&sVarArray, &sVarBefore);
 
-      // Release the MFVec3f interface
+      // Release the interface
       pMFColor->Release();
    }
 
@@ -533,18 +581,18 @@ bool CCortonaField::GetSFBool(bool &bVal) {
    if (m_eType != tSFBool)
       return false;
 
-   // Get the IMFVec3f interface
+   // Get the ISFBool interface
    ISFBoolObject *pSFBool = NULL;
    HRESULT hResult = m_pField->QueryInterface(IID_ISFBoolObject, (void**)&pSFBool);
    if (FAILED(hResult))
       return false;
 
-   // Get the X value
+   // Get the BOOL value
    BOOL bRet;
    hResult = pSFBool->get_Value(&bRet);
    bVal = (bRet == TRUE);
 
-   // Release the MFVec3f interface
+   // Release the interface
    pSFBool->Release();
 
    return SUCCEEDED(hResult);
@@ -555,16 +603,16 @@ bool CCortonaField::SetSFBool(const bool bVal) {
    if (m_eType != tSFBool)
       return false;
 
-   // Get the IMFVec3f interface
+   // Get the ISFBool interface
    ISFBoolObject *pSFBool = NULL;
    HRESULT hResult = m_pField->QueryInterface(IID_ISFBoolObject, (void**)&pSFBool);
    if (FAILED(hResult))
       return false;
 
-   // Get the X value
+   // Set the BOOL value
    hResult = pSFBool->put_Value(bVal);
 
-   // Release the MFVec3f interface
+   // Release the interface
    pSFBool->Release();
 
    return SUCCEEDED(hResult);
@@ -614,7 +662,7 @@ bool CCortonaField::GetSFRotation(float &fX, float &fY, float &fZ, float &fAngle
       SafeArrayUnaccessData(sVar.parray);
    }
 
-   // Release the MFVec3f interface
+   // Release the interface
    pSFRotation->Release();
 
    return bOk;
@@ -677,7 +725,7 @@ bool CCortonaField::SetSFRotation(const float fX, const float fY, const float fZ
 
       hResult = pSFRotation->put_Value(sVarArray);
 
-      // Release the SFRotation interface
+      // Release the interface
       pSFRotation->Release();
    }
 
@@ -686,14 +734,14 @@ bool CCortonaField::SetSFRotation(const float fX, const float fY, const float fZ
 
 bool CCortonaField::GetMFInt32(const long liIndex, long &liValue) {
    // Check the field pointer
-   if (!m_pField || liIndex < 1)
+   if (!m_pField || liIndex < 0)
       return false;
 
    // Check the type
    if (m_eType != tMFInt32)
       return false;
 
-   // Get the IMFVec3f interface
+   // Get the IMFInt32 interface
    IMFInt32Object *pMFInt32 = NULL;
    HRESULT hResult = m_pField->QueryInterface(IID_IMFInt32Object, (void**)&pMFInt32);
    if (FAILED(hResult))
@@ -702,7 +750,7 @@ bool CCortonaField::GetMFInt32(const long liIndex, long &liValue) {
    // Get the values
    hResult = pMFInt32->get_Value(liIndex, &liValue);
 
-   // Release the MFVec3f interface
+   // Release the interface
    pMFInt32->Release();
 
    return SUCCEEDED(hResult);
@@ -710,23 +758,23 @@ bool CCortonaField::GetMFInt32(const long liIndex, long &liValue) {
 
 bool CCortonaField::SetMFInt32(const long liIndex, const long liValue) {
    // Check the field pointer
-   if (!m_pField || liIndex < 1)
+   if (!m_pField || liIndex < 0)
       return false;
 
    // Check the type
    if (m_eType != tMFInt32)
       return false;
 
-   // Get the IMFVec3f interface
+   // Get the IMFInt32 interface
    IMFInt32Object *pMFInt32 = NULL;
    HRESULT hResult = m_pField->QueryInterface(IID_IMFInt32Object, (void**)&pMFInt32);
    if (FAILED(hResult))
       return false;
 
-   // Get the values
+   // Set the values
    hResult = pMFInt32->put_Value(liIndex, liValue);
 
-   // Release the MFVec3f interface
+   // Release the interface
    pMFInt32->Release();
 
    return SUCCEEDED(hResult);
@@ -741,7 +789,7 @@ bool CCortonaField::AddMFInt32(const long liValue) {
    if (m_eType != tMFInt32)
       return false;
 
-   // Get the IMFVec3f interface
+   // Get the IMFInt32 interface
    IMFInt32Object *pMFInt32 = NULL;
    HRESULT hResult = m_pField->QueryInterface(IID_IMFInt32Object, (void**)&pMFInt32);
    if (FAILED(hResult))
@@ -753,10 +801,10 @@ bool CCortonaField::AddMFInt32(const long liValue) {
    sVarBefore.vt = VT_ERROR;
    sVarBefore.scode = DISP_E_PARAMNOTFOUND;
 
-   // Get the values
+   // Add the values
    hResult = pMFInt32->Add(liValue, &sVarBefore);
 
-   // Release the MFVec3f interface
+   // Release the interface
    pMFInt32->Release();
 
    return SUCCEEDED(hResult);
@@ -764,7 +812,7 @@ bool CCortonaField::AddMFInt32(const long liValue) {
 
 bool CCortonaField::SetMFString(const long liIndex, const char* pcString) {
    // Check the field pointer
-   if (!m_pField || liIndex < 1)
+   if (!m_pField || liIndex < 0)
       return false;
 
    // Check the type
@@ -783,7 +831,7 @@ bool CCortonaField::SetMFString(const long liIndex, const char* pcString) {
    // Put the value
    hResult = pMFString->put_Value(liIndex, oStr.bstrVal);
 
-   // Release the MFString interface
+   // Release the interface
    pMFString->Release();
 
    return SUCCEEDED(hResult);
