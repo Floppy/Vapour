@@ -8,7 +8,7 @@
 # BeamElement.wrl
 # 19/03/2002 - James Smith
 #
-# $Id: BeamElement.wrl,v 1.10 2002/04/23 11:28:57 vap-james Exp $
+# $Id: BeamElement.wrl,v 1.11 2002/04/25 12:12:22 vap-james Exp $
 
 PROTO BeamElement [
    eventIn MFColor  set_colours
@@ -99,6 +99,7 @@ PROTO BeamElement [
       field MFVec3f crossSection []
       field SFNode  beam USE BEAM
       field SFNode  material USE MATERIAL
+      field SFBool  init FALSE
       eventOut MFString description_changed IS description_changed
       url "javascript:
          function initialize() {
@@ -122,8 +123,13 @@ PROTO BeamElement [
             crossSection[9]  = new SFVec3f(fWeb,fTopFlangeBottom,0);
             crossSection[10] = new SFVec3f(fSide,fTopFlangeBottom,0);
             crossSection[11] = new SFVec3f(fSide,fTopFlangeTop,0);
+            // Calculate initial node positions and colours
+            //update_nodes(nodes);
+            update_colours(colours);
+         }
+         function setup_shape(nodeset) {
             // Setup transform
-            var beamVector = nodes[1].subtract(nodes[0]);
+            var beamVector = nodeset[nodeIndex[1]].subtract(nodeset[nodeIndex[0]]);
             if ((Math.abs(beamVector.y) > Math.abs(beamVector.x)) && (Math.abs(beamVector.y) > Math.abs(beamVector.z))) {
                for (i=0; i<12; i++) {
                   var temp = crossSection[i].z
@@ -138,9 +144,7 @@ PROTO BeamElement [
                   crossSection[i].z = temp;
                }
             }
-            // Calculate initial node positions and colours
-            update_nodes(nodes);
-            update_colours(colours);
+            init = true;
          }
          function set_colours(value,time) {
             update_colours(value);
@@ -154,6 +158,7 @@ PROTO BeamElement [
             }            
          }
          function set_nodes(value,time) {
+            if (!init) setup_shape(value);
             update_nodes(value);
          }
          function update_nodes(nodeset) {
