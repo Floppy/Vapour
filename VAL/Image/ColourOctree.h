@@ -7,7 +7,7 @@
 // ColourOctree.h - 26/12/1999 - Warren Moore
 //	Octree colour cube declaration
 //
-// $Id: ColourOctree.h,v 1.1 2000/06/16 21:59:43 waz Exp $
+// $Id: ColourOctree.h,v 1.2 2000/06/17 09:30:53 waz Exp $
 //
 
 #ifndef _COLOUROCTREE_
@@ -45,6 +45,11 @@ public:
 	int SumNodes() const;
 	int NumSet() const;
 
+// Colour Functions
+	unsigned char Size() const;
+	unsigned char GetNode(unsigned char cR, unsigned char cG, unsigned char cB);
+	void GetColour(unsigned char cNode, unsigned char &cR, unsigned char &cG, unsigned char &cB);
+
 // Diagnostics
 	unsigned int GetDepth() const;
 
@@ -55,6 +60,8 @@ private:
 	unsigned char m_cPNode;
 	CColourOctree *m_pChild[8];
 
+	unsigned char m_cRPos, m_cGPos, m_cBPos;
+	unsigned char m_cSize;
 };
 
 //#===--- Inline Functions
@@ -69,5 +76,9 @@ inline CColourOctree &CColourOctree::GetParent(unsigned char &cNode) const {
 	cNode = m_cPNode;
 	return *m_pParent;
 } // GetParent
+
+inline unsigned char CColourOctree::Size() const {
+	return m_cSize;
+} // Size
 
 #endif // _COLOUROCTREE_

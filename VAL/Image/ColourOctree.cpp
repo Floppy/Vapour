@@ -7,7 +7,7 @@
 // ColourOctree.cpp - 26/12/1999 - Warren Moore
 //	Octree colour cube implementation
 //
-// $Id: ColourOctree.cpp,v 1.1 2000/06/16 21:59:42 waz Exp $
+// $Id: ColourOctree.cpp,v 1.2 2000/06/17 09:30:53 waz Exp $
 //
 
 #include "stdafx.h"
@@ -33,6 +33,8 @@ CColourOctree::CColourOctree() {
 	// Set all values to zero
 		m_pChild[i] = (CColourOctree*)0;
 	}
+	m_cRPos = m_cGPos = m_cBPos = 0;
+	m_cSize = 128;
 } // Constructor
 
 CColourOctree::CColourOctree(const CColourOctree &copy) {
@@ -60,6 +62,10 @@ CColourOctree::CColourOctree(const CColourOctree &copy) {
 			m_pChild[i] = copy.m_pChild[i];
 		cMask <<= 1;
 	}
+	m_cRPos = copy.m_cRPos;
+	m_cGPos = copy.m_cGPos;
+	m_cBPos = copy.m_cBPos;
+	m_cSize = copy.m_cSize;
 } // Copy Constructor
 
 CColourOctree::~CColourOctree() {
@@ -93,6 +99,31 @@ CColourOctree &CColourOctree::Spawn(const unsigned char cNode) {
 	// Set child details
 		m_pChild[cNode] = pTemp;
 		m_cActive |= cMask;
+	// Calculate new size and offsets for the node
+		unsigned int cRPos = m_cRPos, cGPos = m_cGPos, cBPos = m_cBPos;
+		switch (cNode) {
+			case 0:
+				break;
+			case 1:
+				cRPos += m_cSize; break;
+			case 2:
+																						cBPos += m_cSize; break;
+			case 3:
+				cRPos += m_cSize;                   cBPos += m_cSize; break;
+			case 4:
+													cGPos += m_cSize; break;
+			case 5:
+				cRPos += m_cSize; cGPos += m_cSize; break;
+			case 6:
+													cGPos += m_cSize; cBPos += m_cSize; break;
+			case 7:
+				cRPos += m_cSize; cGPos += m_cSize; cBPos += m_cSize; break;
+		}
+	// Set the new variables
+		pTemp->m_cSize = m_cSize >> 1;
+		pTemp->m_cRPos = cRPos;
+		pTemp->m_cGPos = cGPos;
+		pTemp->m_cBPos = cBPos;
 	}
 // Return the new octant (as a reference)
 	return *m_pChild[cNode];
@@ -232,6 +263,89 @@ int CColourOctree::NumSet() const {
 	}
 	return iChildren;
 } // NumSet
+
+//#===--- Colour Functions
+
+unsigned char CColourOctree::GetNode(unsigned char cR, unsigned char cG, unsigned char cB) {
+	unsigned char cNode = 255;
+//	ASSERT((cR >= m_cRPos) && (cR < (m_cRPos + (m_cSize << 1))));
+//	ASSERT((cG >= m_cGPos) && (cG < (m_cGPos + (m_cSize << 1))));
+//	ASSERT((cB >= m_cBPos) && (cB < (m_cBPos + (m_cSize << 1))));
+
+	unsigned char cRPos = m_cRPos + m_cSize;
+	unsigned char cGPos = m_cGPos + m_cSize;
+	unsigned char cBPos = m_cBPos + m_cSize;
+
+	if (cR >= cRPos) {
+		if (cG >= cGPos) {
+			if (cB >= cBPos) {
+				cNode = 7;
+			}
+			else {
+				cNode = 5;
+			}
+		}
+		else {
+			if (cB >= cBPos) {
+				cNode = 3;
+			}
+			else {
+				cNode = 1;
+			}
+		}
+	}
+	else {
+		if (cG >= cGPos) {
+			if (cB >= cBPos) {
+				cNode = 6;
+			}
+			else {
+				cNode = 4;
+			}
+		}
+		else {
+			if (cB >= cBPos) {
+				cNode = 2;
+			}
+			else {
+				cNode = 0;
+			}
+		}
+	}
+
+	return cNode;
+} // GetNode
+
+void CColourOctree::GetColour(unsigned char cNode, unsigned char &cR,
+																 unsigned char &cG, unsigned char &cB) {
+// Calculate new size and offsets for the node
+	unsigned int cRPos = m_cRPos, cGPos = m_cGPos, cBPos = m_cBPos;
+
+	switch (cNode) {
+		case 0:
+			break;
+		case 1:
+			cRPos += m_cSize; break;
+		case 2:
+			                                    cBPos += m_cSize; break;
+		case 3:
+			cRPos += m_cSize;                   cBPos += m_cSize; break;
+		case 4:
+			                  cGPos += m_cSize; break;
+		case 5:
+			cRPos += m_cSize; cGPos += m_cSize; break;
+		case 6:
+			                  cGPos += m_cSize; cBPos += m_cSize; break;
+		case 7:
+			cRPos += m_cSize; cGPos += m_cSize; cBPos += m_cSize; break;
+	}
+
+// Find centre of node
+	unsigned char cMid = m_cSize >> 1;
+	cR = cRPos + cMid;
+	cG = cGPos + cMid;
+	cB = cBPos + cMid;
+} // GetColour
 
 //#===--- Diagnostic Functions
 
