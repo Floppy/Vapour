@@ -6,7 +6,7 @@
 // SceneManager.cpp
 // 19/03/2002 - James Smith
 //
-// $Id: SceneManager.cpp,v 1.8 2002/03/22 02:31:36 vap-james Exp $
+// $Id: SceneManager.cpp,v 1.9 2002/03/22 10:41:59 vap-james Exp $
 
 #include "stdafx.h"
 #include "SceneManager.h"
@@ -147,7 +147,7 @@ CSceneManager::~CSceneManager() {
 }
 
 void CSceneManager::Load(void) {
-
+   
    // Initialise the NodeSet
    m_oNodeSet.SetSize(9);
    m_oNodeSet.SetDefault(g_pfDefaultNodes);
@@ -227,7 +227,7 @@ void CSceneManager::SetScaleFactor(float fX, float fY, float fZ) {
 }
 
 void CSceneManager::SetViewpoint(float pfPosition[3], float pfRotation[4]) {
-   //m_oViewpoint.Set(pfPosition,pfRotation);
+   m_oViewpoint.Set(pfPosition,pfRotation);
 }
 
 void CSceneManager::ShowFrame(unsigned int iFrame) {
