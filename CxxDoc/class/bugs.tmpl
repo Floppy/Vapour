@@ -36,7 +36,7 @@ $(include:menu.stmpl)
 				$(set:inclass=$(ObjectName))$(set:infile=$docroot/$(MakeFilename:../developer/class/%.html))
 				$(forall:method:
 					$(ifset:bug:
-						<TR VALIGN="TOP"><TD BGCOLOR="#C0C0F0"><P><A HREF="$(infile)">$(inclass)</A></P></TD><TD BGCOLOR="#C0C0F0"><P>$(ObjectName)</P></TD><TD BGCOLOR="#C0C0F0"><P>$(list:$(bug))</P></TD></TR>
+						<TR VALIGN="TOP"><TD BGCOLOR="#C0C0F0"><P><A HREF="$(infile)">$(inclass)</A></P></TD><TD BGCOLOR="#C0C0F0"><P><A HREF="$(infile)#$(href)">$(ObjectName)</A></P></TD><TD BGCOLOR="#C0C0F0"><P>$(list:$(bug))</P></TD></TR>
 					)
 				)
 			)
