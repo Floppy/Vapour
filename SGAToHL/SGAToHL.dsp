@@ -50,7 +50,7 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:console /machine:I386
-# ADD LINK32 AME_SDK_DLL.lib zlib.lib opengl32.lib glu32.lib /nologo /subsystem:console /machine:I386 /nodefaultlib:"libc.lib" /nodefaultlib:"msvcrt.lib" /include:"?g_oImageProxyBMP@@3V?$CImageFileProxy@VCImageFileBMP@@@@A" /include:"?g_oImageProxyRaw@@3V?$CImageFileProxy@VCImageFileRaw@@@@A"
+# ADD LINK32 AME_SDK_DLL.lib zlib.lib opengl32.lib glu32.lib /nologo /subsystem:console /machine:I386 /nodefaultlib:"libc.lib" /nodefaultlib:"msvcrt.lib" /include:"?g_oImageProxyBMP@@3V?$CImageFileProxy@VCImageFileBMP@@@@A" /include:"?g_oImageProxyRaw@@3V?$CImageFileProxy@VCImageFileRaw@@@@A" /include:"?g_oRCProxyOpenGLBufferWin32@@3V?$CRenderContextProxy@VCRCOpenGLBufferWin32@@@@A"
 
 !ELSEIF  "$(CFG)" == "SGAToHL - Win32 Debug"
 
@@ -74,7 +74,7 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:console /debug /machine:I386 /pdbtype:sept
-# ADD LINK32 AME_SDK_DLL.lib zlibd.lib opengl32.lib glu32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:console /map /debug /machine:I386 /nodefaultlib:"libcd.lib" /nodefaultlib:"nafxcwd.lib" /include:"?g_oImageProxyBMP@@3V?$CImageFileProxy@VCImageFileBMP@@@@A" /include:"?g_oImageProxyRaw@@3V?$CImageFileProxy@VCImageFileRaw@@@@A" /include:"?g_oRCProxyOpenGLBufferWin32@@3V?$CRenderContextProxy@VCRCOpenGLBufferWin32@@@@A" /pdbtype:sept
+# ADD LINK32 AME_SDK_DLL.lib zlibd.lib opengl32.lib glu32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:console /map /debug /machine:I386 /nodefaultlib:"libcd.lib" /nodefaultlib:"nafxcwd.lib" /include:"?g_oRCProxyOpenGLBufferWin32@@3V?$CRenderContextProxy@VCRCOpenGLBufferWin32@@@@A" /include:"?g_oImageProxyBMP@@3V?$CImageFileProxy@VCImageFileBMP@@@@A" /include:"?g_oImageProxyRaw@@3V?$CImageFileProxy@VCImageFileRaw@@@@A" /pdbtype:sept
 
 !ENDIF 
 
