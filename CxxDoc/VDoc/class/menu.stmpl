@@ -2,7 +2,7 @@
 <TABLE WIDTH="100%" BORDER=0 CELLPADDING=2 CELLSPACING=0 CLASS=MENUBORDER BGCOLOR="#000080">
 	<TR><TD>
 	<P CLASS=MENUTITLE>
-	<A HREF="$(docroot)/internal/"><FONT COLOR="#FFFFFF">Internal Home</FONT></A>
+	<A HREF="$(docroot)/internal/"><FONT COLOR="#FFFFFF">Home</FONT></A>
 	</P>
 	</TD></TR>
 	<TR><TD>
@@ -14,6 +14,11 @@
 		<A HREF="$(docroot)/$(if:$viewmode=developer:developer)$(else:user)/index.html">Class List</A><BR>
 		<A HREF="$(docroot)/todo.php">To Do List</A><BR>
 		<A HREF="$(docroot)/bugs.php">Known Bugs</A>
+		</P>
+		</TD></TR>
+		<TR><TD BGCOLOR="#C0C0F0">
+		<P CLASS=MENUITEM>
+		<A HREF="/internal/">Internal Site</A>
 		</P>
 		</TD></TR>
 	</TABLE>

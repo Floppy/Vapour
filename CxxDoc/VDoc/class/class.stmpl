@@ -34,7 +34,7 @@ $(include:menu.stmpl)
 		</TABLE>
 		<TABLE WIDTH="100%" BORDER=0 CELLPADDING=2 CELLSPACING=0 CLASS=ITEM BGCOLOR="#FFFFFF">
 			<TR><TD>
-			<TABLE BORDER=0 CELLPADDING=1 CELLSPACING=1 ALIGN=RIGHT>
+			<TABLE BORDER=0 CELLPADDING=2 CELLSPACING=0 BGCOLOR="#C0C0C0" ALIGN=RIGHT>
 				<TR><TD>
 				$(ifany:$methodtype,$NodeType=method:
 					$(forall:$methodtype,$NodeType=method:

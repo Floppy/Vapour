@@ -36,10 +36,10 @@ $(include:../class/menu.stmpl)
 		<TABLE WIDTH="100%" BORDER=0 CELLPADDING=2 CELLSPACING=0 CLASS=ITEM BGCOLOR="#FFFFFF">
 			<TR><TD>
 			$(ifany:docnode:
-				<TABLE BORDER=0 CELLPADDING=1 CELLSPACING=1 ALIGN=RIGHT>
+				<TABLE BORDER=0 CELLPADDING=2 CELLSPACING=0 BGCOLOR="#C0C0C0" ALIGN=RIGHT>
 					<TR><TD>
 					$(forall:docnode:
-						<P CLASS=CLASSHEADING><A HREF="$(MakeFilename:%.html)"><B>$(subst:_: :$(ObjectName))</B></A>$(ifset:brief: - $(brief))</P>
+						<A HREF="$(MakeFilename:%.html)"><B>$(subst:_: :$(ObjectName))</B></A>$(ifset:brief: - $(brief))
 					)
 					</TD></TR>
 				</TABLE>
