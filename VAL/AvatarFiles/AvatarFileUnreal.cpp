@@ -7,7 +7,7 @@
 // AvatarFileUnreal.cpp - 16/2/2000 - James Smith
 //	Unreal export filter implementation
 //
-// $Id: AvatarFileUnreal.cpp,v 1.9 2000/08/29 12:48:41 waz Exp $
+// $Id: AvatarFileUnreal.cpp,v 1.10 2000/08/30 14:08:50 waz Exp $
 //
 
 #include "stdafx.h"
@@ -180,7 +180,7 @@ FRESULT CAvatarFileUnreal::Save(const char* pszFilename, CAvatar* pAvatar) const
       return eResult;
    }
 
-   //////////////////////////////////////////////////////////////////////
+   /*//////////////////////////////////////////////////////////////////////
 
    // Save mesh description .3d file
    // Notify of progress
@@ -280,7 +280,7 @@ FRESULT CAvatarFileUnreal::Save(const char* pszFilename, CAvatar* pAvatar) const
       return eResult;
    }
 
-   //////////////////////////////////////////////////////////////////////
+   //////////////////////////////////////////////////////////////////////*/
 
    // Tidy up allocated memory
    eResult = Cleanup();
@@ -1170,14 +1170,20 @@ FRESULT CAvatarFileUnreal::SaveMeshU(const char* pszFilename, CAvatar* pAvatar) 
 
       int i; // Generic loop counter
       const unsigned int uNumFrames = 700;
+      const unsigned int uNumSeqs = 69;
       const unsigned int uNameLength = strlen(m_pszName);
       unsigned int uCurrentOffset = 0;
       const SBodyPart* pBodyParts = pAvatar->BodyParts();
+
+      unsigned int* pTempAddressPtr = NULL;
 
       // Store old avatar pose
       CAvatarPose poOldPose = pAvatar->ExportPose();
       pAvatar->ResetPose();
       pAvatar->UpdateModel();
+
+      // File offsets and size for export table
+      unsigned long uExportOffset[10] = {0,0,0,0,0,0,0,0,0,0};
 
       // Create file header
       SUnrealPackageHeader sHeader;
@@ -1188,9 +1194,9 @@ FRESULT CAvatarFileUnreal::SaveMeshU(const char* pszFilename, CAvatar* pAvatar) 
       sHeader.uPackageFlags = UNREAL_PKG_ALLOWDOWNLOAD;
       // Name tables stuff
       sHeader.uNameCount = 0x6C;
-      // 0 exported symbols
+      // 9 exported symbols
       sHeader.uExportCount = 0x09; // 0x09 exported names
-      // 3 imported symbols
+      // 12 imported symbols
       sHeader.uImportCount = 0x0C; // 0x0C imported names
       // Create GUID
       // The GUID is our little starter bit, plus a couple of chars of tha name, plus 5 random nums.
@@ -1304,12 +1310,13 @@ FRESULT CAvatarFileUnreal::SaveMeshU(const char* pszFilename, CAvatar* pAvatar) 
          }
       }
       else {
-         // CLEANUP MEMORY ETC
          return F_OUT_OF_MEMORY;
       }
       // Update file offset
       uCurrentOffset += uNameTableLength;
 
+      // Update export offset
+      uExportOffset[0] = uCurrentOffset;
       // Write Mesh Properties
       unsigned int uMeshPropertiesLength = (m_iSex==UNREAL_FEMALE ? 0xC8 : 0xC4) + 5*uNameLength;
       char* pcMeshProperties = NULL;
@@ -1411,7 +1418,7 @@ FRESULT CAvatarFileUnreal::SaveMeshU(const char* pszFilename, CAvatar* pAvatar) 
          uPropertiesOffset += strlen(pszPropertyName) + 1;
          // Write selection mesh name
          sprintf(pszPropertyName,"%s.Select%s",m_pszName,m_pszName);
-         pcMeshProperties[uPropertiesOffset++] = (char)0x15;
+         pcMeshProperties[uPropertiesOffset++] = (char)0x16;
          pcMeshProperties[uPropertiesOffset++] = (char)0x05;
          pcMeshProperties[uPropertiesOffset++] = (char)0x8A;
          pcMeshProperties[uPropertiesOffset++] = (char)0x17;
@@ -1438,7 +1445,7 @@ FRESULT CAvatarFileUnreal::SaveMeshU(const char* pszFilename, CAvatar* pAvatar) 
          uPropertiesOffset += strlen(pszPropertyName) + 1;
          // Write voice name
          sprintf(pszPropertyName,(m_iSex==UNREAL_FEMALE ? "Botpack.VoiceFemaleTwo" : "Botpack.VoiceMaleTwo"),m_pszName);
-         pcMeshProperties[uPropertiesOffset++] = (char)0x18;
+         pcMeshProperties[uPropertiesOffset++] = (char)0x1C;
          pcMeshProperties[uPropertiesOffset++] = (char)0x5D;
          pcMeshProperties[uPropertiesOffset++] = strlen(pszPropertyName) + 2;
          pcMeshProperties[uPropertiesOffset++] = strlen(pszPropertyName) + 1;
@@ -1451,24 +1458,81 @@ FRESULT CAvatarFileUnreal::SaveMeshU(const char* pszFilename, CAvatar* pAvatar) 
          pcMeshProperties[uPropertiesOffset++] = (char)0x00;
       }
       else {
-         // CLEANUP MEMORY ETC
+         delete [] pcNameTable;
          return F_OUT_OF_MEMORY;
       }
       // Update file offset
       uCurrentOffset += uMeshPropertiesLength;
 
+      // Update export offset
+      uExportOffset[1] = uCurrentOffset;
       // Write standard mesh header
-      unsigned int uMeshHeaderLength = 0x30;
+      unsigned int uMeshHeaderLength = 0x50;
       char* pcMeshHeader = NULL;
       NEWBEGIN
       pcMeshHeader = new char[uMeshHeaderLength];
       NEWEND("CAvatarFileUnreal::Save - Mesh top section allocation")
       if (pcMeshHeader != NULL) {
          // Write header
-
+         unsigned int uHeaderOffset = 0;
+         // Write frame 0 description part 1
+         pcMeshHeader[uHeaderOffset++] = (char)0x00;
+         pcMeshHeader[uHeaderOffset++] = (char)0x00;
+         pcMeshHeader[uHeaderOffset++] = (char)0x40;
+         pcMeshHeader[uHeaderOffset++] = (char)0x01;
+         pcMeshHeader[uHeaderOffset++] = (char)0xC4;
+         pcMeshHeader[uHeaderOffset++] = (char)0x00;
+         pcMeshHeader[uHeaderOffset++] = (char)0x80;
+         pcMeshHeader[uHeaderOffset++] = (char)0xFC;
+         pcMeshHeader[uHeaderOffset++] = (char)0xC3;
+         pcMeshHeader[uHeaderOffset++] = (char)0x00;
+         pcMeshHeader[uHeaderOffset++] = (char)0x00;
+         pcMeshHeader[uHeaderOffset++] = (char)0x7F;
+         pcMeshHeader[uHeaderOffset++] = (char)0xC3;
+         pcMeshHeader[uHeaderOffset++] = (char)0x00;
+         pcMeshHeader[uHeaderOffset++] = (char)0x40;
+         pcMeshHeader[uHeaderOffset++] = (char)0x29;
+         pcMeshHeader[uHeaderOffset++] = (char)0x44;
+         pcMeshHeader[uHeaderOffset++] = (char)0x00;
+         pcMeshHeader[uHeaderOffset++] = (char)0x00;
+         pcMeshHeader[uHeaderOffset++] = (char)0x17;
+         pcMeshHeader[uHeaderOffset++] = (char)0x44;
+         pcMeshHeader[uHeaderOffset++] = (char)0x00;
+         pcMeshHeader[uHeaderOffset++] = (char)0x80;
+         pcMeshHeader[uHeaderOffset++] = (char)0xE6;
+         pcMeshHeader[uHeaderOffset++] = (char)0x43;
+         pcMeshHeader[uHeaderOffset++] = (char)0x01;
+         // Write frame 0 description part 2
+         pcMeshHeader[uHeaderOffset++] = (char)0x00;
+         pcMeshHeader[uHeaderOffset++] = (char)0x00;
+         pcMeshHeader[uHeaderOffset++] = (char)0xA0;
+         pcMeshHeader[uHeaderOffset++] = (char)0x42;
+         pcMeshHeader[uHeaderOffset++] = (char)0x00;
+         pcMeshHeader[uHeaderOffset++] = (char)0x00;
+         pcMeshHeader[uHeaderOffset++] = (char)0x46;
+         pcMeshHeader[uHeaderOffset++] = (char)0x42;
+         pcMeshHeader[uHeaderOffset++] = (char)0x00;
+         pcMeshHeader[uHeaderOffset++] = (char)0x00;
+         pcMeshHeader[uHeaderOffset++] = (char)0xCE;
+         pcMeshHeader[uHeaderOffset++] = (char)0x42;
+         pcMeshHeader[uHeaderOffset++] = (char)0xAB;
+         pcMeshHeader[uHeaderOffset++] = (char)0x4C;
+         pcMeshHeader[uHeaderOffset++] = (char)0x39;
+         pcMeshHeader[uHeaderOffset++] = (char)0x44;
+         // Store address of end of frame chunk address
+         *((unsigned int*)(pcMeshHeader+uHeaderOffset)) = 0;
+         pTempAddressPtr = (unsigned int*)(pcMeshHeader+uHeaderOffset);
+         uHeaderOffset+=4;
+         // Write CI of amount of data
+         CUnrealCompactIndex oCIndex((int)((uNumVertices+3)*uNumFrames));
+         for (i=0; i<oCIndex.NumBytes(); i++) {
+            pcMeshHeader[uHeaderOffset++] = oCIndex.CompactIndex()[i];
+         }
+         uMeshHeaderLength = uHeaderOffset;
       }
       else {
-         // CLEANUP MEMORY ETC
+         delete [] pcMeshProperties;
+         delete [] pcNameTable;
          return F_OUT_OF_MEMORY;
       }
       // Update file offset
@@ -1513,7 +1577,9 @@ FRESULT CAvatarFileUnreal::SaveMeshU(const char* pszFilename, CAvatar* pAvatar) 
          strcat(pszWJEName, "utdata.wje");
          fstream fsDataWJE(pszWJEName, ios::in|ios::binary|ios::nocreate);
          if (fsDataWJE.fail()) {
-            // CLEANUP MEMORY ETC
+            delete [] pcMeshHeader;
+            delete [] pcMeshProperties;
+            delete [] pcNameTable;
             osTempStream.close();
             TRACE("Could not open wedgie file!\n");
             return F_FILE_ERROR;
@@ -1540,22 +1606,15 @@ FRESULT CAvatarFileUnreal::SaveMeshU(const char* pszFilename, CAvatar* pAvatar) 
                   pAvatar->Chop(vc7);
             }
             else {
-               // Temporary behaviour until we have all poses.
-               // Reset pose
-               pAvatar->ResetPose();
-               // Point right hand forward
-               pAvatar->SetJointAngle(r_elbow,CAxisRotation(1,0,0,-1.54),false);
-					// Update Pose
-					pAvatar->UpdateModel();
-               // Notify
-               cout << "Couldn't load pose " << i << endl;
-               /*// Fail export if we can't load a pose
-               // CLEANUP MEMORY ETC
+               // Fail export if we can't load a pose
+               delete [] pcMeshHeader;
+               delete [] pcMeshProperties;
+               delete [] pcNameTable;
 			      oWedgie.Close();
                fsDataWJE.close();
                osTempStream.close();
                TRACE("Could not open pose %d!\n",i);
-               return F_FILE_ERROR;*/
+               return F_FILE_ERROR;
             }
 
             // Write vertices
@@ -1585,18 +1644,25 @@ FRESULT CAvatarFileUnreal::SaveMeshU(const char* pszFilename, CAvatar* pAvatar) 
          osTempStream.close();
       }
       else {
-         // CLEANUP MEMORY ETC
+         delete [] pcMeshHeader;
+         delete [] pcMeshProperties;
+         delete [] pcNameTable;
          return F_FILE_ERROR;
       }
       // Update file offset
       uCurrentOffset += uFrameDataLength;
+      // Store current offset in temp pointer
+      *pTempAddressPtr = uCurrentOffset;
 
       // Write the rest of the mesh data
       unsigned int uMeshDataLength = 
-         9 + sizeof(SUnrealTriangle)*(uNumFaces+1) + // mesh header + data
-         (8 * (uNumVertices+3)) + //vertex info
-         (12 * (uNumFaces+1)) + //face info
-         0x45; // footer
+         9  + sizeof(SUnrealTriangle)*(uNumFaces+1) + // mesh header + data
+         5  + (19*uNumSeqs) + 110 + // sequence data
+         9  + (8 * (uNumVertices+3)) + //vertex info
+         50 + (12 * (uNumFaces+1)) + //face info
+         8  + (25 * uNumFrames) + // frame data part 1
+         5  + (16 * uNumFrames) + // frame data part 2
+         69; // footer
       char* pcMeshData = NULL;
       NEWBEGIN
       pcMeshData = new char[uMeshDataLength];
@@ -1610,11 +1676,10 @@ FRESULT CAvatarFileUnreal::SaveMeshU(const char* pszFilename, CAvatar* pAvatar) 
          // Write topology data header
          ////////////////////////////////////////////////////////////
 
-         // Some data that I don't understand
-         pcMeshData[uMeshOffset++] = (char)0x91;
-         pcMeshData[uMeshOffset++] = (char)0x25;
-         pcMeshData[uMeshOffset++] = (char)0x3A;
-         pcMeshData[uMeshOffset++] = (char)0x00;
+         // Store address of end of topology chunk
+         *((unsigned int*)(pcMeshData+uMeshOffset)) = 0;
+         pTempAddressPtr = (unsigned int*)(pcMeshData+uMeshOffset);
+         uMeshOffset+=4;
          // CI of number of faces
          CUnrealCompactIndex oCIndex((int)(uNumFaces+1));
          for (i=0; i<oCIndex.NumBytes(); i++) {
@@ -1644,13 +1709,13 @@ FRESULT CAvatarFileUnreal::SaveMeshU(const char* pszFilename, CAvatar* pAvatar) 
             int iTextureNumber = pFaces[f].m_iTextureNumber;
             for (int tc=3; tc--!=0; ) {
                // Get tex coords
-               double dU = pFaces[i].m_sTexCoords[tc].dU;
-               double dV = pFaces[i].m_sTexCoords[tc].dV;
+               double dU = pFaces[f].m_sTexCoords[tc].dU;
+               double dV = pFaces[f].m_sTexCoords[tc].dV;
                // Clamp to 0..1
                if (dU > 1) dU = 1;
                else if (dU < 0) dU = 0;
-               if (dV > 1) dV = 1;
-               else if (dV < 0) dV = 0;
+               if (dV > 0.9) dV = 0.9;
+               else if (dV < 0.1) dV = 0.1;
                // Recalculate texture V coordinates if this is not the face texture
                if (iTextureNumber!=uFaceTexIndex) {
                   // Multiply by height of this particular image
@@ -1677,9 +1742,9 @@ FRESULT CAvatarFileUnreal::SaveMeshU(const char* pszFilename, CAvatar* pAvatar) 
                   pFaceData[f].uV2 = cV;
                   break;
                }
-               // Write Texture number
-               pFaceData[f].uTexture = iTextureNumber==uFaceTexIndex ? 0 : 1;
             }
+            // Write Texture number
+            pFaceData[f].uTexture = iTextureNumber==uFaceTexIndex ? 0 : 1;
          }
          // Write data for weapon triangle
          // Write vertex indices: three vertices after main vertex list
@@ -1700,10 +1765,113 @@ FRESULT CAvatarFileUnreal::SaveMeshU(const char* pszFilename, CAvatar* pAvatar) 
          pFaceData[f].uTexture = 0;
          // Update offset
          uMeshOffset += (uNumFaces+1) * sizeof(SUnrealTriangle);
+         // Store current offset in temp pointer
+         *pTempAddressPtr = uCurrentOffset + uMeshOffset;
+
+         ////////////////////////////////////////////////////////////
+         // Write sequence info header
+         ////////////////////////////////////////////////////////////
+
+         // Write CI of number of sequences
+         oCIndex.Set((int)uNumSeqs);
+         for (i=0; i<oCIndex.NumBytes(); i++) {
+            pcMeshData[uMeshOffset++] = oCIndex.CompactIndex()[i];
+         }
+
+         ////////////////////////////////////////////////////////////
+         // Write sequence info
+         ////////////////////////////////////////////////////////////
+
+         // Sequence information
+         const int piNameRef[uNumSeqs] = {
+            0x0C, 0x39, 0x3A, 0x38, 0x3E, 0x24, 0x20, 0x1E, 0x21, 0x27, 0x43, 0x26, 
+            0x37, 0x35, 0x48, 0x47, 0x46, 0x4C, 0x4F, 0x4A, 0x22, 0x3B, 0x53, 0x61,
+            0x4D, 0x4E, 0x50, 0x51, 0x4B, 0x5D, 0x60, 0x5A, 0x5B, 0x52, 0x2B, 0x2E,
+            0x3F, 0x40, 0x32, 0x2A, 0x3C, 0x3D, 0x2F, 0x30, 0x28, 0x31, 0x1D, 0x2C,
+            0x33, 0x25, 0x34, 0x58, 0x56, 0x57, 0x41, 0x44, 0x1A, 0x19, 0x1F, 0x36,
+            0x23, 0x2D, 0x5C, 0x55, 0x59, 0x5F, 0x49, 0x45, 0x42
+         };
+         const char piGroup[uNumSeqs] = {
+            0, 1, 1, 1, 1, 3, 3, 3, 3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+            1, 7, 7, 7, 7, 7, 5, 5, 5, 5, 5, 5, 5, 20, 20, 18, 18, 0, 0, 0, 6, 0,
+            6, 0, 0, 6, 0, 6, 6, 6, 6, 0, 0, 0, 3, 0, 0, 0, 3, 3, 3, 0, 0, 0, 0, 0
+         };
+         const int piStartFrame[uNumSeqs] = {
+            0, 1, 2, 3, 4, 90, 95, 0, 136, 177, 187, 197, 235, 250, 373, 380, 400,
+            96, 408, 25, 32, 52, 463, 476, 265, 448, 343, 486, 5, 501, 502, 503, 504,
+            505, 91, 92, 93, 94, 60, 75, 205, 220, 283, 298, 313, 328, 358, 137, 147,
+            157, 167, 670, 680, 690, 298, 328, 187, 525, 538, 554, 567, 583, 604, 622,
+            642, 652, 537, 553, 566
+         };
+         const int piNumFrames[uNumSeqs] = {
+            700, 1, 1, 1, 1, 1, 1, 1, 1, 10, 10, 8, 15, 15, 7, 20, 8, 40, 40, 7, 20, 8,
+            13, 10, 18, 15, 15, 15, 20, 1, 1, 1, 1, 20, 1, 1, 1, 1, 15, 15, 15, 15, 15,
+            15, 15, 15, 15, 10, 10, 10, 10, 10, 10, 10, 2, 2, 1, 13, 16, 13, 16, 21, 18,
+            20, 10, 18, 1, 1, 1
+         };
+         const float pfRate[uNumSeqs] = {
+            30, 30, 30, 30, 30, 30, 30, 30, 30, 15, 15, 15, 15, 15, 6, 7, 6, 15, 15, 6, 7, 6, 6,
+            6, 11, 15, 15, 20, 15, 30, 30, 30, 30, 30, 30, 30, 30, 30, 15, 15, 15, 15, 18, 18, 18,
+            18, 18, 17, 17, 17, 17, 17, 17, 17, 15, 15, 30, 10, 10, 10, 10, 12, 10, 30, 15,
+            10, 30, 30, 30
+         };
+         const char piNumNotifies[uNumSeqs] = {
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 2, 2, 2,
+            2, 2, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 0, 0,
+         };
+         const float pfNotifyData[22] = {
+            0.25F, 0.75F, 0.25F, 0.75F, 0.25F, 0.75F, 0.25F, 0.75F, 0.25F, 0.75F, 0.25F,
+            0.75F, 0.25F, 0.75F, 0.7F, 0.9F, 0.45F, 0.6F, 0.7F, 0.7F, 0.8F, 0.57F
+         };
+         const char piNotifyType[22] = {
+            2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
+            4, 4, 4, 4, 4, 4, 4, 4
+         };
+         int iNotifyCounter = 0;
+         // Write information to memory
+         for (int s=0; s<uNumSeqs; s++) {
+            // Write CI of sequence name
+            oCIndex.Set(piNameRef[s]);
+            for (i=0; i<oCIndex.NumBytes(); i++) {
+               pcMeshData[uMeshOffset++] = oCIndex.CompactIndex()[i];
+            }
+            // Write group number
+            pcMeshData[uMeshOffset++] = piGroup[s];
+            // Write start frame for sequence
+            *((long*)(pcMeshData+uMeshOffset)) = piStartFrame[s];
+            uMeshOffset+=4;
+            // Write number of frames
+            *((long*)(pcMeshData+uMeshOffset)) = piNumFrames[s];
+            uMeshOffset+=4;
+            // Write number of notifies
+            pcMeshData[uMeshOffset++] = piNumNotifies[s];
+            if (piNumNotifies[s] != 0) {
+               // Write notify data
+               for (int n=0; n<piNumNotifies[s]; n++) {
+                  *((float*)(pcMeshData+uMeshOffset)) = pfNotifyData[iNotifyCounter];
+                  uMeshOffset+=4;
+                  pcMeshData[uMeshOffset++] = piNotifyType[iNotifyCounter++];
+               }
+            }
+            // Write rate
+            *((float*)(pcMeshData+uMeshOffset)) = pfRate[s];
+            uMeshOffset+=4;
+         }
 
          ////////////////////////////////////////////////////////////
          // Write vertex info header
          ////////////////////////////////////////////////////////////
+
+         // Store address of end of vertex info chunk
+         *((unsigned int*)(pcMeshData+uMeshOffset)) = 0;
+         pTempAddressPtr = (unsigned int*)(pcMeshData+uMeshOffset);
+         uMeshOffset+=4;
+         // Write CI of number of vertices
+         oCIndex.Set((int)(uNumVertices+3));
+         for (i=0; i<oCIndex.NumBytes(); i++) {
+            pcMeshData[uMeshOffset++] = oCIndex.CompactIndex()[i];
+         }
 
          ////////////////////////////////////////////////////////////
          // Write vertex info
@@ -1711,61 +1879,218 @@ FRESULT CAvatarFileUnreal::SaveMeshU(const char* pszFilename, CAvatar* pAvatar) 
 
          // Cast pointer
          unsigned long* puTempPtr = (unsigned long*)(pcMeshData + uMeshOffset);
-         for (v=0; v<uNumVertices; ) {
-            // Write 2 ints per vertex - don't know what they are yet...
-            puTempPtr[v++] = v; // High
-            puTempPtr[v++] = v; // Low
+         unsigned int uTempOffset = 0;
+         unsigned int uTotalValence = 0;
+         for (v=0; v<uNumVertices; v++) {
+            // Write vertex data
+            puTempPtr[uTempOffset++] = pAvatar->FacesPerVertex(v)->Length(); // Valence
+            puTempPtr[uTempOffset++] = uTotalValence; // Total
+            uTotalValence += pAvatar->FacesPerVertex(v)->Length();
          }
          // Write weapon triangle data
          // Vertex 0
-         puTempPtr[v++] = v; // High 
-         puTempPtr[v++] = v; // Low
+         puTempPtr[uTempOffset++] = 1; // Valence
+         puTempPtr[uTempOffset++] = uTotalValence; // Total
+         uTotalValence++;
          // Vertex 1
-         puTempPtr[v++] = v; // High 
-         puTempPtr[v++] = v; // Low
+         puTempPtr[uTempOffset++] = 1; // Valence
+         puTempPtr[uTempOffset++] = uTotalValence; // Total
+         uTotalValence++;
          // Vertex 2
-         puTempPtr[v++] = v; // High 
-         puTempPtr[v++] = v; // Low
+         puTempPtr[uTempOffset++] = 1; // Valence
+         puTempPtr[uTempOffset++] = uTotalValence; // Total
          // Update offset
          uMeshOffset += 8 * (uNumVertices+3);
+         // Store current offset in temp pointer
+         *pTempAddressPtr = uCurrentOffset + uMeshOffset;
 
          ////////////////////////////////////////////////////////////
          // Write face info header
          ////////////////////////////////////////////////////////////
+
+         // Write face info header
+         // Write frame 0 description part 1
+         pcMeshData[uMeshOffset++] = (char)0x00;
+         pcMeshData[uMeshOffset++] = (char)0x40;
+         pcMeshData[uMeshOffset++] = (char)0x01;
+         pcMeshData[uMeshOffset++] = (char)0xC4;
+         pcMeshData[uMeshOffset++] = (char)0x00;
+         pcMeshData[uMeshOffset++] = (char)0x80;
+         pcMeshData[uMeshOffset++] = (char)0xFC;
+         pcMeshData[uMeshOffset++] = (char)0xC3;
+         pcMeshData[uMeshOffset++] = (char)0x00;
+         pcMeshData[uMeshOffset++] = (char)0x00;
+         pcMeshData[uMeshOffset++] = (char)0x7F;
+         pcMeshData[uMeshOffset++] = (char)0xC3;
+         pcMeshData[uMeshOffset++] = (char)0x00;
+         pcMeshData[uMeshOffset++] = (char)0x40;
+         pcMeshData[uMeshOffset++] = (char)0x29;
+         pcMeshData[uMeshOffset++] = (char)0x44;
+         pcMeshData[uMeshOffset++] = (char)0x00;
+         pcMeshData[uMeshOffset++] = (char)0x00;
+         pcMeshData[uMeshOffset++] = (char)0x17;
+         pcMeshData[uMeshOffset++] = (char)0x44;
+         pcMeshData[uMeshOffset++] = (char)0x00;
+         pcMeshData[uMeshOffset++] = (char)0x80;
+         pcMeshData[uMeshOffset++] = (char)0xE6;
+         pcMeshData[uMeshOffset++] = (char)0x43;
+         pcMeshData[uMeshOffset++] = (char)0x01;
+         // Write frame 0 description part 2
+         pcMeshData[uMeshOffset++] = (char)0x00;
+         pcMeshData[uMeshOffset++] = (char)0x00;
+         pcMeshData[uMeshOffset++] = (char)0xA0;
+         pcMeshData[uMeshOffset++] = (char)0x42;
+         pcMeshData[uMeshOffset++] = (char)0x00;
+         pcMeshData[uMeshOffset++] = (char)0x00;
+         pcMeshData[uMeshOffset++] = (char)0x46;
+         pcMeshData[uMeshOffset++] = (char)0x42;
+         pcMeshData[uMeshOffset++] = (char)0x00;
+         pcMeshData[uMeshOffset++] = (char)0x00;
+         pcMeshData[uMeshOffset++] = (char)0xCE;
+         pcMeshData[uMeshOffset++] = (char)0x42;
+         pcMeshData[uMeshOffset++] = (char)0xAB;
+         pcMeshData[uMeshOffset++] = (char)0x4C;
+         pcMeshData[uMeshOffset++] = (char)0x39;
+         pcMeshData[uMeshOffset++] = (char)0x44;
+
+         // Store address of end of face info chunk
+         *((unsigned int*)(pcMeshData+uMeshOffset)) = 0;
+         pTempAddressPtr = (unsigned int*)(pcMeshData+uMeshOffset);
+         uMeshOffset+=4;
+         // Write CI of data length
+         oCIndex.Set((int)(uNumFaces+1)*3);
+         for (i=0; i<oCIndex.NumBytes(); i++) {
+            pcMeshData[uMeshOffset++] = oCIndex.CompactIndex()[i];
+         }
 
          ////////////////////////////////////////////////////////////
          // Write face info
          ////////////////////////////////////////////////////////////
 
          puTempPtr = (unsigned long*)(pcMeshData + uMeshOffset);
-         unsigned int uTempOffset = 0;
+         uTempOffset = 0;
          for (f=0; f<uNumFaces; f++) {
-            // Write 3 ints per triangle - don't know what they are yet...
-            puTempPtr[uTempOffset++] = f;
-            puTempPtr[uTempOffset++] = f;
-            puTempPtr[uTempOffset++] = f;
+            // Work out adjacent faces
+            int iAdjacentFaces[3];
+            for (int a=0; a<3; a++) {
+               iAdjacentFaces[a] = -1;
+               int b = (a+1) % 3;
+               const CDList<int>* pFaceList = pAvatar->FacesPerVertex(pFaces[f].m_iVertices[a]);
+               for (int i=0; (i<pFaceList->Length()) && (iAdjacentFaces[a]<0); i++) {
+                  int iFace = (*pFaceList)[i];
+                  if (iFace != f) { 
+                     if ((pFaces[iFace].m_iVertices[0] == pFaces[f].m_iVertices[b]) ||
+                         (pFaces[iFace].m_iVertices[1] == pFaces[f].m_iVertices[b]) ||
+                         (pFaces[iFace].m_iVertices[2] == pFaces[f].m_iVertices[b])) 
+                         iAdjacentFaces[a] = iFace;
+                  }
+               }
+               // Make sure we're been successful
+               ASSERT(iAdjacentFaces[a] != -1);
+            }
+            // Write adjacent face numbers
+            puTempPtr[uTempOffset++] = iAdjacentFaces[2];
+            puTempPtr[uTempOffset++] = iAdjacentFaces[0];
+            puTempPtr[uTempOffset++] = iAdjacentFaces[1];
+            // Make sure all three are different
+            ASSERT((iAdjacentFaces[1] != iAdjacentFaces[2]) && (iAdjacentFaces[2] != iAdjacentFaces[0]) && (iAdjacentFaces[0] != iAdjacentFaces[1]));
          }
-         // Write wepaon triangle data
+         // Write weapon triangle data
          puTempPtr[uTempOffset++] = f;
          puTempPtr[uTempOffset++] = f;
          puTempPtr[uTempOffset++] = f;
          // Update offset
          uMeshOffset += 12 * (uNumFaces+1);
+         // Store current offset in temp pointer
+         *pTempAddressPtr = uCurrentOffset + uMeshOffset;
 
          ////////////////////////////////////////////////////////////
-         // Write frame data header
+         // Write frame data part 1 header
          ////////////////////////////////////////////////////////////
 
+         // Write header data - don't know what this means
+         pcMeshData[uMeshOffset++] = (char)0x02;
+         pcMeshData[uMeshOffset++] = (char)0x00;
+         pcMeshData[uMeshOffset++] = (char)0x00;
+         // Write CI of number of frames
+         oCIndex.Set((int)uNumFrames);
+         for (i=0; i<oCIndex.NumBytes(); i++) {
+            pcMeshData[uMeshOffset++] = oCIndex.CompactIndex()[i];
+         }
+
          ////////////////////////////////////////////////////////////
-         // Write frame data
+         // Write frame data part 1
          ////////////////////////////////////////////////////////////
+   
+         // Write frame data part 1 - 25 bytes per frame
+         for (f=0; f<uNumFrames; f++) {
+            pcMeshData[uMeshOffset++] = (char)0x00;
+            pcMeshData[uMeshOffset++] = (char)0x00;
+            pcMeshData[uMeshOffset++] = (char)0x0C;
+            pcMeshData[uMeshOffset++] = (char)0xC2;
+            pcMeshData[uMeshOffset++] = (char)0x00;
+            pcMeshData[uMeshOffset++] = (char)0x00;
+            pcMeshData[uMeshOffset++] = (char)0x5B;
+            pcMeshData[uMeshOffset++] = (char)0xC3;
+            pcMeshData[uMeshOffset++] = (char)0x00;
+            pcMeshData[uMeshOffset++] = (char)0x00;
+            pcMeshData[uMeshOffset++] = (char)0x5B;
+            pcMeshData[uMeshOffset++] = (char)0xC3;
+            pcMeshData[uMeshOffset++] = (char)0x00;
+            pcMeshData[uMeshOffset++] = (char)0x80;
+            pcMeshData[uMeshOffset++] = (char)0x9C;
+            pcMeshData[uMeshOffset++] = (char)0x43;
+            pcMeshData[uMeshOffset++] = (char)0x00;
+            pcMeshData[uMeshOffset++] = (char)0x00;
+            pcMeshData[uMeshOffset++] = (char)0x52;
+            pcMeshData[uMeshOffset++] = (char)0x43;
+            pcMeshData[uMeshOffset++] = (char)0x00;
+            pcMeshData[uMeshOffset++] = (char)0x00;
+            pcMeshData[uMeshOffset++] = (char)0x3C;
+            pcMeshData[uMeshOffset++] = (char)0x43;
+            pcMeshData[uMeshOffset++] = (char)0x01;
+         }
+
+         ////////////////////////////////////////////////////////////
+         // Write frame data part 2 header
+         ////////////////////////////////////////////////////////////
+
+         // Write CI of number of frames
+         oCIndex.Set((int)uNumFrames);
+         for (i=0; i<oCIndex.NumBytes(); i++) {
+            pcMeshData[uMeshOffset++] = oCIndex.CompactIndex()[i];
+         }
+
+         ////////////////////////////////////////////////////////////
+         // Write frame data part 2
+         ////////////////////////////////////////////////////////////
+
+         // Write frame data part 2 - 16 bytes per frame
+         for (f=0; f<uNumFrames; f++) {
+	         pcMeshData[uMeshOffset++] = (char)0x00;
+            pcMeshData[uMeshOffset++] = (char)0x00;
+            pcMeshData[uMeshOffset++] = (char)0x8E;
+            pcMeshData[uMeshOffset++] = (char)0x42;
+            pcMeshData[uMeshOffset++] = (char)0x00;
+            pcMeshData[uMeshOffset++] = (char)0x00;
+            pcMeshData[uMeshOffset++] = (char)0x00;
+            pcMeshData[uMeshOffset++] = (char)0x00;
+            pcMeshData[uMeshOffset++] = (char)0x00;
+            pcMeshData[uMeshOffset++] = (char)0x00;
+            pcMeshData[uMeshOffset++] = (char)0x00;
+            pcMeshData[uMeshOffset++] = (char)0x3F;
+            pcMeshData[uMeshOffset++] = (char)0x15;
+            pcMeshData[uMeshOffset++] = (char)0x1F;
+            pcMeshData[uMeshOffset++] = (char)0x74;
+            pcMeshData[uMeshOffset++] = (char)0x43;
+         }
 
          ////////////////////////////////////////////////////////////
          // Write footer
          ////////////////////////////////////////////////////////////
 
          // Number of vertices
-         *((long*)(pcMeshData+uMeshOffset)) = uNumVertices+1;
+         *((long*)(pcMeshData+uMeshOffset)) = uNumVertices+3;
          uMeshOffset+=4;
          // Number of sequences
          *((long*)(pcMeshData+uMeshOffset)) = uNumFrames;
@@ -1800,7 +2125,10 @@ FRESULT CAvatarFileUnreal::SaveMeshU(const char* pszFilename, CAvatar* pAvatar) 
          // Done - update size
          uMeshDataLength = uMeshOffset;
       }
+      uCurrentOffset += uMeshDataLength;
 
+      // Update export offset
+      uExportOffset[2] = uCurrentOffset;
       // Write Bot Script
       const unsigned int uBotScriptLength = 0x70 + (uNameLength * 3);
       char* pcBotScript = NULL;
@@ -1834,11 +2162,16 @@ FRESULT CAvatarFileUnreal::SaveMeshU(const char* pszFilename, CAvatar* pAvatar) 
          strScript << (char)0;
       }
       else {
-         // CLEANUP MEMORY ETC
+         delete [] pcMeshData;
+         delete [] pcMeshHeader;
+         delete [] pcMeshProperties;
+         delete [] pcNameTable;
          return F_OUT_OF_MEMORY;
       }
       uCurrentOffset += uBotScriptLength;
 
+      // Update export offset
+      uExportOffset[3] = uCurrentOffset;
       // Write Bot Properties
       unsigned int uBotPropertiesLength = 0x94 + 5*uNameLength;
       char* pcBotProperties = NULL;
@@ -1965,12 +2298,18 @@ FRESULT CAvatarFileUnreal::SaveMeshU(const char* pszFilename, CAvatar* pAvatar) 
          pcBotProperties[uPropertiesOffset++] = (char)0x00;
       }
       else {
-         // CLEANUP MEMORY ETC
+         delete [] pcBotScript;
+         delete [] pcMeshData;
+         delete [] pcMeshHeader;
+         delete [] pcMeshProperties;
+         delete [] pcNameTable;
          return F_OUT_OF_MEMORY;
       }
       // Update file offset
       uCurrentOffset += uBotPropertiesLength;
 
+      // Update export offset
+      uExportOffset[4] = uCurrentOffset;
       // Write Selection Mesh Script
       const unsigned int uSelectScriptLength = 0x152 + (uNameLength * 8);
       char* pcSelectScript = NULL;
@@ -2006,17 +2345,24 @@ FRESULT CAvatarFileUnreal::SaveMeshU(const char* pszFilename, CAvatar* pAvatar) 
          strScript << (char)0;
       }
       else {
-         // CLEANUP MEMORY ETC
+         delete [] pcBotProperties;
+         delete [] pcBotScript;
+         delete [] pcMeshData;
+         delete [] pcMeshHeader;
+         delete [] pcMeshProperties;
+         delete [] pcNameTable;
          return F_OUT_OF_MEMORY;
       }
       uCurrentOffset += uSelectScriptLength;
 
+      // Update export offset
+      uExportOffset[5] = uCurrentOffset;
       // Write Mesh Script
       const unsigned int uMeshScriptLength = (m_iSex==UNREAL_FEMALE ? 0x1DA8 : 0x1DA6) + (uNameLength * 98);
       char* pcMeshScript = NULL;
       NEWBEGIN
       pcMeshScript = new char[uMeshScriptLength];
-      NEWEND("CAvatarFileUnreal::Save - bot script allocation");
+      NEWEND("CAvatarFileUnreal::Save - mesh script allocation");
       if (pcSelectScript != NULL) {
          // Create output string stream
          ostrstream strScript(pcMeshScript,uMeshScriptLength);
@@ -2148,11 +2494,19 @@ FRESULT CAvatarFileUnreal::SaveMeshU(const char* pszFilename, CAvatar* pAvatar) 
          strScript << (char)0;
       }
       else {
-         // CLEANUP MEMORY ETC
+         delete [] pcSelectScript;
+         delete [] pcBotProperties;
+         delete [] pcBotScript;
+         delete [] pcMeshData;
+         delete [] pcMeshHeader;
+         delete [] pcMeshProperties;
+         delete [] pcNameTable;
          return F_OUT_OF_MEMORY;
       }
       uCurrentOffset += uMeshScriptLength;
 
+      // Update export offset
+      uExportOffset[6] = uCurrentOffset;
       // Write Selection Mesh Properties
       unsigned int uSelectPropertiesLength = 0x57;
       char* pcSelectProperties = NULL;
@@ -2227,12 +2581,21 @@ FRESULT CAvatarFileUnreal::SaveMeshU(const char* pszFilename, CAvatar* pAvatar) 
          pcSelectProperties[uPropertiesOffset++] = (char)0x00;
       }
       else {
-         // CLEANUP MEMORY ETC
+         delete [] pcMeshScript;
+         delete [] pcSelectScript;
+         delete [] pcBotProperties;
+         delete [] pcBotScript;
+         delete [] pcMeshData;
+         delete [] pcMeshHeader;
+         delete [] pcMeshProperties;
+         delete [] pcNameTable;
          return F_OUT_OF_MEMORY;
       }
       // Update file offset
       uCurrentOffset += uSelectPropertiesLength;
 
+      // Update export offset
+      uExportOffset[7] = uCurrentOffset;
       // Write ForceMeshToExist Data
       const unsigned int uForceMeshToExistDataLength = 0x20;
       char* pcForceMeshToExistData = NULL;
@@ -2274,18 +2637,31 @@ FRESULT CAvatarFileUnreal::SaveMeshU(const char* pszFilename, CAvatar* pAvatar) 
          pcForceMeshToExistData[0x1F] = 0x00;
       }
       else {
-         // CLEANUP MEMORY ETC
+         delete [] pcSelectProperties;
+         delete [] pcMeshScript;
+         delete [] pcSelectScript;
+         delete [] pcBotProperties;
+         delete [] pcBotScript;
+         delete [] pcMeshData;
+         delete [] pcMeshHeader;
+         delete [] pcMeshProperties;
+         delete [] pcNameTable;
          return F_OUT_OF_MEMORY;
       }
       uCurrentOffset += uForceMeshToExistDataLength;
 
+      // Update export offset
+      uExportOffset[8] = uCurrentOffset;
       // Write Selection Model
       unsigned int uSelectMeshLength = 
-         (4*uNumVertices) + // frame data
-         9 + (sizeof(SUnrealTriangle)*uNumFaces) + // Face header + data
-         (8*uNumVertices) + // vertex info
-         (12*uNumFaces) + // face info
-         0x45; // Footer data
+         50 + (4*uNumVertices) + // vertex frame data
+         9  + (sizeof(SUnrealTriangle)*uNumFaces) + // Face header + data
+         5  + 19 + // sequence data
+         9  + (8 * (uNumVertices+3)) + //vertex info
+         50 + (12*uNumFaces) + // face info
+         8  + 25 +// frame data part 1
+         5  + 16 +// frame data part 2
+         69; // Footer data
 
       char* pcSelectMesh = NULL;
       NEWBEGIN
@@ -2299,13 +2675,65 @@ FRESULT CAvatarFileUnreal::SaveMeshU(const char* pszFilename, CAvatar* pAvatar) 
          // Write header
          ////////////////////////////////////////////////////////////
 
-         ////////////////////////////////////////////////////////////
-         // Write vertex data header
-         ////////////////////////////////////////////////////////////
+         // Write frame 0 description part 1
+         pcSelectMesh[uSelectOffset++] = (char)0x00;
+         pcSelectMesh[uSelectOffset++] = (char)0x00;
+         pcSelectMesh[uSelectOffset++] = (char)0x00;
+         pcSelectMesh[uSelectOffset++] = (char)0x84;
+         pcSelectMesh[uSelectOffset++] = (char)0xC2;
+         pcSelectMesh[uSelectOffset++] = (char)0x00;
+         pcSelectMesh[uSelectOffset++] = (char)0x00;
+         pcSelectMesh[uSelectOffset++] = (char)0x1B;
+         pcSelectMesh[uSelectOffset++] = (char)0xC3;
+         pcSelectMesh[uSelectOffset++] = (char)0x00;
+         pcSelectMesh[uSelectOffset++] = (char)0x00;
+         pcSelectMesh[uSelectOffset++] = (char)0x5B;
+         pcSelectMesh[uSelectOffset++] = (char)0xC3;
+         pcSelectMesh[uSelectOffset++] = (char)0x00;
+         pcSelectMesh[uSelectOffset++] = (char)0x00;
+         pcSelectMesh[uSelectOffset++] = (char)0xDE;
+         pcSelectMesh[uSelectOffset++] = (char)0x42;
+         pcSelectMesh[uSelectOffset++] = (char)0x00;
+         pcSelectMesh[uSelectOffset++] = (char)0x00;
+         pcSelectMesh[uSelectOffset++] = (char)0x1B;
+         pcSelectMesh[uSelectOffset++] = (char)0x43;
+         pcSelectMesh[uSelectOffset++] = (char)0x00;
+         pcSelectMesh[uSelectOffset++] = (char)0x00;
+         pcSelectMesh[uSelectOffset++] = (char)0x5C;
+         pcSelectMesh[uSelectOffset++] = (char)0x43;
+         pcSelectMesh[uSelectOffset++] = (char)0x01;
+         // Write frame 0 description part 2
+         pcSelectMesh[uSelectOffset++] = (char)0x00;
+         pcSelectMesh[uSelectOffset++] = (char)0x00;
+         pcSelectMesh[uSelectOffset++] = (char)0xB4;
+         pcSelectMesh[uSelectOffset++] = (char)0x41;
+         pcSelectMesh[uSelectOffset++] = (char)0x00;
+         pcSelectMesh[uSelectOffset++] = (char)0x00;
+         pcSelectMesh[uSelectOffset++] = (char)0x00;
+         pcSelectMesh[uSelectOffset++] = (char)0x00;
+         pcSelectMesh[uSelectOffset++] = (char)0x00;
+         pcSelectMesh[uSelectOffset++] = (char)0x00;
+         pcSelectMesh[uSelectOffset++] = (char)0x00;
+         pcSelectMesh[uSelectOffset++] = (char)0x3F;
+         pcSelectMesh[uSelectOffset++] = (char)0x28;
+         pcSelectMesh[uSelectOffset++] = (char)0xE8;
+         pcSelectMesh[uSelectOffset++] = (char)0x6E;
+         pcSelectMesh[uSelectOffset++] = (char)0x43;
+
+         // Store address of end of frame data chunk
+         *((unsigned int*)(pcSelectMesh+uSelectOffset)) = 0;
+         pTempAddressPtr = (unsigned int*)(pcSelectMesh+uSelectOffset);
+         uSelectOffset+=4;
+         // Write CI of amount of data
+         CUnrealCompactIndex oCIndex((int)uNumVertices);
+         for (i=0; i<oCIndex.NumBytes(); i++) {
+            pcSelectMesh[uSelectOffset++] = oCIndex.CompactIndex()[i];
+         }
 
          ////////////////////////////////////////////////////////////
          // Write vertex data
          ////////////////////////////////////////////////////////////
+
          unsigned long* puTempPtr = (unsigned long*)(pcSelectMesh + uSelectOffset);
          // Reset Pose
          pAvatar->ResetPose();
@@ -2318,19 +2746,20 @@ FRESULT CAvatarFileUnreal::SaveMeshU(const char* pszFilename, CAvatar* pAvatar) 
             puTempPtr[v] = PackVertex(pVertices[v],m_dScale,m_dYOffset);
             // Increment offset
             uSelectOffset += 4;
-         }
+         }         
+         // Store current offset in temp pointer
+         *pTempAddressPtr = uCurrentOffset + uSelectOffset;
 
          ////////////////////////////////////////////////////////////
          // Write topology data header
          ////////////////////////////////////////////////////////////
 
-         // Some data that I don't understand, but is consistent
-         pcSelectMesh[uSelectOffset++] = (char)0x91;
-         pcSelectMesh[uSelectOffset++] = (char)0x25;
-         pcSelectMesh[uSelectOffset++] = (char)0x3A;
-         pcSelectMesh[uSelectOffset++] = (char)0x00;
+         // Store address of end of face chunk
+         *((unsigned int*)(pcSelectMesh+uSelectOffset)) = 0;
+         pTempAddressPtr = (unsigned int*)(pcSelectMesh+uSelectOffset);
+         uSelectOffset+=4;
          // CI of number of faces
-         CUnrealCompactIndex oCIndex((int)uNumFaces);
+         oCIndex.Set((int)uNumFaces);
          for (i=0; i<oCIndex.NumBytes(); i++) {
             pcSelectMesh[uSelectOffset++] = oCIndex.CompactIndex()[i];
          }
@@ -2338,6 +2767,7 @@ FRESULT CAvatarFileUnreal::SaveMeshU(const char* pszFilename, CAvatar* pAvatar) 
          ////////////////////////////////////////////////////////////
          // Write topology data
          ////////////////////////////////////////////////////////////
+
          // Store texture info
          const int iMaxU = UNREAL_TEXTURE_WIDTH-1;
          const int iMaxV = UNREAL_TEXTURE_HEIGHT-1;
@@ -2363,8 +2793,8 @@ FRESULT CAvatarFileUnreal::SaveMeshU(const char* pszFilename, CAvatar* pAvatar) 
                // Clamp to 0..1
                if (dU > 1) dU = 1;
                else if (dU < 0) dU = 0;
-               if (dV > 1) dV = 1;
-               else if (dV < 0) dV = 0;
+               if (dV > 0.9) dV = 0.9;
+               else if (dV < 0.1) dV = 0.1;
                // Recalculate texture V coordinates if this is not the face texture
                if (iTextureNumber!=uFaceTexIndex) {
                   // Multiply by height of this particular image
@@ -2396,18 +2826,55 @@ FRESULT CAvatarFileUnreal::SaveMeshU(const char* pszFilename, CAvatar* pAvatar) 
             pFaceData[f].uTexture = iTextureNumber==uFaceTexIndex ? 0 : 1;
          }
          uSelectOffset += uNumFaces * sizeof(SUnrealTriangle);
+         // Store current offset in temp pointer
+         *pTempAddressPtr = uCurrentOffset + uSelectOffset;
 
          ////////////////////////////////////////////////////////////
-         // Write sequence data header
+         // Write sequence info header
          ////////////////////////////////////////////////////////////
 
+         // Write CI of number of sequences
+         oCIndex.Set((int)1);
+         for (i=0; i<oCIndex.NumBytes(); i++) {
+            pcSelectMesh[uSelectOffset++] = oCIndex.CompactIndex()[i];
+         }
+
          ////////////////////////////////////////////////////////////
-         // Write sequence data
+         // Write sequence info
          ////////////////////////////////////////////////////////////
 
+         // Write CI of sequence ID
+         oCIndex.Set(0x0C);
+         for (i=0; i<oCIndex.NumBytes(); i++) {
+            pcSelectMesh[uSelectOffset++] = oCIndex.CompactIndex()[i];
+         }
+         // Write group number
+         pcSelectMesh[uSelectOffset++] = 0;
+         // Write start frame for sequence
+         *((long*)(pcSelectMesh+uSelectOffset)) = 0;
+         uSelectOffset+=4;
+         // Write number of frames
+         *((long*)(pcSelectMesh+uSelectOffset)) = 1;
+         uSelectOffset+=4;
+         // Write number of notifies
+         pcSelectMesh[uSelectOffset++] = 0;
+         // Write rate
+         *((float*)(pcSelectMesh+uSelectOffset)) = 30;
+         uSelectOffset+=4;
+         
          ////////////////////////////////////////////////////////////
          // Write vertex info header
          ////////////////////////////////////////////////////////////
+
+         // Store address of end of vertex info chunk
+         *((unsigned int*)(pcSelectMesh+uSelectOffset)) = 0;
+         pTempAddressPtr = (unsigned int*)(pcSelectMesh+uSelectOffset);
+         uSelectOffset+=4;
+         // Write CI of number of vertices
+         oCIndex.Set((int)(uNumVertices));
+         for (i=0; i<oCIndex.NumBytes(); i++) {
+            pcSelectMesh[uSelectOffset++] = oCIndex.CompactIndex()[i];
+         }
 
          ////////////////////////////////////////////////////////////
          // Write vertex info
@@ -2415,38 +2882,189 @@ FRESULT CAvatarFileUnreal::SaveMeshU(const char* pszFilename, CAvatar* pAvatar) 
 
          // Cast pointer
          puTempPtr = (unsigned long*)(pcSelectMesh + uSelectOffset);
-         for (v=0; v<uNumVertices; ) {
-            // Write 2 ints per vertex - don't know what they are yet...
-            puTempPtr[v++] = v; // High
-            puTempPtr[v++] = v; // Low
+         unsigned int uTempOffset = 0;
+         unsigned int uTotalValence = 0;
+         for (v=0; v<uNumVertices; v++) {
+            // Write vertex data
+            puTempPtr[uTempOffset++] = pAvatar->FacesPerVertex(v)->Length(); // Valence
+            puTempPtr[uTempOffset++] = uTotalValence; // Total
+            uTotalValence += pAvatar->FacesPerVertex(v)->Length();
          }
          uSelectOffset += 8 * uNumVertices;
+         // Store current offset in temp pointer
+         *pTempAddressPtr = uCurrentOffset + uSelectOffset;
 
          ////////////////////////////////////////////////////////////
          // Write face info header
          ////////////////////////////////////////////////////////////
+
+         // Write face info header
+         // Write frame 0 description part 1
+         pcSelectMesh[uSelectOffset++] = (char)0x00;
+         pcSelectMesh[uSelectOffset++] = (char)0x00;
+         pcSelectMesh[uSelectOffset++] = (char)0x84;
+         pcSelectMesh[uSelectOffset++] = (char)0xC2;
+         pcSelectMesh[uSelectOffset++] = (char)0x00;
+         pcSelectMesh[uSelectOffset++] = (char)0x00;
+         pcSelectMesh[uSelectOffset++] = (char)0x1B;
+         pcSelectMesh[uSelectOffset++] = (char)0xC3;
+         pcSelectMesh[uSelectOffset++] = (char)0x00;
+         pcSelectMesh[uSelectOffset++] = (char)0x00;
+         pcSelectMesh[uSelectOffset++] = (char)0x5B;
+         pcSelectMesh[uSelectOffset++] = (char)0xC3;
+         pcSelectMesh[uSelectOffset++] = (char)0x00;
+         pcSelectMesh[uSelectOffset++] = (char)0x00;
+         pcSelectMesh[uSelectOffset++] = (char)0xDE;
+         pcSelectMesh[uSelectOffset++] = (char)0x42;
+         pcSelectMesh[uSelectOffset++] = (char)0x00;
+         pcSelectMesh[uSelectOffset++] = (char)0x00;
+         pcSelectMesh[uSelectOffset++] = (char)0x1B;
+         pcSelectMesh[uSelectOffset++] = (char)0x43;
+         pcSelectMesh[uSelectOffset++] = (char)0x00;
+         pcSelectMesh[uSelectOffset++] = (char)0x00;
+         pcSelectMesh[uSelectOffset++] = (char)0x5C;
+         pcSelectMesh[uSelectOffset++] = (char)0x43;
+         pcSelectMesh[uSelectOffset++] = (char)0x01;
+         // Write frame 0 description part 2
+         pcSelectMesh[uSelectOffset++] = (char)0x00;
+         pcSelectMesh[uSelectOffset++] = (char)0x00;
+         pcSelectMesh[uSelectOffset++] = (char)0xB4;
+         pcSelectMesh[uSelectOffset++] = (char)0x41;
+         pcSelectMesh[uSelectOffset++] = (char)0x00;
+         pcSelectMesh[uSelectOffset++] = (char)0x00;
+         pcSelectMesh[uSelectOffset++] = (char)0x00;
+         pcSelectMesh[uSelectOffset++] = (char)0x00;
+         pcSelectMesh[uSelectOffset++] = (char)0x00;
+         pcSelectMesh[uSelectOffset++] = (char)0x00;
+         pcSelectMesh[uSelectOffset++] = (char)0x00;
+         pcSelectMesh[uSelectOffset++] = (char)0x3F;
+         pcSelectMesh[uSelectOffset++] = (char)0x28;
+         pcSelectMesh[uSelectOffset++] = (char)0xE8;
+         pcSelectMesh[uSelectOffset++] = (char)0x6E;
+         pcSelectMesh[uSelectOffset++] = (char)0x43;
+
+         // Store address of end of face info chunk
+         *((unsigned int*)(pcSelectMesh+uSelectOffset)) = 0;
+         pTempAddressPtr = (unsigned int*)(pcSelectMesh+uSelectOffset);
+         uSelectOffset+=4;
+         // Write CI of data length
+         oCIndex.Set((int)uNumFaces*3);
+         for (i=0; i<oCIndex.NumBytes(); i++) {
+            pcSelectMesh[uSelectOffset++] = oCIndex.CompactIndex()[i];
+         }
 
          ////////////////////////////////////////////////////////////
          // Write face info
          ////////////////////////////////////////////////////////////
 
          puTempPtr = (unsigned long*)(pcSelectMesh + uSelectOffset);
-         unsigned int uTempOffset = 0;
+         uTempOffset = 0;
          for (f=0; f<uNumFaces; f++) {
-            // Write 3 ints per triangle - don't know what they are yet...
-            puTempPtr[uTempOffset++] = f;
-            puTempPtr[uTempOffset++] = f;
-            puTempPtr[uTempOffset++] = f;
+            // Work out adjacent faces
+            int iAdjacentFaces[3];
+            for (int a=0; a<3; a++) {
+               iAdjacentFaces[a] = -1;
+               int b = (a+1) % 3;
+               const CDList<int>* pFaceList = pAvatar->FacesPerVertex(pFaces[f].m_iVertices[a]);
+               for (int i=0; (i<pFaceList->Length()) && (iAdjacentFaces[a]<0); i++) {
+                  int iFace = (*pFaceList)[i];
+                  if (iFace != f) { 
+                     if ((pFaces[iFace].m_iVertices[0] == pFaces[f].m_iVertices[b]) ||
+                         (pFaces[iFace].m_iVertices[1] == pFaces[f].m_iVertices[b]) ||
+                         (pFaces[iFace].m_iVertices[2] == pFaces[f].m_iVertices[b])) 
+                         iAdjacentFaces[a] = iFace;
+                  }
+               }
+               // Make sure we're been successful
+               ASSERT(iAdjacentFaces[a] != -1);
+            }
+            // Write adjacent face numbers
+            puTempPtr[uTempOffset++] = iAdjacentFaces[2];
+            puTempPtr[uTempOffset++] = iAdjacentFaces[0];
+            puTempPtr[uTempOffset++] = iAdjacentFaces[1];
+            // Make sure all three are different
+            ASSERT((iAdjacentFaces[1] != iAdjacentFaces[2]) && (iAdjacentFaces[2] != iAdjacentFaces[0]) && (iAdjacentFaces[0] != iAdjacentFaces[1]));
          }
          uSelectOffset += 12 * uNumFaces;
+         // Store current offset in temp pointer
+         *pTempAddressPtr = uCurrentOffset + uSelectOffset;
 
          ////////////////////////////////////////////////////////////
-         // Write frame data header
+         // Write frame data part 1 header
          ////////////////////////////////////////////////////////////
 
+         // Write header data - don't know what this means
+         pcSelectMesh[uSelectOffset++] = (char)0x02;
+         pcSelectMesh[uSelectOffset++] = (char)0x00;
+         pcSelectMesh[uSelectOffset++] = (char)0x00;
+         // Write CI of number of frames
+         oCIndex.Set((int)1);
+         for (i=0; i<oCIndex.NumBytes(); i++) {
+            pcSelectMesh[uSelectOffset++] = oCIndex.CompactIndex()[i];
+         }
+
          ////////////////////////////////////////////////////////////
-         // Write frame data
+         // Write frame data part 1
          ////////////////////////////////////////////////////////////
+   
+         // Write frame data part 1 - 25 bytes per frame
+         pcSelectMesh[uSelectOffset++] = (char)0x00;
+         pcSelectMesh[uSelectOffset++] = (char)0x00;
+         pcSelectMesh[uSelectOffset++] = (char)0x84;
+         pcSelectMesh[uSelectOffset++] = (char)0xC2;
+         pcSelectMesh[uSelectOffset++] = (char)0x00;
+         pcSelectMesh[uSelectOffset++] = (char)0x00;
+         pcSelectMesh[uSelectOffset++] = (char)0x1B;
+         pcSelectMesh[uSelectOffset++] = (char)0xC3;
+         pcSelectMesh[uSelectOffset++] = (char)0x00;
+         pcSelectMesh[uSelectOffset++] = (char)0x00;
+         pcSelectMesh[uSelectOffset++] = (char)0x5B;
+         pcSelectMesh[uSelectOffset++] = (char)0xC3;
+         pcSelectMesh[uSelectOffset++] = (char)0x00;
+         pcSelectMesh[uSelectOffset++] = (char)0x00;
+         pcSelectMesh[uSelectOffset++] = (char)0xDE;
+         pcSelectMesh[uSelectOffset++] = (char)0x42;
+         pcSelectMesh[uSelectOffset++] = (char)0x00;
+         pcSelectMesh[uSelectOffset++] = (char)0x00;
+         pcSelectMesh[uSelectOffset++] = (char)0x1B;
+         pcSelectMesh[uSelectOffset++] = (char)0x43;
+         pcSelectMesh[uSelectOffset++] = (char)0x00;
+         pcSelectMesh[uSelectOffset++] = (char)0x00;
+         pcSelectMesh[uSelectOffset++] = (char)0x5C;
+         pcSelectMesh[uSelectOffset++] = (char)0x43;
+         pcSelectMesh[uSelectOffset++] = (char)0x01;
+
+         ////////////////////////////////////////////////////////////
+         // Write frame data part 2 header
+         ////////////////////////////////////////////////////////////
+
+         // Write CI of number of frames
+         oCIndex.Set((int)1);
+         for (i=0; i<oCIndex.NumBytes(); i++) {
+            pcSelectMesh[uSelectOffset++] = oCIndex.CompactIndex()[i];
+         }
+
+         ////////////////////////////////////////////////////////////
+         // Write frame data part 2
+         ////////////////////////////////////////////////////////////
+
+         // Write frame data part 2 - 16 bytes per frame
+         pcSelectMesh[uSelectOffset++] = (char)0x00;
+         pcSelectMesh[uSelectOffset++] = (char)0x00;
+         pcSelectMesh[uSelectOffset++] = (char)0xB4;
+         pcSelectMesh[uSelectOffset++] = (char)0x41;
+         pcSelectMesh[uSelectOffset++] = (char)0x00;
+         pcSelectMesh[uSelectOffset++] = (char)0x00;
+         pcSelectMesh[uSelectOffset++] = (char)0x00;
+         pcSelectMesh[uSelectOffset++] = (char)0x00;
+         pcSelectMesh[uSelectOffset++] = (char)0x00;
+         pcSelectMesh[uSelectOffset++] = (char)0x00;
+         pcSelectMesh[uSelectOffset++] = (char)0x00;
+         pcSelectMesh[uSelectOffset++] = (char)0x3F;
+         pcSelectMesh[uSelectOffset++] = (char)0x28;
+         pcSelectMesh[uSelectOffset++] = (char)0xE8;
+         pcSelectMesh[uSelectOffset++] = (char)0x6E;
+         pcSelectMesh[uSelectOffset++] = (char)0x43;
 
          ////////////////////////////////////////////////////////////
          // Write footer
@@ -2489,14 +3107,108 @@ FRESULT CAvatarFileUnreal::SaveMeshU(const char* pszFilename, CAvatar* pAvatar) 
          uSelectMeshLength = uSelectOffset;
       }
       else {
-         // CLEANUP MEMORY ETC
+         delete [] pcForceMeshToExistData;
+         delete [] pcSelectProperties;
+         delete [] pcMeshScript;
+         delete [] pcSelectScript;
+         delete [] pcBotProperties;
+         delete [] pcBotScript;
+         delete [] pcMeshData;
+         delete [] pcMeshHeader;
+         delete [] pcMeshProperties;
+         delete [] pcNameTable;
          return F_OUT_OF_MEMORY;
       }
       uCurrentOffset += uSelectMeshLength;
 
+      // Update header info
+      sHeader.uImportOffset = uCurrentOffset;
+      // Update export offset
+      uExportOffset[9] = uCurrentOffset;
       // Write Import Table
+      const unsigned int uImportTableLength = 104;
+      unsigned char pcImportTable[uImportTableLength] = {
+      	0x0A, 0x6B, 0x01, 0x00, 0x00, 0x00, 0x00, 0x0A, 0x0A, 0x6B, 0x01, 0x00, 0x00, 0x00, 0x00, 0x09, 
+	      0x0A, 0x64, 0x01, 0xFF, 0xFF, 0xFF, 0xFF, 0x62, 0x01, 0x0A, 0x64, 0x01, 0xFF, 0xFF, 0xFF, 0xFF, 
+	      0x64, 0x01, 0x0A, 0x64, 0x01, 0xFF, 0xFF, 0xFF, 0xFF, 0x63, 0x01, 0x0A, 0x6B, 0x01, 0x00, 0x00, 
+	      0x00, 0x00, 0x0B, 0x0A, 0x64, 0x01, 0xFA, 0xFF, 0xFF, 0xFF, 0x0F, 0x0A, 0x64, 0x01, 0xFE, 0xFF, 
+	      0xFF, 0xFF, 0x66, 0x01, 0x0A, 0x64, 0x01, 0xFE, 0xFF, 0xFF, 0xFF, 0x68, 0x01, 0x0A, 0x64, 0x01, 
+	      0xFE, 0xFF, 0xFF, 0xFF, 0x65, 0x01, 0x0A, 0x64, 0x01, 0xFE, 0xFF, 0xFF, 0xFF, 0x67, 0x01, 0x0A, 
+	      0x64, 0x01, 0xFF, 0xFF, 0xFF, 0xFF, 0x69, 0x01,
+      };
+      uCurrentOffset += uImportTableLength;
 
+      // Update header info
+      sHeader.uExportOffset = uCurrentOffset;
       // Write Export Table
+      unsigned int uExportTableLength = 9 * 24;
+      char* pcExportTable = NULL;
+      NEWBEGIN
+      pcExportTable = new char[uExportTableLength];
+      NEWEND("CAvatarFileUnreal::Save - export table allocation");
+      if (pcExportTable != NULL) {
+         unsigned int uExportTableOffset = 0;
+         // Write export table
+         const int piClass[9] = {
+            UNREAL_CLASS_MESHPROPERTIES, UNREAL_CLASS_MODEL, UNREAL_CLASS_BOTSCRIPT,
+            UNREAL_CLASS_BOTPROPERTIES, UNREAL_CLASS_SELECTSCRIPT, UNREAL_CLASS_MESHSCRIPT,
+            UNREAL_CLASS_SELECTPROPERTIES, UNREAL_CLASS_FORCEMESHTOEXIST, UNREAL_CLASS_MODEL
+         };
+         const char piName[9] = {
+            (char)0x08, (char)0x08, (char)0x6A,
+            (char)0x5E, (char)0x6A, (char)0x6A,
+            (char)0x54, (char)0x29, (char)0x54,
+         };
+         for (i=0; i<9; i++) {
+            int iSize = uExportOffset[i+1] - uExportOffset[i];
+            int iOffset = uExportOffset[i];
+            int b; // loop counter
+            // Write export declaration
+            *((long*)(pcExportTable+uExportTableOffset)) = piClass[i];
+            uExportTableOffset += 4;
+            // Couple of zeroes
+            pcExportTable[uExportTableOffset++] = 0x0;
+            pcExportTable[uExportTableOffset++] = 0x0;
+            // CI of name
+            CUnrealCompactIndex oCIndex((int)piName[i]);
+            for (b=0; b<oCIndex.NumBytes(); b++) {
+               pcExportTable[uExportTableOffset++] = oCIndex.CompactIndex()[b];
+            }
+            // Flags
+            long uFlags;
+            if (piName[i] == 0x6A) uFlags = UNREAL_RF_SCRIPTFLAG | UNREAL_RF_LOADFOREDIT;
+            else if (piName[i] == 0x29) uFlags = UNREAL_RF_LOADFORCLIENT | UNREAL_RF_LOADFORSERVER | UNREAL_RF_LOADFOREDIT | UNREAL_RF_PUBLIC;
+            else uFlags = UNREAL_RF_LOADFORCLIENT | UNREAL_RF_LOADFORSERVER | UNREAL_RF_LOADFOREDIT | UNREAL_RF_PUBLIC | UNREAL_RF_STANDALONE;
+            *((long*)(pcExportTable+uExportTableOffset)) = uFlags; // Object flags
+            uExportTableOffset+=4;
+            // CI of size
+            oCIndex.Set(iSize); // CI of data size
+            for (b=0; b<oCIndex.NumBytes(); b++) {
+               pcExportTable[uExportTableOffset++] = oCIndex.CompactIndex()[b];
+            }
+            // CI of offset
+            oCIndex.Set(iOffset); // CI of data address
+            for (b=0; b<oCIndex.NumBytes(); b++) {
+               pcExportTable[uExportTableOffset++] = oCIndex.CompactIndex()[b];
+            }
+         }
+         uExportTableLength = uExportTableOffset;
+      }
+      else {
+         delete [] pcSelectMesh;
+         delete [] pcForceMeshToExistData;
+         delete [] pcSelectProperties;
+         delete [] pcMeshScript;
+         delete [] pcSelectScript;
+         delete [] pcBotProperties;
+         delete [] pcBotScript;
+         delete [] pcMeshData;
+         delete [] pcMeshHeader;
+         delete [] pcMeshProperties;
+         delete [] pcNameTable;
+         return F_OUT_OF_MEMORY;
+      }
+      uCurrentOffset += uExportTableLength;
 
       // Write data chunks to stream in order
       // Write header
@@ -2514,7 +3226,18 @@ FRESULT CAvatarFileUnreal::SaveMeshU(const char* pszFilename, CAvatar* pAvatar) 
          isTempStream.close();
       }
       else {
-         // CLEANUP MEMORY ETC
+         delete [] pcExportTable;
+         delete [] pcSelectMesh;
+         delete [] pcForceMeshToExistData;
+         delete [] pcSelectProperties;
+         delete [] pcMeshScript;
+         delete [] pcSelectScript;
+         delete [] pcBotProperties;
+         delete [] pcBotScript;
+         delete [] pcMeshData;
+         delete [] pcMeshHeader;
+         delete [] pcMeshProperties;
+         delete [] pcNameTable;
          return F_FILE_ERROR;
       }
       // Write mesh bottom data
@@ -2534,12 +3257,15 @@ FRESULT CAvatarFileUnreal::SaveMeshU(const char* pszFilename, CAvatar* pAvatar) 
       // Write Selection Mesh
       osOutputStream.write(pcSelectMesh,uSelectMeshLength);
       // Write import table
+      osOutputStream.write(pcImportTable,uImportTableLength);
       // Write export table
-
+      osOutputStream.write(pcExportTable,uExportTableLength);
+      
       // Done - close stream
       osOutputStream.close();
 
       // Delete allocated memory
+      delete [] pcExportTable;
       delete [] pcSelectMesh;
       delete [] pcForceMeshToExistData;
       delete [] pcSelectProperties;
@@ -2814,15 +3540,15 @@ FRESULT CAvatarFileUnreal::SaveMeshScript(const char* pszFilename, CAvatar* pAva
       osOutputStream << "#exec MESH ORIGIN MESH=" << m_pszName << " X=0 Y=0 Z=0\n";
       osOutputStream << "\n";
       osOutputStream << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=All       STARTFRAME=0   NUMFRAMES=700\n";
-      osOutputStream << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=AimDnLg   STARTFRAME=1   NUMFRAMES=1			Group=Waiting\n";
-      osOutputStream << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=AimDnSm   STARTFRAME=2   NUMFRAMES=1			Group=Waiting\n";
-      osOutputStream << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=AimUpLg   STARTFRAME=3   NUMFRAMES=1			Group=Waiting\n";
-      osOutputStream << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=AimUpSm   STARTFRAME=4   NUMFRAMES=1			Group=Waiting\n";
+      osOutputStream << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=AimDnLg   STARTFRAME=1   NUMFRAMES=1 Group=Waiting\n";
+      osOutputStream << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=AimDnSm   STARTFRAME=2   NUMFRAMES=1 Group=Waiting\n";
+      osOutputStream << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=AimUpLg   STARTFRAME=3   NUMFRAMES=1 Group=Waiting\n";
+      osOutputStream << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=AimUpSm   STARTFRAME=4   NUMFRAMES=1 Group=Waiting\n";
       osOutputStream << "\n";
-      osOutputStream << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=HeadHit   STARTFRAME=90  NUMFRAMES=1			Group=TakeHit\n";
-      osOutputStream << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=LeftHit   STARTFRAME=95  NUMFRAMES=1			Group=TakeHit\n";
-      osOutputStream << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=GutHit    STARTFRAME=0   NUMFRAMES=1			Group=TakeHit\n";
-      osOutputStream << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=RightHit  STARTFRAME=136 NUMFRAMES=1			Group=TakeHit\n";
+      osOutputStream << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=HeadHit   STARTFRAME=90  NUMFRAMES=1	Group=TakeHit\n";
+      osOutputStream << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=LeftHit   STARTFRAME=95  NUMFRAMES=1	Group=TakeHit\n";
+      osOutputStream << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=GutHit    STARTFRAME=0   NUMFRAMES=1	Group=TakeHit\n";
+      osOutputStream << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=RightHit  STARTFRAME=136 NUMFRAMES=1	Group=TakeHit\n";
       osOutputStream << "\n";
       osOutputStream << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=StillFrRp STARTFRAME=177 NUMFRAMES=10 RATE=15	Group=Waiting\n";
       osOutputStream << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=StillLgFr STARTFRAME=187 NUMFRAMES=10 RATE=15	Group=Waiting\n";
@@ -2830,32 +3556,32 @@ FRESULT CAvatarFileUnreal::SaveMeshScript(const char* pszFilename, CAvatar* pAva
       osOutputStream << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=TreadLg   STARTFRAME=235 NUMFRAMES=15 RATE=15	Group=Waiting\n";
       osOutputStream << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=TreadSm   STARTFRAME=250 NUMFRAMES=15 RATE=15	Group=Waiting\n";
       osOutputStream << "\n";
-      osOutputStream << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=Breath1L  STARTFRAME=373 NUMFRAMES=7  RATE=6		Group=Waiting\n";
-      osOutputStream << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=Breath2L  STARTFRAME=380 NUMFRAMES=20 RATE=7		Group=Waiting\n";
-      osOutputStream << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=CockGunL  STARTFRAME=400 NUMFRAMES=8  RATE=6		Group=Waiting\n";
-      osOutputStream << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=Look      STARTFRAME=96  NUMFRAMES=40 RATE=15     	Group=Waiting \n";
-      osOutputStream << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=LookL     STARTFRAME=408 NUMFRAMES=40 RATE=15     	Group=Waiting \n";
-      osOutputStream << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=Breath1   STARTFRAME=25  NUMFRAMES=7  RATE=6		Group=Waiting\n";
-      osOutputStream << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=Breath2   STARTFRAME=32  NUMFRAMES=20 RATE=7		Group=Waiting\n";
-      osOutputStream << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=CockGun   STARTFRAME=52  NUMFRAMES=8  RATE=6		Group=Waiting\n";
-      osOutputStream << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=Chat1     STARTFRAME=463 NUMFRAMES=13 RATE=6		Group=Waiting\n";
-      osOutputStream << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=Chat2     STARTFRAME=476 NUMFRAMES=10 RATE=6		Group=Waiting\n";
+      osOutputStream << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=Breath1L  STARTFRAME=373 NUMFRAMES=7  RATE=6  Group=Waiting\n";
+      osOutputStream << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=Breath2L  STARTFRAME=380 NUMFRAMES=20 RATE=7  Group=Waiting\n";
+      osOutputStream << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=CockGunL  STARTFRAME=400 NUMFRAMES=8  RATE=6  Group=Waiting\n";
+      osOutputStream << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=Look      STARTFRAME=96  NUMFRAMES=40 RATE=15 Group=Waiting\n";
+      osOutputStream << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=LookL     STARTFRAME=408 NUMFRAMES=40 RATE=15 Group=Waiting\n";
+      osOutputStream << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=Breath1   STARTFRAME=25  NUMFRAMES=7  RATE=6  Group=Waiting\n";
+      osOutputStream << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=Breath2   STARTFRAME=32  NUMFRAMES=20 RATE=7  Group=Waiting\n";
+      osOutputStream << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=CockGun   STARTFRAME=52  NUMFRAMES=8  RATE=6  Group=Waiting\n";
+      osOutputStream << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=Chat1     STARTFRAME=463 NUMFRAMES=13 RATE=6  Group=Waiting\n";
+      osOutputStream << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=Chat2     STARTFRAME=476 NUMFRAMES=10 RATE=6  Group=Waiting\n";
       osOutputStream << "\n";
-      osOutputStream << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=Victory1  STARTFRAME=265 NUMFRAMES=18 RATE=11 	Group=Gesture\n";
+      osOutputStream << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=Victory1  STARTFRAME=265 NUMFRAMES=18 RATE=11 Group=Gesture\n";
       osOutputStream << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=WaveL     STARTFRAME=448 NUMFRAMES=15 RATE=15	Group=Gesture\n";
       osOutputStream << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=Wave      STARTFRAME=343 NUMFRAMES=15 RATE=15	Group=Gesture\n";
       osOutputStream << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=Thrust    STARTFRAME=486 NUMFRAMES=15 RATE=20	Group=Gesture\n";
       osOutputStream << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=Taunt1    STARTFRAME=5   NUMFRAMES=20 RATE=15	Group=Gesture\n";
       osOutputStream << "\n";
-      osOutputStream << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=DodgeB    STARTFRAME=501 NUMFRAMES=1			Group=Jumping\n";
-      osOutputStream << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=DodgeF    STARTFRAME=502 NUMFRAMES=1			Group=Jumping\n";
-      osOutputStream << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=DodgeR    STARTFRAME=503 NUMFRAMES=1			Group=Jumping\n";
-      osOutputStream << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=DodgeL    STARTFRAME=504 NUMFRAMES=1			Group=Jumping\n";
-      osOutputStream << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=Flip      STARTFRAME=505 NUMFRAMES=20		Group=Jumping\n";
-      osOutputStream << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=JumpLgFr  STARTFRAME=91  NUMFRAMES=1			Group=Jumping\n";
-      osOutputStream << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=JumpSmFr  STARTFRAME=92  NUMFRAMES=1			Group=Jumping\n";
-      osOutputStream << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=LandLgFr  STARTFRAME=93  NUMFRAMES=1			Group=Landing\n";
-      osOutputStream << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=LandSmFr  STARTFRAME=94  NUMFRAMES=1			Group=Landing\n";
+      osOutputStream << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=DodgeB    STARTFRAME=501 NUMFRAMES=1  Group=Jumping\n";
+      osOutputStream << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=DodgeF    STARTFRAME=502 NUMFRAMES=1  Group=Jumping\n";
+      osOutputStream << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=DodgeR    STARTFRAME=503 NUMFRAMES=1  Group=Jumping\n";
+      osOutputStream << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=DodgeL    STARTFRAME=504 NUMFRAMES=1  Group=Jumping\n";
+      osOutputStream << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=Flip      STARTFRAME=505 NUMFRAMES=20 Group=Jumping\n";
+      osOutputStream << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=JumpLgFr  STARTFRAME=91  NUMFRAMES=1  Group=Jumping\n";
+      osOutputStream << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=JumpSmFr  STARTFRAME=92  NUMFRAMES=1  Group=Jumping\n";
+      osOutputStream << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=LandLgFr  STARTFRAME=93  NUMFRAMES=1  Group=Landing\n";
+      osOutputStream << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=LandSmFr  STARTFRAME=94  NUMFRAMES=1  Group=Landing\n";
       osOutputStream << "\n";
       osOutputStream << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=DuckWlkL  STARTFRAME=60  NUMFRAMES=15 RATE=15	Group=Ducking\n";
       osOutputStream << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=DuckWlkS  STARTFRAME=75  NUMFRAMES=15 RATE=15	Group=Ducking\n";
@@ -2867,24 +3593,24 @@ FRESULT CAvatarFileUnreal::SaveMeshScript(const char* pszFilename, CAvatar* pAva
       osOutputStream << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=WalkSmFr  STARTFRAME=328 NUMFRAMES=15 RATE=18	Group=MovingFire\n";
       osOutputStream << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=Walk      STARTFRAME=358 NUMFRAMES=15 RATE=18\n";
       osOutputStream << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=RunLg     STARTFRAME=137 NUMFRAMES=10 RATE=17\n";
-      osOutputStream << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=RunLgFr   STARTFRAME=147 NUMFRAMES=10 RATE=17    	Group=MovingFire\n";
+      osOutputStream << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=RunLgFr   STARTFRAME=147 NUMFRAMES=10 RATE=17 Group=MovingFire\n";
       osOutputStream << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=RunSm     STARTFRAME=157 NUMFRAMES=10 RATE=17\n";
       osOutputStream << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=RunSmFr   STARTFRAME=167 NUMFRAMES=10 RATE=17	Group=MovingFire\n";
       osOutputStream << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=BackRun   STARTFRAME=670 NUMFRAMES=10 RATE=17	Group=MovingFire\n";
       osOutputStream << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=StrafeL   STARTFRAME=680 NUMFRAMES=10 RATE=17	Group=MovingFire\n";
       osOutputStream << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=StrafeR   STARTFRAME=690 NUMFRAMES=10 RATE=17	Group=MovingFire\n";
-      osOutputStream << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=TurnLg    STARTFRAME=298 NUMFRAMES=2  RATE=15	// 2 frames of walklgfr\n";
-      osOutputStream << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=TurnSm    STARTFRAME=328 NUMFRAMES=2  RATE=15	// 2 frames of walksmfr\n";
-      osOutputStream << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=Fighter   STARTFRAME=187 NUMFRAMES=1			// first frame of stilllgfr\n";
+      osOutputStream << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=TurnLg    STARTFRAME=298 NUMFRAMES=2  RATE=15\n";
+      osOutputStream << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=TurnSm    STARTFRAME=328 NUMFRAMES=2  RATE=15\n";
+      osOutputStream << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=Fighter   STARTFRAME=187 NUMFRAMES=1\n";
       osOutputStream << "\n";
       osOutputStream << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=Dead1     STARTFRAME=525 NUMFRAMES=13 RATE=10	Group=TakeHit\n";
-      osOutputStream << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=Dead2     STARTFRAME=538 NUMFRAMES=16 RATE=10		\n";
+      osOutputStream << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=Dead2     STARTFRAME=538 NUMFRAMES=16 RATE=10\n";
       osOutputStream << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=Dead3     STARTFRAME=554 NUMFRAMES=13 RATE=10\n";
       osOutputStream << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=Dead4     STARTFRAME=567 NUMFRAMES=16 RATE=10\n";
       osOutputStream << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=Dead7     STARTFRAME=583 NUMFRAMES=21 RATE=12	Group=TakeHit\n";
       osOutputStream << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=Dead8     STARTFRAME=604 NUMFRAMES=18 RATE=10	Group=TakeHit\n";
       osOutputStream << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=Dead9     STARTFRAME=622 NUMFRAMES=20 RATE=30	Group=TakeHit\n";
-      osOutputStream << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=Dead9B    STARTFRAME=642 NUMFRAMES=10 RATE=15		\n";
+      osOutputStream << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=Dead9B    STARTFRAME=642 NUMFRAMES=10 RATE=15\n";
       osOutputStream << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=Dead11    STARTFRAME=652 NUMFRAMES=18 RATE=10\n";
       osOutputStream << "\n";
       osOutputStream << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=DeathEnd  STARTFRAME=537 NUMFRAMES=1\n";
@@ -2893,12 +3619,12 @@ FRESULT CAvatarFileUnreal::SaveMeshScript(const char* pszFilename, CAvatar* pAva
       osOutputStream << "\n";
       osOutputStream << "#exec MESHMAP SCALE MESHMAP=" << m_pszName << " X=0.1 Y=0.1 Z=0.2\n";
       osOutputStream << "\n";
-      osOutputStream << "#exec MESH NOTIFY MESH=" << m_pszName << " SEQ=RunLG TIME=0.25 FUNCTION=PlayFootStep\n";
-      osOutputStream << "#exec MESH NOTIFY MESH=" << m_pszName << " SEQ=RunLG TIME=0.75 FUNCTION=PlayFootStep\n";
+      osOutputStream << "#exec MESH NOTIFY MESH=" << m_pszName << " SEQ=RunLG   TIME=0.25 FUNCTION=PlayFootStep\n";
+      osOutputStream << "#exec MESH NOTIFY MESH=" << m_pszName << " SEQ=RunLG   TIME=0.75 FUNCTION=PlayFootStep\n";
       osOutputStream << "#exec MESH NOTIFY MESH=" << m_pszName << " SEQ=RunLGFR TIME=0.25 FUNCTION=PlayFootStep\n";
       osOutputStream << "#exec MESH NOTIFY MESH=" << m_pszName << " SEQ=RunLGFR TIME=0.75 FUNCTION=PlayFootStep\n";
-      osOutputStream << "#exec MESH NOTIFY MESH=" << m_pszName << " SEQ=RunSM TIME=0.25 FUNCTION=PlayFootStep\n";
-      osOutputStream << "#exec MESH NOTIFY MESH=" << m_pszName << " SEQ=RunSM TIME=0.75 FUNCTION=PlayFootStep\n";
+      osOutputStream << "#exec MESH NOTIFY MESH=" << m_pszName << " SEQ=RunSM   TIME=0.25 FUNCTION=PlayFootStep\n";
+      osOutputStream << "#exec MESH NOTIFY MESH=" << m_pszName << " SEQ=RunSM   TIME=0.75 FUNCTION=PlayFootStep\n";
       osOutputStream << "#exec MESH NOTIFY MESH=" << m_pszName << " SEQ=RunSMFR TIME=0.25 FUNCTION=PlayFootStep\n";
       osOutputStream << "#exec MESH NOTIFY MESH=" << m_pszName << " SEQ=RunSMFR TIME=0.75 FUNCTION=PlayFootStep\n";
       osOutputStream << "#exec MESH NOTIFY MESH=" << m_pszName << " SEQ=StrafeL TIME=0.25 FUNCTION=PlayFootStep\n";
@@ -2907,14 +3633,14 @@ FRESULT CAvatarFileUnreal::SaveMeshScript(const char* pszFilename, CAvatar* pAva
       osOutputStream << "#exec MESH NOTIFY MESH=" << m_pszName << " SEQ=StrafeR TIME=0.75 FUNCTION=PlayFootStep\n";
       osOutputStream << "#exec MESH NOTIFY MESH=" << m_pszName << " SEQ=BackRun TIME=0.25 FUNCTION=PlayFootStep\n";
       osOutputStream << "#exec MESH NOTIFY MESH=" << m_pszName << " SEQ=BackRun TIME=0.75 FUNCTION=PlayFootStep\n";
-      osOutputStream << "#exec MESH NOTIFY MESH=" << m_pszName << " SEQ=Dead1 TIME=0.7 FUNCTION=LandThump\n";
-      osOutputStream << "#exec MESH NOTIFY MESH=" << m_pszName << " SEQ=Dead2 TIME=0.9 FUNCTION=LandThump\n";
-      osOutputStream << "#exec MESH NOTIFY MESH=" << m_pszName << " SEQ=Dead3 TIME=0.45 FUNCTION=LandThump\n";
-      osOutputStream << "#exec MESH NOTIFY MESH=" << m_pszName << " SEQ=Dead4 TIME=0.6 FUNCTION=LandThump\n";
-      osOutputStream << "#exec MESH NOTIFY MESH=" << m_pszName << " SEQ=Dead7 TIME=0.7 FUNCTION=LandThump\n";
-      osOutputStream << "#exec MESH NOTIFY MESH=" << m_pszName << " SEQ=Dead8 TIME=0.7 FUNCTION=LandThump\n";
-      osOutputStream << "#exec MESH NOTIFY MESH=" << m_pszName << " SEQ=Dead9B TIME=0.8 FUNCTION=LandThump\n";
-      osOutputStream << "#exec MESH NOTIFY MESH=" << m_pszName << " SEQ=Dead11 TIME=0.57 FUNCTION=LandThump\n";
+      osOutputStream << "#exec MESH NOTIFY MESH=" << m_pszName << " SEQ=Dead1   TIME=0.7  FUNCTION=LandThump\n";
+      osOutputStream << "#exec MESH NOTIFY MESH=" << m_pszName << " SEQ=Dead2   TIME=0.9  FUNCTION=LandThump\n";
+      osOutputStream << "#exec MESH NOTIFY MESH=" << m_pszName << " SEQ=Dead3   TIME=0.45 FUNCTION=LandThump\n";
+      osOutputStream << "#exec MESH NOTIFY MESH=" << m_pszName << " SEQ=Dead4   TIME=0.6  FUNCTION=LandThump\n";
+      osOutputStream << "#exec MESH NOTIFY MESH=" << m_pszName << " SEQ=Dead7   TIME=0.7  FUNCTION=LandThump\n";
+      osOutputStream << "#exec MESH NOTIFY MESH=" << m_pszName << " SEQ=Dead8   TIME=0.7  FUNCTION=LandThump\n";
+      osOutputStream << "#exec MESH NOTIFY MESH=" << m_pszName << " SEQ=Dead9B  TIME=0.8  FUNCTION=LandThump\n";
+      osOutputStream << "#exec MESH NOTIFY MESH=" << m_pszName << " SEQ=Dead11  TIME=0.57 FUNCTION=LandThump\n";
       osOutputStream << "\n";
       osOutputStream << "defaultproperties\n";
       osOutputStream << "{\n";
@@ -2928,13 +3654,13 @@ FRESULT CAvatarFileUnreal::SaveMeshScript(const char* pszFilename, CAvatar* pAva
          osOutputStream << "   LandGrunt=Sound'FemaleSounds.(All).land10'\n";
          osOutputStream << "   CarcassType=Class'Botpack.TFemale2Carcass'\n";
          osOutputStream << "   SpecialMesh=\"Botpack.TrophyFemale2\"\n";
-         osOutputStream << "   VoiceType=\"BotPack.VoiceFemaleTwo\"\n";
+         osOutputStream << "   VoiceType=\"Botpack.VoiceFemaleTwo\"\n";
       }
       else {
          osOutputStream << "   LandGrunt=Sound'MaleSounds.(All).land10'\n";
          osOutputStream << "   CarcassType=Class'Botpack.TMale2Carcass'\n";
          osOutputStream << "   SpecialMesh=\"Botpack.TrophyMale2\"\n";
-         osOutputStream << "   VoiceType=\"BotPack.VoiceMaleTwo\"\n";
+         osOutputStream << "   VoiceType=\"Botpack.VoiceMaleTwo\"\n";
       }
       osOutputStream << "   MenuName=\"" << m_pszName << "\"\n";
       osOutputStream << "   Mesh=" << m_pszName << "\n";
@@ -2992,12 +3718,10 @@ FRESULT CAvatarFileUnreal::SaveBotScript(const char* pszFilename, CAvatar* pAvat
       if (m_iSex == UNREAL_FEMALE) {
          osOutputStream << "   LandGrunt=Sound'FemaleSounds.(All).land10'\n";
          osOutputStream << "   CarcassType=Class'Botpack.TFemale2Carcass'\n";
-         //osOutputStream << "   VoiceType=\"BotPack.VoiceFemaleTwo\"\n";
       }
       else {
          osOutputStream << "   LandGrunt=Sound'MaleSounds.(All).land10'\n";
          osOutputStream << "   CarcassType=Class'Botpack.TMale2Carcass'\n";
-         //osOutputStream << "   VoiceType=\"BotPack.VoiceMaleTwo\"\n";
       }
       osOutputStream << "   FaceSkin=0\n";
       osOutputStream << "   TeamSkin1=1\n";
