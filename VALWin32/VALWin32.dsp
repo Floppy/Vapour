@@ -93,10 +93,6 @@ SOURCE=.\Render\RCOpenGLBufferWin32.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\Render\RCOpenGLWin32.cpp
-# End Source File
-# Begin Source File
-
 SOURCE=.\Application\Registry.cpp
 # End Source File
 # Begin Source File
@@ -123,10 +119,6 @@ SOURCE=.\Application\FolderDialog.h
 # Begin Source File
 
 SOURCE=.\Render\RCOpenGLBufferWin32.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\Render\RCOpenGLWin32.h
 # End Source File
 # Begin Source File
 
