@@ -133,11 +133,11 @@ PROTO SlabElement [
          function set_visible(value,time) {
             if (value == true) {
                steelmaterial.transparency = 0;
-               slabmaterial.transparency = 0.25;
+               slabmaterial.transparency = 0;
             }
             else {
                steelmaterial.transparency = 0.9;
-               slabmaterial.transparency = 0.95;
+               slabmaterial.transparency = 0.9;
             }
          }
       "
