@@ -9,7 +9,7 @@
 //! file      = "Control/VTStrucVisCtl.cpp"
 //! author    = "Warren Moore"
 //! date      = "5/3/2002"
-//! rcsid     = "$Id: VTStrucVisCtl.cpp,v 1.29 2002/04/05 14:23:44 vap-warren Exp $"
+//! rcsid     = "$Id: VTStrucVisCtl.cpp,v 1.30 2002/04/22 11:34:55 vap-warren Exp $"
 
 #include "stdafx.h"
 #include "VTStrucVis.h"
@@ -1278,22 +1278,24 @@ bool CVTStrucVisCtl::UpdateSliders(unsigned int &uiFrame) {
    // Scale Tab
    if (m_uiUITab == 1) {
       bool bScaleModified = false;
+      const float fTol = 0.00001f;
       float fVal = 0.0f;
       // X Scale
+      CString oStr;
       fVal = m_oSXScale.GetFloat();
-      if (fVal != m_fXScale) {
+      if ((m_fXScale > fVal + fTol) || (m_fXScale < fVal - fTol)) {
          m_fXScale = fVal;
          bScaleModified = true;
       }
       // Y Scale
       fVal = m_oSYScale.GetFloat();
-      if (fVal != m_fYScale) {
+      if ((m_fYScale > fVal + fTol) || (m_fYScale < fVal - fTol)) {
          m_fYScale = fVal;
          bScaleModified = true;
       }
       // Z Scale
       fVal = m_oSZScale.GetFloat();
-      if (fVal != m_fZScale) {
+      if ((m_fZScale > fVal + fTol) || (m_fZScale < fVal - fTol)) {
          m_fZScale = fVal;
          bScaleModified = true;
       }
