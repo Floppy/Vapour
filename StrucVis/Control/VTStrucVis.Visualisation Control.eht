@@ -54,4 +54,10 @@ method.
 MFC vs. ATL
 </P>
 <P>
+The Microsoft Foundation Classes (MFC) and Active Template Library (ATL) are sets of development libraries for
+the rapid development of ActiveX components. MFC provides a good framework for ActiveX control design, and supplies
+useful classes for user interface development. ATL's main advantages are that it can generate controls of a 
+smaller download size, and it is easier to create controls with dual interfaces (Automation and COM). However,
+given that these advantages were not useful to this project, and that we were already proficient in using MFC,
+ATL was not used.
 </P>
