@@ -11,7 +11,7 @@
 //! author 		= "James Smith"
 //! date 		= "01/10/2001"
 //! lib 		= libVALETmath
-//! rcsid 		= "$Id: Vector3D.cpp,v 1.4 2001/10/02 17:01:12 vap-james Exp $"
+//! rcsid 		= "$Id: Vector3D.cpp,v 1.5 2001/10/02 22:12:19 vap-james Exp $"
 //! userlevel 	        = Normal
 //! docentry 	        = "VALET.Math.Geometry"
 
@@ -353,6 +353,6 @@ namespace VALET {
 	  free(buffer);
 	  return output;
 	} //ToString(int precision) const
-}
 
+}
 
