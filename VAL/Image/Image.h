@@ -7,7 +7,7 @@
 // Image.h - 21/12/1999 - Warren Moore
 //	Image header
 //
-// $Id: Image.h,v 1.5 2000/07/11 16:09:39 waz Exp $
+// $Id: Image.h,v 1.6 2000/07/15 15:13:16 waz Exp $
 //
 
 #ifndef _VAL_IMAGE_
@@ -45,12 +45,13 @@ enum IMAGEFILTERTYPE {
 
 enum IRESULT {
 	I_OK,
-	I_OUTOFRANGE,
-	I_INVALIDPARAM,
-	I_INCORRECTTYPE,
-	I_UNSUPPORTEDTYPE,
-	I_NOIMAGE,
-	I_OUTOFMEMORY,
+	I_OUT_OF_RANGE,
+	I_INVALID_PARAM,
+	I_INCORRECT_TYPE,
+	I_UNSUPPORTED_TYPE,
+	I_NO_IMAGE,
+	I_NO_PALETTE,
+	I_OUT_OF_MEMORY,
 	I_ERROR,
 };
 
@@ -82,6 +83,7 @@ public:
 
 // Conversion 
 	IRESULT Convert(IMAGETYPE eType, int iColours = 256);
+	IRESULT ForceToPalette(const CImagePalette &oPalette);
 
 // Scaling
 	IRESULT Scale(int iWidth, int iHeight, IMAGEFILTERTYPE eFilter = IF_BILINEAR);
@@ -121,6 +123,7 @@ protected:
 
 // Colour Quantisation
 	IRESULT CreatePaletteFromRGB(int iColours = 256);
+	int MatchColour(unsigned long uColour);
 
 // Scaling
 	sContribList *AllocateContributions(int iWidth, int iWindow);

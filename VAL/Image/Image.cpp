@@ -7,7 +7,7 @@
 // Image.h - 21/12/1999 - Warren Moore
 //	Image implementation
 //
-// $Id: Image.cpp,v 1.5 2000/07/10 22:16:59 waz Exp $
+// $Id: Image.cpp,v 1.6 2000/07/15 15:13:15 waz Exp $
 //
 
 #include "stdafx.h"
@@ -170,14 +170,14 @@ IRESULT CImage::CreateImage() {
 	IRESULT eResult = I_OK;
 // Validate image size
 	if ((m_iWidth == 0) || (m_iHeight == 0))
-		eResult = I_NOIMAGE;
+		eResult = I_NO_IMAGE;
 	if ((m_iWidth < 0) || (m_iWidth > IMG_MAXWIDTH)) {
 		m_iWidth = 0;
-		eResult = I_OUTOFRANGE;
+		eResult = I_OUT_OF_RANGE;
 	}
 	if ((m_iHeight < 0) || (m_iHeight > IMG_MAXWIDTH)) {
 		m_iHeight = 0;
-		eResult = I_OUTOFRANGE;
+		eResult = I_OUT_OF_RANGE;
 	}
 
 // If the size is valid, allocate the image memory
@@ -219,7 +219,7 @@ IRESULT CImage::CreateImage() {
 			m_pData = (UINT*) new UINT[m_iDataSize];
 			NEWEND("CImage::CreateImage - Image data")
 			if (!m_pData)
-				eResult = I_OUTOFMEMORY;
+				eResult = I_OUT_OF_MEMORY;
 		}
 	}
 
@@ -230,7 +230,7 @@ IRESULT CImage::CreateImage() {
 		m_pPalette = (CImagePalette*) new CImagePalette;
 		NEWEND("CImage::CreateImage - Palette object")
 		if (!m_pPalette)
-			eResult = I_OUTOFMEMORY;
+			eResult = I_OUT_OF_MEMORY;
 	}
 
 // If allocation or a size parameter failed, zero everything
@@ -340,7 +340,7 @@ IRESULT CImage::Convert(IMAGETYPE eType, int iColours) {
 // Check input image
 	IRESULT eResult = I_OK;
 	if ((m_iWidth <= 0) || (m_iHeight <= 0)) 
-		eResult = I_NOIMAGE;
+		eResult = I_NO_IMAGE;
 
 	if (eResult == I_OK) {
 // Select the correct conversion method for the current image type
@@ -352,15 +352,112 @@ IRESULT CImage::Convert(IMAGETYPE eType, int iColours) {
 						eResult = CreatePaletteFromRGB(iColours);
 						break;
 					default:
-						eResult = I_UNSUPPORTEDTYPE;
+						eResult = I_UNSUPPORTED_TYPE;
 				}
 				break;
 			default:
-				eResult = I_UNSUPPORTEDTYPE;
+				eResult = I_UNSUPPORTED_TYPE;
 		}
 	}
 	return eResult;
 } // Convert
+
+IRESULT CImage::ForceToPalette(const CImagePalette &oPalette) {
+	// Check for image
+	if ((m_iWidth == 0) || (m_iHeight == 0))
+		return I_NO_IMAGE;
+	// Check image type
+	if (m_eImageType != IT_RGB)
+		return I_INCORRECT_TYPE;
+	// Check the palette contains colours
+	int iSize = oPalette.GetSize();
+	if (iSize == 0)
+		return I_NO_PALETTE;
+	// Save the original image details
+	const int iInputLine = m_iLineSize;
+	unsigned long *pInputData = (unsigned long*)m_pData;
+	unsigned long *pIData = pInputData;
+	unsigned long *pIDataPtr = pInputData;
+	const unsigned iWidth = m_iWidth / 4;
+	const unsigned int iLeft = m_iWidth % 4;
+	// Create the new image
+	IRESULT eResult = I_OK;
+	m_eImageType = IT_PALETTE;
+	eResult = CreateImage();
+	// If image allocated ok, begin quantising
+	if (eResult == I_OK) {
+		// Get the palette
+		m_pPalette->Copy(&(CImagePalette)oPalette);
+		// Create the new image with the correct image indices
+		const int iOutputLine = m_iLineSize * 4;
+		pIData = pInputData;
+		unsigned char *pOData = (unsigned char*)m_pData;
+		unsigned char *pODataPtr = pOData;
+		register int iY = m_iHeight, iX = iWidth;
+		unsigned long uInput, uColour;
+		// Retreive every pixel from the original image, and match it in BGR format
+		// For each line
+		while (iY--) {
+			pIDataPtr = pIData;
+			pODataPtr = pOData;
+			iX = iWidth;
+			// For each pixel in the line
+			while (iX--) {
+				// First pixel
+				uColour = *pIDataPtr++;
+				*pODataPtr = MatchColour(uColour);
+				TRACE("Index %d\n", *pODataPtr);
+				pODataPtr++;
+				// Second pixel
+				uInput = *pIDataPtr++;
+				uColour = (uColour >> 24) | (uInput << 8);
+				*pODataPtr = MatchColour(uColour);
+				TRACE("Index %d\n", *pODataPtr);
+				pODataPtr++;
+				// Third pixel
+				uColour = uInput >> 16;
+				uInput = *pIDataPtr++;
+				uColour |= (uInput << 16);
+				*pODataPtr = MatchColour(uColour);
+				TRACE("Index %d\n", *pODataPtr);
+				pODataPtr++;
+				// Fourth pixel
+				uColour = uInput >> 8;
+				*pODataPtr = MatchColour(uColour);
+				TRACE("Index %d\n", *pODataPtr);
+				pODataPtr++;
+			}
+			// For any remaining pixels
+			if (iLeft > 0) {
+				// First pixel
+				uColour = *pIDataPtr++;
+				*pODataPtr = MatchColour(uColour);
+				pODataPtr++;
+			}
+			if (iLeft > 1) {
+				// Second pixel
+				uInput = *pIDataPtr++;
+				uColour = (uColour >> 24) | (uInput << 8);
+				*pODataPtr = MatchColour(uColour);
+				pODataPtr++;
+			}
+			if (iLeft > 2) {
+				// Third pixel
+				uColour = uInput >> 16;
+				uInput = *pIDataPtr++;
+				uColour |= (uInput << 16);
+				*pODataPtr = MatchColour(uColour);
+				pODataPtr++;
+			}
+			// Add the line steps
+			pIData += iInputLine;
+			pOData += iOutputLine;
+		}
+	}
+	// Delete the original image
+	delete [] pInputData;
+	return I_OK;
+} // ForceToPalette
 
 //#===--- Colour Quantisation
 
@@ -499,6 +596,38 @@ IRESULT CImage::CreatePaletteFromRGB(int iColours) {
 	return eResult;
 } // CreatePaletteFromRGB
 
+int CImage::MatchColour(unsigned long uColour) {
+	// Make sure it's a palettised image
+	if (m_eImageType != IT_PALETTE)
+		return -1;
+	// Match the colour
+	int iCount = 0;
+	unsigned long uPal = 0;
+	int iVal = -1;
+	int iLowestError = 8192;	// Huge error
+	while (iCount < m_pPalette->GetSize()) {
+		// Get the colour
+		m_pPalette->GetEntry(iCount, uPal);
+		// Calculate the error
+		int iR = (uColour >> 16) & 0x000000FF;
+		int iG = (uColour >>  8) & 0x000000FF;
+		int iB = (uColour      ) & 0x000000FF;
+		iR = abs(iR - ((uPal      ) & 0x000000FF));
+		iG = abs(iG - ((uPal >>  8) & 0x000000FF));
+		iB = abs(iB - ((uPal >> 16) & 0x000000FF));
+		int iError = iR + iG + iB;
+		// Record if lowest error
+		if (iError < iLowestError) {
+			iLowestError = iError;
+			iVal = iCount;
+		}
+		// Carry on through the palette
+		iCount++;
+	}
+	ASSERT(iVal != 255);
+	return iVal;
+} // MatchColour
+
 //#===--- Scaling Functions
 
 IRESULT CImage::Scale(int iWidth, int iHeight, IMAGEFILTERTYPE eFilter) {
@@ -510,7 +639,7 @@ IRESULT CImage::Scale(int iWidth, int iHeight, IMAGEFILTERTYPE eFilter) {
 	if ((iHeight < 0) || (iHeight > IMG_MAXHEIGHT))
 		iHeight = 0;
 	if ((iWidth == 0) || (iHeight == 0))
-		eResult = I_INVALIDPARAM;
+		eResult = I_INVALID_PARAM;
 
 // Begin scaling if okay
 	if (eResult == I_OK) {
@@ -538,14 +667,14 @@ IRESULT CImage::Scale(int iWidth, int iHeight, IMAGEFILTERTYPE eFilter) {
 } // Scale
 
 IRESULT CImage::ScaleHorizontal(int iWidth, IMAGEFILTERTYPE eFilter) {
-	IRESULT eResult = I_UNSUPPORTEDTYPE;
+	IRESULT eResult = I_UNSUPPORTED_TYPE;
 	if (m_eImageType == IT_RGB)
 		eResult = ScaleHorizontalRGB(iWidth, eFilter);
 	return eResult;
 } // ScaleHorizontal
 
 IRESULT CImage::ScaleVertical(int iHeight, IMAGEFILTERTYPE eFilter) {
-	IRESULT eResult = I_UNSUPPORTEDTYPE;
+	IRESULT eResult = I_UNSUPPORTED_TYPE;
 	if (m_eImageType == IT_RGB)
 		eResult = ScaleVerticalRGB(iHeight, eFilter);
 	return eResult;
