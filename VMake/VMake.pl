@@ -5,14 +5,14 @@
 # script to emulate intended VMake functionality
 
 # 17/09/2001 - Warren Moore
-# $Id: VMake.pl,v 1.7 2001/09/21 12:31:10 vap-warren Exp $
+# $Id: VMake.pl,v 1.8 2001/09/21 13:16:34 vap-warren Exp $
 # Copyright 2000-2001 Vapour Technology Ltd.
 
 use strict;
 
 #=== global vars
 # get a nice version number from the rcs id
-my $rcs_id = '$Id: VMake.pl,v 1.7 2001/09/21 12:31:10 vap-warren Exp $';
+my $rcs_id = '$Id: VMake.pl,v 1.8 2001/09/21 13:16:34 vap-warren Exp $';
 $rcs_id =~ s/\$//g;
 my $version = ($rcs_id =~ /^Id: [^\s]+ ([0-9\.]+)/) ? $1 : "(unknown)";
 my $list_name = "arch.list";		# default arch.list location
@@ -113,7 +113,7 @@ else {
 }
 
 # remove any non-arch files
-my @file_list = split /\n/, `find . -name '*.*' ! -lname '*.*'`;
+my @file_list = split /\n/, `find . -name '*.*'`;
 my @rm_list;
 $count = 0;
 while ($count < scalar(@file_list)) {
@@ -149,6 +149,10 @@ while ($count < scalar(@file_list)) {
 		else {
 			$count++;
 		}
+	}
+	# ignore's symbolic links
+	elsif (readlink $file) {
+		splice(@file_list, $count, 1);
 	}
 	# so it's not an arch file then...
 	else {
