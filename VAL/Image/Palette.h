@@ -7,7 +7,7 @@
 // Palette.h - 19/03/2000 - Warren Moore
 //	Palette header
 //
-// $Id: Palette.h,v 1.6 2000/08/07 18:58:33 waz Exp $
+// $Id: Palette.h,v 1.7 2000/08/09 16:37:07 waz Exp $
 //
 
 #ifndef _VAL_PALETTE_
@@ -19,8 +19,8 @@
 #include "VAL.h"
 
 //#===--- Defines
-#define IPL_CACHE_SIZE			50
-#define IPL_LRU_MAX					10
+// Max size of palette
+#define IPL_MAX_ENTRIES			256
 
 /////////////
 // CPalette
@@ -28,12 +28,12 @@
 class CImagePalette {
 public:
 	//#===--- Constructions
-	// Create the palette of a specified size filled with a default colour (max 256)
-	CImagePalette(int iSize = 256, unsigned int uColour = 0);
+	// Create the palette of a specified size filled with a default colour
+	CImagePalette(int iSize = IPL_MAX_ENTRIES, unsigned int uColour = 0);
 	CImagePalette(const CImagePalette &oCopy);
 	~CImagePalette();
 	// Copy the palette into current from a pointer
-	void Copy(CImagePalette *pCopy);
+	void Copy(CImagePalette *poCopy);
 
 	//#===--- Settings
 	// Set the size of colours within the palette
@@ -57,6 +57,10 @@ public:
 
 //#===--- Internal Functions
 protected:
+	//#===--- Palette Allocation
+	// Allocates the palette memory from m_iSize. Returns false and sets size to 0 if failed
+	bool AllocatePalette();
+
 	//#===--- Matched colour cache
 	// Creates a cache for recently matched values
 	void CreateCache();
@@ -69,6 +73,15 @@ protected:
 
 	//#===--- Palette entry hash table
 	// Creates a hash table of the palette entries
+	void CreateHash();
+	// Returns palette index if colour found, -1 if not
+	int CheckHash(unsigned int uColour);
+	// Deletes the hash memory
+	void DeleteHash();
+
+	//#===--- Brute force colour matching
+	// Finds the entry with the lowest error
+	int FindLowest(unsigned int uColour);
 
 //#===--- Internal Structures
 	// Colour matching cache
@@ -84,14 +97,21 @@ protected:
 		}
 	} SCache;
 
+	// Hash table entries
+	typedef struct SHashEntryStruct {
+		int m_iIndex;
+		unsigned int m_uColour;
+		int m_iR, m_iG, m_iB;
+	} SHashEntry;
+
 	// Palette hash table
 	typedef struct SHashStruct {
-		unsigned int m_uEntries;
-		int *m_piIndex;
+		unsigned int m_uEntries;		// Number of entries in this part of the hash
+		SHashEntry *m_psColour;
 
 		SHashStruct() {							// Inline constructor
 			m_uEntries = 0;
-			m_piIndex = NULL;
+			m_psColour = NULL;
 		}
 	} SHash;
 
@@ -100,9 +120,11 @@ protected:
 	int m_iSize;												// Max number of colour entries
 	int m_iNextEntry;										// Internal counter for AddEntry function
 
-	unsigned int m_uPalette[256];				// Palette data
+	unsigned int *m_puPalette;					// Palette data
 
 	SCache *m_psCache;									// Colour match cache structure
+
+	SHash *m_psHash;										// Colour match hash table
 };
 
 //#===--- Inline Functions
