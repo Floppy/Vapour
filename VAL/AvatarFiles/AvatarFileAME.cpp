@@ -7,7 +7,7 @@
 // AvatarFileAME.cpp - 17/06/2000 - James Smith
 //	AME import filter implementation
 //
-// $Id: AvatarFileAME.cpp,v 1.10 2000/11/21 16:44:31 waz Exp $
+// $Id: AvatarFileAME.cpp,v 1.11 2000/11/29 21:17:50 james Exp $
 //
 
 #include "stdafx.h"
@@ -147,36 +147,54 @@ CAvatar* CAvatarFileAME::Load(const char* pszFilename) const {
          g_poVAL->SetProgressText("AMELoad", "Loading textures");
          int iNumTextures = AMeModel.iTotalNumTextures;
          for (int t=0; t<iNumTextures; t++) {
-            CImage* pNewImage = new CImage(IT_RGB);
-            if (pNewImage) {
-               pNewImage->ImportAMETexture(AMeModel.TextureArr[t]);
-               int iWidth = 0;
-               int iHeight = 0;
-               pNewImage->GetSize(iWidth, iHeight);
-               // Find new size - lower power of 2 up to iMaxSize
-               const int iMaxSize = 512;
-               if (iWidth > iMaxSize) iWidth = iMaxSize;
-               else {
-                  int iMax = iMaxSize;
-                  while ((iWidth & iMax) == 0) {
-                     iMax = iMax>>1;
+            // Create new material
+            int iNewMaterial = pNewAvatar->AddMaterial();
+            if (iNewMaterial > -1) {
+               CImage* pNewImage = NULL;
+               NEWBEGIN
+               pNewImage = new CImage(IT_RGB);
+               NEWEND("CAvatarFileAME::Load() - image allocation");
+               if (pNewImage) {
+                  // Import AME texture into image
+                  pNewImage->ImportAMETexture(AMeModel.TextureArr[t]);
+                  // Make sure image loaded correctly
+                  int iWidth = 0;
+                  int iHeight = 0;
+                  pNewImage->GetSize(iWidth, iHeight);
+                  // If not, we have either run out of memory or got bad data
+                  if ((iWidth & iHeight) == 0) {
+                     delete pNewImage;
+                     pNewImage = NULL;
+                     if ((AMeModel.TextureArr[t].ptrRGBData == 0) || 
+                         (AMeModel.TextureArr[t].iWidth == 0) ||
+                         (AMeModel.TextureArr[t].iHeight == 0)) pNewAvatar->SetStatus(CAvatar::AV_BADDATA);
+                     else pNewAvatar->SetStatus(CAvatar::AV_NOALLOC);
                   }
-                  iWidth = iMax;
-               }
-               if (iHeight > iMaxSize) iHeight = iMaxSize;
-               else {
-                  int iMax = iMaxSize;
-                  while ((iHeight & iMax) == 0) {
-                     iMax = iMax>>1;
+                  else {
+                     // Find new size - lower power of 2 up to iMaxSize
+                     const int iMaxSize = 512;
+                     if (iWidth > iMaxSize) iWidth = iMaxSize;
+                     else {
+                        int iMax = iMaxSize;
+                        while ((iWidth & iMax) == 0) {
+                           iMax = iMax>>1;
+                        }
+                        iWidth = iMax;
+                     }
+                     if (iHeight > iMaxSize) iHeight = iMaxSize;
+                     else {
+                        int iMax = iMaxSize;
+                        while ((iHeight & iMax) == 0) {
+                           iMax = iMax>>1;
+                        }
+                        iHeight = iMax;
+                     }
+                     // Rescale texture
+                     pNewImage->Scale(iWidth,iHeight);
                   }
-                  iHeight = iMax;
                }
-               // Rescale texture
-               pNewImage->Scale(iWidth,iHeight);
-               // Create new material and set texture
-               int iNewMaterial = pNewAvatar->AddMaterial();
-               if (iNewMaterial > -1) pNewAvatar->Material(iNewMaterial)->SetTexture(pNewImage);
-               else delete pNewImage;
+               // Store image pointer
+               pNewAvatar->Material(iNewMaterial)->SetTexture(pNewImage);
             }
          }
 
