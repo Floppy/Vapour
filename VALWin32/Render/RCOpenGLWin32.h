@@ -7,7 +7,7 @@
 // RCOpenGLBufferWin32.h - 23/11/2000 - Warren Moore
 //	Render context for an OpenGL Win32 display
 //
-// $Id: RCOpenGLWin32.h,v 1.2 2000/11/25 22:41:15 waz Exp $
+// $Id: RCOpenGLWin32.h,v 1.3 2000/11/26 17:05:25 waz Exp $
 //
 
 #ifndef _VAL_RENDERCONTEXTOPENGLWIN32_
@@ -104,7 +104,7 @@ protected:
 
 //#===--- Internal Data
 	// Context Info
-	CClientDC *m_poDC;												// Windows device context pointer
+	HDC m_hDC;															// Windows device context handle
 	unsigned char *m_pcData;										// Pointer to start of bitmap data
 	HGLRC m_hGLRC;														// OpenGL render context handle
 	int m_iPixelFormat;												// Current OpenGL pixel format

@@ -7,7 +7,7 @@
 // RCOpenGLWin32.cpp - 23/11/2000 - Warren Moore
 //	Render context for an OpenGL window
 //
-// $Id: RCOpenGLWin32.cpp,v 1.2 2000/11/25 22:41:15 waz Exp $
+// $Id: RCOpenGLWin32.cpp,v 1.3 2000/11/26 17:05:25 waz Exp $
 //
 
 #include "StdAfx.h"
@@ -39,7 +39,7 @@ CRenderContextProxy<CRCOpenGLWin32> g_oRCProxyOpenGLWin32;
 
 CRCOpenGLWin32::CRCOpenGLWin32(const CDisplayContext *poDisplay) : 
 	CRenderContext(poDisplay),
-	m_poDC(NULL),
+	m_hDC(NULL),
 	m_hGLRC(NULL),
 	m_iPixelFormat(0),
 	m_bDepthTest(true) {
@@ -47,7 +47,7 @@ CRCOpenGLWin32::CRCOpenGLWin32(const CDisplayContext *poDisplay) :
 	if (m_poDisplay) {
 		void *pData = NULL;
 		m_poDisplay->GetDisplayPointer(DC_WIN_DC, pData);
-		m_poDC = (CClientDC*)pData;
+		m_hDC = (HDC)pData;
 	}
 	// Clear the texture table
 	memset(m_puTexNum, 0, sizeof(m_puTexNum));
@@ -217,7 +217,7 @@ RCRESULT CRCOpenGLWin32::CreateContext() {
 	};
 
 	// Choose an appriate pixel format
-	m_iPixelFormat = ChoosePixelFormat(m_poDC->m_hDC, &sPixelFormat);
+	m_iPixelFormat = ChoosePixelFormat(m_hDC, &sPixelFormat);
 
 	// Error if pixel format returned 0
 	if (m_iPixelFormat == 0)
@@ -229,11 +229,11 @@ RCRESULT CRCOpenGLWin32::CreateContext() {
 		return eResult;
 
 	// Set the returned pixel format
-	if (SetPixelFormat(m_poDC->m_hDC, m_iPixelFormat, &sPixelFormat) != TRUE)
+	if (SetPixelFormat(m_hDC, m_iPixelFormat, &sPixelFormat) != TRUE)
 		return RC_SET_FORMAT_ERROR;
 
 	// If a valid format set, create the context
-	if ((m_hGLRC = wglCreateContext(m_poDC->m_hDC)) == NULL)
+	if ((m_hGLRC = wglCreateContext(m_hDC)) == NULL)
 		return RC_CONTEXT_CREATE_ERROR;
 
 	return RC_OK;
@@ -280,7 +280,7 @@ RCRESULT CRCOpenGLWin32::Enable() {
 	// Check we have an active context
 	if (!m_bCreated)
 		return RC_NOT_ACTIVE;
-	wglMakeCurrent(m_poDC->m_hDC, m_hGLRC);
+	wglMakeCurrent(m_hDC, m_hGLRC);
 	m_bEnabled = true;
 	return RC_OK;
 } // Enable
@@ -309,7 +309,7 @@ RCRESULT CRCOpenGLWin32::BeginRender() {
 
 RCRESULT CRCOpenGLWin32::EndRender() {
 	// Flush the back buffer to screen
-	SwapBuffers(m_poDC->GetSafeHdc());
+	SwapBuffers(m_hDC);
 	return RC_OK;
 } // EndRender
 
@@ -457,6 +457,7 @@ RCRESULT CRCOpenGLWin32::SetProjectionMode(unsigned int uMode) {
 //#===--- Export
 
 RCRESULT CRCOpenGLWin32::Snapshot(CImage *&poImage) {
+	/*
 	// Check we have an active context
 	if (!m_bCreated)
 		return RC_NOT_ACTIVE;
@@ -528,4 +529,6 @@ RCRESULT CRCOpenGLWin32::Snapshot(CImage *&poImage) {
 		memcpy(poImage->m_pData, m_pcData, m_uWidth * m_uHeight);
 
 	return RC_OK;
+	*/
+	return RC_UNSUPPORTED_FUNCTION;
 } // Snapshot
