@@ -7,7 +7,7 @@
 // DList.h - 28/05/2000 - James Smith
 //	Doubly Linked list class header
 //
-// $Id: DList.h,v 1.2 2000/06/17 10:42:15 waz Exp $
+// $Id: DList.h,v 1.3 2000/10/06 13:02:16 waz Exp $
 //
 
 #ifndef _VAL_LIST_
@@ -59,6 +59,9 @@ public:
 
    // Convert to array
    T* Convert(int& iLength);
+
+   // Clear the list
+   void Clear(void);
 
    // Destructor
    virtual ~CDList();
@@ -146,6 +149,19 @@ T* CDList<T>::Convert(int& iLength) {
    }
    return pArray;
 } //Convert(int& iLength)
+
+template<class T> 
+void CDList<T>::Clear(void) {
+   while (m_pFront != NULL) {
+      CDListItem<T>* pTemp = m_pFront->m_pNext;
+      delete m_pFront;
+      m_pFront = pTemp;
+   }
+   m_pFront = NULL;
+   m_pBack = NULL;
+   m_iLength = 0;
+   return;
+} //Clear(void)
 
 template<class T> 
 CDList<T>::~CDList() {
