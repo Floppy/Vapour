@@ -6,7 +6,7 @@
 // SceneManager.h
 // 19/03/2002 - James Smith
 //
-// $Id: SceneManager.h,v 1.3 2002/03/22 02:31:36 vap-james Exp $
+// $Id: SceneManager.h,v 1.4 2002/03/22 14:56:25 vap-james Exp $
 
 #ifndef __SCENEMANAGER__
 #define __SCENEMANAGER__
@@ -14,6 +14,7 @@
 #include <vector>
 #include "Element.h"
 #include "Viewpoint.h"
+#include "DataManager.h"
 
 #if _MSC_VER > 1000
 #pragma once
@@ -35,7 +36,7 @@ public:
    // Load a dataset
    // The old dataset is destroyed
    
-   unsigned int NumFrames(void) {return m_iNumFrames;}
+   unsigned int NumFrames(void) {return m_oDataMgr.NumFrames();}
    // The number of frames
 
    unsigned int NumGroups(void);
@@ -84,6 +85,9 @@ protected:
    CNodeSet m_oNodeSet;
    // The set of nodes
    
+   CDataManager m_oDataMgr;
+   // The data manager
+
    std::vector<CElement*> m_oElements;
    // Element list
 
@@ -92,9 +96,6 @@ protected:
 
    CViewpoint m_oViewpoint;
    // The virtual camera
-
-   unsigned int m_iNumFrames;
-   // The number of frames in the sequence
 
 };
 

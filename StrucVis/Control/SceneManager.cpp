@@ -6,7 +6,7 @@
 // SceneManager.cpp
 // 19/03/2002 - James Smith
 //
-// $Id: SceneManager.cpp,v 1.12 2002/03/22 13:44:06 vap-james Exp $
+// $Id: SceneManager.cpp,v 1.13 2002/03/22 14:56:26 vap-james Exp $
 
 #include "stdafx.h"
 #include "SceneManager.h"
@@ -20,119 +20,6 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-////////////
-// Test Data
-
-const int g_iNumNodes = 9;
-const float g_pfDefaultNodes[27] = {
-   -1, 0, -1,
-   -1, 0, 0,
-   -1, 0, 1,
-   0, 0, -1,
-   0, 0, 0,
-   0, 0, 1,
-   1, 0, -1,
-   1, 0, 0,
-   1, 0, 1
-};
-
-const g_iNumFrames = 4;
-const float g_pfNodeDisplacments[g_iNumFrames][27] = {
-   {
-      0, 0, 0,
-      0, 0, 0,
-      0, 0, 0,
-      0, 0, 0,
-      0, 0, 0,
-      0, 0, 0,
-      0, 0, 0,
-      0, 0, 0,
-      0, 0, 0
-   },
-   {
-      0, 0, 0,
-      0, 0, 0,
-      0, -0.1f, 0,
-      0, 0, 0,
-      0, -0.05f, 0,
-      0, -0.2f, 0,
-      0, 0, 0,
-      0, -0.1f, 0,
-      0, -0.4f, 0
-   },
-   {
-      0, 0, 0,
-      0, 0, 0,
-      0, -0.2f, 0,
-      0, 0, 0,
-      0, -0.1f, 0,
-      0, -0.4f, 0,
-      0, 0, 0,
-      0, -0.2f, 0,      
-      0, -0.7f, 0
-   },
-   {
-      0, 0, 0,
-      0, 0, 0,
-      0, -0.5, 0,
-      0, 0, 0,
-      0, -0.25, 0,
-      0, -0.6f, 0,
-      0, -0.1f, 0,
-      0, -0.5, 0,      
-      0, -1, 0
-   }
-};
-const float g_pfNodeStresses[g_iNumFrames][9] = {
-   {0,0,0,0,0,0,0,0,0},
-   {0,10,25,0,15,25,10,25,25},
-   {0,20,50,0,25,50,25,50,50},
-   {0,50,100,0,75,100,50,100,100}
-};
-
-const float g_fStartTemp = 20.0f;
-
-const g_iNumGroups = 2;
-
-const TElementType g_ptGroupTypes[g_iNumGroups] = {
-   BEAM, SLAB
-};
-const float g_pfGroupTemps[g_iNumFrames][g_iNumGroups] = {
-   {30,30},{40,40},{60,50},{80,60}
-};
-
-const unsigned int g_iNumBeams = 6;
-const float g_fBeamHeight = 0.5446f;
-const float g_fBeamWidth = 0.2119f;
-const float g_fFlange = 0.0213f;
-const float g_fWeb = 0.0128f;
-const unsigned int g_piBeamNodes[g_iNumBeams][2] = {
-   {1, 2},
-   {2, 3},
-   {1, 4},
-   {4, 7},
-   {7, 8},
-   {8, 9}
-};
-const unsigned int g_piNodeGroups[g_iNumBeams] = {
-   1,1,1,1,1,1
-};
-
-const unsigned int g_iNumSlabs = 1;
-const float g_fSlabThickness = 0.3f;
-const unsigned int g_piSlabNodes[1][9] = {
-   {9, 6, 3, 2, 1, 4, 7, 8, 5}
-};
-const unsigned int g_piSlabGroups[g_iNumSlabs] = {
-   2
-};
-const unsigned char g_pcSlabCracks[g_iNumFrames][g_iNumSlabs][9] = {
-   {{0,0,0,0,0,0,0,0,0}},
-   {{0,0,0,3,0,0,0,0,0}},
-   {{1,1,0,3,0,0,0,1,0}},
-   {{2,2,1,3,0,0,1,2,0}}
-};
-
 ///////////
 // CSceneManager
 
@@ -141,8 +28,7 @@ typedef std::vector<CSceneManager::CGroup>::iterator grpIter;
 
 CSceneManager::CSceneManager(CCortonaUtil *poCortona) :
    m_poCortona(poCortona),
-   m_oViewpoint(poCortona),
-   m_iNumFrames(0)
+   m_oViewpoint(poCortona)
 {
 }
    
@@ -155,41 +41,54 @@ CSceneManager::~CSceneManager() {
 void CSceneManager::Load(void) {
    
    // Initialise the NodeSet
-   m_oNodeSet.SetSize(9);
-   m_oNodeSet.SetDefault(g_pfDefaultNodes);
+   m_oNodeSet.SetSize(m_oDataMgr.NumNodes());
+   m_oNodeSet.SetDefault(m_oDataMgr.NodePositions());
 
    // Create groups
-   for (int i=0; i<g_iNumGroups; i++) {
+   for (int i=0; i<m_oDataMgr.NumGroups(); i++) {
       CGroup oGroup;
-      oGroup.m_fTemperature = g_fStartTemp;
-      oGroup.m_oType = g_ptGroupTypes[i];
-      m_oGroups.push_back(oGroup);      
+      oGroup.m_fTemperature = 0;
+      oGroup.m_oType = m_oDataMgr.GroupType(i);
+      m_oGroups.push_back(oGroup);
    }
 
-   // Load frame info
-   m_iNumFrames = g_iNumFrames;
-      
    // Create some beams
-   for (i=0; i<g_iNumBeams; i++) {
+   for (i=0; i<m_oDataMgr.NumBeams(); i++) {
+      // Create beam
       CBeamElement* pBeam = new CBeamElement(m_poCortona,&m_oNodeSet);
+      // Set info
       pBeam->SetID(i);
-      pBeam->SetGroup(g_piNodeGroups[i]);
-      pBeam->SetSize(g_fBeamHeight,g_fBeamWidth,g_fFlange,g_fWeb);
-      pBeam->SetNodes(g_piBeamNodes[i]);
+      pBeam->SetGroup(m_oDataMgr.BeamGroup(pBeam->ID()));
+      // Set sizes
+      float fHeight, fWidth, fFlange, fWeb;
+      m_oDataMgr.BeamSizes(pBeam->Group(),fHeight, fWidth, fFlange, fWeb);
+      pBeam->SetSize(fHeight, fWidth, fFlange, fWeb);
+      // Set nodes
+      pBeam->SetNodes(m_oDataMgr.BeamNodes(pBeam->ID()));
+      // Set other info
       pBeam->SetColourScheme(STRESS);
       pBeam->SetStressRange(0,100);
+      // Add to list      
       m_oElements.push_back(pBeam);   
    }
 
    // Create some slabs
-   for (i=0; i<g_iNumSlabs; i++) {
+   for (i=0; i<m_oDataMgr.NumSlabs(); i++) {
+      // Create slab
       CSlabElement* pSlab = new CSlabElement(m_poCortona,&m_oNodeSet);
-      pSlab->SetID(i+g_iNumBeams);
-      pSlab->SetGroup(g_piSlabGroups[i]);
-      pSlab->SetSize(g_fSlabThickness);
-      pSlab->SetNodes(g_piSlabNodes[i]);
+      // Set info
+      pSlab->SetID(i);
+      pSlab->SetGroup(m_oDataMgr.SlabGroup(pSlab->ID()));
+      // Set sizes
+      float fThickness;
+      m_oDataMgr.SlabSizes(pSlab->Group(),fThickness);
+      pSlab->SetSize(fThickness);
+      // Set nodes
+      pSlab->SetNodes(m_oDataMgr.SlabNodes(pSlab->ID()));
+      // Set other info
       pSlab->SetColourScheme(STRESS);
       pSlab->SetStressRange(0,100);
+      // Add to list      
       m_oElements.push_back(pSlab);
    }
 
@@ -237,19 +136,21 @@ void CSceneManager::SetViewpoint(float pfPosition[3], float pfRotation[4]) {
 }
 
 void CSceneManager::ShowFrame(unsigned int iFrame) {
+   // Load frame into data manager
+   m_oDataMgr.LoadFrame(iFrame);
    // Load temperatures into groups
    for (int g=0; g<m_oGroups.size(); g++) {
-      m_oGroups[g].m_fTemperature = g_pfGroupTemps[iFrame][g];
+      m_oGroups[g].m_fTemperature = m_oDataMgr.GroupTemp(g);
    }
    // Load node displacements
-   m_oNodeSet.Displace(g_pfNodeDisplacments[iFrame]);
+   m_oNodeSet.Displace(m_oDataMgr.NodeDisplacements());
    // Load node stresses
    for (elemIter pElem = m_oElements.begin(); pElem != m_oElements.end(); pElem++) {
       if ((*pElem)->Type() == BEAM) {
          // Enter beam node stresses
          float pfStresses[2];
          for (int i=0; i<2; i++) {
-            pfStresses[i] = g_pfNodeStresses[iFrame][(*pElem)->Node(i)];
+            pfStresses[i] = m_oDataMgr.BeamStresses((*pElem)->ID())[(*pElem)->Node(i)];
          }
          (*pElem)->SetStresses(pfStresses);
       }
@@ -257,10 +158,11 @@ void CSceneManager::ShowFrame(unsigned int iFrame) {
          // Enter slab node stresses and cracks
          float pfStresses[9];
          for (int i=0; i<9; i++) {
-            pfStresses[i] = g_pfNodeStresses[iFrame][(*pElem)->Node(i)];
+            pfStresses[i] = m_oDataMgr.SlabStresses((*pElem)->ID())[(*pElem)->Node(i)];
          }
          (*pElem)->SetStresses(pfStresses);
-         static_cast<CSlabElement*>(*pElem)->SetCracks(0,g_pcSlabCracks[iFrame][0]);
+         unsigned int iLayer = 0;
+         static_cast<CSlabElement*>(*pElem)->SetCracks(iLayer,m_oDataMgr.SlabCracks((*pElem)->ID(),iLayer));
       }
    }
    // Render
