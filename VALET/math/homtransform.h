@@ -14,12 +14,12 @@
 //! author 		= "James Smith"
 //! date 		= "02/10/2001"
 //! lib 		= libVALETmath
-//! rcsid 		= "$Id: homtransform.h,v 1.1 2001/10/02 22:08:31 vap-james Exp $"
+//! rcsid 		= "$Id: homtransform.h,v 1.2 2001/10/03 10:44:42 vap-james Exp $"
 //! userlevel 	        = Normal
 //! docentry 	        = "VALET.Math.Geometry"
 
 namespace VALET {
-	class CHomTransform;
+  class CHomTransform;
 }
 
 //#===--- Includes
@@ -114,6 +114,14 @@ namespace VALET {
     //!param: iRow = the row of the desired element.
     //!param: iCol = the column of the desired element.
     //!param: return = the requested element.
+
+  private:
+
+    void ChangeCentre(const CVector3D& vecCentre);
+    //: Change the centre of rotation
+    // This can only be used on pure rotation matrices.
+    // It is used by the rotation about arbitrary centre constructors.
+    //!param: vecCentre = centre of rotation.
     
   };
 
