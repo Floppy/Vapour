@@ -5,7 +5,7 @@
 # script to check out the source modules and build docs for each supported arch
 
 # 13/09/2001 - Warren Moore
-# $Id: create_docs.pl,v 1.10 2001/09/16 23:52:33 vap-warren Exp $
+# $Id: create_docs.pl,v 1.11 2001/09/17 00:03:03 vap-warren Exp $
 # Copyright 2000-2001 Vapour Technology Ltd.
 
 # bring in the environment vars
@@ -110,7 +110,10 @@ foreach my $mod_name (@modules) {
 	
 	#=== run vmake to generate noarch source tree
 	# using pseudo-VMake make targets
-	`cd $mod_fullname && make vmake_noarch && cd ../..`;
+	if (not -r "$mod_fullname/Makefile") {
+		error("Unable to find pseudo-VMake file for '$mod_fullname'");
+	}
+	print `cd $mod_fullname && make vmake_noarch && cd ../..`;
 	
 	# pull all the eht's in the dir
 	my $find_results = `find . -name '$mod_fullname/*.eht'`;
@@ -143,8 +146,11 @@ foreach my $arch_name (@arch) {
 		
 		#=== run vmake to generate the relevant source tree
 		# using pseudo-VMake make targets
+		if (not -r "$mod_fullname/Makefile") {
+			error("Unable to find pseudo-VMake file for '$mod_fullname'");
+		}
 		my $make_target = "vmake_$arch_name";
-		`cd $mod_fullname && make $make_target && cd ../..`;
+		print `cd $mod_fullname && make $make_target && cd ../..`;
 		
 	}
 
