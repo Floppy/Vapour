@@ -14,7 +14,7 @@
 //! author 		= "Warren Moore"
 //! date 		= "23/09/2001"
 //! lib 			= libVALETcore
-//! rcsid 		= "$Id: logmanager.h,v 1.6 2001/10/17 22:00:55 vap-warren Exp $"
+//! rcsid 		= "$Id: logmanager.h,v 1.7 2001/10/21 14:38:33 vap-warren Exp $"
 //! userlevel 	= Develop
 //! docentry 	= "VALET.Core.Log"
 //! example 	= VALET/core/log.test.cpp
@@ -27,14 +27,27 @@ namespace NValet {
 	//#===--- Predeclared Classes
 	class CLogHandle;
 
+   //#===--- Log level enum
+   // LL_ALL         = Complete verbose logging
+   // LL_FUNCTION    = Logging of function calls and below
+   // LL_OBJECT      = Logging of object creation/destruction and below
+   // LL_BLOCK       = Logging of block level operations and below
+   //	LL_ERROR       = Logging of errors only
+   // LL_CRITICAL    = Logging of fatal errors only
+   enum LOG_LEVEL {
+      LL_ALL = 0,
+      LL_FUNCTION = 1,
+      LL_OBJECT = 2,
+      LL_BLOCK = 3,
+      LL_ERROR = 4,
+      LL_CRITICAL = 5
+   };
+   
 	//#===--- CLogManager
 	//: Central manager for log output
 	// Object that controls the output of CLog objects
 	// Should only be one global log manager per application
 	//!classtodo: Move arrays to dynamically allocated list? (perf. worries)
-
-	#define LMGR_MAX 10
-	/* Maximum number of available log streams*/
 
 	class CLogManager {
 	public:
@@ -48,7 +61,7 @@ namespace NValet {
 		//:------
 		//: Log management
 		
-		void SetLog(const char *pcType, bool bLog, int iLevel = -1);
+		void SetLog(const char *pcType, bool bLog, int iLevel = LL_ALL);
 		// Set whether a log is active, and to what level
 		//!param: pcType = Type under which to be logged
 		//!param: bLog = Whether log is active or not
@@ -64,9 +77,10 @@ namespace NValet {
 		// Queries whether a log is active, returns -1 if not, otherwise returns log ID
 		//!param: pcType = Log type to test
 
-		void Trace(int iID, const char *pcMessage, int iLevel = 0);
+		void Trace(int iID, const char *pcFunction, const char *pcMessage, int iLevel);
 		// Outputs to the log
 		//!param: iID = Log type ID
+		//!param: pcFunction = Function name
 		//!param: pcMessage = Log message
 		//!param: iLevel = Level of log message
 
@@ -86,12 +100,14 @@ namespace NValet {
 
 		void Close(int iID);
 		// Close the log - I/O dependent
-
-		bool m_bActive;								// Global debug indicator
-		char *m_ppcType[LMGR_MAX];					// Array of log type strings
-		bool m_pbActive[LMGR_MAX];					// Array of log type indicators
-		int m_piLevel[LMGR_MAX];					// Array of log levels
-		CLogHandle *m_poHandle[LMGR_MAX];		// Array of log handles
+      
+      const static unsigned int m_uiMaxLogs = 10;     // Maximum number of logs available
+      
+		bool m_bActive;      								   // Global debug indicator
+		char *m_ppcType[m_uiMaxLogs];      					// Array of log type strings
+		bool m_pbActive[m_uiMaxLogs];		      			// Array of log type indicators
+		int m_piLevel[m_uiMaxLogs];				      	// Array of log levels
+		CLogHandle *m_poHandle[m_uiMaxLogs];		      // Array of log handles
 		
 	};
 

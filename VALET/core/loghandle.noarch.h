@@ -14,7 +14,7 @@
 //! author 		= "Warren Moore"
 //! date 		= "23/09/2001"
 //! lib 			= libVALETcore
-//! rcsid 		= "$Id: loghandle.noarch.h,v 1.5 2001/10/17 22:00:55 vap-warren Exp $"
+//! rcsid 		= "$Id: loghandle.noarch.h,v 1.6 2001/10/21 14:38:33 vap-warren Exp $"
 //! userlevel 	= Develop
 //! docentry 	= "VALET.Core.Log"
 //! example 	= VALET/core/log.test.cpp
@@ -41,9 +41,10 @@ namespace NValet {
 		~CLogHandle();
 		// Destructor
 
-		void Trace(int iLevel, const char *pcMessage);
+		void Trace(int iLevel, const char *pcFunction, const char *pcMessage);
 		// Log output
 		//!param: iLevel = Level of log message
+		//!param: pcFunction = Function name
 		//!param: pcMessage = Log message string
 
 	protected:

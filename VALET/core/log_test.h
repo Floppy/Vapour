@@ -10,12 +10,11 @@
 #define _VALET_CORE_LOG_TEST_
 
 ////////////////
-//! file 		= "VALET/core/log.test.h"
+//! file 		= "VALET/core/log_test.h"
 //! author 		= "Warren Moore"
 //! date 		= "15/10/2001"
-//! rcsid 		= "$Id: log_test.h,v 1.3 2001/10/17 22:00:54 vap-warren Exp $"
+//! rcsid 		= "$Id: log_test.h,v 1.4 2001/10/21 14:38:33 vap-warren Exp $"
 //! userlevel 	= Develop
-//! docentry 	= "VALET.Core.Log"
 
 //#===--- Includes
 #include "VALET/valet.h"

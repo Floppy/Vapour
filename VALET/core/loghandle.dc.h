@@ -14,7 +14,7 @@
 //! author 		= "Warren Moore"
 //! date 		= "26/09/2001"
 //! lib 			= libVALETcore
-//! rcsid 		= "$Id: loghandle.dc.h,v 1.6 2001/10/17 22:00:55 vap-warren Exp $"
+//! rcsid 		= "$Id: loghandle.dc.h,v 1.7 2001/10/21 14:38:33 vap-warren Exp $"
 //! userlevel 	= Develop
 //! docentry 	= "VALET.Core.Log"
 //! example 	= VALET/core/log.test.cpp
@@ -27,7 +27,7 @@ namespace NValet {
 	//#===--- CLogHandle
 	//: Debug log handle for files
 	// This is the serial implementation of the log handle object
-	// using the DC serial cable
+	// using the DC serial cable and dc-tool
 
 	class CLogHandle {
 	public:
@@ -39,14 +39,15 @@ namespace NValet {
 		~CLogHandle();
 		// Destructor
 
-		void Trace(int iLevel, const char *pcMessage);
+		void Trace(int iLevel, const char *pcFunction, const char *pcMessage);
 		// Log output
 		//!param: iLevel = Level of log message
+		//!param: pcFunction = Function name
 		//!param: pcMessage = Log message string
 
 	protected:
 
-		char m_pcType[STR_LENGTH];		// Name of log type
+		char m_pcType[m_uiStrLength];		// Name of log type
 		
 	};
 

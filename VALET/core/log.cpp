@@ -11,7 +11,7 @@
 //! author		= "Warren Moore"
 //! date			= "23/09/2001"
 //! lib 			= libVALETcore
-//! rcsid		= "$Id: log.cpp,v 1.3 2001/10/17 22:00:54 vap-warren Exp $"
+//! rcsid		= "$Id: log.cpp,v 1.4 2001/10/21 14:38:32 vap-warren Exp $"
 
 //#===--- Includes
 #include "log.h"
@@ -20,8 +20,10 @@ namespace NValet {
 	
    //#===--- CLog
 
-	CLog::CLog(const char* pcType, const char* pcFunction) :
-		m_iID(-1) {
+	CLog::CLog(const char* pcType, const char* pcFunction, int iLevel) :
+		m_iID(-1),
+      m_iLevel(iLevel)
+   {
 		ASSERT(pcType);
 		ASSERT(pcFunction);
 		// Skip straight out if not logging
@@ -42,10 +44,7 @@ namespace NValet {
 			m_iID = -1;
 		}
 		// Trace the function name
-		char pcMessage[STR_LENGTH] = "";
-		strcpy(pcMessage, "Entering function ");
-		strcat(pcMessage, m_pcFunction);
-		g_oLogManager.Trace(m_iID, pcMessage);
+		g_oLogManager.Trace(m_iID, m_pcFunction, "Entering", m_iLevel);
 	} // CLog::CLog
 
 	CLog::~CLog() {
@@ -53,10 +52,7 @@ namespace NValet {
 		if (m_iID < 0)
 			return;
 		// Trace leaving the function
-		char pcMessage[STR_LENGTH] = "";
-		strcpy(pcMessage, "Leaving function ");
-		strcat(pcMessage, m_pcFunction);
-		g_oLogManager.Trace(m_iID, pcMessage);
+		g_oLogManager.Trace(m_iID, m_pcFunction, "Leaving", m_iLevel);
 		// Delete allocated strings
 		if (m_pcFunction)
 			delete [] m_pcFunction;

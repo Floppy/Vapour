@@ -14,7 +14,7 @@
 //! author 		= "Warren Moore"
 //! date 		= "23/09/2001"
 //! lib 			= libVALETcore
-//! rcsid 		= "$Id: log_inline.cpp,v 1.2 2001/10/09 20:44:30 vap-james Exp $"
+//! rcsid 		= "$Id: log_inline.cpp,v 1.3 2001/10/21 14:38:32 vap-warren Exp $"
 
 //#===--- CLog Inline Functions
 
@@ -24,7 +24,7 @@ namespace NValet {
 		ASSERT(pcMessage);
 		// If we have an id, trace the message
 		if (m_iID >= 0)
-			g_oLogManager.Trace(m_iID, pcMessage, iLevel);
+			g_oLogManager.Trace(m_iID, m_pcFunction, pcMessage, iLevel);
 	} // CLog::Trace
 
 }

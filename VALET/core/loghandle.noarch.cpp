@@ -11,7 +11,7 @@
 //! author 		= "Warren Moore"
 //! date 		= "23/09/2001"
 //! lib 			= libVALETcore
-//! rcsid 		= "$Id: loghandle.noarch.cpp,v 1.2 2001/10/09 20:44:30 vap-james Exp $"
+//! rcsid 		= "$Id: loghandle.noarch.cpp,v 1.3 2001/10/21 14:38:33 vap-warren Exp $"
 
 //#===--- Includes
 #include "loghandle.h"
@@ -27,7 +27,7 @@ namespace NValet {
 		m_poLogFile(NULL) {
 		ASSERT(pcType);
 		// Create the log filename
-		char pcName[STR_LENGTH] = "";
+		char pcName[m_uiStrLength] = "";
 		strcpy(pcName, pcType);
 		strcat(pcName, ".log");
 		// Create the log file
@@ -46,12 +46,12 @@ namespace NValet {
 		}
 	} // CLogHandle::~CLogHandle
 
-	void CLogHandle::Trace(int iLevel, const char *pcMessage) {
+	void CLogHandle::Trace(int iLevel, const char *pcFunction, const char *pcMessage) {
 		ASSERT(iLevel >= 0);
 		ASSERT(pcMessage);
 		if (!m_poLogFile)
 			return;
-		*m_poLogFile << iLevel << " : " << pcMessage << endl;
+		*m_poLogFile << iLevel << " : " << pcFunction << " - " << pcMessage << endl;
 	} // CLogHandle::Trace
 	
 }

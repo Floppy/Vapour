@@ -14,7 +14,7 @@
 //! author 		= "Warren Moore"
 //! date 		= "23/09/2001"
 //! lib 			= libVALETcore
-//! rcsid 		= "$Id: log.h,v 1.5 2001/10/17 22:00:54 vap-warren Exp $"
+//! rcsid 		= "$Id: log.h,v 1.6 2001/10/21 14:38:32 vap-warren Exp $"
 //! userlevel 	= Normal
 //! docentry 	= "VALET.Core.Log"
 //! example 	= VALET/core/log.test.cpp
@@ -29,7 +29,7 @@ namespace NValet {
 	
 	//#===--- Externally linked objects
 	extern CLogManager g_oLogManager;
-	
+
 	//#===--- CLog
 	//: Debug trace logging object
 	//	An object created inside functions used for effective logging
@@ -38,7 +38,7 @@ namespace NValet {
 	class CLog {
 	public:
 
-		CLog(const char *pcType, const char *pcFunction);
+		CLog(const char *pcType, const char *pcFunction, int iLevel = LL_FUNCTION);
 		//: Constructor
 		// Registers the trace object with the specified type
 		// and stores the function name
@@ -48,7 +48,7 @@ namespace NValet {
 		~CLog();
 		// Destructor
 
-		void Trace(const char *pcMessage, int iLevel = 0);
+		void Trace(const char *pcMessage, int iLevel = LL_FUNCTION);
 		//: Trace Function
 		// Routes trace messages through to the log manager
 		//!param: pcMessage = Log message
@@ -57,6 +57,7 @@ namespace NValet {
 	protected:
 
 		int m_iID;					// Log type ID
+      const int m_iLevel;     // Initial calling level
 		char *m_pcFunction;		// Function name
 		
 	};

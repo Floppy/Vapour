@@ -11,7 +11,7 @@
 //! author		= "Warren Moore"
 //! date			= "23/09/2001"
 //! lib 			= libVALETcore
-//! rcsid		= "$Id: logmanager.cpp,v 1.3 2001/10/17 00:22:47 vap-warren Exp $"
+//! rcsid		= "$Id: logmanager.cpp,v 1.4 2001/10/21 14:38:33 vap-warren Exp $"
 
 //#===--- Includes
 #include "logmanager.h"
@@ -27,21 +27,21 @@ namespace NValet {
 	CLogManager::CLogManager(bool bLog) :
 		m_bActive(bLog) {
 		// Clear all the debug links
-		register int i = LMGR_MAX;
-		while (i--) {
-			m_ppcType[i] = NULL;
-			m_pbActive[i] = false;
-			m_piLevel[i] = 0;
-			m_poHandle[i] = NULL;
+		register unsigned int ui = m_uiMaxLogs;
+		while (ui--) {
+			m_ppcType[ui] = NULL;
+			m_pbActive[ui] = false;
+			m_piLevel[ui] = 0;
+			m_poHandle[ui] = NULL;
 		}
 	} // CLogManager::CLogManager
 
 	CLogManager::~CLogManager() {
 		// Clear all the allocated type strings
-		register int i = LMGR_MAX;
-		while (i--) {
-			if (m_ppcType[i]) {
-				Close(i);
+		register unsigned int ui = m_uiMaxLogs;
+		while (ui--) {
+			if (m_ppcType[ui]) {
+				Close(ui);
 			}
 		}
 	} // CLogManager::~CLogManager
@@ -65,7 +65,7 @@ namespace NValet {
 	int CLogManager::CheckType(const char *pcType) {
 		ASSERT(pcType);
 		// Loop through each entry
-		register int i = LMGR_MAX;
+		register int i = m_uiMaxLogs;
 		int iFound = -1, iFree = -1;
 		while (i--) {
 			// Check if we have an entry
@@ -104,7 +104,7 @@ namespace NValet {
 
 	int CLogManager::Open(const char *pcType, int iID) {
 		ASSERT(pcType);
-		ASSERT((iID >= 0) && (iID < LMGR_MAX));
+		ASSERT((iID >= 0) && (iID < m_uiMaxLogs));
 		ASSERT(m_ppcType[iID] == NULL);
 		// Create the handle object
 		m_poHandle[iID] = (CLogHandle*) new CLogHandle(pcType);
@@ -128,7 +128,7 @@ namespace NValet {
 	} // CLogManager::Open
 
 	void CLogManager::Close(int iID) {
-		ASSERT((iID >= 0) && (iID < LMGR_MAX));
+		ASSERT((iID >= 0) && (iID < m_uiMaxLogs));
 		ASSERT(m_ppcType[iID] != NULL);
 		ASSERT(m_poHandle[iID] != NULL);
 		// Delete the allocate memory
@@ -139,10 +139,11 @@ namespace NValet {
 		m_poHandle[iID] = NULL;
 	} // CLogManager::Close
 
-	void CLogManager::Trace(int iID, const char *pcMessage, int iLevel) {
-		ASSERT((iID >= 0) && (iID < LMGR_MAX));
+	void CLogManager::Trace(int iID, const char *pcFunction, const char *pcMessage, int iLevel) {
+		ASSERT((iID >= 0) && (iID < m_uiMaxLogs));
 		ASSERT(m_ppcType[iID]);
 		ASSERT(m_poHandle[iID]);
+		ASSERT(pcFunction);
 		ASSERT(pcMessage);
 		// Make sure logging is on
 		if (!m_bActive)
@@ -150,7 +151,7 @@ namespace NValet {
 		if (!m_pbActive[iID])
 			return;
 		if (iLevel >= m_piLevel[iID]) {
-			m_poHandle[iID]->Trace(iLevel, pcMessage);
+			m_poHandle[iID]->Trace(iLevel, pcFunction, pcMessage);
 		}
 	} // CLogManager::Trace
 

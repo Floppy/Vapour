@@ -10,7 +10,7 @@
 //! file 		= "VALET/core/log.test.cpp"
 //! author 		= "Warren Moore"
 //! date 		= "23/09/2001"
-//! rcsid 		= "$Id: log.test.cpp,v 1.3 2001/10/17 00:22:47 vap-warren Exp $"
+//! rcsid 		= "$Id: log.test.cpp,v 1.4 2001/10/21 14:38:32 vap-warren Exp $"
 
 //#===--- Includes
 #include "log_test.h"
@@ -24,10 +24,6 @@ using namespace NValet;
 	
 //#===--- Defines
 #define LOOP_MAX 5
-
-//#===--- Globals
-// Instance of the global log manager (located in namespace NValet)
-NValet::CLogManager NValet::g_oLogManager(true);
 
 //#===--- Test Functions
 
