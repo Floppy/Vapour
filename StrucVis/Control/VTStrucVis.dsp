@@ -69,6 +69,11 @@ SOURCE="$(InputPath)"
 	echo regsvr32 exec. time > "$(OutDir)\regsvr32.trg" 
 	
 # End Custom Build
+# Begin Special Build Tool
+SOURCE="$(InputPath)"
+PostBuild_Desc=Copying control to HTML directory
+PostBuild_Cmds=copy Release\VTStrucVis.ocx HTML
+# End Special Build Tool
 
 !ELSEIF  "$(CFG)" == "VTStrucVis - Win32 Debug"
 
@@ -107,6 +112,11 @@ SOURCE="$(InputPath)"
 	echo regsvr32 exec. time > "$(OutDir)\regsvr32.trg" 
 	
 # End Custom Build
+# Begin Special Build Tool
+SOURCE="$(InputPath)"
+PostBuild_Desc=Copying control to HTML directory
+PostBuild_Cmds=copy Debug\VTStrucVis.ocx HTML
+# End Special Build Tool
 
 !ELSEIF  "$(CFG)" == "VTStrucVis - Win32 Unicode Debug"
 

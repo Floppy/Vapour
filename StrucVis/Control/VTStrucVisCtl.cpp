@@ -7,7 +7,7 @@
 // VTStructVisCtl.cpp
 // 05/03/2002 - Warren Moore
 //
-// $Id: VTStrucVisCtl.cpp,v 1.10 2002/03/24 16:43:26 vap-warren Exp $
+// $Id: VTStrucVisCtl.cpp,v 1.11 2002/03/24 18:51:31 vap-warren Exp $
 
 #include "stdafx.h"
 #include "VTStrucVis.h"
@@ -300,7 +300,6 @@ CVTStrucVisCtl::~CVTStrucVisCtl() {
 // Member Functions
 
 bool CVTStrucVisCtl::InitCortona() {
-   TRACE("CVTStrucVisCtl::InitCortona\n");
    // Initialise Cortona
    if (!m_oCortona.Attached()) {
       m_eCortonaResult = CR_UNKNOWN;
@@ -323,8 +322,6 @@ bool CVTStrucVisCtl::InitCortona() {
 }
 
 void CVTStrucVisCtl::ExitCortona() {
-   TRACE("CVTStrucVisCtl::ExitCortona\n");
-
    // Release Cortona
    m_eCortonaResult = CR_UNKNOWN;
    if (m_oCortona.Attached())
@@ -542,10 +539,84 @@ void CVTStrucVisCtl::DrawUI(CDC *pDC, const CRect &rcBounds) {
    // Render the UI
 }
 
+bool CVTStrucVisCtl::LoadBitmap() {
+   // Check the data object
+   if (m_oUIData.GetPath() == "") {
+      m_eUIResult = UI_NOTSET;
+      return false;
+   }
+   if ((m_uiAsyncFlags & AD_UILOADED) == 0) {
+      m_eUIResult = UI_NOTLOADED;
+      return false;
+   }
+   // Try loading the object
+   m_eUIResult = UI_UNKNOWN;
+   // Check the bitmap file header
+	BITMAPFILEHEADER bmfh;
+   unsigned int uiRead = m_oUIData.Read((void*)&bmfh, sizeof(bmfh));
+   // File error checking
+   if (uiRead != sizeof(bmfh)) {
+      m_eUIResult = UI_DATAERROR;
+      return false;
+   }
+   // Check bitmap type
+   if (bmfh.bfType != 0x4d42) { // 'BM'
+		m_eUIResult = UI_INCORRECTFORMAT;
+      return false;
+   }
+   if ((bmfh.bfReserved1 != 0) || (bmfh.bfReserved2 != 0)) {
+		m_eUIResult = UI_INCORRECTFORMAT;
+      return false;
+   }
+
+   // Check the bitmap info header
+	BITMAPINFOHEADER bmih;
+	uiRead = m_oUIData.Read((void*)&bmih, sizeof(bmih));
+   // File error checking
+   if (uiRead != sizeof(bmih)) {
+		m_eUIResult = UI_DATAERROR;
+      return false;
+   }
+   // Get resolution & orientation
+	unsigned int uiWidth = bmih.biWidth;
+	unsigned int uiHeight = abs(bmih.biHeight);
+	bool bTopDown = (bmih.biHeight < 0);
+
+   // Check the colour depth = 1 bit planes, 24 bpp
+   if ((bmih.biPlanes != 1) || (bmih.biBitCount != 24)) {
+      m_eUIResult = UI_WRONGDEPTH;
+      return false;
+   }
+   // No compression
+   if (bmih.biCompression != BI_RGB) {
+      m_eUIResult = UI_WRONGTYPE;
+      return false;
+   }
+   // No colour table, must be a packed bitmap
+   if ((bmih.biClrUsed != 0) || (bmih.biClrImportant != 0)) {
+      m_eUIResult = UI_WRONGFORMAT;
+      return false;
+   }
+
+   // Set the read pointer to the beginning of the data
+	uiRead = m_oUIData.Seek(bmfh.bfOffBits, CFile::begin);
+   // File error checking
+   if (uiRead != bmfh.bfOffBits) {
+      m_eUIResult = UI_DATAERROR;
+      return false;
+   }
+   // All OK
+   m_eUIResult = UI_OK;
+
+	return true;
+}
+
 void CVTStrucVisCtl::UILoading() {
    // Set the async data flags
    m_uiAsyncFlags &= AD_UIMASK;
    m_uiAsyncFlags |= AD_UILOADING;
+   // Set the UI status unknown
+   m_eUIResult = UI_UNKNOWN;
    // Refresh the control
    InvalidateControl();
 }
@@ -554,6 +625,8 @@ void CVTStrucVisCtl::UILoaded() {
    // Set the async data flags
    m_uiAsyncFlags &= AD_UIMASK;
    m_uiAsyncFlags |= AD_UILOADED;
+   // Try to get the bitmap
+   LoadBitmap();
    // Refresh the control
    InvalidateControl();
 }
@@ -593,7 +666,7 @@ void CVTStrucVisCtl::OnDraw(CDC* pdc, const CRect& rcBounds, const CRect& rcInva
    bool bRun = AmbientUserMode() && !AmbientUIDead();
    // If we're in run mode, the UI is loaded and the ready state is marked interactive
    // render the full-on interface
-   if (bRun && (m_uiAsyncFlags & AD_UILOADED) && (GetReadyState() == READYSTATE_INTERACTIVE)) {
+   if (bRun && (m_eUIResult == UI_OK) && (GetReadyState() == READYSTATE_INTERACTIVE)) {
       // Draw the full-on interface
       DrawUI(pdc, rcBounds);
    }
@@ -646,6 +719,7 @@ void CVTStrucVisCtl::OnResetState() {
    InternalSetReadyState(READYSTATE_LOADED);
 
    // Reset the data result
+   m_uiAsyncFlags = AD_EMPTY;
    m_eUIResult = UI_UNKNOWN;
    m_eSimResult = SD_UNKNOWN;
 }

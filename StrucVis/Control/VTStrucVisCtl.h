@@ -7,7 +7,7 @@
 // VTStructVisCtl.cpp
 // 05/03/2002 - Warren Moore
 //
-// $Id: VTStrucVisCtl.h,v 1.9 2002/03/24 13:37:08 vap-warren Exp $
+// $Id: VTStrucVisCtl.h,v 1.10 2002/03/24 18:51:31 vap-warren Exp $
 
 #ifndef __VTSTRUCTVIS_CONTROL__
 #define __VTSTRUCTVIS_CONTROL__
@@ -53,6 +53,8 @@ public:
 //#===--- Member Functions
 public:
 
+   //--- Asynchronous data-driven functions
+
    void UILoading();
    // Called by CUIDataPath to indicate that the data is loading
 
@@ -71,6 +73,8 @@ public:
 
 protected:
 
+   //--- Cortona Functions
+
    bool InitCortona();
    // Starts the Cortona control, resetting the control if already initialised
 
@@ -80,12 +84,20 @@ protected:
    bool GetCortona();
    // Searches for a Cortona control within the current container
 
+   //--- Rendering Functions
+
    void DrawPlaceholder(CDC *pDC, const CRect &rcBounds, bool bRun);
    // Draws the control placeholder
    // bRun indicates that the control is in run mode, not dev mode
 
    void DrawUI(CDC *pDC, const CRect &rcBounds);
    // Render the VCR-style interface
+
+   //--- UI Functions
+
+   bool LoadBitmap();
+   // Tries to load the bitmap from the UIDataPath object, and sets
+   // m_eUIResult accordingly - returns true if successful
 
 //#===--- Private Data Types
 protected:
@@ -102,6 +114,13 @@ protected:
    // UI data error states
    typedef enum TEUIResult {
       UI_UNKNOWN = 0,               // Unknown
+      UI_NOTSET,                    // No UI data path is set
+      UI_NOTLOADED,                 // The UI data has not finished loading
+      UI_DATAERROR,                 // Error loading the UI data
+      UI_INCORRECTFORMAT,           // UI data is not a bitmap
+      UI_WRONGDEPTH,                // The bitmap is of an incompatible colour depth
+      UI_WRONGTYPE,                 // The bitmap is of an incompatible compression type
+      UI_WRONGFORMAT,               // Bitmap must be packed and not have a colour table
       UI_OK,                        // UI loaded OK
    } EUIResult;
 
@@ -124,6 +143,7 @@ protected:
    CCortonaControl m_oCortona;               // Cortona control manager
    CUIDataPath m_oUIData;                    // Asynchronous UI data file
    CSimDataPath m_oSimData;                  // Asynchronous simulation data file
+   CBitmap m_oUIBitmap;                      // UI bitmap object
 
 //#===--- Windows Mappings
 
