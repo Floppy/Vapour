@@ -11,7 +11,7 @@
 //! author 		= "Warren Moore"
 //! date 		= "20/10/2001"
 //! lib 			= libVALETarch
-//! rcsid 		= "$Id: global.cpp,v 1.1 2001/10/21 14:28:50 vap-warren Exp $"
+//! rcsid 		= "$Id: global.cpp,v 1.2 2001/10/24 14:19:43 vap-warren Exp $"
 
 //#===--- Includes
 #include "VALET/valet.h"
@@ -25,7 +25,7 @@ namespace NValet {
 #ifdef VDEBUG
 #define VALET_LOGGING_ACTIVE true
 #else
-#define VALET_LOGGING_ACTIVE
+#define VALET_LOGGING_ACTIVE false
 #endif
    CLogManager g_oLogManager(VALET_LOGGING_ACTIVE);
 
