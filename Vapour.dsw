@@ -1,0 +1,275 @@
+Microsoft Developer Studio Workspace File, Format Version 6.00
+# WARNING: DO NOT EDIT OR DELETE THIS WORKSPACE FILE!
+
+###############################################################################
+
+Project: "Dizzy"=.\Dizzy\Dizzy.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+    Begin Project Dependency
+    Project_Dep_Name VAL
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name VALWin32
+    End Project Dependency
+}}}
+
+###############################################################################
+
+Project: "InterVAL"=.\InterVAL\InterVAL.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+    Begin Project Dependency
+    Project_Dep_Name VAL
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name VALWin32
+    End Project Dependency
+}}}
+
+###############################################################################
+
+Project: "Peek"=.\Peek\Peek.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+    Begin Project Dependency
+    Project_Dep_Name VAL
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name VALWin32
+    End Project Dependency
+}}}
+
+###############################################################################
+
+Project: "SFXSet"=.\SFXSet\SFXSet.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+    Begin Project Dependency
+    Project_Dep_Name VAL
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name VALWin32
+    End Project Dependency
+}}}
+
+###############################################################################
+
+Project: "SGAToHL"=.\SGAToHL\SGAToHL.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+    Begin Project Dependency
+    Project_Dep_Name VAL
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name VALWin32
+    End Project Dependency
+}}}
+
+###############################################################################
+
+Project: "SGAToUT"=.\SGAToUT\SGAToUT.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+    Begin Project Dependency
+    Project_Dep_Name VAL
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name VALWin32
+    End Project Dependency
+}}}
+
+###############################################################################
+
+Project: "Saver"=.\Saver\Saver.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+    Begin Project Dependency
+    Project_Dep_Name VAL
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name VALWin32
+    End Project Dependency
+}}}
+
+###############################################################################
+
+Project: "SpinDoctor"=.\SpinDoctor\SpinDoctor.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+    Begin Project Dependency
+    Project_Dep_Name VAL
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name VALWin32
+    End Project Dependency
+}}}
+
+###############################################################################
+
+Project: "Twister"=.\Twister\Twister.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+    Begin Project Dependency
+    Project_Dep_Name VAL
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name VALWin32
+    End Project Dependency
+}}}
+
+###############################################################################
+
+Project: "UnrealTool"=.\UnrealTool\UnrealTool.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+    Begin Project Dependency
+    Project_Dep_Name VAL
+    End Project Dependency
+}}}
+
+###############################################################################
+
+Project: "VAL"=.\VAL\VAL.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
+Project: "VALWin32"=.\Valwin32\VALWin32.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+    Begin Project Dependency
+    Project_Dep_Name VAL
+    End Project Dependency
+}}}
+
+###############################################################################
+
+Project: "WJESFX"=.\WJESFX\WJESFX.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+    Begin Project Dependency
+    Project_Dep_Name VAL
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name VALWin32
+    End Project Dependency
+}}}
+
+###############################################################################
+
+Project: "Wedgie"=.\Wedgie\Wedgie.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+    Begin Project Dependency
+    Project_Dep_Name VAL
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name VALWin32
+    End Project Dependency
+}}}
+
+###############################################################################
+
+Project: "sgatosim"=.\SGAToSim\SGAToSim.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+    Begin Project Dependency
+    Project_Dep_Name VAL
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name VALWin32
+    End Project Dependency
+}}}
+
+###############################################################################
+
+Global:
+
+Package=<5>
+{{{
+}}}
+
+Package=<3>
+{{{
+}}}
+
+###############################################################################
+
