@@ -1,0 +1,51 @@
+#========---
+#=- VALET Documentation Generation
+#=====---
+Vapour Technology All-Purpose Library
+Copyright 2001 Vapour Technology Ltd.
+
+Add confidentiality notice
+
+26/09/2001 - Warren Moore
+
+#===--- Intro
+
+This details how to build a local install of the source documentation. Scripts
+check out all the required modules from cvs and build docs for all
+architectures.
+
+#===--- Requirements
+
+To run:-
+CxxDoc from Ravl/SourceTools
+  available from http://ravl.sourceforge.net, but only CxxDoc binary required
+cvs client apps
+  available all over the shop
+VALET/VMake
+  download from Vapour cvs, built and in local bin path
+  
+To view:-
+Apache server running PHP
+  http://www.apache.org
+  http://www.php.org
+vsrcdoc_core.php
+  from vapourtech.net - used for arch link generation
+  
+#===--- Customizing
+
+Copy build_local_docs.sh to a temp directory into which the source can be
+checked out (build procedure will leave dir as found). Edit VALET_DOCROOT and
+VALET_CVSOPTIONS to suit.
+
+Hmmmm, currently Vapour/CxxDoc/class/global.stmpl set the internal doc path to 
+/internal/docs and the filesystem path to /www/vapourtech/www/internal/docs. 
+If you can get your local Apache set-up to match this location (through cunning
+use of symlinks) then you're laughing. Otherwise I'll have to look into a better
+method (such as moving it into vsrcdoc_core.php).
+
+#===--- Building
+
+Now this is all done, just run ./build_local_docs.sh in your temp directory and
+the whole thing should be built!
+
+$Id: README,v 1.1 2001/09/26 10:29:40 vap-warren Exp $

@@ -5,7 +5,7 @@
 # script to check out the source modules and build docs for each supported arch
 
 # 13/09/2001 - Warren Moore
-# $Id: create_docs.pl,v 1.17 2001/09/26 01:48:25 vap-warren Exp $
+# $Id: create_docs.pl,v 1.18 2001/09/26 10:29:40 vap-warren Exp $
 # Copyright 2000-2001 Vapour Technology Ltd.
 
 # bring in the environment vars
@@ -27,7 +27,7 @@ sub error {
 #=== main start
 # check we have the variables
 if (not $VALET_DOCROOT) {
-	error("No doc root specified");
+	error("No doc root specified\nDO NOT RUN DIRECTLY - Edit and run build_local_docs.sh");
 }
 if (not $VALET_CVSOPTIONS) {
 	error("No cvs options specified");
