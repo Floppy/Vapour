@@ -7,7 +7,7 @@
 // AvatarFileOBJ.cpp - 04/10/2000 - James Smith
 //	Wavefront OBJ export filter implementation
 //
-// $Id: AvatarFileOBJ.cpp,v 1.0 2000/10/04 16:27:08 waz Exp $
+// $Id: AvatarFileOBJ.cpp,v 1.1 2000/11/21 16:42:38 waz Exp $
 //
 
 #include "stdafx.h"
@@ -96,7 +96,7 @@ FRESULT CAvatarFileOBJ::Save(const char* pszFilename, CAvatar* pAvatar) const {
    free(pszLocalFilename);
    int iBaseNameLength = strlen(m_pszBasename);
    // Setup the export progress dialog
-   g_poVAL->SetProgressMax("OBJSave",3 + pAvatar->NumTextures());
+   g_poVAL->SetProgressMax("OBJSave",3 + pAvatar->NumMaterials());
    g_poVAL->StepProgress("OBJSave");
    // Save OBJ to stream
    g_poVAL->SetProgressText("OBJSave","Saving OBJ file");
@@ -134,10 +134,10 @@ FRESULT CAvatarFileOBJ::Save(const char* pszFilename, CAvatar* pAvatar) const {
 	   osOutputStream << "\n# " << pAvatar->NumFaces() << " elements\n";
       osOutputStream << "g " << m_pszBasename << '\n';
       osOutputStream << "s 1\n";
-      for (int t=0; t<pAvatar->NumTextures(); t++) {   
+      for (int t=0; t<pAvatar->NumMaterials(); t++) {   
 	      osOutputStream << "usemtl " << m_pszBasename << '_' << (char)(t+'a') << '\n';
 	      for (f=0; f<pAvatar->NumFaces(); f++) {
-            if (pFaces[f].m_iTextureNumber == t) {
+            if (pFaces[f].m_iMaterialNumber == t) {
 		         osOutputStream << "f ";
 		         osOutputStream << pFaces[f].m_sVertices[0].m_iVertex+1 << '/' << (f*3)+1 << '/' << pFaces[f].m_sVertices[0].m_iVertex+1 << ' ';
 		         osOutputStream << pFaces[f].m_sVertices[1].m_iVertex+1 << '/' << (f*3)+2 << '/' << pFaces[f].m_sVertices[1].m_iVertex+1 << ' ';
@@ -150,7 +150,7 @@ FRESULT CAvatarFileOBJ::Save(const char* pszFilename, CAvatar* pAvatar) const {
 	osOutputStream.close();
    // Save images
    CImageFile* pImageFile = g_oImageFileStore.CreateByExtension("jpg");
-   for (int t=0; t<pAvatar->NumTextures(); t++) {
+   for (int t=0; t<pAvatar->NumMaterials(); t++) {
       g_poVAL->StepProgress("OBJSave");
       char pszDisplay[256];
       sprintf(pszDisplay,"Saving JPEG texture %d", t);
@@ -160,7 +160,7 @@ FRESULT CAvatarFileOBJ::Save(const char* pszFilename, CAvatar* pAvatar) const {
       pszTextureFilename[iBaseNameLength] = '_';
       pszTextureFilename[iBaseNameLength+1] = t+'a';
       strcpy(pszTextureFilename+iBaseNameLength+2,".jpg");
-      pAvatar->Texture(t)->Save(pszTextureFilename,pImageFile);
+      pAvatar->Material(t)->Texture()->Save(pszTextureFilename,pImageFile);
       delete [] pszTextureFilename;
    }
    // Write material file
@@ -171,7 +171,7 @@ FRESULT CAvatarFileOBJ::Save(const char* pszFilename, CAvatar* pAvatar) const {
    strcpy(pszMaterialFilename+iBaseNameLength,".mtl");
    ofstream osMaterialStream(pszMaterialFilename);
    delete [] pszMaterialFilename;
-   for (t=0; t<pAvatar->NumTextures(); t++) {
+   for (t=0; t<pAvatar->NumMaterials(); t++) {
       osMaterialStream << "newmtl " << m_pszBasename << '_' << (char)(t+'a') << "\n";
       osMaterialStream << "Kd 1 1 1\n";
       osMaterialStream << "Ns 0\n";

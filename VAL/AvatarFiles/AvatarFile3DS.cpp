@@ -7,7 +7,7 @@
 // AvatarFile3DS.cpp - 04/10/2000 - James Smith
 //	3D Studio export filter implementation
 //
-// $Id: AvatarFile3DS.cpp,v 1.0 2000/10/04 16:27:06 waz Exp $
+// $Id: AvatarFile3DS.cpp,v 1.1 2000/11/21 16:41:49 waz Exp $
 //
 
 #include "stdafx.h"
@@ -92,7 +92,7 @@ FRESULT CAvatarFile3DS::Save(const char* pszFilename, CAvatar* pAvatar) const {
    free(pszLocalFilename);
    int iBaseNameLength = strlen(pszBasename);
    // Setup the export progress dialog
-   g_poVAL->SetProgressMax("3DSSave",5 + pAvatar->NumTextures());
+   g_poVAL->SetProgressMax("3DSSave",5 + pAvatar->NumMaterials());
    g_poVAL->StepProgress("3DSSave");
    g_poVAL->SetProgressText("3DSSave","Saving 3DS file");
    // Save 3DS to stream
@@ -124,7 +124,7 @@ FRESULT CAvatarFile3DS::Save(const char* pszFilename, CAvatar* pAvatar) const {
       }
 
       // Create Face Material Chunk
-      int iNumMaterials = pAvatar->NumTextures();
+      int iNumMaterials = pAvatar->NumMaterials();
       int iFaceMaterialChunkLength = (iNumMaterials*(strlen(pszBasename) + 11)) + (iNumFaces*2);
       char* pcFaceMaterialChunk = new char[iFaceMaterialChunkLength];
       memset(pcFaceMaterialChunk,0,iFaceMaterialChunkLength);
@@ -142,7 +142,7 @@ FRESULT CAvatarFile3DS::Save(const char* pszFilename, CAvatar* pAvatar) const {
          iOffset += 2;
          int iFaceCount = 0;
          for (int j=0; j<iNumFaces; j++) {
-            if (pFaces[j].m_iTextureNumber == i) {
+            if (pFaces[j].m_iMaterialNumber == i) {
                *((short*)(pcFaceMaterialChunk+iOffset)) = j;
                iOffset += 2;
                iFaceCount++;
@@ -434,7 +434,7 @@ FRESULT CAvatarFile3DS::Save(const char* pszFilename, CAvatar* pAvatar) const {
 	osOutputStream.close();
    // Save images
    CImageFile* pImageFile = g_oImageFileStore.CreateByExtension("jpg");
-   for (int t=0; t<pAvatar->NumTextures(); t++) {
+   for (int t=0; t<pAvatar->NumMaterials(); t++) {
       g_poVAL->StepProgress("3DSSave");
       char pszDisplay[256];
       sprintf(pszDisplay,"Saving JPEG texture %d", t);
@@ -444,7 +444,7 @@ FRESULT CAvatarFile3DS::Save(const char* pszFilename, CAvatar* pAvatar) const {
       pszTextureFilename[iBaseNameLength] = '_';
       pszTextureFilename[iBaseNameLength+1] = t+'a';
       strcpy(pszTextureFilename+iBaseNameLength+2,".jpg");
-      pAvatar->Texture(t)->Save(pszTextureFilename,pImageFile);
+      pAvatar->Material(t)->Texture()->Save(pszTextureFilename,pImageFile);
       delete [] pszTextureFilename;
    }
    // Finish

@@ -7,7 +7,7 @@
 // TriFace.h - 04/03/2000 - James Smith
 //	3D Trianglular Face structure header
 //
-// $Id: TriFace.h,v 1.3 2000/10/06 13:16:21 waz Exp $
+// $Id: TriFace.h,v 1.4 2000/11/21 16:41:29 waz Exp $
 //
 
 #ifndef _VAL_TRIFACE_
@@ -28,7 +28,7 @@ struct SFaceVertex {
 struct STriFace {
 	SFaceVertex m_sVertices[3];
 	double m_dNormal[3];
-	int m_iTextureNumber;
+	int m_iMaterialNumber;
 };
 
 typedef std::vector<SFaceVertex> CTriStrip;

@@ -7,7 +7,7 @@
 // BodyPart.h - 17/06/2000 - James Smith
 //	Body Part information structures and types
 //
-// $Id: BodyPart.h,v 1.4 2000/08/21 23:07:51 waz Exp $
+// $Id: BodyPart.h,v 1.5 2000/11/21 16:41:15 waz Exp $
 //
 
 #ifndef _VAL_BODYPART_
@@ -165,8 +165,8 @@ struct SBodyPart {
 	CDList<int>* m_pliFaces; // Temporary use during load
    int* m_piFaces;
 
-   // Texture information
-   int m_iTextureIndex;
+   // Material information
+   int m_iMaterialIndex;
 
    // A set of rotation limits
 	double m_dMaxX;
