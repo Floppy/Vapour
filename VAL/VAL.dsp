@@ -97,6 +97,10 @@ SOURCE=.\AvatarFiles\AvatarFileAME.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\AvatarFiles\AvatarFileGeneric.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\AvatarFiles\AvatarFileHalflife.cpp
 # End Source File
 # Begin Source File
@@ -259,6 +263,10 @@ SOURCE=.\Avatar\AvatarFile.h
 # Begin Source File
 
 SOURCE=.\AvatarFiles\AvatarFileAME.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\AvatarFiles\AvatarFileGeneric.h
 # End Source File
 # Begin Source File
 
