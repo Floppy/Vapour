@@ -14,9 +14,13 @@
 //! author 		= "James Smith"
 //! date 		= "01/10/2001"
 //! lib 		= libVALETmath
-//! rcsid 		= "$Id: vector3d.h,v 1.3 2001/10/02 15:35:44 vap-james Exp $"
+//! rcsid 		= "$Id: vector3d.h,v 1.4 2001/10/02 17:01:12 vap-james Exp $"
 //! userlevel 	        = Normal
 //! docentry 	        = "VALET.Math.Geometry"
+
+namespace VALET {
+	class CAxisRotation;
+}
 
 //#===--- Includes
 #include "../arch/valet.h"
@@ -214,7 +218,7 @@ namespace VALET {
 		// Equivalent to calling SetLength(1)
 		//!param: return = reference to this vector
 	
-		//CVector3D Rotate(const CAxisRotation & oRot) const;
+		CVector3D Rotate(const CAxisRotation & oRot) const;
 		//: Rotate
 		// Returns a new vector which is this vector rotated about (0,0,0) by oRot.
 		//!param: oRot = axis-angle rotation
@@ -267,7 +271,7 @@ namespace VALET {
 	
 		bool ParseString(const char* strInput, int* used = NULL);
 		//: Load values from a string
-		//!todo: Document this properly - don't have time now, it's late and I can't remember
+		//!todo: Document this properly - don't have time now, I can't remember
 		//!todo: what the return and parameters mean. Oops!
 	
 		//:-----------------

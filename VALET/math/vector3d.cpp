@@ -11,15 +11,15 @@
 //! author 		= "James Smith"
 //! date 		= "01/10/2001"
 //! lib 		= libVALETmath
-//! rcsid 		= "$Id: vector3d.cpp,v 1.3 2001/10/02 15:34:41 vap-james Exp $"
+//! rcsid 		= "$Id: vector3d.cpp,v 1.4 2001/10/02 17:01:12 vap-james Exp $"
 //! userlevel 	        = Normal
 //! docentry 	        = "VALET.Math.Geometry"
 
 #include "vector3d.h"
 
 // VALET includes
-//#include "AxisRotation.h"
-//#include "Quaternion.h"
+#include "axisrotation.h"
+#include "quaternion.h"
 
 // Standard includes
 #include <math.h>
@@ -173,12 +173,12 @@ namespace VALET {
 	  return *this /= Length();
 	} //Normalise()
 	
-	//CVector3D CVector3D::Rotate(const CAxisRotation & oRot) const {
-	//CQuaternion quatRotation(oRot);
-	//CQuaternion quatVector(0, *this);
-	//CQuaternion quatResult = quatRotation.Inverse() * quatVector * quatRotation;
-	//return quatResult.GetVector();
-	//} //Rotate(const CAxisRotation & oRot) const
+	CVector3D CVector3D::Rotate(const CAxisRotation & oRot) const {
+		CQuaternion quatRotation(oRot);
+		CQuaternion quatVector(0, *this);
+		CQuaternion quatResult = quatRotation.Inverse() * quatVector * quatRotation;
+		return quatResult.Vector();
+	} //Rotate(const CAxisRotation & oRot) const
 	
 	double CVector3D::X(void) const {
 	  return m_pComponents[0];
