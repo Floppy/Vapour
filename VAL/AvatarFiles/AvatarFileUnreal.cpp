@@ -7,7 +7,7 @@
 // AvatarFileUnreal.cpp - 16/2/2000 - James Smith
 //	Unreal export filter implementation
 //
-// $Id: AvatarFileUnreal.cpp,v 1.8 2000/08/24 22:20:40 waz Exp $
+// $Id: AvatarFileUnreal.cpp,v 1.9 2000/08/29 12:48:41 waz Exp $
 //
 
 #include "stdafx.h"
@@ -19,13 +19,14 @@
 
 #include "Unreal.h"
 
-#include "ImageFileStore.h"
-extern CImageFileStore g_oImageFileStore;
+//#include "ImageFileStore.h"
+//extern CImageFileStore g_oImageFileStore;
 
 #include <direct.h>
 #include <errno.h>
 #include <time.h>
 #include <strstrea.h>
+#include <math.h>
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -52,6 +53,9 @@ CAvatarFileUnreal::CAvatarFileUnreal() {
    m_puImageHeight = NULL;
    m_uTotalHeight = 0;
    m_iSex = UNREAL_MALE;
+   m_dYOffset = 0;
+   m_dScale = 1;
+   return;
 } // CAvatarFileUnreal()
 
 float CAvatarFileUnreal::GetFilterVersion() const {
@@ -276,6 +280,8 @@ FRESULT CAvatarFileUnreal::Save(const char* pszFilename, CAvatar* pAvatar) const
       return eResult;
    }
 
+   //////////////////////////////////////////////////////////////////////
+
    // Tidy up allocated memory
    eResult = Cleanup();
    // Step progress
@@ -284,7 +290,7 @@ FRESULT CAvatarFileUnreal::Save(const char* pszFilename, CAvatar* pAvatar) const
    return eResult;
 } // Save(const char* pszFilename, CAvatar* pAvatar)
 
-FRESULT CAvatarFileUnreal::Init(const char* pszFilename, const CAvatar* pAvatar) const {
+FRESULT CAvatarFileUnreal::Init(const char* pszFilename, CAvatar* pAvatar) const {
 
    // Declare a loop variable
    int i=0;
@@ -404,6 +410,16 @@ FRESULT CAvatarFileUnreal::Init(const char* pszFilename, const CAvatar* pAvatar)
    NEWEND("CAvatarFileUnreal::Init - minima storage allocation")
    if (m_puFirstPixel == NULL) return F_OUT_OF_MEMORY;
 
+   // Calculate model scales and offsets
+   // Reset Pose
+   pAvatar->ResetPose();
+   pAvatar->UpdateModel();
+   // Setup sizes & offsets etc
+   SPoint3D pntMin, pntMax;
+   pAvatar->BoundingBox(unknown,pntMax,pntMin);
+   m_dScale = 110 / (pntMax.m_dComponents[1] - pntMin.m_dComponents[1]);
+   m_dYOffset = -((pntMax.m_dComponents[1] + pntMin.m_dComponents[1]) / 2 * m_dScale);
+   
    // Done!
    return F_OK;
 } //Init(const char* pszFilename, const CAvatar* pAvatar) const
@@ -941,7 +957,7 @@ FRESULT CAvatarFileUnreal::SaveTextureUTX(const char* pszFilename, const CAvatar
             pcTextureData[uTextureDataOffset++] = (char)0x00;
             pcTextureData[uTextureDataOffset++] = (char)0x00;
             // Number of images to output
-            char cNumImages = 2;
+            char cNumImages = 1;
             pcTextureData[uTextureDataOffset++] = (char)cNumImages;
             // Until we reach the minimum texture size (0), output image halving size each time
             for (i=0; i<cNumImages; i++) {
@@ -1143,6 +1159,9 @@ FRESULT CAvatarFileUnreal::SaveMeshU(const char* pszFilename, CAvatar* pAvatar) 
 
    FRESULT eResult = F_OK;
 
+   const unsigned int uNumFaces = pAvatar->NumFaces();
+   const unsigned int uNumVertices = pAvatar->NumVertices();
+
    // Open output stream
    ofstream osOutputStream;
    osOutputStream.open(pszFilename,ios::binary|ios::out);
@@ -1150,6 +1169,7 @@ FRESULT CAvatarFileUnreal::SaveMeshU(const char* pszFilename, CAvatar* pAvatar) 
    if (!osOutputStream.fail()) {
 
       int i; // Generic loop counter
+      const unsigned int uNumFrames = 700;
       const unsigned int uNameLength = strlen(m_pszName);
       unsigned int uCurrentOffset = 0;
       const SBodyPart* pBodyParts = pAvatar->BodyParts();
@@ -1197,7 +1217,7 @@ FRESULT CAvatarFileUnreal::SaveMeshU(const char* pszFilename, CAvatar* pAvatar) 
       unsigned int uMeshName, uSelectName, uBotName;
       // Create name table
       sHeader.uNameOffset = uCurrentOffset;
-      unsigned long uNameTableLength = 0x593 + 3*uNameLength; // 0x593 for basic names and constant parts of model names, plus 2 * name length for names
+      unsigned long uNameTableLength = ( m_iSex==UNREAL_FEMALE ? 0x599 : 0x593 )+ 3*uNameLength; // 0x593 for basic names and constant parts of model names, plus 2 * name length for names
       char* pcNameTable;
       NEWBEGIN
       pcNameTable = new char[uNameTableLength];
@@ -1291,13 +1311,144 @@ FRESULT CAvatarFileUnreal::SaveMeshU(const char* pszFilename, CAvatar* pAvatar) 
       uCurrentOffset += uNameTableLength;
 
       // Write Mesh Properties
-      unsigned int uMeshPropertiesLength = 0xC4 + 5*uNameLength;
+      unsigned int uMeshPropertiesLength = (m_iSex==UNREAL_FEMALE ? 0xC8 : 0xC4) + 5*uNameLength;
       char* pcMeshProperties = NULL;
       NEWBEGIN
       pcMeshProperties = new char[uMeshPropertiesLength];
       NEWEND("CAvatarFileUnreal::Save - Standard mesh properties data chunk allocation")
       if (pcMeshProperties != NULL) {
-         // Write properties data
+         unsigned int uPropertiesOffset = 0;
+         char pszPropertyName[32];
+         // Write ID
+         pcMeshProperties[uPropertiesOffset++] = (char)0x88;
+         // Write standard data
+         pcMeshProperties[uPropertiesOffset++] = (char)0x00;
+         // Write specific data
+         pcMeshProperties[uPropertiesOffset++] = (char)0x06;
+         pcMeshProperties[uPropertiesOffset++] = (char)0x00;
+         // Write compact index of name table entry
+         pcMeshProperties[uPropertiesOffset++] = (char)0x08;
+         // Write standard data
+         memset(pcMeshProperties+uPropertiesOffset,(char)-1,8);
+         uPropertiesOffset+=8;
+         memset(pcMeshProperties+uPropertiesOffset,(char)0,4);
+         uPropertiesOffset+=4;
+         // Write specific data
+         pcMeshProperties[uPropertiesOffset++] = (char)0x02;
+         pcMeshProperties[uPropertiesOffset++] = (char)0x0C;
+         pcMeshProperties[uPropertiesOffset++] = (char)0x04;
+         pcMeshProperties[uPropertiesOffset++] = (char)0xF8;
+         // Write standard data
+         pcMeshProperties[uPropertiesOffset++] = (char)0x00;
+         // Write specific data
+         pcMeshProperties[uPropertiesOffset++] = (char)0x08;
+         // Write standard data
+         memset(pcMeshProperties+uPropertiesOffset,(char)0,2);
+         uPropertiesOffset+=2;
+         memset(pcMeshProperties+uPropertiesOffset,(char)-1,10);
+         uPropertiesOffset+=10;
+         memset(pcMeshProperties+uPropertiesOffset,(char)0,4);
+         uPropertiesOffset+=4;
+         // Write specific data
+         pcMeshProperties[uPropertiesOffset++] = (char)0x36;
+         // Write standard data
+         memset(pcMeshProperties+uPropertiesOffset,(char)0,19);
+         uPropertiesOffset+=19;
+         pcMeshProperties[uPropertiesOffset++] = (char)0x02;
+         // Write specific data
+         pcMeshProperties[uPropertiesOffset++] = (char)0x01;
+         // Write standard data
+         pcMeshProperties[uPropertiesOffset++] = (char)0x01;
+         memset(pcMeshProperties+uPropertiesOffset,(char)0,7);
+         uPropertiesOffset+=7;
+         // Write ID again
+         pcMeshProperties[uPropertiesOffset++] = (char)0x88;
+         // Write standard data
+         pcMeshProperties[uPropertiesOffset++] = (char)0x01;
+         memset(pcMeshProperties+uPropertiesOffset,(char)0,3);
+         uPropertiesOffset+=3;
+         // Write specific data
+         pcMeshProperties[uPropertiesOffset++] = (char)0x54;
+         pcMeshProperties[uPropertiesOffset++] = (char)0xC9;
+         pcMeshProperties[uPropertiesOffset++] = (char)0x16;
+         pcMeshProperties[uPropertiesOffset++] = (char)0xB8;
+         // Write standard data
+         pcMeshProperties[uPropertiesOffset++] = (char)0x04;
+         pcMeshProperties[uPropertiesOffset++] = (char)0x08;
+         pcMeshProperties[uPropertiesOffset++] = (char)0x09;
+         pcMeshProperties[uPropertiesOffset++] = (char)0x0B;
+         pcMeshProperties[uPropertiesOffset++] = (char)0x0A;
+         pcMeshProperties[uPropertiesOffset++] = (char)0x85;
+         // Write property data
+         pcMeshProperties[uPropertiesOffset++] = (char)0x1B;
+         pcMeshProperties[uPropertiesOffset++] = (char)0x11;
+         pcMeshProperties[uPropertiesOffset++] = (char)0x22;
+         pcMeshProperties[uPropertiesOffset++] = (char)0x01;
+         pcMeshProperties[uPropertiesOffset++] = (char)0x00;
+         pcMeshProperties[uPropertiesOffset++] = (char)0x00;
+         pcMeshProperties[uPropertiesOffset++] = (char)0x00;
+         pcMeshProperties[uPropertiesOffset++] = (char)0x10;
+         pcMeshProperties[uPropertiesOffset++] = (char)0x22;
+         pcMeshProperties[uPropertiesOffset++] = (char)0x02;
+         pcMeshProperties[uPropertiesOffset++] = (char)0x00;
+         pcMeshProperties[uPropertiesOffset++] = (char)0x00;
+         pcMeshProperties[uPropertiesOffset++] = (char)0x00;
+         // Write skin name
+         sprintf(pszPropertyName,"%sSkins.%s",m_pszName,m_pszTexBaseName);
+         pcMeshProperties[uPropertiesOffset++] = (char)0x15;
+         pcMeshProperties[uPropertiesOffset++] = (char)0x5D;
+         pcMeshProperties[uPropertiesOffset++] = strlen(pszPropertyName) + 2;
+         pcMeshProperties[uPropertiesOffset++] = strlen(pszPropertyName) + 1;
+         strcpy(pcMeshProperties+uPropertiesOffset,pszPropertyName);
+         uPropertiesOffset += strlen(pszPropertyName) + 1;
+         // Write texture package name
+         sprintf(pszPropertyName,"%sSkins.",m_pszName);
+         pcMeshProperties[uPropertiesOffset++] = (char)0x0E;
+         pcMeshProperties[uPropertiesOffset++] = (char)0x5D;
+         pcMeshProperties[uPropertiesOffset++] = strlen(pszPropertyName) + 2;
+         pcMeshProperties[uPropertiesOffset++] = strlen(pszPropertyName) + 1;
+         strcpy(pcMeshProperties+uPropertiesOffset,pszPropertyName);
+         uPropertiesOffset += strlen(pszPropertyName) + 1;
+         // Write selection mesh name
+         sprintf(pszPropertyName,"%s.Select%s",m_pszName,m_pszName);
+         pcMeshProperties[uPropertiesOffset++] = (char)0x15;
+         pcMeshProperties[uPropertiesOffset++] = (char)0x05;
+         pcMeshProperties[uPropertiesOffset++] = (char)0x8A;
+         pcMeshProperties[uPropertiesOffset++] = (char)0x17;
+         pcMeshProperties[uPropertiesOffset++] = (char)0x5D;
+         pcMeshProperties[uPropertiesOffset++] = strlen(pszPropertyName) + 2;
+         pcMeshProperties[uPropertiesOffset++] = strlen(pszPropertyName) + 1;
+         strcpy(pcMeshProperties+uPropertiesOffset,pszPropertyName);
+         uPropertiesOffset += strlen(pszPropertyName) + 1;
+         // Write special mesh name
+         sprintf(pszPropertyName,(m_iSex==UNREAL_FEMALE ? "Botpack.TrophyFemale2" : "Botpack.TrophyMale2"),m_pszName);
+         pcMeshProperties[uPropertiesOffset++] = (char)0x18;
+         pcMeshProperties[uPropertiesOffset++] = (char)0x5D;
+         pcMeshProperties[uPropertiesOffset++] = strlen(pszPropertyName) + 2;
+         pcMeshProperties[uPropertiesOffset++] = strlen(pszPropertyName) + 1;
+         strcpy(pcMeshProperties+uPropertiesOffset,pszPropertyName);
+         uPropertiesOffset += strlen(pszPropertyName) + 1;
+         // Write mesh name
+         sprintf(pszPropertyName,"%s",m_pszName);
+         pcMeshProperties[uPropertiesOffset++] = (char)0x13;
+         pcMeshProperties[uPropertiesOffset++] = (char)0x5D;
+         pcMeshProperties[uPropertiesOffset++] = strlen(pszPropertyName) + 2;
+         pcMeshProperties[uPropertiesOffset++] = strlen(pszPropertyName) + 1;
+         strcpy(pcMeshProperties+uPropertiesOffset,pszPropertyName);
+         uPropertiesOffset += strlen(pszPropertyName) + 1;
+         // Write voice name
+         sprintf(pszPropertyName,(m_iSex==UNREAL_FEMALE ? "Botpack.VoiceFemaleTwo" : "Botpack.VoiceMaleTwo"),m_pszName);
+         pcMeshProperties[uPropertiesOffset++] = (char)0x18;
+         pcMeshProperties[uPropertiesOffset++] = (char)0x5D;
+         pcMeshProperties[uPropertiesOffset++] = strlen(pszPropertyName) + 2;
+         pcMeshProperties[uPropertiesOffset++] = strlen(pszPropertyName) + 1;
+         strcpy(pcMeshProperties+uPropertiesOffset,pszPropertyName);
+         uPropertiesOffset += strlen(pszPropertyName) + 1;
+         // Finish
+         pcMeshProperties[uPropertiesOffset++] = (char)0x0F;
+         pcMeshProperties[uPropertiesOffset++] = (char)0x05;
+         pcMeshProperties[uPropertiesOffset++] = (char)0x02;
+         pcMeshProperties[uPropertiesOffset++] = (char)0x00;
       }
       else {
          // CLEANUP MEMORY ETC
@@ -1306,21 +1457,23 @@ FRESULT CAvatarFileUnreal::SaveMeshU(const char* pszFilename, CAvatar* pAvatar) 
       // Update file offset
       uCurrentOffset += uMeshPropertiesLength;
 
-      // Write frame data header for standard mesh
-      unsigned int uMeshFrameHeaderLength = 10;
-      char* pcMeshFrameHeader = NULL;
+      // Write standard mesh header
+      unsigned int uMeshHeaderLength = 0x30;
+      char* pcMeshHeader = NULL;
       NEWBEGIN
-      pcMeshFrameHeader = new char[uMeshFrameHeaderLength];
-      NEWEND("CAvatarFileUnreal::Save - Frame header allocation")
-      if (pcMeshFrameHeader != NULL) {
-         // Write frame data header
+      pcMeshHeader = new char[uMeshHeaderLength];
+      NEWEND("CAvatarFileUnreal::Save - Mesh top section allocation")
+      if (pcMeshHeader != NULL) {
+         // Write header
+
       }
       else {
          // CLEANUP MEMORY ETC
          return F_OUT_OF_MEMORY;
       }
       // Update file offset
-      uCurrentOffset += uMeshFrameHeaderLength;
+      uCurrentOffset += uMeshHeaderLength;
+
       // Actual frame data is just too huge to store in-core,
       // unless to want to allocate nearly 4 meg of memory.
       // Therefore, we write it to a temp file in the right 
@@ -1330,22 +1483,15 @@ FRESULT CAvatarFileUnreal::SaveMeshU(const char* pszFilename, CAvatar* pAvatar) 
       sprintf(m_pszTempFilename+strlen(m_pszTgtDir),"tempframedata.bin");
       osTempStream.open(m_pszTempFilename,ios::out|ios::binary);
 	   if (!osTempStream.fail()) {
-         const unsigned int uNumFrames = 700;
-         // Reset avatar pose
-         pAvatar->ResetPose();
-         pAvatar->UpdateModel();
-         // Setup sizes & offsets etc
-         SPoint3D pntMin, pntMax;
-         pAvatar->BoundingBox(unknown,pntMax,pntMin);
-         const double dHeight = (pntMax.m_dComponents[1] - pntMin.m_dComponents[1]);
-         const double dScale = 110 / dHeight;
-         const double dYOff = -((pntMax.m_dComponents[1] + pntMin.m_dComponents[1]) / 2 * dScale);
-         // Get vertex info
-         const int uNumVertices = pAvatar->NumVertices();
+         // Information variables
+         const unsigned int uNumVertices = pAvatar->NumVertices();
          const SPoint3D* pVertices = pAvatar->Vertices();
          // Store weapon triangle vertices
          SPoint3D pWeaponVertices[3]; // top/back, top/front, bottom/front in that order
          // In default pose, we use bounding box information for right hand to calculate these.
+         pAvatar->ResetPose();
+         pAvatar->UpdateModel();
+         SPoint3D pntMax, pntMin;
          pAvatar->BoundingBox(r_wrist,pntMax,pntMin);
          // Calculate rough Y value of palm (i.e. for grip);
          //double dYMiddle = (pntMin.m_dComponents[1] + pntMax.m_dComponents[1]*3) / 4;
@@ -1381,32 +1527,41 @@ FRESULT CAvatarFileUnreal::SaveMeshU(const char* pszFilename, CAvatar* pAvatar) 
             // This needs to be done for each frame that is output.
             // Create filename to load: utp000.vpo to utp699.vpo
             sprintf(pszPoseFilename,"poses\\utp%03d.vpo",i);
-            // Load file from wedgie
+            // Load file from wedgie7
             CAvatarPose oPose;
             if (oPose.Load(pszPoseFilename, oWedgie) == F_OK) {
-               cout << "Loaded pose " << i << endl;
                // Apply to avatar
                pAvatar->ImportPose(oPose);
 					// Update Pose
 					pAvatar->UpdateModel();
-					// Remove body parts as necessary
+					// Remove body parts as necessary for particular frames
 					// Head shot
 					if ((i >= 567) && (i <= 582))
                   pAvatar->Chop(vc7);
             }
             else {
+               // Temporary behaviour until we have all poses.
                // Reset pose
                pAvatar->ResetPose();
                // Point right hand forward
                pAvatar->SetJointAngle(r_elbow,CAxisRotation(1,0,0,-1.54),false);
 					// Update Pose
 					pAvatar->UpdateModel();
+               // Notify
+               cout << "Couldn't load pose " << i << endl;
+               /*// Fail export if we can't load a pose
+               // CLEANUP MEMORY ETC
+			      oWedgie.Close();
+               fsDataWJE.close();
+               osTempStream.close();
+               TRACE("Could not open pose %d!\n",i);
+               return F_FILE_ERROR;*/
             }
 
             // Write vertices
             for (int v=0; v<uNumVertices; v++) {
                // Pack vertex into a long int 
-               long lVertex = PackVertex(pVertices[v],dScale,dYOff);
+               long lVertex = PackVertex(pVertices[v],m_dScale,m_dYOffset);
                // Write long to stream
                osTempStream.write((char*)&lVertex,4);
                uFrameDataLength += 4;
@@ -1419,7 +1574,7 @@ FRESULT CAvatarFileUnreal::SaveMeshU(const char* pszFilename, CAvatar* pAvatar) 
                // Update vertex pos
                SPoint3D pntNewPosition = htTransform * pWeaponVertices[wv];
                // Pack vertex into a long int 
-               long lVertex = PackVertex(pntNewPosition,dScale,dYOff);
+               long lVertex = PackVertex(pntNewPosition,m_dScale,m_dYOffset);
                // Write long to stream
                osTempStream.write((char*)&lVertex,4);
                uFrameDataLength += 4;
@@ -1436,122 +1591,214 @@ FRESULT CAvatarFileUnreal::SaveMeshU(const char* pszFilename, CAvatar* pAvatar) 
       // Update file offset
       uCurrentOffset += uFrameDataLength;
 
-      // Write mesh data
-      int iNumFaces = pAvatar->NumFaces();
-      SUnrealTriangle* pMeshData = NULL;
+      // Write the rest of the mesh data
+      unsigned int uMeshDataLength = 
+         9 + sizeof(SUnrealTriangle)*(uNumFaces+1) + // mesh header + data
+         (8 * (uNumVertices+3)) + //vertex info
+         (12 * (uNumFaces+1)) + //face info
+         0x45; // footer
+      char* pcMeshData = NULL;
       NEWBEGIN
-      pMeshData = new SUnrealTriangle[iNumFaces+1]; // +1 for weapon triangle
+      pcMeshData = new char[uMeshDataLength];
       NEWEND("CAvatarFileUnreal::Save - mesh data allocation");
-      if (pMeshData != NULL) {
+      if (pcMeshData != NULL) {
+
+         unsigned long uMeshOffset = 0; // temp offset counter
+         int f,v; // loop counters
+
+         ////////////////////////////////////////////////////////////
+         // Write topology data header
+         ////////////////////////////////////////////////////////////
+
+         // Some data that I don't understand
+         pcMeshData[uMeshOffset++] = (char)0x91;
+         pcMeshData[uMeshOffset++] = (char)0x25;
+         pcMeshData[uMeshOffset++] = (char)0x3A;
+         pcMeshData[uMeshOffset++] = (char)0x00;
+         // CI of number of faces
+         CUnrealCompactIndex oCIndex((int)(uNumFaces+1));
+         for (i=0; i<oCIndex.NumBytes(); i++) {
+            pcMeshData[uMeshOffset++] = oCIndex.CompactIndex()[i];
+         }
+
+         ////////////////////////////////////////////////////////////
+         // Write topology data
+         ////////////////////////////////////////////////////////////
          // Store texture info
          const int iMaxU = UNREAL_TEXTURE_WIDTH-1;
          const int iMaxV = UNREAL_TEXTURE_HEIGHT-1;
-         // other stuff we need
+         // Some other stuff we need
          const STriFace* pFaces = pAvatar->Faces();
          const unsigned int uFaceTexIndex = pAvatar->TextureIndex(skullbase);
+         // Cast pointer
+         SUnrealTriangle* pFaceData = (SUnrealTriangle*)(pcMeshData + uMeshOffset);
          // Write faces
-         for (int f=0; f<iNumFaces; f++) {
+         for (f=0; f<uNumFaces; f++) {
             // Vertex indices
-            pMeshData[f].uVertex0 = pFaces[f].m_iVertices[2];
-            pMeshData[f].uVertex1 = pFaces[f].m_iVertices[1];
-            pMeshData[f].uVertex2 = pFaces[f].m_iVertices[0];
+            pFaceData[f].uVertex0 = pFaces[f].m_iVertices[2];
+            pFaceData[f].uVertex1 = pFaces[f].m_iVertices[1];
+            pFaceData[f].uVertex2 = pFaces[f].m_iVertices[0];
             // Write Flags
-            pMeshData[f].uFlags = UNREAL_U_TRI_NORMAL1SIDE;
+            pFaceData[f].uFlags = UNREAL_U_TRI_NORMAL1SIDE;
             // Texture coordinates
             int iTextureNumber = pFaces[f].m_iTextureNumber;
-            if (pFaces[f].m_iTextureNumber==uFaceTexIndex) {
-               // Write face tex coords - nice & simple
-               for (int tc=3; tc--!=0; ) {
-                  // Get tex coords
-                  double dU = pFaces[i].m_sTexCoords[tc].dU;
-                  double dV = pFaces[i].m_sTexCoords[tc].dV;
-                  // Clamp to 0..1
-                  if (dU > 1) dU = 1;
-                  else if (dU < 0) dU = 0;
-                  if (dV > 1) dV = 1;
-                  else if (dV < 0) dV = 0;
-                  // Scale and store
-                  char cU = dU*iMaxU;
-                  char cV = dV*iMaxV;
-                  switch (tc) {
-                  case 2:
-                     pMeshData[f].uU0 = cU;
-                     pMeshData[f].uV0 = cV;
-                     break;
-                  case 1:
-                     pMeshData[f].uU1 = cU;
-                     pMeshData[f].uV1 = cV;
-                     break;
-                  case 0:
-                     pMeshData[f].uU2 = cU;
-                     pMeshData[f].uV2 = cV;
-                     break;
-                  }
-               }
-               // Write Texture number
-               pMeshData[f].uTexture = 0;
-            }
-            else {
-               // Other texture coordinates are more complex to recompute
-               for (int tc=3; tc--!=0; ) {
-                  // Get tex coords
-                  double dU = pFaces[i].m_sTexCoords[tc].dU;
-                  double dV = pFaces[i].m_sTexCoords[tc].dV;
-                  // Clamp to 0..1
-                  if (dU > 1) dU = 1;
-                  else if (dU < 0) dU = 0;
-                  if (dV > 1) dV = 1;
-                  else if (dV < 0) dV = 0;
-                  // Recalculate texture V coordinates:
+            for (int tc=3; tc--!=0; ) {
+               // Get tex coords
+               double dU = pFaces[i].m_sTexCoords[tc].dU;
+               double dV = pFaces[i].m_sTexCoords[tc].dV;
+               // Clamp to 0..1
+               if (dU > 1) dU = 1;
+               else if (dU < 0) dU = 0;
+               if (dV > 1) dV = 1;
+               else if (dV < 0) dV = 0;
+               // Recalculate texture V coordinates if this is not the face texture
+               if (iTextureNumber!=uFaceTexIndex) {
                   // Multiply by height of this particular image
                   dV *= m_puImageHeight[iTextureNumber];
                   // Add where this image starts
                   dV += m_puFirstPixel[iTextureNumber];
                   // Divide by the total height of the image
                   dV /= m_uTotalHeight;
-                  // Scale and store
-                  char cU = dU*iMaxU;
-                  char cV = dV*iMaxV;
-                  switch (tc) {
-                  case 2:
-                     pMeshData[f].uU0 = cU;
-                     pMeshData[f].uV0 = cV;
-                     break;
-                  case 1:
-                     pMeshData[f].uU1 = cU;
-                     pMeshData[f].uV1 = cV;
-                     break;
-                  case 0:
-                     pMeshData[f].uU2 = cU;
-                     pMeshData[f].uV2 = cV;
-                     break;
-                  }
+               }
+               // Scale and store
+               char cU = (dU*iMaxU)+0.5; // Add 0.5 to ensure correct rounding
+               char cV = (dV*iMaxV)+0.5; // Add 0.5 to ensure correct rounding
+               switch (tc) {
+               case 2:
+                  pFaceData[f].uU0 = cU;
+                  pFaceData[f].uV0 = cV;
+                  break;
+               case 1:
+                  pFaceData[f].uU1 = cU;
+                  pFaceData[f].uV1 = cV;
+                  break;
+               case 0:
+                  pFaceData[f].uU2 = cU;
+                  pFaceData[f].uV2 = cV;
+                  break;
                }
                // Write Texture number
-               pMeshData[f].uTexture = 1;
+               pFaceData[f].uTexture = iTextureNumber==uFaceTexIndex ? 0 : 1;
             }
          }
          // Write data for weapon triangle
          // Write vertex indices: three vertices after main vertex list
          unsigned short uVertexNumber = pAvatar->NumVertices();
-         pMeshData[i].uVertex0 = uVertexNumber++;
-         pMeshData[i].uVertex1 = uVertexNumber++;
-         pMeshData[i].uVertex2 = uVertexNumber;
+         pFaceData[f].uVertex0 = uVertexNumber++;
+         pFaceData[f].uVertex1 = uVertexNumber++;
+         pFaceData[f].uVertex2 = uVertexNumber;
          // Write Flags
-         pMeshData[f].uFlags = UNREAL_U_TRI_WEAPONTRI;
+         pFaceData[f].uFlags = UNREAL_U_TRI_WEAPONTRI;
          // Texture coordinates
-         pMeshData[i].uU0 = 0;
-         pMeshData[i].uV0 = 0;
-         pMeshData[i].uU1 = 0;
-         pMeshData[i].uV1 = 0;
-         pMeshData[i].uU2 = 0;
-         pMeshData[i].uV2 = 0;
+         pFaceData[f].uU0 = 0;
+         pFaceData[f].uV0 = 0;
+         pFaceData[f].uU1 = 0;
+         pFaceData[f].uV1 = 0;
+         pFaceData[f].uU2 = 0;
+         pFaceData[f].uV2 = 0;
          // Texture number
-         pMeshData[i].uTexture = 0;
-      }
-      else {
-         // CLEANUP MEMORY ETC
-         return F_OUT_OF_MEMORY;
+         pFaceData[f].uTexture = 0;
+         // Update offset
+         uMeshOffset += (uNumFaces+1) * sizeof(SUnrealTriangle);
+
+         ////////////////////////////////////////////////////////////
+         // Write vertex info header
+         ////////////////////////////////////////////////////////////
+
+         ////////////////////////////////////////////////////////////
+         // Write vertex info
+         ////////////////////////////////////////////////////////////
+
+         // Cast pointer
+         unsigned long* puTempPtr = (unsigned long*)(pcMeshData + uMeshOffset);
+         for (v=0; v<uNumVertices; ) {
+            // Write 2 ints per vertex - don't know what they are yet...
+            puTempPtr[v++] = v; // High
+            puTempPtr[v++] = v; // Low
+         }
+         // Write weapon triangle data
+         // Vertex 0
+         puTempPtr[v++] = v; // High 
+         puTempPtr[v++] = v; // Low
+         // Vertex 1
+         puTempPtr[v++] = v; // High 
+         puTempPtr[v++] = v; // Low
+         // Vertex 2
+         puTempPtr[v++] = v; // High 
+         puTempPtr[v++] = v; // Low
+         // Update offset
+         uMeshOffset += 8 * (uNumVertices+3);
+
+         ////////////////////////////////////////////////////////////
+         // Write face info header
+         ////////////////////////////////////////////////////////////
+
+         ////////////////////////////////////////////////////////////
+         // Write face info
+         ////////////////////////////////////////////////////////////
+
+         puTempPtr = (unsigned long*)(pcMeshData + uMeshOffset);
+         unsigned int uTempOffset = 0;
+         for (f=0; f<uNumFaces; f++) {
+            // Write 3 ints per triangle - don't know what they are yet...
+            puTempPtr[uTempOffset++] = f;
+            puTempPtr[uTempOffset++] = f;
+            puTempPtr[uTempOffset++] = f;
+         }
+         // Write wepaon triangle data
+         puTempPtr[uTempOffset++] = f;
+         puTempPtr[uTempOffset++] = f;
+         puTempPtr[uTempOffset++] = f;
+         // Update offset
+         uMeshOffset += 12 * (uNumFaces+1);
+
+         ////////////////////////////////////////////////////////////
+         // Write frame data header
+         ////////////////////////////////////////////////////////////
+
+         ////////////////////////////////////////////////////////////
+         // Write frame data
+         ////////////////////////////////////////////////////////////
+
+         ////////////////////////////////////////////////////////////
+         // Write footer
+         ////////////////////////////////////////////////////////////
+
+         // Number of vertices
+         *((long*)(pcMeshData+uMeshOffset)) = uNumVertices+1;
+         uMeshOffset+=4;
+         // Number of sequences
+         *((long*)(pcMeshData+uMeshOffset)) = uNumFrames;
+         uMeshOffset+=4;
+         // Standard data
+         memset(pcMeshData+uMeshOffset,0,8);
+         uMeshOffset+=8;
+         pcMeshData[uMeshOffset++] = (char)0xCD;
+         pcMeshData[uMeshOffset++] = (char)0xCC;
+         pcMeshData[uMeshOffset++] = (char)0xCC;
+         pcMeshData[uMeshOffset++] = (char)0x3D;
+         pcMeshData[uMeshOffset++] = (char)0xCD;
+         pcMeshData[uMeshOffset++] = (char)0xCC;
+         pcMeshData[uMeshOffset++] = (char)0xCC;
+         pcMeshData[uMeshOffset++] = (char)0x3D;
+         pcMeshData[uMeshOffset++] = (char)0xCD;
+         pcMeshData[uMeshOffset++] = (char)0xCC;
+         pcMeshData[uMeshOffset++] = (char)0x4C;
+         pcMeshData[uMeshOffset++] = (char)0x3E;
+         memset(pcMeshData+uMeshOffset,0,32);
+         uMeshOffset+=32;
+         pcMeshData[uMeshOffset++] = (char)0x02;
+         pcMeshData[uMeshOffset++] = (char)0x00;
+         pcMeshData[uMeshOffset++] = (char)0x00;
+         pcMeshData[uMeshOffset++] = (char)0x80;
+         pcMeshData[uMeshOffset++] = (char)0x3F;
+         pcMeshData[uMeshOffset++] = (char)0x00;
+         pcMeshData[uMeshOffset++] = (char)0x00;
+         pcMeshData[uMeshOffset++] = (char)0x80;
+         pcMeshData[uMeshOffset++] = (char)0x3F;
+
+         // Done - update size
+         uMeshDataLength = uMeshOffset;
       }
 
       // Write Bot Script
@@ -1593,6 +1840,136 @@ FRESULT CAvatarFileUnreal::SaveMeshU(const char* pszFilename, CAvatar* pAvatar) 
       uCurrentOffset += uBotScriptLength;
 
       // Write Bot Properties
+      unsigned int uBotPropertiesLength = 0x94 + 5*uNameLength;
+      char* pcBotProperties = NULL;
+      NEWBEGIN
+      pcBotProperties = new char[uBotPropertiesLength];
+      NEWEND("CAvatarFileUnreal::Save - Bot properties data chunk allocation")
+      if (pcBotProperties != NULL) {
+         unsigned int uPropertiesOffset = 0;
+         char pszPropertyName[32];
+         // Write ID
+         pcBotProperties[uPropertiesOffset++] = (char)0x89;
+         // Write standard data
+         pcBotProperties[uPropertiesOffset++] = (char)0x00;
+         // Write specific data
+         pcBotProperties[uPropertiesOffset++] = (char)0x03;
+         pcBotProperties[uPropertiesOffset++] = (char)0x08;
+         // Write compact index of name table entry
+         pcBotProperties[uPropertiesOffset++] = (char)0x5E;
+         pcBotProperties[uPropertiesOffset++] = (char)0x01;
+         // Write standard data
+         memset(pcBotProperties+uPropertiesOffset,(char)-1,8);
+         uPropertiesOffset+=8;
+         memset(pcBotProperties+uPropertiesOffset,(char)0,4);
+         uPropertiesOffset+=4;
+         // Write specific data
+         pcBotProperties[uPropertiesOffset++] = (char)0x42;
+         pcBotProperties[uPropertiesOffset++] = (char)0x9C;
+         pcBotProperties[uPropertiesOffset++] = (char)0x04;
+         pcBotProperties[uPropertiesOffset++] = (char)0xF8;
+         // Write standard data
+         pcBotProperties[uPropertiesOffset++] = (char)0x00;
+         // Write specific data
+         pcBotProperties[uPropertiesOffset++] = (char)0x0D;
+         // Write standard data
+         memset(pcBotProperties+uPropertiesOffset,(char)0,2);
+         uPropertiesOffset+=2;
+         memset(pcBotProperties+uPropertiesOffset,(char)-1,10);
+         uPropertiesOffset+=10;
+         memset(pcBotProperties+uPropertiesOffset,(char)0,4);
+         uPropertiesOffset+=4;
+         // Write specific data
+         pcBotProperties[uPropertiesOffset++] = (char)0x36;
+         // Write standard data
+         memset(pcBotProperties+uPropertiesOffset,(char)0,19);
+         uPropertiesOffset+=19;
+         pcBotProperties[uPropertiesOffset++] = (char)0x02;
+         // Write specific data
+         pcBotProperties[uPropertiesOffset++] = (char)0x04;
+         // Write standard data
+         pcBotProperties[uPropertiesOffset++] = (char)0x01;
+         memset(pcBotProperties+uPropertiesOffset,(char)0,7);
+         uPropertiesOffset+=7;
+         // Write ID again
+         pcBotProperties[uPropertiesOffset++] = (char)0x89;
+         // Write standard data
+         pcBotProperties[uPropertiesOffset++] = (char)0x01;
+         memset(pcBotProperties+uPropertiesOffset,(char)0,3);
+         uPropertiesOffset+=3;
+         // Write specific data
+         pcBotProperties[uPropertiesOffset++] = (char)0x14;
+         pcBotProperties[uPropertiesOffset++] = (char)0xF3;
+         pcBotProperties[uPropertiesOffset++] = (char)0x11;
+         pcBotProperties[uPropertiesOffset++] = (char)0x26;
+         // Write standard data
+         pcBotProperties[uPropertiesOffset++] = (char)0x04;
+         pcBotProperties[uPropertiesOffset++] = (char)0x08;
+         pcBotProperties[uPropertiesOffset++] = (char)0x09;
+         pcBotProperties[uPropertiesOffset++] = (char)0x0B;
+         pcBotProperties[uPropertiesOffset++] = (char)0x0A;
+         pcBotProperties[uPropertiesOffset++] = (char)0x85;
+         // Write property data
+         pcBotProperties[uPropertiesOffset++] = (char)0x0D;
+         pcBotProperties[uPropertiesOffset++] = (char)0x16;
+         pcBotProperties[uPropertiesOffset++] = (char)0x05;
+         pcBotProperties[uPropertiesOffset++] = (char)0x8A;
+         pcBotProperties[uPropertiesOffset++] = (char)0x11;
+         pcBotProperties[uPropertiesOffset++] = (char)0x22;
+         pcBotProperties[uPropertiesOffset++] = (char)0x01;
+         pcBotProperties[uPropertiesOffset++] = (char)0x00;
+         pcBotProperties[uPropertiesOffset++] = (char)0x00;
+         pcBotProperties[uPropertiesOffset++] = (char)0x00;
+         pcBotProperties[uPropertiesOffset++] = (char)0x10;
+         pcBotProperties[uPropertiesOffset++] = (char)0x22;
+         pcBotProperties[uPropertiesOffset++] = (char)0x02;
+         pcBotProperties[uPropertiesOffset++] = (char)0x00;
+         pcBotProperties[uPropertiesOffset++] = (char)0x00;
+         pcBotProperties[uPropertiesOffset++] = (char)0x00;
+         // Write skin name
+         sprintf(pszPropertyName,"%sSkins.%s",m_pszName,m_pszTexBaseName);
+         pcBotProperties[uPropertiesOffset++] = (char)0x15;
+         pcBotProperties[uPropertiesOffset++] = (char)0x5D;
+         pcBotProperties[uPropertiesOffset++] = strlen(pszPropertyName) + 2;
+         pcBotProperties[uPropertiesOffset++] = strlen(pszPropertyName) + 1;
+         strcpy(pcBotProperties+uPropertiesOffset,pszPropertyName);
+         uPropertiesOffset += strlen(pszPropertyName) + 1;
+         // Write texture package name
+         sprintf(pszPropertyName,"%sSkins.",m_pszName);
+         pcBotProperties[uPropertiesOffset++] = (char)0x0E;
+         pcBotProperties[uPropertiesOffset++] = (char)0x5D;
+         pcBotProperties[uPropertiesOffset++] = strlen(pszPropertyName) + 2;
+         pcBotProperties[uPropertiesOffset++] = strlen(pszPropertyName) + 1;
+         strcpy(pcBotProperties+uPropertiesOffset,pszPropertyName);
+         uPropertiesOffset += strlen(pszPropertyName) + 1;
+         // Write selection mesh name
+         sprintf(pszPropertyName,"%s.Select%s",m_pszName,m_pszName);
+         pcBotProperties[uPropertiesOffset++] = (char)0x17;
+         pcBotProperties[uPropertiesOffset++] = (char)0x5D;
+         pcBotProperties[uPropertiesOffset++] = strlen(pszPropertyName) + 2;
+         pcBotProperties[uPropertiesOffset++] = strlen(pszPropertyName) + 1;
+         strcpy(pcBotProperties+uPropertiesOffset,pszPropertyName);
+         uPropertiesOffset += strlen(pszPropertyName) + 1;
+         // Write mesh name
+         sprintf(pszPropertyName,"%s",m_pszName);
+         pcBotProperties[uPropertiesOffset++] = (char)0x13;
+         pcBotProperties[uPropertiesOffset++] = (char)0x5D;
+         pcBotProperties[uPropertiesOffset++] = strlen(pszPropertyName) + 2;
+         pcBotProperties[uPropertiesOffset++] = strlen(pszPropertyName) + 1;
+         strcpy(pcBotProperties+uPropertiesOffset,pszPropertyName);
+         uPropertiesOffset += strlen(pszPropertyName) + 1;
+         // Finish
+         pcBotProperties[uPropertiesOffset++] = (char)0x0F;
+         pcBotProperties[uPropertiesOffset++] = (char)0x05;
+         pcBotProperties[uPropertiesOffset++] = (char)0x02;
+         pcBotProperties[uPropertiesOffset++] = (char)0x00;
+      }
+      else {
+         // CLEANUP MEMORY ETC
+         return F_OUT_OF_MEMORY;
+      }
+      // Update file offset
+      uCurrentOffset += uBotPropertiesLength;
 
       // Write Selection Mesh Script
       const unsigned int uSelectScriptLength = 0x152 + (uNameLength * 8);
@@ -1635,7 +2012,7 @@ FRESULT CAvatarFileUnreal::SaveMeshU(const char* pszFilename, CAvatar* pAvatar) 
       uCurrentOffset += uSelectScriptLength;
 
       // Write Mesh Script
-      const unsigned int uMeshScriptLength = 0x1DA6 + (uNameLength * 98);
+      const unsigned int uMeshScriptLength = (m_iSex==UNREAL_FEMALE ? 0x1DA8 : 0x1DA6) + (uNameLength * 98);
       char* pcMeshScript = NULL;
       NEWBEGIN
       pcMeshScript = new char[uMeshScriptLength];
@@ -1648,7 +2025,7 @@ FRESULT CAvatarFileUnreal::SaveMeshU(const char* pszFilename, CAvatar* pAvatar) 
          strScript << (char)0 << (char)0 << (char)0;
          strScript << (char)0 << (char)0 << (char)0;
          // Write script length
-         CUnrealCompactIndex oCIndex((int)(0x1D9C+(uNameLength*98)));
+         CUnrealCompactIndex oCIndex((int)((m_iSex==UNREAL_FEMALE?0x1D9E:0x1D9C)+(uNameLength*98)));
          // This should only ever write two bytes
          ASSERT(oCIndex.NumBytes()==2);
          for (int b=0; b<oCIndex.NumBytes(); b++) {
@@ -1656,7 +2033,10 @@ FRESULT CAvatarFileUnreal::SaveMeshU(const char* pszFilename, CAvatar* pAvatar) 
          }
          // Write script itself.         
          strScript << "// " << m_pszName << ".\x0D\x0A";
-         strScript << "class " << m_pszName << " extends TournamentMale;\x0D\x0A";
+         if (m_iSex == UNREAL_FEMALE) 
+            strScript << "class " << m_pszName << " extends TournamentFemale;\x0D\x0A";
+         else 
+            strScript << "class " << m_pszName << " extends TournamentMale;\x0D\x0A";
          strScript << "\x0D\x0A";
          strScript << "#exec MESH IMPORT MESH=" << m_pszName << " ANIVFILE=MODELS\\" << m_pszName << "_a.3d DATAFILE=MODELS\\" << m_pszName << "_d.3d X=0 Y=0 Z=0 MLOD=0\x0D\x0A";
          strScript << "#exec MESH ORIGIN MESH=" << m_pszName << " X=0 Y=0 Z=0\x0D\x0A";
@@ -1773,15 +2153,92 @@ FRESULT CAvatarFileUnreal::SaveMeshU(const char* pszFilename, CAvatar* pAvatar) 
       }
       uCurrentOffset += uMeshScriptLength;
 
-      // Write Selection Mesh Properties - selection mesh actually has no properties as such...
-      // 8B 00 05 00 54 01 FF FF FF FF FF FF FF FF 00 00 00 00 00 00 00 00 00 00 00 00 FF FF FF FF FF FF FF FF FF FF 00 00 00 00 12 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 02 07 01 00 00 00 22 18 10 60 8B 01 00 00 00 F9 CE 3A 9E 04 08 09 0B 0A 85 0D 00
+      // Write Selection Mesh Properties
+      unsigned int uSelectPropertiesLength = 0x57;
+      char* pcSelectProperties = NULL;
+      NEWBEGIN
+      pcSelectProperties = new char[uSelectPropertiesLength];
+      NEWEND("CAvatarFileUnreal::Save - Selection mesh properties data chunk allocation")
+      if (pcSelectProperties != NULL) {
+         unsigned int uPropertiesOffset = 0;
+         // Write ID
+         pcSelectProperties[uPropertiesOffset++] = (char)0x8B;
+         // Write standard data
+         pcSelectProperties[uPropertiesOffset++] = (char)0x00;
+         // Write specific data
+         pcSelectProperties[uPropertiesOffset++] = (char)0x05;
+         pcSelectProperties[uPropertiesOffset++] = (char)0x00;
+         // Write compact index of name table entry
+         pcSelectProperties[uPropertiesOffset++] = (char)0x54;
+         pcSelectProperties[uPropertiesOffset++] = (char)0x01;
+         // Write standard data
+         memset(pcSelectProperties+uPropertiesOffset,(char)-1,8);
+         uPropertiesOffset+=8;
+         memset(pcSelectProperties+uPropertiesOffset,(char)0,4);
+         uPropertiesOffset+=4;
+         // Write specific data
+         pcSelectProperties[uPropertiesOffset++] = (char)0x00;
+         pcSelectProperties[uPropertiesOffset++] = (char)0x00;
+         pcSelectProperties[uPropertiesOffset++] = (char)0x00;
+         pcSelectProperties[uPropertiesOffset++] = (char)0x00;
+         // Write standard data
+         pcSelectProperties[uPropertiesOffset++] = (char)0x00;
+         // Write specific data
+         pcSelectProperties[uPropertiesOffset++] = (char)0x00;
+         // Write standard data
+         memset(pcSelectProperties+uPropertiesOffset,(char)0,2);
+         uPropertiesOffset+=2;
+         memset(pcSelectProperties+uPropertiesOffset,(char)-1,10);
+         uPropertiesOffset+=10;
+         memset(pcSelectProperties+uPropertiesOffset,(char)0,4);
+         uPropertiesOffset+=4;
+         // Write specific data
+         pcSelectProperties[uPropertiesOffset++] = (char)0x12;
+         // Write standard data
+         memset(pcSelectProperties+uPropertiesOffset,(char)0,19);
+         uPropertiesOffset+=19;
+         pcSelectProperties[uPropertiesOffset++] = (char)0x02;
+         // Write specific data
+         pcSelectProperties[uPropertiesOffset++] = (char)0x07;
+         // Write standard data
+         pcSelectProperties[uPropertiesOffset++] = (char)0x01;
+         memset(pcSelectProperties+uPropertiesOffset,(char)0,7);
+         uPropertiesOffset+=7;
+         // Write ID again
+         pcSelectProperties[uPropertiesOffset++] = (char)0x8B;
+         // Write standard data
+         pcSelectProperties[uPropertiesOffset++] = (char)0x01;
+         memset(pcSelectProperties+uPropertiesOffset,(char)0,3);
+         uPropertiesOffset+=3;
+         // Write specific data
+         pcSelectProperties[uPropertiesOffset++] = (char)0xF9;
+         pcSelectProperties[uPropertiesOffset++] = (char)0xCE;
+         pcSelectProperties[uPropertiesOffset++] = (char)0x3A;
+         pcSelectProperties[uPropertiesOffset++] = (char)0x9E;
+         // Write standard data
+         pcSelectProperties[uPropertiesOffset++] = (char)0x04;
+         pcSelectProperties[uPropertiesOffset++] = (char)0x08;
+         pcSelectProperties[uPropertiesOffset++] = (char)0x09;
+         pcSelectProperties[uPropertiesOffset++] = (char)0x0B;
+         pcSelectProperties[uPropertiesOffset++] = (char)0x0A;
+         pcSelectProperties[uPropertiesOffset++] = (char)0x85;
+         // Finish
+         pcSelectProperties[uPropertiesOffset++] = (char)0x0D;
+         pcSelectProperties[uPropertiesOffset++] = (char)0x00;
+      }
+      else {
+         // CLEANUP MEMORY ETC
+         return F_OUT_OF_MEMORY;
+      }
+      // Update file offset
+      uCurrentOffset += uSelectPropertiesLength;
 
       // Write ForceMeshToExist Data
       const unsigned int uForceMeshToExistDataLength = 0x20;
       char* pcForceMeshToExistData = NULL;
       NEWBEGIN
       pcForceMeshToExistData = new char[uForceMeshToExistDataLength];
-      NEWEND("CAvatarFileUnreal::Save - bot script allocation");
+      NEWEND("CAvatarFileUnreal::Save - ForceMeshToExist data allocation");
       if (pcForceMeshToExistData != NULL) {
          pcForceMeshToExistData[0x00] = 0x00;
          pcForceMeshToExistData[0x01] = 0x00;
@@ -1822,202 +2279,235 @@ FRESULT CAvatarFileUnreal::SaveMeshU(const char* pszFilename, CAvatar* pAvatar) 
       }
       uCurrentOffset += uForceMeshToExistDataLength;
 
-      /*// Write Selection Model
-      // Write selection frame data
-      const unsigned int uNumVertices = pAvatar->NumVertices();
-      unsigned long* puSelectionFrameData = NULL;
+      // Write Selection Model
+      unsigned int uSelectMeshLength = 
+         (4*uNumVertices) + // frame data
+         9 + (sizeof(SUnrealTriangle)*uNumFaces) + // Face header + data
+         (8*uNumVertices) + // vertex info
+         (12*uNumFaces) + // face info
+         0x45; // Footer data
+
+      char* pcSelectMesh = NULL;
       NEWBEGIN
-      puSelectionFrameData = new unsigned long[uNumVertices];
-      NEWEND("CAvatarFileUnreal::Save - selection frame data allocation");
-      if (puSelectionFrameData != NULL) {
+      pcSelectMesh = new char[uSelectMeshLength];
+      NEWEND("CAvatarFileUnreal::Save - selection mesh allocation failure");
+      if (pcSelectMesh != NULL) {
+         unsigned int uSelectOffset = 0; // counter variable
+         int f,v; // loop variables
+
+         ////////////////////////////////////////////////////////////
+         // Write header
+         ////////////////////////////////////////////////////////////
+
+         ////////////////////////////////////////////////////////////
+         // Write vertex data header
+         ////////////////////////////////////////////////////////////
+
+         ////////////////////////////////////////////////////////////
+         // Write vertex data
+         ////////////////////////////////////////////////////////////
+         unsigned long* puTempPtr = (unsigned long*)(pcSelectMesh + uSelectOffset);
          // Reset Pose
          pAvatar->ResetPose();
          pAvatar->UpdateModel();
-         // Setup sizes & offsets etc
-         SPoint3D pntMin, pntMax;
-         pAvatar->BoundingBox(unknown,pntMax,pntMin);
-         double dHeight = (pntMax.m_dComponents[1] - pntMin.m_dComponents[1]);
-         double dScale = 110 / dHeight;
-         double dYOff = -((pntMax.m_dComponents[1] + pntMin.m_dComponents[1]) / 2 * dScale);
          // Get vertex info
          const SPoint3D* pVertices = pAvatar->Vertices();
          // Write vertices
-         for (int v=0; v<uNumVertices; v++) {
+         for (v=0; v<uNumVertices; v++) {
             // Store packed vertex
-            puSelectionFrameData[v] = PackVertex(pVertices[v],dScale,dYOff);
-         }   
-      }
-      else {
-         // CLEANUP MEMORY ETC
-         return F_OUT_OF_MEMORY;
-      }
+            puTempPtr[v] = PackVertex(pVertices[v],m_dScale,m_dYOffset);
+            // Increment offset
+            uSelectOffset += 4;
+         }
 
-      // Write selection mesh data
-      SUnrealTriangle* pSelectionMeshData = NULL;
-      NEWBEGIN
-      pSelectionMeshData = new SUnrealTriangle[iNumFaces];
-      NEWEND("CAvatarFileUnreal::Save - selection mesh data allocation");
-      if (pSelectionMeshData != NULL) {
+         ////////////////////////////////////////////////////////////
+         // Write topology data header
+         ////////////////////////////////////////////////////////////
+
+         // Some data that I don't understand, but is consistent
+         pcSelectMesh[uSelectOffset++] = (char)0x91;
+         pcSelectMesh[uSelectOffset++] = (char)0x25;
+         pcSelectMesh[uSelectOffset++] = (char)0x3A;
+         pcSelectMesh[uSelectOffset++] = (char)0x00;
+         // CI of number of faces
+         CUnrealCompactIndex oCIndex((int)uNumFaces);
+         for (i=0; i<oCIndex.NumBytes(); i++) {
+            pcSelectMesh[uSelectOffset++] = oCIndex.CompactIndex()[i];
+         }
+
+         ////////////////////////////////////////////////////////////
+         // Write topology data
+         ////////////////////////////////////////////////////////////
          // Store texture info
          const int iMaxU = UNREAL_TEXTURE_WIDTH-1;
          const int iMaxV = UNREAL_TEXTURE_HEIGHT-1;
-         // other stuff we need
+         // Some other stuff we need
          const STriFace* pFaces = pAvatar->Faces();
          const unsigned int uFaceTexIndex = pAvatar->TextureIndex(skullbase);
+         // Cast pointer
+         SUnrealTriangle* pFaceData = (SUnrealTriangle*)(pcSelectMesh + uSelectOffset);
          // Write faces
-         for (int f=0; f<iNumFaces; f++) {
+         for (f=0; f<uNumFaces; f++) {
             // Vertex indices
-            pSelectionMeshData[f].uVertex0 = pFaces[f].m_iVertices[2];
-            pSelectionMeshData[f].uVertex1 = pFaces[f].m_iVertices[1];
-            pSelectionMeshData[f].uVertex2 = pFaces[f].m_iVertices[0];
+            pFaceData[f].uVertex0 = pFaces[f].m_iVertices[2];
+            pFaceData[f].uVertex1 = pFaces[f].m_iVertices[1];
+            pFaceData[f].uVertex2 = pFaces[f].m_iVertices[0];
             // Write Flags
-            pSelectionMeshData[f].uFlags = UNREAL_U_TRI_NORMAL1SIDE;
+            pFaceData[f].uFlags = UNREAL_U_TRI_NORMAL1SIDE;
             // Texture coordinates
             int iTextureNumber = pFaces[f].m_iTextureNumber;
-            if (pFaces[f].m_iTextureNumber==uFaceTexIndex) {
-               // Write face tex coords - nice & simple
-               for (int tc=3; tc--!=0; ) {
-                  // Get tex coords
-                  double dU = pFaces[i].m_sTexCoords[tc].dU;
-                  double dV = pFaces[i].m_sTexCoords[tc].dV;
-                  // Clamp to 0..1
-                  if (dU > 1) dU = 1;
-                  else if (dU < 0) dU = 0;
-                  if (dV > 1) dV = 1;
-                  else if (dV < 0) dV = 0;
-                  // Scale and store
-                  char cU = dU*iMaxU;
-                  char cV = dV*iMaxV;
-                  switch (tc) {
-                     case 2:
-                        pSelectionMeshData[f].uU0 = cU;
-                        pSelectionMeshData[f].uV0 = cV;
-                     case 1:
-                        pSelectionMeshData[f].uU1 = cU;
-                        pSelectionMeshData[f].uV1 = cV;
-                     case 0:
-                        pSelectionMeshData[f].uU2 = cU;
-                        pSelectionMeshData[f].uV2 = cV;
-                  }
-               }
-               // Write Texture number
-               pSelectionMeshData[f].uTexture = 0;
-            }
-            else {
-               // Other texture coordinates are more complex to recompute
-               for (int tc=3; tc--!=0; ) {
-                  // Get tex coords
-                  double dU = pFaces[i].m_sTexCoords[tc].dU;
-                  double dV = pFaces[i].m_sTexCoords[tc].dV;
-                  // Clamp to 0..1
-                  if (dU > 1) dU = 1;
-                  else if (dU < 0) dU = 0;
-                  if (dV > 1) dV = 1;
-                  else if (dV < 0) dV = 0;
-                  // Recalculate texture V coordinates:
+            for (int tc=3; tc--!=0; ) {
+               // Get tex coords
+               double dU = pFaces[f].m_sTexCoords[tc].dU;
+               double dV = pFaces[f].m_sTexCoords[tc].dV;
+               // Clamp to 0..1
+               if (dU > 1) dU = 1;
+               else if (dU < 0) dU = 0;
+               if (dV > 1) dV = 1;
+               else if (dV < 0) dV = 0;
+               // Recalculate texture V coordinates if this is not the face texture
+               if (iTextureNumber!=uFaceTexIndex) {
                   // Multiply by height of this particular image
                   dV *= m_puImageHeight[iTextureNumber];
                   // Add where this image starts
                   dV += m_puFirstPixel[iTextureNumber];
                   // Divide by the total height of the image
                   dV /= m_uTotalHeight;
-                  // Scale and store
-                  char cU = dU*iMaxU;
-                  char cV = dV*iMaxV;
-                  switch (tc) {
-                  case 2:
-                     pSelectionMeshData[f].uU0 = cU;
-                     pSelectionMeshData[f].uV0 = cV;
-                     break;
-                  case 1:
-                     pSelectionMeshData[f].uU1 = cU;
-                     pSelectionMeshData[f].uV1 = cV;
-                     break;
-                  case 0:
-                     pSelectionMeshData[f].uU2 = cU;
-                     pSelectionMeshData[f].uV2 = cV;
-                     break;
-                  }
                }
-               // Write Texture number
-               pSelectionMeshData[f].uTexture = 1;
+               // Scale and store
+               char cU = (dU*iMaxU)+0.5; // Add 0.5 to ensure correct rounding
+               char cV = (dV*iMaxV)+0.5; // Add 0.5 to ensure correct rounding
+               switch (tc) {
+               case 2:
+                  pFaceData[f].uU0 = cU;
+                  pFaceData[f].uV0 = cV;
+                  break;
+               case 1:
+                  pFaceData[f].uU1 = cU;
+                  pFaceData[f].uV1 = cV;
+                  break;
+               case 0:
+                  pFaceData[f].uU2 = cU;
+                  pFaceData[f].uV2 = cV;
+                  break;
+               }
             }
+            // Write Texture number
+            pFaceData[f].uTexture = iTextureNumber==uFaceTexIndex ? 0 : 1;
          }
+         uSelectOffset += uNumFaces * sizeof(SUnrealTriangle);
+
+         ////////////////////////////////////////////////////////////
+         // Write sequence data header
+         ////////////////////////////////////////////////////////////
+
+         ////////////////////////////////////////////////////////////
+         // Write sequence data
+         ////////////////////////////////////////////////////////////
+
+         ////////////////////////////////////////////////////////////
+         // Write vertex info header
+         ////////////////////////////////////////////////////////////
+
+         ////////////////////////////////////////////////////////////
+         // Write vertex info
+         ////////////////////////////////////////////////////////////
+
+         // Cast pointer
+         puTempPtr = (unsigned long*)(pcSelectMesh + uSelectOffset);
+         for (v=0; v<uNumVertices; ) {
+            // Write 2 ints per vertex - don't know what they are yet...
+            puTempPtr[v++] = v; // High
+            puTempPtr[v++] = v; // Low
+         }
+         uSelectOffset += 8 * uNumVertices;
+
+         ////////////////////////////////////////////////////////////
+         // Write face info header
+         ////////////////////////////////////////////////////////////
+
+         ////////////////////////////////////////////////////////////
+         // Write face info
+         ////////////////////////////////////////////////////////////
+
+         puTempPtr = (unsigned long*)(pcSelectMesh + uSelectOffset);
+         unsigned int uTempOffset = 0;
+         for (f=0; f<uNumFaces; f++) {
+            // Write 3 ints per triangle - don't know what they are yet...
+            puTempPtr[uTempOffset++] = f;
+            puTempPtr[uTempOffset++] = f;
+            puTempPtr[uTempOffset++] = f;
+         }
+         uSelectOffset += 12 * uNumFaces;
+
+         ////////////////////////////////////////////////////////////
+         // Write frame data header
+         ////////////////////////////////////////////////////////////
+
+         ////////////////////////////////////////////////////////////
+         // Write frame data
+         ////////////////////////////////////////////////////////////
+
+         ////////////////////////////////////////////////////////////
+         // Write footer
+         ////////////////////////////////////////////////////////////
+
+         // Number of vertices
+         *((long*)(pcSelectMesh+uSelectOffset)) = uNumVertices;
+         uSelectOffset+=4;
+         // Number of sequences
+         *((long*)(pcSelectMesh+uSelectOffset)) = 1;
+         uSelectOffset+=4;
+         // Standard data
+         memset(pcSelectMesh+uSelectOffset,0,8);
+         uSelectOffset+=8;
+         pcSelectMesh[uSelectOffset++] = (char)0xCD;
+         pcSelectMesh[uSelectOffset++] = (char)0xCC;
+         pcSelectMesh[uSelectOffset++] = (char)0xCC;
+         pcSelectMesh[uSelectOffset++] = (char)0x3D;
+         pcSelectMesh[uSelectOffset++] = (char)0xCD;
+         pcSelectMesh[uSelectOffset++] = (char)0xCC;
+         pcSelectMesh[uSelectOffset++] = (char)0xCC;
+         pcSelectMesh[uSelectOffset++] = (char)0x3D;
+         pcSelectMesh[uSelectOffset++] = (char)0xCD;
+         pcSelectMesh[uSelectOffset++] = (char)0xCC;
+         pcSelectMesh[uSelectOffset++] = (char)0x4C;
+         pcSelectMesh[uSelectOffset++] = (char)0x3E;
+         memset(pcSelectMesh+uSelectOffset,0,32);
+         uSelectOffset+=32;
+         pcSelectMesh[uSelectOffset++] = (char)0x02;
+         pcSelectMesh[uSelectOffset++] = (char)0x00;
+         pcSelectMesh[uSelectOffset++] = (char)0x00;
+         pcSelectMesh[uSelectOffset++] = (char)0x80;
+         pcSelectMesh[uSelectOffset++] = (char)0x3F;
+         pcSelectMesh[uSelectOffset++] = (char)0x00;
+         pcSelectMesh[uSelectOffset++] = (char)0x00;
+         pcSelectMesh[uSelectOffset++] = (char)0x80;
+         pcSelectMesh[uSelectOffset++] = (char)0x3F;
+
+         // Done - update size
+         uSelectMeshLength = uSelectOffset;
       }
       else {
          // CLEANUP MEMORY ETC
          return F_OUT_OF_MEMORY;
-      }*/
+      }
+      uCurrentOffset += uSelectMeshLength;
 
       // Write Import Table
-      /*sHeader.uImportOffset = uCurrentOffset;
-      SUnrealImportTableEntry* pImportTable;
-      NEWBEGIN
-      pImportTable = new SUnrealImportTableEntry[sHeader.uImportCount];
-      NEWEND("CAvatarFileUnreal::Save - import table allocation");
-      if (pImportTable != NULL) {
-         // This data is taken verbatim from a good file
-         pImportTable[0].cClassPackage = 0x03;
-         pImportTable[0].cClassName    = 0x1B;
-         pImportTable[0].uPackageIndex = 0;
-         pImportTable[0].cObjectName   = 0x03;
-         pImportTable[1].cClassPackage = 0x03;
-         pImportTable[1].cClassName    = 0x1B;
-         pImportTable[1].uPackageIndex = 0;
-         pImportTable[1].cObjectName   = 0x05;
-         pImportTable[2].cClassPackage = 0x03;
-         pImportTable[2].cClassName    = 0x15;
-         pImportTable[2].uPackageIndex = -1;
-         pImportTable[2].cObjectName   = 0x16;
-         pImportTable[3].cClassPackage = 0x03;
-         pImportTable[3].cClassName    = 0x15;
-         pImportTable[3].uPackageIndex = -2;
-         pImportTable[3].cObjectName   = 0x17;
-         pImportTable[4].cClassPackage = 0x03;
-         pImportTable[4].cClassName    = 0x15;
-         pImportTable[4].uPackageIndex = -1;
-         pImportTable[4].cObjectName   = 0x15;
-         pImportTable[5].cClassPackage = 0x03;
-         pImportTable[5].cClassName    = 0x15;
-         pImportTable[5].uPackageIndex = -1;
-         pImportTable[5].cObjectName   = 0x14;
-         pImportTable[6].cClassPackage = 0x03;
-         pImportTable[6].cClassName    = 0x15;
-         pImportTable[6].uPackageIndex = -2;
-         pImportTable[6].cObjectName   = 0x18;
-         pImportTable[7].cClassPackage = 0x03;
-         pImportTable[7].cClassName    = 0x15;
-         pImportTable[7].uPackageIndex = -2;
-         pImportTable[7].cObjectName   = 0x19;
-         pImportTable[8].cClassPackage = 0x03;
-         pImportTable[8].cClassName    = 0x15;
-         pImportTable[8].uPackageIndex = -1;
-         pImportTable[8].cObjectName   = 0x1A;
-         pImportTable[9].cClassPackage = 0x03;
-         pImportTable[9].cClassName    = 0x15;
-         pImportTable[9].uPackageIndex = -11;
-         pImportTable[9].cObjectName   = 0x0A;
-         pImportTable[10].cClassPackage = 0x03;
-         pImportTable[10].cClassName    = 0x1B;
-         pImportTable[10].uPackageIndex = 0;
-         pImportTable[10].cObjectName   = 0x02;
-      }
-      else {
-         // CLEANUP MEMORY ETC
-         return F_OUT_OF_MEMORY;
-      }
-      uCurrentOffset += sizeof(SUnrealImportTableEntry)*sHeader.uImportCount;*/
 
-      // Write Export Table      
+      // Write Export Table
 
-      // Write data chunks to stream
+      // Write data chunks to stream in order
       // Write header
       osOutputStream.write((char*)&sHeader,sizeof(SUnrealPackageHeader));
       // Write Name Table
       osOutputStream.write(pcNameTable,uNameTableLength);
       // Write mesh properties
+      osOutputStream.write(pcMeshProperties,uMeshPropertiesLength);
+      // Write mesh top data
+      osOutputStream.write(pcMeshHeader,uMeshHeaderLength);
       // Write mesh frame data
-      osOutputStream.write(pcMeshFrameHeader,uMeshFrameHeaderLength);
       ifstream isTempStream(m_pszTempFilename,ios::in|ios::binary);
       if (!isTempStream.fail()) {
          osOutputStream << isTempStream.rdbuf();
@@ -2027,40 +2517,38 @@ FRESULT CAvatarFileUnreal::SaveMeshU(const char* pszFilename, CAvatar* pAvatar) 
          // CLEANUP MEMORY ETC
          return F_FILE_ERROR;
       }
-      // Write Mesh Topology
-      //osOutputStream.write((char*)pMeshData,sizeof(SUnrealTriangle)*(iNumFaces+1));
+      // Write mesh bottom data
+      osOutputStream.write(pcMeshData,uMeshDataLength);
       // Write Bot Script
       osOutputStream.write(pcBotScript,uBotScriptLength);
       // Write Bot properties
+      osOutputStream.write(pcBotProperties,uBotPropertiesLength);
       // Write SelectionMesh script
       osOutputStream.write(pcSelectScript,uSelectScriptLength);
       // Write Mesh script
       osOutputStream.write(pcMeshScript,uMeshScriptLength);
       // Write SelectionMesh properties
+      osOutputStream.write(pcSelectProperties,uSelectPropertiesLength);
       // Write ForceMeshToExist data
       osOutputStream.write(pcForceMeshToExistData,uForceMeshToExistDataLength);
-      // Write SelectionMesh
-      // Write selection frame data
-      //osOutputStream.write((char*)puSelectionFrameData,sizeof(unsigned long)*uNumVertices);
-      // Write selection mesh data
-      //osOutputStream.write((char*)pSelectionMeshData,sizeof(SUnrealTriangle)*iNumFaces);
+      // Write Selection Mesh
+      osOutputStream.write(pcSelectMesh,uSelectMeshLength);
       // Write import table
-      //osOutputStream.write((char*)pImportTable,sizeof(SUnrealImportTableEntry)*sHeader.uImportCount);
       // Write export table
 
       // Done - close stream
       osOutputStream.close();
 
       // Delete allocated memory
-      //delete [] pImportTable;
-      //delete [] pSelectionMeshData;
-      //delete [] puSelectionFrameData;
+      delete [] pcSelectMesh;
       delete [] pcForceMeshToExistData;
+      delete [] pcSelectProperties;
       delete [] pcMeshScript;
       delete [] pcSelectScript;
+      delete [] pcBotProperties;
       delete [] pcBotScript;
-      delete [] pMeshData;
-      delete [] pcMeshFrameHeader;
+      delete [] pcMeshData;
+      delete [] pcMeshHeader;
       delete [] pcMeshProperties;
       delete [] pcNameTable;
 
@@ -2113,53 +2601,32 @@ FRESULT CAvatarFileUnreal::SaveMeshD3D(const char* pszFilename, CAvatar* pAvatar
          osOutputStream.write(&cColour,1);
          // Texture coordinates
          int iTextureNumber = pFaces[i].m_iTextureNumber;
-         if (pFaces[i].m_iTextureNumber==uFaceTexIndex) {
-            // Write face tex coords - nice & simple
-            for (int tc=3; tc--!=0; ) {
-               // Get tex coords
-               double dU = pFaces[i].m_sTexCoords[tc].dU;
-               double dV = pFaces[i].m_sTexCoords[tc].dV;
-               // Clamp to 0..1
-               if (dU > 1) dU = 1;
-               else if (dU < 0) dU = 0;
-               if (dV > 1) dV = 1;
-               else if (dV < 0) dV = 0;
-               // Scale and store
-               char cU = dU*iMaxU;
-               char cV = dV*iMaxV;
-               osOutputStream.write(&cU,1);
-               osOutputStream.write(&cV,1);
-            }
-            // Write Texture number
-            osOutputStream.write("\x00",1);
-         }
-         else {
-            // Other texture coordinates are more complex to recompute
-            for (int tc=3; tc--!=0; ) {
-               // Get tex coords
-               double dU = pFaces[i].m_sTexCoords[tc].dU;
-               double dV = pFaces[i].m_sTexCoords[tc].dV;
-               // Clamp to 0..1
-               if (dU > 1) dU = 1;
-               else if (dU < 0) dU = 0;
-               if (dV > 1) dV = 1;
-               else if (dV < 0) dV = 0;
-               // Recalculate texture V coordinates:
+         for (int tc=3; tc--!=0; ) {
+            // Get tex coords
+            double dU = pFaces[i].m_sTexCoords[tc].dU;
+            double dV = pFaces[i].m_sTexCoords[tc].dV;
+            // Clamp to 0..1
+            if (dU > 1) dU = 1;
+            else if (dU < 0) dU = 0;
+            if (dV > 0.9) dV = 0.9;
+            else if (dV < 0.1) dV = 0.1;
+            // Recalculate texture V coordinates if appropriate
+            if (iTextureNumber!=uFaceTexIndex) {
                // Multiply by height of this particular image
                dV *= m_puImageHeight[iTextureNumber];
                // Add where this image starts
                dV += m_puFirstPixel[iTextureNumber];
                // Divide by the total height of the image
                dV /= m_uTotalHeight;
-               // Scale and store
-               char cU = dU*iMaxU;
-               char cV = dV*iMaxV;
-               osOutputStream.write(&cU,1);
-               osOutputStream.write(&cV,1);
             }
-            // Write Texture number
-            osOutputStream.write("\x01",1);
+            // Scale and store
+            char cU = (dU*iMaxU)+0.5; // Add 0.5 to ensure correct rounding
+            char cV = (dV*iMaxV)+0.5; // Add 0.5 to ensure correct rounding
+            osOutputStream.write(&cU,1);
+            osOutputStream.write(&cV,1);
          }
+         // Write Texture number
+         osOutputStream.write((iTextureNumber==uFaceTexIndex) ? "\0x00" : "\x01", 1);
          // Write Flags
          osOutputStream.write("\0",1);
       }
@@ -2197,15 +2664,6 @@ FRESULT CAvatarFileUnreal::SaveMeshA3D(const char* pszFilename, CAvatar* pAvatar
    ofstream osOutputStream(pszFilename,ios::binary|ios::out);
 	if (!osOutputStream.fail()) {
       const SBodyPart* pBodyParts = pAvatar->BodyParts();
-      // Reset avatar pose
-      pAvatar->ResetPose();
-      pAvatar->UpdateModel();
-      // Setup sizes & offsets etc
-      SPoint3D pntMin, pntMax;
-      pAvatar->BoundingBox(unknown,pntMax,pntMin);
-      const double dHeight = (pntMax.m_dComponents[1] - pntMin.m_dComponents[1]);
-      const double dScale = 110 / dHeight;
-      const double dYOff = -((pntMax.m_dComponents[1] + pntMin.m_dComponents[1]) / 2 * dScale);
       // Get vertex info
       int uNumVertices = pAvatar->NumVertices();
       const SPoint3D* pVertices = pAvatar->Vertices();
@@ -2270,53 +2728,32 @@ FRESULT CAvatarFileUnreal::SaveSelectionMeshD3D(const char* pszFilename, CAvatar
          osOutputStream.write(&cColour,1);
          // Texture coordinates
          int iTextureNumber = pFaces[i].m_iTextureNumber;
-         if (pFaces[i].m_iTextureNumber==uFaceTexIndex) {
-            // Write face tex coords - these are simple
-            for (int tc=3; tc--!=0; ) {
-               // Get tex coords
-               double dU = pFaces[i].m_sTexCoords[tc].dU;
-               double dV = pFaces[i].m_sTexCoords[tc].dV;
-               // Clamp to 0..1
-               if (dU > 1) dU = 1;
-               else if (dU < 0) dU = 0;
-               if (dV > 1) dV = 1;
-               else if (dV < 0) dV = 0;
-               // Scale and store
-               char cU = dU*iMaxU;
-               char cV = dV*iMaxV;
-               osOutputStream.write(&cU,1);
-               osOutputStream.write(&cV,1);
-            }
-            // Write Texture number
-            osOutputStream.write("\x00",1);
-         }
-         else {
-            // Other texture coordinates are more complex to recompute
-            for (int tc=3; tc--!=0; ) {
-               // Get tex coords
-               double dU = pFaces[i].m_sTexCoords[tc].dU;
-               double dV = pFaces[i].m_sTexCoords[tc].dV;
-               // Clamp to 0..1
-               if (dU > 1) dU = 1;
-               else if (dU < 0) dU = 0;
-               if (dV > 1) dV = 1;
-               else if (dV < 0) dV = 0;
-               // Recalculate texture V coordinates:
+         for (int tc=3; tc--!=0; ) {
+            // Get tex coords
+            double dU = pFaces[i].m_sTexCoords[tc].dU;
+            double dV = pFaces[i].m_sTexCoords[tc].dV;
+            // Clamp to 0..1
+            if (dU > 1) dU = 1;
+            else if (dU < 0) dU = 0;
+            if (dV > 0.9) dV = 0.9;
+            else if (dV < 0.1) dV = 0.1;
+            // Recalculate texture V coordinates if appropriate
+            if (iTextureNumber!=uFaceTexIndex) {
                // Multiply by height of this particular image
                dV *= m_puImageHeight[iTextureNumber];
                // Add where this image starts
                dV += m_puFirstPixel[iTextureNumber];
                // Divide by the total height of the image
                dV /= m_uTotalHeight;
-               // Scale and store
-               char cU = dU*iMaxU;
-               char cV = dV*iMaxV;
-               osOutputStream.write(&cU,1);
-               osOutputStream.write(&cV,1);
             }
-            // Write Texture number
-            osOutputStream.write("\x01",1);
+            // Scale and store
+            char cU = (dU*iMaxU)+0.5; // Add 0.5 to ensure correct rounding
+            char cV = (dV*iMaxV)+0.5; // Add 0.5 to ensure correct rounding
+            osOutputStream.write(&cU,1);
+            osOutputStream.write(&cV,1);
          }
+         // Write Texture number
+         osOutputStream.write((iTextureNumber==uFaceTexIndex) ? "\0x00" : "\x01", 1);
          // Write Flags
          osOutputStream.write("\0",1);
       }
@@ -2337,12 +2774,6 @@ FRESULT CAvatarFileUnreal::SaveSelectionMeshA3D(const char* pszFilename, CAvatar
       // Reset avatar pose
       pAvatar->ResetPose();
       pAvatar->UpdateModel();
-      // Setup sizes & offsets etc
-      SPoint3D pntMin, pntMax;
-      pAvatar->BoundingBox(unknown,pntMax,pntMin);
-      const double dHeight = (pntMax.m_dComponents[1] - pntMin.m_dComponents[1]);
-      const double dScale = 110 / dHeight;
-      const double dYOff = -((pntMax.m_dComponents[1] + pntMin.m_dComponents[1]) / 2 * dScale);
       // Get vertex info
       const int uNumVertices = pAvatar->NumVertices();
       const SPoint3D* pVertices = pAvatar->Vertices();
@@ -2356,7 +2787,7 @@ FRESULT CAvatarFileUnreal::SaveSelectionMeshA3D(const char* pszFilename, CAvatar
       // Write vertices
       for (v=0; v<uNumVertices; v++) {
          // Pack vertex into a long int 
-         long lVertex = PackVertex(pVertices[v],dScale,dYOff);
+         long lVertex = PackVertex(pVertices[v],m_dScale,m_dYOffset);
          // Write long to stream
          osOutputStream.write((char*)&lVertex,4);
       }

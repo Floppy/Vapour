@@ -7,7 +7,7 @@
 // AvatarFileUnreal.h - 5/4/2000 - James Smith
 //	Unreal export filter header
 //
-// $Id: AvatarFileUnreal.h,v 1.6 2000/08/24 22:20:41 waz Exp $
+// $Id: AvatarFileUnreal.h,v 1.7 2000/08/29 12:48:41 waz Exp $
 //
 
 #pragma once
@@ -16,17 +16,10 @@
 #define _VAL_AVATARFILEUNREAL_
 
 #include "AvatarFileStore.h"
+#include "SGAToUnrealTournament.h"
 #include "Palette.h"
 
 #include <fstream.h>
-
-// Definitions of class options and arguments
-// Option IDs
-#define UNREAL_SEX			   5
-// Option values
-// UNREAL_SEX
-#define UNREAL_MALE		      1
-#define UNREAL_FEMALE			2
 
 //////////////////////
 // CAvatarFileUnreal
@@ -88,7 +81,7 @@ private:
    FRESULT SaveMeshScript(const char* pszFilename, CAvatar* pAvatar) const;
    FRESULT SaveSelectionMeshScript(const char* pszFilename, CAvatar* pAvatar) const;
    FRESULT SaveBotScript(const char* pszFilename, CAvatar* pAvatar) const;
-   FRESULT Init(const char* pszFilename, const CAvatar* pAvatar) const;
+   FRESULT Init(const char* pszFilename, CAvatar* pAvatar) const;
 
    // Various name strings
    mutable char* m_pszName;
@@ -100,6 +93,9 @@ private:
    mutable unsigned int* m_puFirstPixel;
    mutable unsigned int* m_puImageHeight;
    mutable unsigned int m_uTotalHeight;
+   // Model scale factors
+   mutable double m_dScale;
+   mutable double m_dYOffset;
 
 };
 
