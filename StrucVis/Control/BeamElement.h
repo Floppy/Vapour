@@ -7,7 +7,7 @@
 // BeamElement.h
 // 19/03/2002 - James Smith
 //
-// $Id: BeamElement.h,v 1.12 2002/03/27 16:40:02 vap-james Exp $
+// $Id: BeamElement.h,v 1.13 2002/03/27 17:08:15 vap-warren Exp $
 
 #ifndef __VTSTRUCVIS_BEAMELEMENT__
 #define __VTSTRUCVIS_BEAMELEMENT__
@@ -23,6 +23,9 @@ class CBeamElement : public CElement {
 public:
    CBeamElement(CCortonaUtil *poCortona, CNodeSet* poNodeSet);
    // Constructor
+
+   ~CBeamElement();
+   // Destructor
 
 //#===--- Member Functions
 
@@ -81,6 +84,9 @@ protected:
    float m_fWeb;
    // Beam dimensions
 
+   mutable CCortonaField *m_ppoField[3];
+   // Field value caches
+   // Positions, colours, visible
 };
 
 #endif // __VTSTRUCVIS_BEAMELEMENT__

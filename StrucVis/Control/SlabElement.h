@@ -7,7 +7,7 @@
 // SlabElement.h
 // 19/03/2002 - James Smith
 //
-// $Id: SlabElement.h,v 1.13 2002/03/27 16:40:00 vap-james Exp $
+// $Id: SlabElement.h,v 1.14 2002/03/27 17:08:15 vap-warren Exp $
 
 #ifndef __VTSTRUCVIS_SLABELEMENT__
 #define __VTSTRUCVIS_SLABELEMENT__
@@ -23,6 +23,9 @@ class CSlabElement : public CElement {
 public:
    CSlabElement(CCortonaUtil *poCortona, CNodeSet* poNodeSet);
    // Constructor
+
+   ~CSlabElement();
+   // Destructor
 
 //#===--- Member Functions
 
@@ -84,6 +87,10 @@ protected:
 
    float m_fThickness;
    // Slab dimensions
+
+   mutable CCortonaField *m_ppoField[4];
+   // Field value caches
+   // Positions, cracks, colours, visible
 };
 
 #endif // __VTSTRUCVIS_SLABELEMENT__
