@@ -13,7 +13,7 @@
 //! author 		= "James Smith"
 //! date 		= "15/10/2001"
 //! lib 		= libVALET3d
-//! rcsid 		= "$Id: mesh.h,v 1.2 2001/10/15 16:35:38 vap-james Exp $"
+//! rcsid 		= "$Id: mesh.h,v 1.3 2001/10/15 16:52:52 vap-james Exp $"
 //! userlevel 	        = Normal
 //! docentry 	        = "VALET.3D.Surface Representations"
 
@@ -26,6 +26,7 @@ namespace NValet {
   //: Polygon Mesh
   // This class describes the topology of a mesh surface. Geometry info is provided by
   // whichever class encapsulates this one.
+  // The topology is stored in a winged-edge representation for fast and easy manipulation.
 
   class CMesh {
 

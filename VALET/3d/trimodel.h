@@ -5,15 +5,15 @@
 //
 // Add confidentiality notice
 
-#ifndef _VALET_TRIMESH_
-#define _VALET_TRIMESH_
+#ifndef _VALET_TRIMODEL_
+#define _VALET_TRIMODEL_
 
 ////////////////
-//! file 		= "VALET/3d/trimesh.h"
+//! file 		= "VALET/3d/trimodel.h"
 //! author 		= "James Smith"
 //! date 		= "10/10/2001"
 //! lib 		= libVALET3d
-//! rcsid 		= "$Id: trimesh.h,v 1.4 2001/10/15 16:35:39 vap-james Exp $"
+//! rcsid 		= "$Id: trimodel.h,v 1.1 2001/10/15 16:52:53 vap-james Exp $"
 //! userlevel 	        = Normal
 //! docentry 	        = "VALET.3D.Surface Representations"
 
@@ -27,12 +27,10 @@
 
 namespace NValet {
 
-  //: Triangle Mesh
+  //: A triangle-mesh-based 3d model.
   // A description of a 3d mesh, containing only triangular elements.
-  // The class uses a winged-edge representation to allow easy  and fast 
-  // manipulation of the mesh.
 
-  class CTriMesh : public CSurface<CVector3D> {
+  class CTriModel : public CSurface<CVector3D> {
 
   protected:
 
@@ -43,11 +41,11 @@ namespace NValet {
     //:------------------------
     //: Contruction/Destruction
 
-    CTriMesh();
+    CTriModel();
     //: Default Constructor
     // Creates an empty model.
     
-    ~CTriMesh();
+    ~CTriModel();
     //: Destructor
     
     //:-----------------
@@ -71,4 +69,4 @@ namespace NValet {
 
 }
 
-#endif //_VALET_TRIMESH_
+#endif //_VALET_TRIMODEL_

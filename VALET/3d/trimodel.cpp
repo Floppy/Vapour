@@ -7,15 +7,15 @@
 // Add confidentiality notice
 
 ////////////////
-//! file 		= "VALET/3d/trimesh.cpp"
+//! file 		= "VALET/3d/trimodel.cpp"
 //! author 		= "James Smith"
 //! date 		= "10/10/2001"
 //! lib 		= libVALET3d
-//! rcsid 		= "$Id: trimesh.cpp,v 1.2 2001/10/15 16:12:39 vap-james Exp $"
+//! rcsid 		= "$Id: trimodel.cpp,v 1.1 2001/10/15 16:52:53 vap-james Exp $"
 //! userlevel 	        = Normal
 //! docentry 	        = "VALET.3D.Surface Representations"
 
-#include "trimesh.h"
+#include "trimodel.h"
 
 // VALET includes
 
@@ -23,10 +23,10 @@
 
 namespace NValet {
   
-  CTriMesh::CTriMesh() {
+  CTriModel::CTriModel() {
   }
   
-  CTriMesh::~CTriMesh() {
+  CTriModel::~CTriModel() {
   }
   
 }
