@@ -7,7 +7,7 @@
 // Defs.h - 21/12/1999 - Warren Moore
 //	Global Definitions for VAL
 //
-// $Id: Defs.h,v 1.2 2000/06/17 10:42:05 waz Exp $
+// $Id: Defs.h,v 1.3 2000/07/10 09:08:02 waz Exp $
 //
 
 #ifndef _VAL_DEFS_
@@ -20,7 +20,9 @@
 #define NEWBEGIN	try { 
 #define NEWEND(x)	} catch (CMemoryException *pException) { TRACE("Out of memory : %s\n", x); pException->Delete(); } 
 
-//#===--- CAvanewApp
+
+#define STR_SIZE				256
+
 #define SPLASH_TIME			3
 
 //#===--- CImage
