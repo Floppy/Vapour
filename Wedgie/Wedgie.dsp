@@ -92,7 +92,7 @@ LINK32=link.exe
 # PROP Default_Filter "cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 # Begin Source File
 
-SOURCE=.\CommandLine.cpp
+SOURCE=.\MFCCmdLine.cpp
 # End Source File
 # Begin Source File
 
@@ -121,7 +121,7 @@ SOURCE=.\WedgieDlg.cpp
 # PROP Default_Filter "h;hpp;hxx;hm;inl"
 # Begin Source File
 
-SOURCE=.\CommandLine.h
+SOURCE=.\MFCCmdLine.h
 # End Source File
 # Begin Source File
 

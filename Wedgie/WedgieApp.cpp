@@ -7,7 +7,7 @@
 // WedgieApp.cpp - 02/12/1999 - Warren Moore
 //	  Main application source
 //
-// $Id: WedgieApp.cpp,v 1.2 2000/12/03 18:30:04 warren Exp $
+// $Id: WedgieApp.cpp,v 1.3 2000/12/04 23:04:31 warren Exp $
 //
 
 #include "stdafx.h"
@@ -15,10 +15,12 @@
 #include "WedgieDlg.h"
 
 #include "VALWin32.h"
-#include "CommandLine.h"
+#include "MFCCmdLine.h"
 
 #include <iostream.h>
 #include "Wedgie.h"
+#include <io.h>
+#include <fcntl.h>
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -69,26 +71,24 @@ BOOL CWedgieApp::InitInstance() {
 	CString strDirName;
 	strDirName = GetProfileString("Application Settings", "Directory Name", "C:\\");
 
-	// Write the banner
-	/*
-	HANDLE hConsole = ::GetStdHandle(STD_OUTPUT_HANDLE);
-	if (hConsole == INVALID_HANDLE_VALUE) {
-		unsigned long ulCount = 0;
-		char pcText[STR_SIZE] = "Wedgie v1.0 (";
-		strcat(pcText, __DATE__);
-		strcat(pcText, ")\n");
-		WriteConsole(hConsole, pcText, strlen(pcText), &ulCount, NULL);
-	}
-	*/
-	cout << "Wedgie Compiler " << WEDGIE_VERSION << " (" << __DATE__ << ")" << endl;
-	cout << "Copyright 1999-2000 Vapour Technology Ltd." << endl << endl;
-
 	// Parse command line for standard shell commands, DDE, file open
-	CCommandLine oCmdLine;
+	CMFCCmdLine oCmdLine;
 	ParseCommandLine(oCmdLine);
 	// Don't create the dialog if input dir supplied on command line
 	const char *pcInputDir = NULL;
 	if (pcInputDir = oCmdLine.GetInputDir()) {
+		// Write the banner
+		/*
+		int hCrt;
+		FILE *hf;
+		AllocConsole();
+		hCrt = _open_osfhandle((long)GetStdHandle(STD_OUTPUT_HANDLE), _O_TEXT);
+		hf = _fdopen(hCrt, "w");
+		*stdout = *hf;
+		int i = setvbuf( stdout, NULL, _IONBF, 0 );
+		*/
+		printf("Wedgie Compiler %s (%s)\n", WEDGIE_VERSION, __DATE__);
+		printf("Copyright 1999-2000 Vapour Technology Ltd.\n\n");
 		// Create the wedgie name
 		char pcWJEName[STR_SIZE] = "";
 		if ((pcInputDir[0] != '\\') && (pcInputDir[1] != '.') && (pcInputDir[1] != ':')) {
@@ -107,11 +107,14 @@ BOOL CWedgieApp::InitInstance() {
 		oFile.open(pcWJEName, ios::out|ios::binary|ios::trunc);
 		if (!oFile.fail()) {
 			CWedgie oWedgie;
-			if (oWedgie.Open(&oFile, pcInputDir, true, false) == WJE_OK)
-				cout << pcWJEName << " created containing " << oWedgie.Files() << " files" << endl;
-			else 
-				cout << "Unable to create " << pcWJEName << endl;
-			oWedgie.Close();
+			if (oWedgie.Open(&oFile, pcInputDir, true, false) == WJE_OK) {
+				printf("%s created containing %d\n", pcWJEName, oWedgie.Files());
+				oWedgie.Close();
+			}
+			else {
+				printf("Unable to create %s\n", pcWJEName);
+				remove(pcWJEName);
+			}
 		}
 	}
 	else {
