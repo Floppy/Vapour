@@ -6,7 +6,7 @@
 // NodeSet.h
 // 19/03/2002 - James Smith
 //
-// $Id: NodeSet.h,v 1.4 2002/03/21 21:16:28 vap-james Exp $
+// $Id: NodeSet.h,v 1.5 2002/03/21 23:36:17 vap-james Exp $
 
 #ifndef __NODESET__
 #define __NODESET__
@@ -34,12 +34,12 @@ public:
    // Set the size of the node set
    // All data will be dumped.
 
-   void SetDefault(float* pfNodePositions);
+   void SetDefault(const float* pfNodePositions);
    // The default nodes are overwritten with the passed data.
    // (NumNodes * 3) floats are assumed.
    // This also overwrites current positions.
 
-   void Displace(float* pfDisplacements) const;
+   void Displace(const float* pfDisplacements) const;
    // Adds the passed array of displacements onto the default nodes
    // to create a new current node list.
    // Displacements are multiplied by the scale factor.

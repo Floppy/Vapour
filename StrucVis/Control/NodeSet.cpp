@@ -6,7 +6,7 @@
 // NodeSet.cpp
 // 19/03/2002 - James Smith
 //
-// $Id: NodeSet.cpp,v 1.5 2002/03/21 21:16:28 vap-james Exp $
+// $Id: NodeSet.cpp,v 1.6 2002/03/21 23:36:17 vap-james Exp $
 
 #include "stdafx.h"
 #include "NodeSet.h"
@@ -55,15 +55,15 @@ void CNodeSet::SetSize(int iNumNodes) {
    return;
 }
 
-void CNodeSet::SetDefault(float* pfNodePositions) {
+void CNodeSet::SetDefault(const float* pfNodePositions) {
    memcpy(m_pfDefaultNodePositions,pfNodePositions,m_iNumNodes*3*sizeof(float));
    memcpy(m_pfCurrentNodePositions,pfNodePositions,m_iNumNodes*3*sizeof(float));
 }
 
-void CNodeSet::Displace(float* pfDisplacements) const {
+void CNodeSet::Displace(const float* pfDisplacements) const {
    float* pfDefault = m_pfDefaultNodePositions;
    float* pfCurrent = m_pfCurrentNodePositions;
-   float* pfDisplacement = pfDisplacements;
+   const float* pfDisplacement = pfDisplacements;
    for (unsigned int n=0; n<m_iNumNodes; n++) {
       for (unsigned int c=0; c<3; c++) {
          *pfCurrent = *pfDefault + (m_pfScale[c] * *pfDisplacement);
