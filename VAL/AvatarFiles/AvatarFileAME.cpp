@@ -1,4 +1,4 @@
-//====---
+	//====---
 // VAL
 //----
 // Vapour Technology All-Purpose Library
@@ -7,7 +7,7 @@
 // AvatarFileAME.cpp - 17/06/2000 - James Smith
 //	AME import filter implementation
 //
-// $Id: AvatarFileAME.cpp,v 1.5 2000/08/09 12:21:02 waz Exp $
+// $Id: AvatarFileAME.cpp,v 1.6 2000/08/10 22:44:20 waz Exp $
 //
 
 #include "stdafx.h"
