@@ -7,7 +7,7 @@
 # SlabElement.wrl
 # 19/03/2002 - James Smith
 #
-# $Id: SlabElement.wrl,v 1.13 2002/03/27 16:18:34 vap-james Exp $
+# $Id: SlabElement.wrl,v 1.14 2002/03/28 13:29:51 vap-james Exp $
 
 PROTO SlabElement [
    eventIn MFColor  set_colours
@@ -213,15 +213,15 @@ PROTO SlabElement [
                }
             }
             // Set crack locations
-            crack1.translation = coordNode.point[32].add(coordNode.point[0].subtract(coordNode.point[32]).multiply(0.5));
-            crack2.translation = coordNode.point[32].add(coordNode.point[4].subtract(coordNode.point[32]).multiply(0.5));
-            crack3.translation = coordNode.point[32].add(coordNode.point[8].subtract(coordNode.point[32]).multiply(0.5));
-            crack4.translation = coordNode.point[32].add(coordNode.point[12].subtract(coordNode.point[32]).multiply(0.5));
-            crack5.translation = coordNode.point[32].add(coordNode.point[16].subtract(coordNode.point[32]).multiply(0.5));
-            crack6.translation = coordNode.point[32].add(coordNode.point[20].subtract(coordNode.point[32]).multiply(0.5));
-            crack7.translation = coordNode.point[32].add(coordNode.point[24].subtract(coordNode.point[32]).multiply(0.5));
-            crack8.translation = coordNode.point[32].add(coordNode.point[28].subtract(coordNode.point[32]).multiply(0.5));
-            crack9.translation = coordNode.point[32].add(coordNode.point[32].subtract(coordNode.point[32]).multiply(0.5));
+            crack1.translation = coordNode.point[35].add(coordNode.point[3].subtract(coordNode.point[35]).multiply(0.666));
+            crack2.translation = coordNode.point[35].add(coordNode.point[7].subtract(coordNode.point[35]).multiply(0.666));
+            crack3.translation = coordNode.point[35].add(coordNode.point[11].subtract(coordNode.point[35]).multiply(0.666));
+            crack4.translation = coordNode.point[35].add(coordNode.point[15].subtract(coordNode.point[35]).multiply(0.666));
+            crack5.translation = coordNode.point[35].add(coordNode.point[19].subtract(coordNode.point[35]).multiply(0.666));
+            crack6.translation = coordNode.point[35].add(coordNode.point[23].subtract(coordNode.point[35]).multiply(0.666));
+            crack7.translation = coordNode.point[35].add(coordNode.point[27].subtract(coordNode.point[35]).multiply(0.666));
+            crack8.translation = coordNode.point[35].add(coordNode.point[31].subtract(coordNode.point[35]).multiply(0.666));
+            crack9.translation = coordNode.point[35].add(coordNode.point[35].subtract(coordNode.point[35]).multiply(0.666));
          }
          function set_cracks(value,time) {
             update_cracks(value);
