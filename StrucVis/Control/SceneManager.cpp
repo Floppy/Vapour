@@ -6,7 +6,7 @@
 // SceneManager.cpp
 // 19/03/2002 - James Smith
 //
-// $Id: SceneManager.cpp,v 1.5 2002/03/21 23:43:19 vap-james Exp $
+// $Id: SceneManager.cpp,v 1.6 2002/03/22 00:23:15 vap-james Exp $
 
 #include "stdafx.h"
 #include "SceneManager.h"
@@ -37,7 +37,7 @@ const float g_pfDefaultNodes[27] = {
 };
 
 const g_iNumFrames = 4;
-const float g_pfNodeDisplacments[4][27] = {
+const float g_pfNodeDisplacments[g_iNumFrames][27] = {
    {
       0, 0, 0,
       0, 0, 0,
@@ -83,21 +83,23 @@ const float g_pfNodeDisplacments[4][27] = {
       0, -1, 0
    }
 };
-const float g_pfNodeStresses[4][9] = {
+const float g_pfNodeStresses[g_iNumFrames][9] = {
    {0,0,0,0,0,0,0,0,0},
    {0,10,25,0,15,25,10,25,25},
    {0,20,50,0,25,50,25,50,50},
    {0,50,100,0,75,100,50,100,100}
 };
 
-const unsigned int g_iNumBeams = 4;
+const unsigned int g_iNumBeams = 6;
 const float g_fBeamHeight = 0.5446f;
 const float g_fBeamWidth = 0.2119f;
 const float g_fFlange = 0.0213f;
 const float g_fWeb = 0.0128f;
-const unsigned int g_piBeamNodes[4][2] = {
+const unsigned int g_piBeamNodes[g_iNumBeams][2] = {
    {1, 2},
    {2, 3},
+   {1, 4},
+   {4, 7},
    {7, 8},
    {8, 9}
 };
