@@ -11,7 +11,7 @@
 //! author     = "James Smith"
 //! date       = "01/10/2001"
 //! lib        = libVALETmath
-//! rcsid      = "$Id: Vector3D.cpp,v 1.11 2001/10/27 13:06:09 vap-james Exp $"
+//! rcsid      = "$Id: Vector3D.cpp,v 1.12 2001/10/30 00:51:47 vap-james Exp $"
 //! userlevel  = Normal
 //! docentry   = "VALET.Math.Geometry"
 
@@ -220,6 +220,10 @@ namespace NVALET {
       return m_pdComponents[2];
    } //Z(void)
 	
+   const double* CVector3D::Array(void) {
+      return m_pdComponents;
+   } //Array(void)
+
    void CVector3D::ToDouble(double& dX, double& dY, double& dZ) const {
       CLog("math","CVector3D::ToDouble");
       dX = m_pdComponents[0];

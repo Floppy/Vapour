@@ -14,7 +14,7 @@
 //! author     = "James Smith"
 //! date       = "01/10/2001"
 //! lib        = libVALETmath
-//! rcsid      = "$Id: vector3d.h,v 1.13 2001/10/24 21:33:27 vap-james Exp $"
+//! rcsid      = "$Id: vector3d.h,v 1.14 2001/10/30 00:51:47 vap-james Exp $"
 //! userlevel  = Normal
 //! docentry   = "VALET.Math.Geometry"
 
@@ -253,6 +253,11 @@ namespace NVALET {
     //: Access to the Z component
     // Allows direct modfication of the component.
     //!param: return = reference to the Z component
+
+    const double* Array(void);
+    //: Access to the array of values.
+    // This is suitable for passing to glVertex3dv(), for instance.
+    //!param: return = a pointer to the array of values (3 elements - XYZ)
 	
     void ToDouble(double &dX, double &dY, double &dZ) const;
     //: Get all three components at once.
