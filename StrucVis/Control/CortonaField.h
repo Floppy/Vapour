@@ -7,7 +7,7 @@
 // CortonaField.h
 // 12/03/2002 - Warren Moore
 //
-// $Id: CortonaField.h,v 1.5 2002/03/21 14:32:07 vap-warren Exp $
+// $Id: CortonaField.h,v 1.6 2002/03/21 22:55:22 vap-warren Exp $
 
 #ifndef __CORTONAFIELD__
 #define __CORTONAFIELD__
@@ -47,6 +47,9 @@ public:
    bool SetMFVec3f(const long liIndex, const float fX, const float fY, const float fZ);
    // Sets the X, Y, Z values at the specified index
 
+   bool AddMFVec3f(const float fX, const float fY, const float fZ);
+   // Appends the X, Y, Z triplet to the end of the vector list
+
    //--- SFVec3f Functions
    // These access functions could be extensively improved
 
@@ -78,7 +81,7 @@ protected:
    // Returns the field object interface
 
    // Friend class for protected functions
-   friend class CCortonaUtil;
+   friend class CCortonaNode;
 
 //#===--- Member Variables
 protected:

@@ -7,7 +7,7 @@
 // CortonaField.cpp
 // 07/03/2002 - Warren Moore
 //
-// $Id: CortonaField.cpp,v 1.3 2002/03/20 21:57:19 vap-warren Exp $
+// $Id: CortonaField.cpp,v 1.4 2002/03/21 22:55:22 vap-warren Exp $
 
 #include "stdafx.h"
 #include "CortonaBase.h"
@@ -54,9 +54,34 @@ bool CCortonaField::GetMFVec3f(const long liIndex, float &fX, float &fY, float &
       return false;
 
    // Get the values
-   bool bOk = SUCCEEDED(pMFVec3f->get_X(liIndex, &fX));
-   bOk &= SUCCEEDED(pMFVec3f->get_Y(liIndex, &fY));
-   bOk &= SUCCEEDED(pMFVec3f->get_Z(liIndex, &fZ));
+   VARIANT sVar;
+   VariantInit(&sVar);
+
+   // Get the complete value
+   hResult = pMFVec3f->get_Value(liIndex, &sVar);
+   // If we got the variant array, get access to the data
+   bool bOk = false;
+   if (SUCCEEDED(hResult)) {
+      VARIANT *pVarArray = NULL;
+      hResult = SafeArrayAccessData(sVar.parray, (void**)&pVarArray);
+      // If we got access, get each element
+      if (SUCCEEDED(hResult)) {
+         // Check each type
+         bOk  = (pVarArray[0].vt == VT_R4);
+         bOk &= (pVarArray[1].vt == VT_R4);
+         bOk &= (pVarArray[2].vt == VT_R4);
+         if (bOk) {
+            // All types checked so get the values
+            fX = pVarArray[0].fltVal;
+            fY = pVarArray[1].fltVal;
+            fZ = pVarArray[2].fltVal;
+         }
+      }
+      SafeArrayUnaccessData(sVar.parray);
+   }
+
+   // Clear the variant
+   VariantClear(&sVar);
 
    // Release the MFVec3f interface
    pMFVec3f->Release();
@@ -110,6 +135,66 @@ bool CCortonaField::SetMFVec3f(const long liIndex, const float fX, const float f
    pMFVec3f->Release();
 
    return bOk;
+}
+
+bool CCortonaField::AddMFVec3f(const float fX, const float fY, const float fZ) {
+   // Check the field pointer
+   if (!m_pField)
+      return false;
+
+   // Check the type
+   if (m_eType != tMFVec3f)
+      return false;
+
+   // Create the safe array
+   const int iCount = 3;
+   SAFEARRAYBOUND sSABound[1];
+   SAFEARRAY *pSA;
+
+   sSABound[0].cElements = iCount;
+   sSABound[0].lLbound = 1;
+   pSA = SafeArrayCreate(VT_VARIANT, 1, sSABound);
+
+   // Gain access to the values
+   VARIANT *pVal = NULL;
+   HRESULT hResult = SafeArrayAccessData(pSA, (void**)&pVal);
+   if (SUCCEEDED(hResult)) {
+      // Populate the array
+      VariantInit(pVal);
+      pVal[0].vt = VT_R4;
+      pVal[0].fltVal = fX,
+      VariantInit(pVal + 1);
+      pVal[1].vt = VT_R4;
+      pVal[1].fltVal = fY,
+      VariantInit(pVal + 2);
+      pVal[2].vt = VT_R4;
+      pVal[2].fltVal = fZ,
+      SafeArrayUnaccessData(pSA);
+   }
+   else {
+      SafeArrayDestroy(pSA);
+      return false;
+   }
+
+   // Initialise the variant
+   VARIANT sVariant;
+   VariantInit(&sVariant);
+
+   // Set the type and value
+   sVariant.vt = VT_ARRAY | VT_VARIANT;
+   sVariant.parray = pSA;
+
+   // Get the IMFVec3f interface
+   IMFVec3fObject *pMFVec3f = NULL;
+   hResult = m_pField->QueryInterface(IID_IMFVec3fObject, (void**)&pMFVec3f);
+   if (SUCCEEDED(hResult)) {
+      // Add the value
+      hResult = pMFVec3f->Add(&sVariant, NULL);
+      // Release the MFVec3f interface
+      pMFVec3f->Release();
+   }
+
+   return SUCCEEDED(hResult);
 }
 
 bool CCortonaField::GetSFVec3f(float &fX, float &fY, float &fZ) {
