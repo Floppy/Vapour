@@ -14,7 +14,7 @@
 //! author 		= "Warren Moore"
 //! date 		= "23/09/2001"
 //! lib 			= libVALET
-//! rcsid 		= "$Id: valet.noarch.h,v 1.5 2001/10/27 15:41:19 vap-warren Exp $"
+//! rcsid 		= "$Id: valet.noarch.h,v 1.6 2001/10/28 16:49:13 vap-warren Exp $"
 //! userlevel 	= Normal
 //! docentry 	= "VALET.Arch"
 
@@ -26,6 +26,8 @@
 
 /*#===--- Assert */
 
+#ifdef VDEBUG
+
 #ifdef ASSERT
 #undef ASSERT
 #endif
@@ -33,5 +35,7 @@
 #define ASSERT(x)    assert(x)
 
 #include <assert.h>
+
+#endif /* VDEBUG */
 
 #endif /* _VALET_NOARCH_ */
