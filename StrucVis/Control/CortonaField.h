@@ -9,7 +9,7 @@
 //! file      = "Control/CortonaField.h"
 //! author    = "Warren Moore"
 //! date      = "12/3/2002"
-//! rcsid     = "$Id: CortonaField.h,v 1.16 2002/04/05 08:56:21 vap-warren Exp $"
+//! rcsid     = "$Id: CortonaField.h,v 1.17 2002/04/05 14:13:42 vap-warren Exp $"
 
 #ifndef __VTSTRUCVIS_CORTONAFIELD__
 #define __VTSTRUCVIS_CORTONAFIELD__
@@ -226,6 +226,7 @@ protected:
    IFieldObject *m_pField;       //: The field interface
    FTYPE m_eType;                //: The field type
 
+   //: Specific field interfaces
    union TUInterface {
       IMFColorObject *m_pMFColor;
       IMFVec3fObject *m_pMFVec3f;
@@ -234,7 +235,7 @@ protected:
       ISFBoolObject *m_pSFBool;
       ISFRotationObject *m_pSFRotation;
       IMFStringObject *m_pMFString;
-   } m_uInterface;               //: Specific field interfaces
+   } m_uInterface;               
 
 };
 

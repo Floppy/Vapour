@@ -4,12 +4,12 @@
 // ActiveX Control for structure visualisation
 // Copyright 2002 Vapour Technology Ltd.
 //
-//! docentry  = "VTStrucVis.Visualisation Control.ActiveX Control"
+//! docentry  = "VTStrucVis.Visualisation Control.Asynchronous Data"
 //! userlevel =  Normal
 //! file      = "Control/UIDataPath.h"
 //! author    = "Warren Moore"
 //! date      = "27/3/2002"
-//! rcsid     = "$Id: UIDataPath.h,v 1.6 2002/04/04 21:03:37 vap-warren Exp $"
+//! rcsid     = "$Id: UIDataPath.h,v 1.7 2002/04/05 14:13:42 vap-warren Exp $"
 
 #ifndef __VTSTUCVIS_UIDATAPATH__
 #define __VTSTUCVIS_UIDATAPATH__
@@ -40,7 +40,7 @@ public:
 	//{{AFX_VIRTUAL(CUIDataPath)
    public:
 	protected:
-	virtual void OnDataAvailable(DWORD dwSize, DWORD bscfFlag);
+	virtual void OnDataAvailable(DWORD dwSize, DWORD bscfFlag);    //: Called by MFC when data arrives
 	//}}AFX_VIRTUAL
 
 	//{{AFX_MSG(CUIDataPath)

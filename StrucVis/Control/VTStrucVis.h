@@ -4,12 +4,12 @@
 // ActiveX Control for structure visualisation
 // Copyright 2002 Vapour Technology Ltd.
 //
-//! docentry  = "VTStrucVis.Visualisation Control.ActiveX Control"
+//! docentry  = "VTStrucVis.Visualisation Control.User Interface"
 //! userlevel =  Normal
 //! file      = "Control/VTStrucVis.h"
 //! author    = "Warren Moore"
 //! date      = "5/3/2002"
-//! rcsid     = "$Id: VTStrucVis.h,v 1.5 2002/04/04 21:03:38 vap-warren Exp $"
+//! rcsid     = "$Id: VTStrucVis.h,v 1.6 2002/04/05 14:13:42 vap-warren Exp $"
 
 #ifndef __VTSTRUCTVIS__
 #define __VTSTRUCTVIS__

@@ -4,12 +4,12 @@
 // ActiveX Control for structure visualisation
 // Copyright 2002 Vapour Technology Ltd.
 //
-//! docentry  = "VTStrucVis.Visualisation Control.ActiveX Control"
+//! docentry  = "VTStrucVis.Visualisation Control.User Interface"
 //! userlevel =  Normal
 //! file      = "Control/VTStrucVisCtl.h"
 //! author    = "Warren Moore"
 //! date      = "5/3/2002"
-//! rcsid     = "$Id: VTStrucVisCtl.h,v 1.25 2002/04/04 21:03:38 vap-warren Exp $"
+//! rcsid     = "$Id: VTStrucVisCtl.h,v 1.26 2002/04/05 14:13:42 vap-warren Exp $"
 
 #ifndef __VTSTRUCTVIS_CONTROL__
 #define __VTSTRUCTVIS_CONTROL__
@@ -228,6 +228,7 @@ protected:
 
    const static int m_piAnimSpeed[5];
    //: Animation speeds
+   // Array of timer speeds for the five speed settings (in milliseconds)
 
    //: A virtual slider class
 
