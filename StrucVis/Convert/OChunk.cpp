@@ -6,19 +6,19 @@
 //
 //! docentry  = "File Converter.VSV File IO"
 //! userlevel =  Normal
-//! file      = "Convert/Chunk.cpp"
+//! file      = "Convert/OChunk.cpp"
 //! author    = "James Smith"
 //! date      = "19/3/2002"
-//! rcsid     = "$Id: Chunk.cpp,v 1.8 2002/04/03 11:15:11 vap-james Exp $"
+//! rcsid     = "$Id: OChunk.cpp,v 1.1 2002/04/04 10:03:06 vap-james Exp $"
 
-#include "Chunk.h"
+#include "OChunk.h"
 
 #include <math.h>
 #include <vector>
 
 #define SCALE_FACTOR 0.01;
 
-CChunk::CChunk(TChunkType oType) :
+COChunk::COChunk(TChunkType oType) :
    m_iFrame(0),
    m_oType(oType),
    m_pcData(NULL),
@@ -26,7 +26,7 @@ CChunk::CChunk(TChunkType oType) :
 {
 }
 
-CChunk::CChunk(const CChunk& oChunk) :
+COChunk::COChunk(const COChunk& oChunk) :
    m_iFrame(oChunk.m_iFrame),
    m_oType(oChunk.m_oType),
    m_pcData(NULL),
@@ -40,11 +40,11 @@ CChunk::CChunk(const CChunk& oChunk) :
    memcpy(m_pcData,oChunk.m_pcData,m_iLength);
 }
 
-CChunk::~CChunk() {
+COChunk::~COChunk() {
    if (m_pcData) delete [] m_pcData;
 }
 
-bool CChunk::Read(CInputData& oInput) {
+bool COChunk::Read(CInputData& oInput) {
    // Check that there isn't already data in this chunk.
    if (m_oType != CHUNK_NONE) 
       return false;
@@ -81,7 +81,7 @@ bool CChunk::Read(CInputData& oInput) {
 
 }
 
-TChunkType CChunk::TranslateType(const char* pcType) {
+TChunkType COChunk::TranslateType(const char* pcType) {
    if (strcmp(pcType,"HEADER")                            == 0) return CHUNK_NONE;
    if (strcmp(pcType,"NODAL GEOMETRY")                    == 0) return CHUNK_NODES;
    if (strcmp(pcType,"SECTION SIZES")                     == 0) return CHUNK_BEAMSIZE;
@@ -100,7 +100,7 @@ TChunkType CChunk::TranslateType(const char* pcType) {
    return CHUNK_NONE;
 }
 
-bool CChunk::ReadNodes(CInputData& oInput) {   
+bool COChunk::ReadNodes(CInputData& oInput) {   
    // Extract data
    std::vector<float*> oList;
    while (oInput.DataReady()) {
@@ -151,7 +151,7 @@ bool CChunk::ReadNodes(CInputData& oInput) {
    return true;
 }
 
-bool CChunk::ReadBeamSizes(CInputData& oInput) {
+bool COChunk::ReadBeamSizes(CInputData& oInput) {
    // Extract data
    std::vector<float*> oList;
    while (oInput.DataReady()) {
@@ -204,7 +204,7 @@ bool CChunk::ReadBeamSizes(CInputData& oInput) {
    return true;
 }
 
-bool CChunk::ReadSlabSizes(CInputData& oInput) {
+bool COChunk::ReadSlabSizes(CInputData& oInput) {
    // Extract data
    std::vector<float*> oList;
    // Skip initial 18 numbers that we don't need
@@ -260,7 +260,7 @@ bool CChunk::ReadSlabSizes(CInputData& oInput) {
    return true;
 }
 
-bool CChunk::ReadBeams(CInputData& oInput) {
+bool COChunk::ReadBeams(CInputData& oInput) {
    // Extract data
    std::vector<unsigned int*> oList;
    // Get per-beam data
@@ -332,7 +332,7 @@ bool CChunk::ReadBeams(CInputData& oInput) {
    return true;
 }
 
-bool CChunk::ReadSlabs(CInputData& oInput) {
+bool COChunk::ReadSlabs(CInputData& oInput) {
    // Extract data
    std::vector<unsigned int*> oList;
    // Get per-beam data
@@ -393,7 +393,7 @@ bool CChunk::ReadSlabs(CInputData& oInput) {
    return true;
 }
 
-bool CChunk::ReadTemps(CInputData& oInput) {
+bool COChunk::ReadTemps(CInputData& oInput) {
    // Extract data
    std::vector<float> oList;
    // Get beam group data
@@ -445,7 +445,7 @@ bool CChunk::ReadTemps(CInputData& oInput) {
    return true;
 }
 
-bool CChunk::ReadNodeDisplacements(CInputData& oInput) {
+bool COChunk::ReadNodeDisplacements(CInputData& oInput) {
    // Extract data
    std::vector<float*> oList;
    while (oInput.DataReady()) {
@@ -498,7 +498,7 @@ bool CChunk::ReadNodeDisplacements(CInputData& oInput) {
    return true;
 }
 
-bool CChunk::ReadBeamForces(CInputData& oInput) {
+bool COChunk::ReadBeamForces(CInputData& oInput) {
    // Extract data
    std::vector<float*> oList;
    int iCount = 0;
@@ -562,7 +562,7 @@ bool CChunk::ReadBeamForces(CInputData& oInput) {
    return true;
 }
 
-bool CChunk::ReadSlabForces(CInputData& oInput) {
+bool COChunk::ReadSlabForces(CInputData& oInput) {
    // Extract data
    std::vector<float*> oList;
    while (oInput.DataReady()) {
@@ -617,7 +617,7 @@ bool CChunk::ReadSlabForces(CInputData& oInput) {
    return true;
 }
 
-bool CChunk::ReadCracks(CInputData& oInput) {
+bool COChunk::ReadCracks(CInputData& oInput) {
    // Extract data
    std::vector<unsigned char*> oList;
    while (oInput.DataReady()) {
@@ -673,7 +673,7 @@ bool CChunk::ReadCracks(CInputData& oInput) {
    return true;
 }
 
-bool CChunk::CreateFrameInfoChunk(CInputData& oInput) {
+bool COChunk::CreateFrameInfoChunk(CInputData& oInput) {
    // Create chunk
    m_iLength = 2 + (2*sizeof(unsigned int));
    m_pcData = new unsigned char[m_iLength];
@@ -693,7 +693,7 @@ bool CChunk::CreateFrameInfoChunk(CInputData& oInput) {
    return true;
 }
 
-bool CChunk::CreateGroupChunk(CInputData& oInput) {
+bool COChunk::CreateGroupChunk(CInputData& oInput) {
    // Create chunk
    int iNumGroups = oInput.GetNumBeamGroups() + oInput.GetNumSlabGroups();
    m_iLength = 2 + (2*sizeof(unsigned int)) + iNumGroups*sizeof(unsigned char);
@@ -720,7 +720,7 @@ bool CChunk::CreateGroupChunk(CInputData& oInput) {
    return true;
 }
 
-bool CChunk::CreateStressChunk(CInputData& oInput) {
+bool COChunk::CreateStressChunk(CInputData& oInput) {
    // Create chunk
    m_iLength = 2 + sizeof(unsigned int) + 2*sizeof(float);
    m_pcData = new unsigned char[m_iLength];
@@ -743,7 +743,7 @@ bool CChunk::CreateStressChunk(CInputData& oInput) {
    return true;
 }
 
-bool CChunk::AddSubChunk(const CChunk* pSubChunk) {
+bool COChunk::AddSubChunk(const COChunk* pSubChunk) {
    if (m_iLength == 0) {
       m_iLength = 2 + sizeof(unsigned int);
    }
@@ -754,7 +754,7 @@ bool CChunk::AddSubChunk(const CChunk* pSubChunk) {
    return true;
 }
 
-bool CChunk::Write(ofstream& oOutput) const {
+bool COChunk::Write(ofstream& oOutput) const {
    const char* pcData = NULL;
    bool bOK = true;
    if (m_oSubChunks.size() > 0) {
@@ -766,7 +766,7 @@ bool CChunk::Write(ofstream& oOutput) const {
       // Write TOC
       unsigned int iOffset = 2 + sizeof(unsigned int) + (m_oSubChunks.size() * (1 + sizeof(unsigned int)));
       pcData = reinterpret_cast<const char*>(&iOffset);
-      for (std::vector<const CChunk*>::const_iterator pSubChunk = m_oSubChunks.begin(); pSubChunk != m_oSubChunks.end(); pSubChunk++) {
+      for (std::vector<const COChunk*>::const_iterator pSubChunk = m_oSubChunks.begin(); pSubChunk != m_oSubChunks.end(); pSubChunk++) {
          oOutput << static_cast<unsigned char>((*pSubChunk)->Type());
          oOutput.write(pcData,sizeof(unsigned int));
          iOffset += (*pSubChunk)->Length();
@@ -783,14 +783,14 @@ bool CChunk::Write(ofstream& oOutput) const {
    }
 }
 
-const CChunk* CChunk::SubChunk(TChunkType oType) const {
-   for (std::vector<const CChunk*>::const_iterator pEntry=m_oSubChunks.begin(); pEntry!=m_oSubChunks.end(); pEntry++) {
+const COChunk* COChunk::SubChunk(TChunkType oType) const {
+   for (std::vector<const COChunk*>::const_iterator pEntry=m_oSubChunks.begin(); pEntry!=m_oSubChunks.end(); pEntry++) {
       if ((*pEntry)->m_oType == oType) return *pEntry;
    }
    return NULL;
 }
 
-void CChunk::AddDisplacements(float* pfDisplacements) {
+void COChunk::AddDisplacements(float* pfDisplacements) {
    // Check chunk type
    if (m_oType != CHUNK_NODEDISP) return;
    // Get pointer to displacement data
@@ -811,7 +811,7 @@ void CChunk::AddDisplacements(float* pfDisplacements) {
    return;
 }
 
-unsigned int CChunk::NumNodes(void) const {
+unsigned int COChunk::NumNodes(void) const {
    // Check chunk type
    if (m_oType != CHUNK_NODES) return 0;
    // Get pointer to displacement data
@@ -820,7 +820,7 @@ unsigned int CChunk::NumNodes(void) const {
    return *reinterpret_cast<unsigned int*>(pcData);
 }
 
-void CChunk::ZeroDisplacements(void) {
+void COChunk::ZeroDisplacements(void) {
    // Check chunk type
    if (m_oType != CHUNK_NODEDISP) return;
    // Get pointer to displacement data

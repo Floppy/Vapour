@@ -9,7 +9,7 @@
 //! file      = "Convert/Chunk.h"
 //! author    = "James Smith"
 //! date      = "19/3/2002"
-//! rcsid     = "$Id: Chunk.h,v 1.7 2002/04/03 23:06:44 vap-james Exp $"
+//! rcsid     = "$Id: OChunk.h,v 1.1 2002/04/04 10:03:06 vap-james Exp $"
 
 #ifndef __VTSTRUCVIS_CHUNK__
 #define __VTSTRUCVIS_CHUNK__
@@ -46,27 +46,27 @@ enum TChunkType {
    CHUNK_CRACKS   = 0x26,
 };
 
-//: A data chunk
-// This class provides an interface to a VSV file data chunk.
+//: A output-specific data chunk
+// This class provides an interface to a VSV file data chunk for output purposes.
 
-class CChunk {
+class COChunk {
 
 public:
 
    //:-------------------------
    //: Construction/Destruction
 
-   CChunk(TChunkType oType = CHUNK_NONE);
+   COChunk(TChunkType oType = CHUNK_NONE);
    //: Constructor
    //!param: oType - if specified, a chunk of that type is created. Otherwise, the chunk takes it's type from the data loaded into it.
 
-   CChunk(const CChunk& oChunk);
+   COChunk(const COChunk& oChunk);
    //: Copy constructor
    // Copies chunk data into a new chunk.
    // Does NOT perform a deep copy of subchunks.
    //!param: oChunk - The chunk to copy.
 
-   ~CChunk();
+   ~COChunk();
    //: Destructor
 
    //:---------
@@ -83,12 +83,12 @@ public:
    unsigned int Length(void) const {return m_iLength;}
    //: The length of the chunk data
 
-   bool AddSubChunk(const CChunk* pSubChunk);
+   bool AddSubChunk(const COChunk* pSubChunk);
    //: Add a subchunk.
    //!param: pSubChunk - the subchunk to add
    //!param: return - true if successful
 
-   const CChunk* SubChunk(TChunkType oType) const;
+   const COChunk* SubChunk(TChunkType oType) const;
    //: Get a subchunk with the specified type
 
    bool Write(ofstream& oOutput) const;
@@ -175,7 +175,7 @@ private:
 
 protected:
 
-   vector<const CChunk*> m_oSubChunks;
+   vector<const COChunk*> m_oSubChunks;
    //: A list of subchunks
 
    TChunkType m_oType;

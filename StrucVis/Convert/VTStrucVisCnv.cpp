@@ -9,13 +9,13 @@
 //! file      = "Convert/VTStrucVisCnv.cpp"
 //! author    = "James Smith"
 //! date      = "19/3/2002"
-//! rcsid     = "$Id: VTStrucVisCnv.cpp,v 1.8 2002/04/03 11:15:11 vap-james Exp $"
+//! rcsid     = "$Id: VTStrucVisCnv.cpp,v 1.9 2002/04/04 10:03:07 vap-james Exp $"
 
 #include <iostream>
 #include <vector>
 
 #include "InputData.h"
-#include "Chunk.h"
+#include "OChunk.h"
 
 using namespace std;
 
@@ -32,16 +32,16 @@ int main(int argc, char* argv[]) {
    // Open input data file
    CInputData oInput(argv[1]);
 
-   vector<CChunk*> oChunkList;
+   vector<COChunk*> oChunkList;
 
    // While there is data to read, create chunks and add them to the list
    while (oInput.NextSection()) {
-      CChunk* pChunk = new CChunk;
+      COChunk* pChunk = new COChunk;
       cout << oInput.SectionType() << ", Frame " << oInput.LoadIncr() << " ";
       if (pChunk->Read(oInput)) {
          oChunkList.push_back(pChunk);
          if (pChunk->Type() == CHUNK_BEAMS) {
-            pChunk = new CChunk;
+            pChunk = new COChunk;
             if (pChunk->Read(oInput)) {
                oChunkList.push_back(pChunk);
             }
@@ -56,27 +56,27 @@ int main(int argc, char* argv[]) {
    }
 
    // Create group chunk
-   CChunk* pChunk = new CChunk;
+   COChunk* pChunk = new COChunk;
    if (pChunk->CreateGroupChunk(oInput)) oChunkList.push_back(pChunk);
    else delete pChunk;
 
    // Create stress range chunk
-   pChunk = new CChunk;
+   pChunk = new COChunk;
    if (pChunk->CreateStressChunk(oInput)) oChunkList.push_back(pChunk);
    else delete pChunk;
 
    cout << "Read " << oInput.GetNumBeams() << " Beams and "<< oInput.GetNumSlabs() << " Slabs." << endl;
 
    // Create frame chunks
-   vector<CChunk*> oFrames;
+   vector<COChunk*> oFrames;
    bool bOK;
    int iFrame = 0;
    int iNumChunks = 0;
    do {
       bOK = false;
       iFrame++;
-      CChunk* pChunk = new CChunk(CHUNK_FRAME);
-      for (std::vector<CChunk*>::iterator pIter = oChunkList.begin(); pIter != oChunkList.end(); pIter++) {
+      COChunk* pChunk = new COChunk(CHUNK_FRAME);
+      for (std::vector<COChunk*>::iterator pIter = oChunkList.begin(); pIter != oChunkList.end(); pIter++) {
          if ((*pIter)->Frame() == iFrame) {
             pChunk->AddSubChunk(*pIter);
             iNumChunks++;
@@ -85,28 +85,28 @@ int main(int argc, char* argv[]) {
       }
       if (bOK) {
          // Fill in empty chunks
-         const CChunk* pSubChunk = pChunk->SubChunk(CHUNK_NODEDISP);
+         const COChunk* pSubChunk = pChunk->SubChunk(CHUNK_NODEDISP);
          if (pSubChunk == NULL) {
-            CChunk* pOldChunk = new CChunk(*(oFrames.back()->SubChunk(CHUNK_NODEDISP)));
+            COChunk* pOldChunk = new COChunk(*(oFrames.back()->SubChunk(CHUNK_NODEDISP)));
             pOldChunk->ZeroDisplacements();
             pChunk->AddSubChunk(pOldChunk);
             iNumChunks++;
          }
          pSubChunk = pChunk->SubChunk(CHUNK_SLABFORC);
          if (pSubChunk == NULL) {
-            CChunk* pOldChunk = new CChunk(*(oFrames.back()->SubChunk(CHUNK_SLABFORC)));
+            COChunk* pOldChunk = new COChunk(*(oFrames.back()->SubChunk(CHUNK_SLABFORC)));
             pChunk->AddSubChunk(pOldChunk);
             iNumChunks++;
          }
          pSubChunk = pChunk->SubChunk(CHUNK_BEAMFORC);
          if (pSubChunk == NULL) {
-            CChunk* pOldChunk = new CChunk(*(oFrames.back()->SubChunk(CHUNK_BEAMFORC)));
+            COChunk* pOldChunk = new COChunk(*(oFrames.back()->SubChunk(CHUNK_BEAMFORC)));
             pChunk->AddSubChunk(pOldChunk);
             iNumChunks++;
          }
          pSubChunk = pChunk->SubChunk(CHUNK_CRACKS);
          if (pSubChunk == NULL) {
-            CChunk* pOldChunk = new CChunk(*(oFrames.back()->SubChunk(CHUNK_CRACKS)));
+            COChunk* pOldChunk = new COChunk(*(oFrames.back()->SubChunk(CHUNK_CRACKS)));
             pChunk->AddSubChunk(pOldChunk);
             iNumChunks++;
          }
@@ -117,7 +117,7 @@ int main(int argc, char* argv[]) {
    } while (bOK);
 
    // Create frame info chunk
-   pChunk = new CChunk;
+   pChunk = new COChunk;
    if (pChunk->CreateFrameInfoChunk(oInput)) oChunkList.push_back(pChunk);
    else delete pChunk;
 
@@ -125,8 +125,8 @@ int main(int argc, char* argv[]) {
 
    // Create setup chunk
    iNumChunks = 0;
-   CChunk oSetup(CHUNK_SETUP);
-   for (std::vector<CChunk*>::iterator pIter = oChunkList.begin(); pIter != oChunkList.end(); pIter++) {
+   COChunk oSetup(CHUNK_SETUP);
+   for (std::vector<COChunk*>::iterator pIter = oChunkList.begin(); pIter != oChunkList.end(); pIter++) {
       if ((*pIter)->Type() < CHUNK_FRAME) {
          oSetup.AddSubChunk(*pIter);
          iNumChunks++;
@@ -142,15 +142,15 @@ int main(int argc, char* argv[]) {
    memset(pfDisplacements,0,iSize * sizeof(float));
    // Propogate displacements across frames
    for (pIter = oFrames.begin(); pIter != oFrames.end(); pIter++) {
-      const CChunk* pNodeDisp = (*pIter)->SubChunk(CHUNK_NODEDISP);
+      const COChunk* pNodeDisp = (*pIter)->SubChunk(CHUNK_NODEDISP);
       if (pNodeDisp != NULL) {
-         const_cast<CChunk*>(pNodeDisp)->AddDisplacements(pfDisplacements);
+         const_cast<COChunk*>(pNodeDisp)->AddDisplacements(pfDisplacements);
       }
    }
    delete [] pfDisplacements;
 
    // Create root chunk
-   CChunk oRoot(CHUNK_ROOT);
+   COChunk oRoot(CHUNK_ROOT);
    // Add subchunks to root   
    oRoot.AddSubChunk(&oSetup);
    for (pIter = oFrames.begin(); pIter != oFrames.end(); pIter++)
