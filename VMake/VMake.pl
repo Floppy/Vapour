@@ -5,21 +5,20 @@
 # script to emulate intended VMake functionality
 
 # 17/09/2001 - Warren Moore
-# $Id: VMake.pl,v 1.9 2001/09/24 13:36:17 vap-warren Exp $
+# $Id: VMake.pl,v 1.10 2001/09/26 01:36:20 vap-warren Exp $
 # Copyright 2000-2001 Vapour Technology Ltd.
 
 use strict;
 
 #=== global vars
 # get a nice version number from the rcs id
-my $rcs_id = '$Id: VMake.pl,v 1.9 2001/09/24 13:36:17 vap-warren Exp $';
+my $rcs_id = '$Id: VMake.pl,v 1.10 2001/09/26 01:36:20 vap-warren Exp $';
 $rcs_id =~ s/\$//g;
 my $version = ($rcs_id =~ /^Id: [^\s]+ ([0-9\.]+)/) ? $1 : "(unknown)";
 my $list_name = "arch.list";		# default arch.list location
 my $def_build = "noarch";			# default build target
 my $silent = "";						# default verbose output
 my $doc = "";							# default build, not document
-my $doc_path = ".";					# default doc file path
 my $banner = <<BANNER;				# app banner
 VMake.pl v$version
 17/01/2001 - Warren Moore
@@ -61,10 +60,6 @@ while (@ARGV) {
 		if ($buf eq "-doc") {
 			$doc = "true";
 		}
-		# doc arch file path
-		if ($buf eq "-o") {
-			$doc_path = shift(@ARGV);
-		}
 		$buf = "";
 	}
 }
@@ -78,15 +73,6 @@ if (not $silent) {
 # check we have an arch
 if (not $arch_name) {
 	error("Usage - VMake.pl <arch>");
-}
-
-# check we have a doc path if doc specified
-if ($doc) {
-	if (not $doc_path) {
-		error("Must set doc file path with -o if -doc used");
-	}
-	# make sure we have a trailing slash on the doc path
-	$doc_path .= "/" unless $doc_path =~ /\/$/;
 }
 
 # read in the arch list
@@ -172,15 +158,6 @@ foreach my $file (@rm_list) {
 	}
 }
 
-# if it's an arch specific doc build, open the doc file
-if ($doc and $arch_name ne "noarch") {
-	my $doc_list = "$doc_path$arch_name.list";
-	print "Opening: $doc_list\n";
-	if (not open(DOC_LIST, ">$doc_list")) {
-		error("Unable to open '$doc_list' (set path with -o)");
-	}
-}
-
 # Create links for remaining arch files
 foreach my $file (@file_list) {
 	# generate the link filename
@@ -200,10 +177,6 @@ foreach my $file (@file_list) {
 	if ($doc) {
 		output("Moving: $file -> $link\n");
 		rename $file, $link or error("Unable to move '$file' to '$link'");
-		# write out the file if arch specific doc build
-		if ($file_arch ne "noarch") {
-			print DOC_LIST "$file\n";
-		}
 	}
 	# generate the link
 	else {
@@ -212,12 +185,4 @@ foreach my $file (@file_list) {
 		symlink $target, $link or error("Unable to create symlink from '$link' to '$target'");
 	}
 }
-
-# if doc build, close the doc list
-if ($doc and $arch_name ne "noarch") {
-	# print a single line not to confuse browsers
-	print DOC_LIST "\n";
-	close(DOC_LIST);
-}
-
 
