@@ -7,54 +7,79 @@
 // counter.cpp - 06/12/2000 - Warren Moore
 //	  Main application
 //
-// $Id: counter.cpp,v 1.1 2000/12/17 12:50:38 warren Exp $
+// $Id: counter.cpp,v 1.2 2001/06/30 14:17:08 warren Exp $
 //
 
-// Common includes
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include <fcntl.h>
 #include "CGI.h"
-#include "gd/gd.h"
-
-// Windows includes
+#include "gd.h"
+#include <fcntl.h>
 #ifdef WIN32
 #include <io.h>
 #else
-// Unix includes
 #include <sys/file.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
 #endif // WIN32
 
-// Current version string
 #define COUNTER_VERSION			"v1.0"
-// Default number of digits to use (can be overidden with digits=<num_of_digits>)
 #define COUNTER_DIGITS			6
-// Number of time to try locking the count data file
 #define COUNTER_LOCK_TRIES		6
 
-// Default string array size
 #define STR_SIZE					1024
 
-// Different sets of parameters for Win and Unix builds
-// NOTE: You only need to change COUNTER_ROOT for your build type
-// NOTE: COUNTER_ZERO and COUNTER_PIC are string formatting defines and don't need to be changed
 #ifdef WIN32
-#define COUNTER_ROOT				"D:\\Vapour\\Dev\\src\\Vapour\\Counter\\Data\\"
+// Windows
+#define COUNTER_ROOT				"D:\\Vapour\\Data\\"
 #define COUNTER_ZERO				"%s\\0.gif"
 #define COUNTER_PIC				"%s\\%c.gif"			
 #else
+#ifdef LINUX
+// Linux
+#define COUNTER_ROOT				"/www/vapournet/counter/"
+//#define COUNTER_ROOT				"/home/waz/src/counter/data/"
+#define COUNTER_ZERO				"%s/0.gif"
+#define COUNTER_PIC				"%s/%c.gif"		
+
+const char g_pcReferrers[][STR_SIZE] = {
+	"vapourtech.hollowhill.com/",
+	"vapournet.hollowhill.com/",
+	"waz.hollowhill.com/",
+	"oak.hollowhill.com/",
+	"w-e-s.hollowhill.com/",
+	""
+};
+
+#else
+// FreeBSD
 #define COUNTER_ROOT				"/www/vapourisp/counter/"
 #define COUNTER_ZERO				"%s/0.gif"
 #define COUNTER_PIC				"%s/%c.gif"		
+
+const char g_pcReferrers[][STR_SIZE] = {
+	"vapourtech.com/",
+	"vapourtech.co.uk/",
+	"vapourtech.net/",
+	"evilhq.com/",
+	"waz.org.uk/",
+	"elsepth.org.uk/",
+	"w-e-s.co.uk/",
+	"floppy.org.uk/",
+	"smurfette.org.uk/",
+	"guildfordboyz.com/",
+	"county-oak.org.uk/",
+	"moorecentral.org.uk/",
+	"tablefootball.org.uk/",
+	""
+};
+
+#endif // LINUX
 #endif // WIN32
 
-// List of valid referrers - these are pumped into the CCGI object 
-// NOTE: Change these to match your valid referrers. MUST end with an empty string
-const char g_pcReferrers[][STR_SIZE] = {
+/*
 	"http://www.vapourtech.com/",
 	"http://www.host.vapourtech.com/",
 	"http://www.evilhq.com/",
@@ -63,10 +88,7 @@ const char g_pcReferrers[][STR_SIZE] = {
 	"http://www.w-e-s.co.uk/",
 	"http://www.floppy.org.uk/",
 	"http://www.smurfette.org.uk/",
-	""
-};
-
-//#===--- Function Declarations
+*/
 
 // Copies the incremented counter string into pcOut, empty if error
 void GetCount(const char *pcCountName, char *pcCount);
@@ -75,12 +97,8 @@ bool CreateImage(const char *pcCount, const char *pcFont, int iDigits);
 // Generates an error message or image
 void Error(const char *pcText = "");
 
-//#===--- Globals
-
 // The global cgi utility object
 CCGI g_oCGI;
-
-//#===--- Function Definitions
 
 int main(int argc, char **argv) {
 	// Start 'er up
@@ -144,7 +162,7 @@ void GetCount(const char *pcCountName, char *pcCount) {
 	// Try to open the file
 	int iFile = _open(pcCountName, _O_RDWR);
 	if (iFile == -1)
-		return;
+		return ;
 	// Read in the data
 	char pcData[STR_SIZE];
 	memset(pcData, 0, STR_SIZE);
@@ -254,6 +272,16 @@ bool CreateImage(const char *pcCount, const char *pcFont, int iDigits) {
 		gdImageDestroy(pImg);
 		return false;
 	}
+	// Copy the palette info from one to the other...
+	int iColTotal = gdImageColorsTotal(pImg);
+	for (int i = 0; i < iColTotal; i++) {
+		gdImageColorAllocate(pOutImg, gdImageRed(pImg, i), gdImageGreen(pImg, i), gdImageBlue(pImg, i));
+	}
+	int iTransCol = gdImageGetTransparent(pImg);
+	if (iTransCol >= 0) {
+		gdImageColorTransparent(pOutImg, iTransCol);
+		gdImageFill(pOutImg, 0, 0, iTransCol);
+	}
 	// Loop through each leading zero
 	int iPos = 0;
 	while (iSpare-- > 0) {
@@ -289,7 +317,7 @@ bool CreateImage(const char *pcCount, const char *pcFont, int iDigits) {
 	// Write out the output image
 	if (g_oCGI.Debug()) {
 		char pcGIFName[STR_SIZE] = COUNTER_ROOT;
-		strcat(pcGIFName, "counter.gif");
+		strcat(pcGIFName, "out.gif");
 		FILE *pGIFFile = NULL;
 		pGIFFile = fopen(pcGIFName, "wb");
 		if (pGIFFile) {
@@ -316,7 +344,7 @@ void Error(const char *pcText) {
 	if (g_oCGI.Debug()) {
 		printf("Error: %s\n\n", pcText);
 		printf("Usage: id=<counter_id> [font=<font_name>] [digits=<num_of_digits>]\n");
-		printf("Note: counter.gif will be placed in %s\n", COUNTER_ROOT);
+		printf("Note: out.gif will be placed in %s\n", COUNTER_ROOT);
 	}
 	else {
 		gdImagePtr pOutImg = NULL;
