@@ -5,7 +5,7 @@
 # script to check out the source modules and build docs for each supported arch
 
 # 13/09/2001 - Warren Moore
-# $Id: create_docs.pl,v 1.14 2001/09/20 23:25:12 vap-warren Exp $
+# $Id: create_docs.pl,v 1.15 2001/09/24 13:35:21 vap-warren Exp $
 # Copyright 2000-2001 Vapour Technology Ltd.
 
 # bring in the environment vars
@@ -15,7 +15,7 @@ use Env qw(VALET_DOCROOT VALET_CVSOPTIONS);
 #=== global vars
 my $proj_name = "VALET";
 my $mod_prefix = "Vapour/";
-my $vmake_cmd = "VMake.pl -doc -a ../VArch/arch.list";
+my $vmake_cmd = "VMake.pl -doc -o $VALET_DOCROOT -a ../VArch/arch.list";
 
 #=== error function
 sub error {
