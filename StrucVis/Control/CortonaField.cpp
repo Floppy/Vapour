@@ -7,7 +7,7 @@
 // CortonaField.cpp
 // 07/03/2002 - Warren Moore
 //
-// $Id: CortonaField.cpp,v 1.12 2002/03/26 14:57:22 vap-warren Exp $
+// $Id: CortonaField.cpp,v 1.13 2002/03/26 15:02:28 vap-warren Exp $
 
 #include "stdafx.h"
 
@@ -150,6 +150,7 @@ bool CCortonaField::SetMFVec3f(const long liIndex, const float fX, const float f
       }
       else {
          SafeArrayDestroy(pSA);
+         pMFVec3f->Release();
          return false;
       }
 
@@ -163,13 +164,6 @@ bool CCortonaField::SetMFVec3f(const long liIndex, const float fX, const float f
 
       // Add the value
       hResult = pMFVec3f->put_Value(liIndex, sVarArray);
-
-      /*
-      // Get the X value
-      bool bOk = SUCCEEDED(pMFVec3f->put_X(liIndex, fX));
-      bOk &= SUCCEEDED(pMFVec3f->put_Y(liIndex, fY));
-      bOk &= SUCCEEDED(pMFVec3f->put_Z(liIndex, fZ));
-      */
 
       // Release the MFVec3f interface
       pMFVec3f->Release();
@@ -288,13 +282,6 @@ bool CCortonaField::GetSFVec3f(float &fX, float &fY, float &fZ) {
       SafeArrayUnaccessData(sVar.parray);
    }
 
-   /*
-   // Get the values
-   bool bOk = SUCCEEDED(pSFVec3f->get_X(&fX));
-   bOk &= SUCCEEDED(pSFVec3f->get_Y(&fY));
-   bOk &= SUCCEEDED(pSFVec3f->get_Z(&fZ));
-   */
-
    // Release the MFVec3f interface
    pSFVec3f->Release();
 
@@ -341,6 +328,7 @@ bool CCortonaField::SetSFVec3f(const float fX, const float fY, const float fZ) {
       }
       else {
          SafeArrayDestroy(pSA);
+         pSFVec3f->Release();
          return false;
       }
 
@@ -354,13 +342,6 @@ bool CCortonaField::SetSFVec3f(const float fX, const float fY, const float fZ) {
 
       // Add the value
       hResult = pSFVec3f->put_Value(sVarArray);
-
-      /*
-      // Set the X value
-      bool bOk = SUCCEEDED(pSFVec3f->put_X(fX));
-      bOk &= SUCCEEDED(pSFVec3f->put_Y(fY));
-      bOk &= SUCCEEDED(pSFVec3f->put_Z(fZ));
-      */
 
       // Release the MFVec3f interface
       pSFVec3f->Release();
@@ -411,13 +392,6 @@ bool CCortonaField::GetMFColor(const long liIndex, float &fR, float &fG, float &
       SafeArrayUnaccessData(sVar.parray);
    }
 
-   /*
-   // Get the values
-   bool bOk = SUCCEEDED(pMFColor->get_Red(liIndex, &fR));
-   bOk &= SUCCEEDED(pMFColor->get_Green(liIndex, &fG));
-   bOk &= SUCCEEDED(pMFColor->get_Blue(liIndex, &fB));
-   */
-
    // Release the MFVec3f interface
    pMFColor->Release();
 
@@ -464,6 +438,7 @@ bool CCortonaField::SetMFColor(const long liIndex, const float fR, const float f
       }
       else {
          SafeArrayDestroy(pSA);
+         pMFColor->Release();
          return false;
       }
 
@@ -477,13 +452,6 @@ bool CCortonaField::SetMFColor(const long liIndex, const float fR, const float f
 
       // Add the value
       hResult = pMFColor->put_Value(liIndex, sVarArray);
-
-      /*
-      // Get the X value
-      bool bOk = SUCCEEDED(pMFColor->put_Red(liIndex, fR));
-      bOk &= SUCCEEDED(pMFColor->put_Green(liIndex, fG));
-      bOk &= SUCCEEDED(pMFColor->put_Blue(liIndex, fB));
-      */
 
       // Release the MFVec3f interface
       pMFColor->Release();
@@ -646,14 +614,6 @@ bool CCortonaField::GetSFRotation(float &fX, float &fY, float &fZ, float &fAngle
       SafeArrayUnaccessData(sVar.parray);
    }
 
-   /*
-   // Get the values
-   bool bOk = SUCCEEDED(pSFRotation->get_X(&fX));
-   bOk &= SUCCEEDED(pSFRotation->get_Y(&fY));
-   bOk &= SUCCEEDED(pSFRotation->get_Z(&fZ));
-   bOk &= SUCCEEDED(pSFRotation->get_Angle(&fAngle));
-   */
-
    // Release the MFVec3f interface
    pSFRotation->Release();
 
@@ -703,6 +663,7 @@ bool CCortonaField::SetSFRotation(const float fX, const float fY, const float fZ
       }
       else {
          SafeArrayDestroy(pSA);
+         pSFRotation->Release();
          return false;
       }
 
@@ -715,13 +676,6 @@ bool CCortonaField::SetSFRotation(const float fX, const float fY, const float fZ
       sVarArray.parray = pSA;
 
       hResult = pSFRotation->put_Value(sVarArray);
-      /*
-      // Get the X value
-      bool bOk = SUCCEEDED(pSFRotation->put_X(fX));
-      bOk &= SUCCEEDED(pSFRotation->put_Y(fY));
-      bOk &= SUCCEEDED(pSFRotation->put_Z(fZ));
-      bOk &= SUCCEEDED(pSFRotation->put_Angle(fAngle));
-      */
 
       // Release the SFRotation interface
       pSFRotation->Release();
