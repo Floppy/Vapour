@@ -14,7 +14,7 @@
 //! author 		= "Warren Moore"
 //! date 		= "17/10/2001"
 //! lib 			= libVALETimage
-//! rcsid 		= "$Id: palette.h,v 1.9 2001/10/24 17:07:43 vap-warren Exp $"
+//! rcsid 		= "$Id: palette.h,v 1.10 2001/10/24 17:37:19 vap-warren Exp $"
 //! userlevel 	= Advanced
 //! docentry 	= "VALET.Image.Palette"
 
@@ -94,7 +94,6 @@ namespace NValet {
 
    //#===--- Structures
 
-/*
    	//: Colour matching cache
    	struct SCacheStruct {
          unsigned int m_uColour;
@@ -133,7 +132,6 @@ namespace NValet {
       typedef struct SCacheStruct SCache;             // Cache structure typedef
       typedef struct SHashEntryStruct SHashEntry;     // Hash table entry typedef
       typedef struct SHashStruct SHash;               // Hash table typedef
-*/
 
    //:------
    //: Palette Allocation

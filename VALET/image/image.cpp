@@ -10,14 +10,12 @@
 #include "VALET/image.h"
 #include "VALET/log.h"
 
-//#include "/home/waz/src/test_kos/utils.h"
-
 ////////////////
 //! file 		= "VALET/image/image.cpp"
 //! author		= "Warren Moore"
 //! date			= "17/10/2001"
 //! lib 			= libVALETimage
-//! rcsid		= "$Id: image.cpp,v 1.2 2001/10/21 14:43:24 vap-warren Exp $"
+//! rcsid		= "$Id: image.cpp,v 1.3 2001/10/24 17:37:19 vap-warren Exp $"
 
 namespace NValet {
 
@@ -244,16 +242,4 @@ namespace NValet {
       return IR_OK;
    }
 
-/*
-   Warren's hacked in DC render function
-   void CImage::Render(short sX, short sY) {
-      CLog oLog("image", "CImage::Render");
-      if (m_eImageType == IT_RGB)
-         display_raw_image_plane(sX, sY, m_uiWidth, m_uiHeight,
-                                 (unsigned char*)m_ppuiData[0], 
-                                 (unsigned char*)m_ppuiData[1], 
-                                 (unsigned char*)m_ppuiData[2]);
-   }
-*/
-   
 }
