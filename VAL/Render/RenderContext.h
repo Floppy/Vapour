@@ -7,7 +7,7 @@
 // RenderContext.h - 23/07/2000 - Warren Moore
 //	Base class for render contexts
 //
-// $Id: RenderContext.h,v 1.3 2000/07/30 14:57:56 waz Exp $
+// $Id: RenderContext.h,v 1.4 2000/10/06 13:04:44 waz Exp $
 //
 
 #ifndef _VAL_RENDERCONTEXT_
@@ -17,35 +17,58 @@
 
 #include "VAL.h"
 
+#include "RenderContextStore.h"
 #include "Image.h"
 
 //#===--- Defines
 
-// Options
+//#===--- Options
 #define RCO_UNKNOWN							0
-#define RCO_DEPTH								1
-#define RCO_NEARPLANE						2
-#define RCO_FARPLANE						3
-#define RCO_VIEWANGLE						4
-#define RCO_BACKRED							5
-#define RCO_BACKGREEN						6
-#define RCO_BACKBLUE						7
+	// Selection
+#define RCO_MODE								1
+#define RCO_MEDIUM							2
+#define RCO_VIEW								3
+	// Common
+#define RCO_WIDTH								4
+#define RCO_HEIGHT							5
+#define RCO_DEPTH								6
+	// Context
+#define RCO_NEARPLANE						7
+#define RCO_FARPLANE							8
+#define RCO_VIEWANGLE						9
+#define RCO_BACKRED						  10
+#define RCO_BACKGREEN					  11
+#define RCO_BACKBLUE						  12
 
-// Buffer flags
+//#===--- Option values
+#define RCV_DONT_CARE						0
+	// RCO_MODE
+#define RCV_SOFTWARE							1
+#define RCV_OPENGL							2
+#define RCV_DIRECTX							3
+	// RCO_MEDIUM
+#define RCV_WINDOW							1
+#define RCV_BUFFER							2
+	// RCO_VIEW
+#define RCV_NORMAL							1
+#define RCV_STEREO							2
+	// Buffer flags
 #define RCB_FRONT								1
 #define RCB_BACK								2
 #define RCB_COLOUR							4
 #define RCB_DEPTH								8
-
-// Projection modes
+	// Projection modes
 #define RCP_CURRENT							0
-#define RCP_PERSPECTIVE					1
-#define RCP_ORTHOGRAPHIC				2
+#define RCP_PERSPECTIVE						1
+#define RCP_ORTHOGRAPHIC					2
 
 //#===--- Data types
 enum RCRESULT {
 	RC_OK = 0,
 	RC_OUT_OF_MEMORY,
+	RC_INCORRECT_MODE,
+	RC_UNSUPPORTED_MEDIUM,
+	RC_UNSUPPORTED_VIEW,
 	RC_MEDIA_ERROR,
 	RC_FORMAT_NOT_AVAILABLE,
 	RC_SET_FORMAT_ERROR,
@@ -54,7 +77,7 @@ enum RCRESULT {
 	RC_NOT_CREATED,
 	RC_INVALID_IMAGE_TYPE,
 	RC_IMAGE_ERROR,
-	RC_NO_OPTION,
+	RC_UNKNOWN_OPTION,
 	RC_NO_TEXTURE,
 	RC_WRONG_BUFFER,
 	RC_UNSUPPORTED_PROJECTION,
@@ -64,6 +87,9 @@ enum RCRESULT {
 #define RC_ERROR_STRINGS \
 	"OK", \
 	"Out of memory", \
+	"Incorrect mode", \
+	"Unsupported medium",\
+	"Unsupported view", \
 	"Render media error", \
 	"Render format not available", \
 	"Error setting the chosen format", \
@@ -78,6 +104,19 @@ enum RCRESULT {
 	"Specified projection method not supported", \
 	"Unknown error", \
 
+// DLL import/export definitions
+#ifndef DLL_IMP_EXP
+	#ifdef _VAPOUR_EXPORT_DLL_
+		#define DLL_IMP_EXP __declspec(dllexport)
+	#endif
+	#ifdef _VAPOUR_IMPORT_DLL_
+		#define DLL_IMP_EXP __declspec(dllimport)
+	#endif
+	#ifndef DLL_IMP_EXP
+		#define DLL_IMP_EXP
+	#endif
+#endif
+
 ///////////////////
 // CRenderContext
 
@@ -88,17 +127,18 @@ public:
 
 //#===--- External Functions
 	//#===--- Status Functions
-	// Returns the unique ID for the context
-	virtual const char *GetID() const;
 	// Returns bool indicating whether the context has been created
 	virtual bool Active() const;
 	// Returns bool indicating whther the context has been enabled
 	virtual bool Enabled() const;
 
 	//#===--- Options
+	// Render mode
+	virtual unsigned int GetMode() const = 0;
 	// Context resolution
 	virtual RCRESULT SetSize(unsigned int uWidth, unsigned int uHeight);
 	virtual RCRESULT GetSize(unsigned int &uWidth, unsigned int &uHeight);
+	virtual RCRESULT Resize() = 0;
 	// Flagged options
 	virtual RCRESULT SetOption(int iOption, unsigned int uValue);
 	virtual RCRESULT GetOption(int iOption, unsigned int &uValue);
@@ -106,6 +146,8 @@ public:
 	virtual RCRESULT GetOption(int iOption, float &fValue);
 
 	//#===--- Context Control
+	// Checks selection options for suitability, and passes in creatio options
+	virtual RCRESULT CheckSelection(RCOptionListVector &oOptionList) = 0;
 	// Create the context as per the supplied options
 	virtual RCRESULT Create() = 0;
 	// Destroy the current context
@@ -151,15 +193,16 @@ protected:
 //#===--- Internal Functions
 
 //#===--- Internal Data
-	unsigned int m_uWidth, m_uHeight;							// Context resolution
-	unsigned int m_uDepth;												// Colour depth (in bits per pixel)
+	unsigned int m_uWidth, m_uHeight;						// Active context resolution
+	unsigned int m_uNewWidth, m_uNewHeight;				// Next context resolution
+	unsigned int m_uDepth;										// Colour depth (in bits per pixel)
 	float m_fNearPlane, m_fFarPlane;							// View clipping planes
-	float m_fViewAngle;														// Camera view angle
-	float m_fBackRed, m_fBackGreen, m_fBackBlue;	// Context clear colour
-	unsigned int m_uProjMode;											// Current projection mode
+	float m_fViewAngle;											// Camera view angle
+	float m_fBackRed, m_fBackGreen, m_fBackBlue;			// Context clear colour
+	unsigned int m_uProjMode;									// Current projection mode
 
-	bool m_bCreated;															// Context created indicator
-	bool m_bEnabled;															// Context enabled indicator
+	bool m_bCreated;												// Context created indicator
+	bool m_bEnabled;												// Context enabled indicator
 
 	static const char *m_pcErrorString[];					// Error string table
 };

@@ -7,13 +7,14 @@
 // RenderContextStore.cpp - 05/10/2000 - Warren Moore
 //	Render context selection speciality store implementation
 //
-// $Id: RenderContextStore.cpp,v 1.0 2000/10/05 20:16:38 waz Exp $
+// $Id: RenderContextStore.cpp,v 1.1 2000/10/06 13:04:43 waz Exp $
 //
 
 #include "stdafx.h"
 
 #include "RenderContextStore.h"
 #include "RenderContextProxy.h"
+#include "RenderContext.h"
 
 #include <algorithm>
 
@@ -26,7 +27,7 @@ static char THIS_FILE[] = __FILE__;
 ////////////////////////
 // CRenderContextStore
 
-const double CRenderContextStore::m_dMaxFilterVersion = 2.0;
+const double CRenderContextStore::m_dMaxVersion = 2.0F;
 
 /////////////////////
 // Member Functions
@@ -61,63 +62,57 @@ void CRenderContextStore::Override(CRenderContextStore &oRenderContextStore) {
 } // Override
 
 int CRenderContextStore::GetCount() const {
-   if (m_pParentStore) return m_pParentStore->GetCount();
-   else return (m_pRenderContexts) ? m_pRenderContexts->size() : 0;
+   if (m_pParentStore)
+		return m_pParentStore->GetCount();
+   else
+		return (m_pRenderContexts) ? m_pRenderContexts->size() : 0;
 } // GetCount
 
 const CRenderContextProxyBase* CRenderContextStore::GetAt(int i) const {
-   if (m_pParentStore) return m_pParentStore->GetAt(i);
-	else return m_pRenderContexts->at(i);
+   if (m_pParentStore)
+		return m_pParentStore->GetAt(i);
+	else
+		return m_pRenderContexts->at(i);
 } // GetAt
 
-/*
-bool CRenderContextStore::CheckForExtension(const char* pszExtension) {
-   if (m_pParentStore) return m_pParentStore->CheckForExtension(pszExtension);
-   else {
-      for (RenderContextIterator iter = m_pRenderContexts->begin(); iter != m_pRenderContexts->end(); iter++) {
-         const CRenderContextProxyBase* pProxy = *iter;
-		   if (stricmp(pProxy->GetExtension(), pszExtension) == 0)
-			   return true;
-      }
-	   return false;
-   }
-} // CheckForExtension
+//#===--- Context selection
+void CRenderContextStore::ClearContextOptions() {
+	m_oOptionList.clear();
+} // ClearContextOptions
 
-CRenderContext* CRenderContextStore::CreateByExtension(const char* pszExtension) {
-   if (m_pParentStore) return m_pParentStore->CreateByExtension(pszExtension);
-   else {
-      RenderContextIterator iterSelected = NULL;
-      double dVersion = 0.0;
-      for (RenderContextIterator iter = m_pRenderContexts->begin(); iter != m_pRenderContexts->end(); iter++) {
-         const CRenderContextProxyBase* pProxy = *iter;
-         if ((stricmp(pProxy->GetExtension(), pszExtension) == 0)
-             && (pProxy->GetVersion() < m_dMaxFilterVersion)
-             && (pProxy->GetVersion() > dVersion)) {
-            dVersion = pProxy->GetVersion();
-   		   iterSelected = iter;
-         }
-      }
-      if (iterSelected) return (*iterSelected)->CreateObject();
-      else return NULL;
-   }
-} // CreateByExtension
-*/
+void CRenderContextStore::SetContextOption(int iOption, unsigned int uValue) {
+	// Store the tuple
+	SRCOptionTuple sTuple;
+	sTuple.m_iOption = iOption;
+	sTuple.m_uValue = uValue;
+	// Push it on the list
+	m_oOptionList.push_back(sTuple);
+} // SetContextOption
 
-bool CompareFilters(const CRenderContextProxyBase* pFilterOne ,const CRenderContextProxyBase* pFilterTwo) {
-   bool bRetVal = true;
-   CString strOne = pFilterOne->GetTitle();
-   CString strTwo = pFilterTwo->GetTitle();
-	/*
-   if (strOne == strTwo) {
-      // Compare extensions
-      strOne = pFilterOne->GetExtension();
-      strTwo = pFilterTwo->GetExtension();
-      bRetVal = (strOne < strTwo) ? true : false;
-   }
-   else {
-	*/
-      // Compare titles
-      bRetVal = (strOne < strTwo) ? true : false;
-   //}
-   return bRetVal;
-} //CompareFilters(const CRenderContextProxyBase* pFilterOne ,const CRenderContextProxyBase* pFilterTwo)
+CRenderContext *CRenderContextStore::CreateSuitableContext() {
+	// Give up if empty option list
+	if (m_oOptionList.size() == 0)
+		return NULL;
+	int iCount = 0;
+	CRenderContext *pContext = NULL;
+	// Loop through all registered contexts until one found or all tried
+	while ((pContext == NULL) && (iCount < GetCount())) {
+		// Create the context under creation
+		pContext = GetAt(iCount)->CreateObject();
+		// Pass in the selection options
+		RCRESULT eResult = RC_OK;
+		eResult = pContext->CheckSelection(m_oOptionList);
+		// If succeeded, try to create the context
+		if (eResult == RC_OK)
+			eResult = pContext->Create();
+		// If not ok, delete the context
+		if (eResult != RC_OK) {
+			delete pContext;
+			pContext = NULL;
+		}
+		// Step to the next context
+		iCount++;
+	}
+	return pContext;
+} // CreateSuitableContext
+

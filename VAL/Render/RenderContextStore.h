@@ -7,7 +7,7 @@
 // RenderContextStore.h - 05/10/2000 - Warren Moore
 //	Render Context selection speciality store header
 //
-// $Id: RenderContextStore.h,v 1.0 2000/10/05 20:16:39 waz Exp $
+// $Id: RenderContextStore.h,v 1.1 2000/10/06 13:04:44 waz Exp $
 //
 
 #pragma once
@@ -17,8 +17,6 @@
 
 #include <stdio.h>
 #include <vector>
-
-#include "RenderContext.h"
 
 // DLL import/export definitions
 #ifndef DLL_IMP_EXP
@@ -36,42 +34,53 @@
 // Predeclare CRenderContextProxyBase - do not include here
 class CRenderContextProxyBase;
 
+// Predeclare CRenderContext as only for return type
+class CRenderContext;
+
 // Vector and Iterator Typedef
 typedef std::vector<const CRenderContextProxyBase*> RenderContextVector;
 typedef std::vector<const CRenderContextProxyBase*>::iterator RenderContextIterator;
 
-// Predicate function for comparing filter names. Returns true if pFilterOne < pFilterTwo.
-bool CompareFilters(const CRenderContextProxyBase* pFilterOne ,const CRenderContextProxyBase* pFilterTwo);
+// Context selection option structure and vector
+struct SRCOptionTuple {
+	int m_iOption;
+	unsigned int m_uValue;
+};
+typedef std::vector<SRCOptionTuple> RCOptionListVector;
 
 ////////////////////////
 // CRenderContextStore
 
 class DLL_IMP_EXP CRenderContextStore {
-
-private:
-	void Init();
-
-	RenderContextVector* m_pRenderContexts;
-
-   static const double m_dMaxFilterVersion;
-
-   CRenderContextStore* m_pParentStore;
-
 public:
-	CRenderContextStore() {m_pParentStore=NULL;};
+//#===--- External Functions
+	CRenderContextStore() { m_pParentStore=NULL; };
 	~CRenderContextStore();
 
+	// Proxy register function
 	void Register(const CRenderContextProxyBase* pProxy);
 
+	// Register store to master store
    void Override(CRenderContextStore &oRenderContextStore);
 
-/*
-	bool CheckForExtension(const char* pszExtension);
-	CRenderContext* CreateByExtension(const char* pszExtension);	
-*/
-
+	// Registered proxy direct access
 	int GetCount() const;
 	const CRenderContextProxyBase* GetAt(int i) const;
+
+	// Context selection
+	void ClearContextOptions();
+	void SetContextOption(int iOption, unsigned int uValue);
+	CRenderContext *CreateSuitableContext();
+
+private:
+//#===--- Internal Functions
+	void Init();
+
+//#===--- Internal Data
+	RenderContextVector* m_pRenderContexts;			// List of registered contexts
+   static const double m_dMaxVersion;					// Maximum usable context version
+   CRenderContextStore* m_pParentStore;				// Pointer to master store
+	RCOptionListVector m_oOptionList;					// Context selection option list
 
 };
 

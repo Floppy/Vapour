@@ -7,7 +7,7 @@
 // RenderContext.cpp - 23/07/2000 - Warren Moore
 //	Base class for render contexts
 //
-// $Id: RenderContext.cpp,v 1.3 2000/07/30 14:57:56 waz Exp $
+// $Id: RenderContext.cpp,v 1.4 2000/10/06 13:04:44 waz Exp $
 //
 
 #include "StdAfx.h"
@@ -21,9 +21,6 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-//#===--- Defines
-#define RC_ID								"BaseRC-23072000"
-
 ///////////////////
 // CRenderContext
 
@@ -33,7 +30,7 @@ const char *CRenderContext::m_pcErrorString[] = {
 
 CRenderContext::CRenderContext() {
 	// No default values
-	m_uWidth = m_uHeight = 0;
+	m_uWidth = m_uHeight = m_uNewWidth = m_uNewHeight = 0;
 	m_uDepth = 0;
 	m_fNearPlane = m_fFarPlane = m_fViewAngle = 0.0F;
 	// Initial clear colour black
@@ -48,13 +45,9 @@ CRenderContext::CRenderContext() {
 CRenderContext::~CRenderContext() {
 } // Destructor
 
-const char *CRenderContext::GetID() const {
-	return RC_ID;
-} // GetID
-
 RCRESULT CRenderContext::SetSize(unsigned int uWidth, unsigned int uHeight) {
-	m_uWidth = uWidth;
-	m_uHeight = uHeight;
+	m_uNewWidth = uWidth;
+	m_uNewHeight = uHeight;
 	return RC_OK;
 } // SetSize
 
@@ -67,6 +60,12 @@ RCRESULT CRenderContext::GetSize(unsigned int &uWidth, unsigned int &uHeight) {
 RCRESULT CRenderContext::SetOption(int iOption, unsigned int uValue) {
 	RCRESULT eResult = RC_OK;
 	switch (iOption) {
+		case RCO_WIDTH:
+			m_uWidth = uValue;
+			break;
+		case RCO_HEIGHT:
+			m_uHeight = uValue;
+			break;
 		case RCO_DEPTH:
 			// Allow standard colour depths
 			if ((uValue == 8) || (uValue == 16) || (uValue == 24) || (uValue == 32))
@@ -94,7 +93,7 @@ RCRESULT CRenderContext::SetOption(int iOption, unsigned int uValue) {
 			m_fBackBlue = 255.0F / ((float)(uValue & 0x000000ff));
 			break;
 		default:
-			eResult = RC_NO_OPTION;
+			eResult = RC_UNKNOWN_OPTION;
 	}
 	return eResult;
 } // SetOption (Int)
@@ -102,6 +101,12 @@ RCRESULT CRenderContext::SetOption(int iOption, unsigned int uValue) {
 RCRESULT CRenderContext::GetOption(int iOption, unsigned int &uValue) {
 	RCRESULT eResult = RC_OK;
 	switch (iOption) {
+		case RCO_WIDTH:
+			uValue = m_uWidth;
+			break;
+		case RCO_HEIGHT:
+			uValue = m_uHeight;
+			break;
 		case RCO_DEPTH:
 			uValue = m_uDepth;
 			break;
@@ -118,7 +123,7 @@ RCRESULT CRenderContext::GetOption(int iOption, unsigned int &uValue) {
 			uValue = 255 * (unsigned int)m_fBackBlue;
 			break;
 		default:
-			eResult = RC_NO_OPTION;
+			eResult = RC_UNKNOWN_OPTION;
 	}
 	return eResult;
 } // GetOption (Int)
@@ -156,7 +161,7 @@ RCRESULT CRenderContext::SetOption(int iOption, float fValue) {
 			m_fBackBlue = fValue;
 			break;
 		default:
-			eResult = RC_NO_OPTION;
+			eResult = RC_UNKNOWN_OPTION;
 	}
 	return eResult;
 } // SetOption (Float)
@@ -186,7 +191,7 @@ RCRESULT CRenderContext::GetOption(int iOption, float &fValue) {
 			fValue = m_fBackBlue;
 			break;
 		default:
-			eResult = RC_NO_OPTION;
+			eResult = RC_UNKNOWN_OPTION;
 	}
 	return eResult;
 } // GetOption (Float)
