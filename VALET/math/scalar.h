@@ -6,15 +6,15 @@
 //
 // Add confidentiality notice
 
-#ifndef _VALET_SCALAR_
-#define _VALET_SCALAR_
+#ifndef _VALET_MATH_SCALAR_
+#define _VALET_MATH_SCALAR_
 
 ////////////////
 //! file 		= "VALET/math/scalar.h"
 //! author 		= "James Smith"
 //! date 		= "01/10/2001"
 //! lib 		= libVALETmath
-//! rcsid 		= "$Id: scalar.h,v 1.3 2001/10/17 14:44:57 vap-warren Exp $"
+//! rcsid 		= "$Id: scalar.h,v 1.4 2001/10/18 13:07:01 vap-james Exp $"
 //! userlevel 	        = Normal
 //! docentry 	        = "VALET.Math.Geometry"
 
@@ -88,4 +88,4 @@ namespace NValet {
   
 }
 
-#endif // _VALET_SCALAR_
+#endif // _VALET_MATH_SCALAR_

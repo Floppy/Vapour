@@ -6,15 +6,15 @@
 //
 // Add confidentiality notice
 
-#ifndef _VALET_EULERROTATION_
-#define _VALET_EULERROTATION_
+#ifndef _VALET_MATH_EULERROTATION_
+#define _VALET_MATH_EULERROTATION_
 
 ////////////////
 //! file 		= "VALET/math/eulerrotation.h"
 //! author 		= "James Smith"
 //! date 		= "02/10/2001"
 //! lib 		= libVALETmath
-//! rcsid 		= "$Id: eulerrotation.h,v 1.4 2001/10/17 14:44:56 vap-warren Exp $"
+//! rcsid 		= "$Id: eulerrotation.h,v 1.5 2001/10/18 13:07:01 vap-james Exp $"
 //! userlevel 	        = Normal
 //! docentry 	        = "VALET.Math.Geometry"
 
@@ -191,4 +191,4 @@ namespace NValet {
 
 }
 
-#endif // _VALET_EULERROTATION_
+#endif // _VALET_MATH_EULERROTATION_

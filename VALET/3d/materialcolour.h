@@ -6,15 +6,15 @@
 //
 // Add confidentiality notice
 
-#ifndef _VALET_MATERIALCOLOUR_
-#define _VALET_MATERIALCOLOUR_
+#ifndef _VALET_3D_MATERIALCOLOUR_
+#define _VALET_3D_MATERIALCOLOUR_
 
 ////////////////
 //! file 		= "VALET/3d/materialcolour.h"
 //! author 		= "James Smith"
 //! date 		= "09/10/2001"
 //! lib 		= libVALET3d
-//! rcsid 		= "$Id: materialcolour.h,v 1.5 2001/10/18 12:40:17 vap-james Exp $"
+//! rcsid 		= "$Id: materialcolour.h,v 1.6 2001/10/18 13:07:00 vap-james Exp $"
 //! userlevel 	        = Normal
 //! docentry 	        = "VALET.3D.Surface Materials"
 
@@ -102,4 +102,4 @@ namespace NValet {
 
 }
 
-#endif //_VALET_MATERIALCOLOUR_
+#endif //_VALET_3D_MATERIALCOLOUR_

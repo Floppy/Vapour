@@ -6,15 +6,15 @@
 //
 // Add confidentiality notice
 
-#ifndef _VALET_QUATERNION_
-#define _VALET_QUATERNION_
+#ifndef _VALET_MATH_QUATERNION_
+#define _VALET_MATH_QUATERNION_
 
 ////////////////
 //! file 		= "VALET/math/quaternion.h"
 //! author 		= "James Smith"
 //! date 		= "02/10/2001"
 //! lib 		= libVALETmath
-//! rcsid 		= "$Id: quaternion.h,v 1.6 2001/10/17 14:44:56 vap-warren Exp $"
+//! rcsid 		= "$Id: quaternion.h,v 1.7 2001/10/18 13:07:01 vap-james Exp $"
 //! userlevel 	        = Normal
 //! docentry 	        = "VALET.Math.Geometry"
 
@@ -137,4 +137,4 @@ namespace NValet {
   };
 }
 
-#endif // _VALET_QUATERNION_
+#endif // _VALET_MATH_QUATERNION_

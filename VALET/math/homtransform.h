@@ -6,15 +6,15 @@
 //
 // Add confidentiality notice
 
-#ifndef _VALET_HOMTRANSFORM_
-#define _VALET_HOMTRANSFORM_
+#ifndef _VALET_MATH_HOMTRANSFORM_
+#define _VALET_MATH_HOMTRANSFORM_
 
 ////////////////
 //! file 		= "VALET/math/homtransform.h"
 //! author 		= "James Smith"
 //! date 		= "02/10/2001"
 //! lib 		= libVALETmath
-//! rcsid 		= "$Id: homtransform.h,v 1.4 2001/10/17 14:44:56 vap-warren Exp $"
+//! rcsid 		= "$Id: homtransform.h,v 1.5 2001/10/18 13:07:01 vap-james Exp $"
 //! userlevel 	        = Normal
 //! docentry 	        = "VALET.Math.Geometry"
 
@@ -127,4 +127,4 @@ namespace NValet {
 
 }
 
-#endif // _VALET_HOMTRANSFORM_
+#endif // _VALET_MATH_HOMTRANSFORM_

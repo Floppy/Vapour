@@ -5,15 +5,15 @@
 //
 // Add confidentiality notice
 
-#ifndef _VALET_TRIMODEL_
-#define _VALET_TRIMODEL_
+#ifndef _VALET_3D_TRIMODEL_
+#define _VALET_3D_TRIMODEL_
 
 ////////////////
 //! file 		= "VALET/3d/trimodel.h"
 //! author 		= "James Smith"
 //! date 		= "10/10/2001"
 //! lib 			= libVALET3d
-//! rcsid 		= "$Id: trimodel.h,v 1.3 2001/10/18 12:40:17 vap-james Exp $"
+//! rcsid 		= "$Id: trimodel.h,v 1.4 2001/10/18 13:07:01 vap-james Exp $"
 //! userlevel 	= Normal
 //! docentry 	= "VALET.3D.Surface Representations"
 
@@ -69,4 +69,4 @@ namespace NValet {
 
 }
 
-#endif //_VALET_TRIMODEL_
+#endif //_VALET_3D_TRIMODEL_

@@ -5,15 +5,15 @@
 //
 // Add confidentiality notice
 
-#ifndef _VALET_HEIGHTFIELD_
-#define _VALET_HEIGHTFIELD_
+#ifndef _VALET_3D_HEIGHTFIELD_
+#define _VALET_3D_HEIGHTFIELD_
 
 ////////////////
 //! file 		= "VALET/3d/heightfield.h"
 //! author 		= "James Smith"
 //! date 		= "10/10/2001"
 //! lib 		= libVALET3d
-//! rcsid 		= "$Id: heightfield.h,v 1.1 2001/10/18 12:51:04 vap-james Exp $"
+//! rcsid 		= "$Id: heightfield.h,v 1.2 2001/10/18 13:06:59 vap-james Exp $"
 //! userlevel 	        = Normal
 //! docentry 	        = "VALET.3D.Surface Representations"
 
@@ -105,4 +105,4 @@ namespace NValet {
 
 }
 
-#endif //_VALET_HEIGHTFIELD_
+#endif //_VALET_3D_HEIGHTFIELD_

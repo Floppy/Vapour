@@ -5,15 +5,15 @@
 //
 // Add confidentiality notice
 
-#ifndef _VALET_MESH_
-#define _VALET_MESH_
+#ifndef _VALET_3D_MESH_
+#define _VALET_3D_MESH_
 
 ////////////////
 //! file 		= "VALET/3d/mesh.h"
 //! author 		= "James Smith"
 //! date 		= "15/10/2001"
 //! lib 		= libVALET3d
-//! rcsid 		= "$Id: mesh.h,v 1.9 2001/10/18 12:40:17 vap-james Exp $"
+//! rcsid 		= "$Id: mesh.h,v 1.10 2001/10/18 13:07:00 vap-james Exp $"
 //! userlevel 	        = Normal
 //! docentry 	        = "VALET.3D.Surface Representations"
 
@@ -146,4 +146,4 @@ namespace NValet {
    
 }
 
-#endif //_VALET_MESH_
+#endif //_VALET_3D_MESH_

@@ -6,15 +6,15 @@
 //
 // Add confidentiality notice
 
-#ifndef _VAL_SURFACE_
-#define _VAL_SURFACE_
+#ifndef _VALET_3D_SURFACE_
+#define _VALET_3D_SURFACE_
 
 ////////////////
 //! file 		= "VALET/3d/surface.h"
 //! author 		= "James Smith"
 //! date 		= "12/10/2001"
 //! lib 		= libVALET3d
-//! rcsid 		= "$Id: surface.h,v 1.5 2001/10/18 12:22:11 vap-james Exp $"
+//! rcsid 		= "$Id: surface.h,v 1.6 2001/10/18 13:07:00 vap-james Exp $"
 //! userlevel 	        = Normal
 //! docentry 	        = "VALET.3D.Surface Representations"
 
@@ -81,4 +81,4 @@ namespace NValet {
 
 #include "surface_template.cpp"
 
-#endif //_VALET_SURFACE_
+#endif //_VALET_3D_SURFACE_
