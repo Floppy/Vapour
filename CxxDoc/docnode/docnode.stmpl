@@ -1,0 +1,135 @@
+$(silent:
+	$(include:../class/global.stmpl)
+	$(set:docentry_=$(subst: :_:$(docentry)))
+)
+<HTML>
+<HEAD>
+<TITLE>Vapour Technology - Source Documentation</TITLE>
+<LINK REL=STYLESHEET HREF="/vapourtech.css" TYPE="text/css">
+</HEAD>
+<BODY LINK="#6363E9" ALINK="#C5C5F5" VLINK="#000080" BGCOLOR="#6363E9">
+
+$(//:#===--- Top )
+$(include:../class/top.stmpl)
+
+<TABLE WIDTH="100%" BORDER="0" CELLPADDING="0" CELLSPACING="4">
+	<TR VALIGN="TOP" WIDTH="10%">
+
+$(//:#===--- Menu)
+$(include:../class/menu.stmpl)
+
+	<!-- Main Start -->
+	<TD WIDTH="$(tablewidth)">
+	<TABLE WIDTH="100%" BORDER="0" CELLPADDING="2" CELLSPACING="0" CLASS="ITEMBORDER" BGCOLOR="#000080">
+		<TR><TD>
+		<P CLASS="SECTIONTITLE">
+		Documentation
+		</P>
+		</TD></TR>
+		<TR><TD>
+		<TABLE WIDTH="100%" BORDER="0" CELLPADDING="2" CELLSPACING="0" BGCOLOR="#C0C0C0">
+		<TR><TD><P>
+		$(ifset:docentry:
+			$(set:parent=)
+			$(for:.:$docentry:
+				$(silent:
+					$(ifset:parent:$(set:parent=$(parent).$(subst: :_:%arg%)))$(else:$(set:parent=$(subst: :_:%arg%)))
+				)
+				$(if:$docentry_!=$parent:<A HREF="$(parent).html">%arg%</A> . )$(else:<B>%arg%</B>)
+			)
+		)
+		</P></TD>
+		$(ifany:docnode:
+			<TD><P ALIGN="RIGHT"><B>Subtopics</B></P></TD>
+		)
+		</TR>
+		</TABLE>
+		<TABLE WIDTH="100%" BORDER="0" CELLPADDING="2" CELLSPACING="0" CLASS="ITEM" BGCOLOR="#FFFFFF">
+			<TR><TD>
+			$(ifany:docnode:
+				<TABLE BORDER="0" CELLPADDING="1" CELLSPACING="1" ALIGN="RIGHT">
+					<TR><TD>
+					$(forall:docnode:
+						<P><A HREF="$(MakeFilename:%.html)"><B>$(subst:_: :$(ObjectName))</B></A>$(ifset:brief: - $(brief))</P>
+					)
+					</TD></TR>
+				</TABLE>
+			)			
+			
+			<P CLASS="CLASSLARGETITLE">
+			$(ifset:brief:$(brief))$(else:$(ObjectName))
+			</P>
+			
+			$(ifset:detail:
+				<!-- Begining of EHT content -->
+				<P>
+				$(detail)
+				</P>
+				<!-- End of EHT content -->
+			)
+
+$(ifany:docleaf:
+	<H2>Basic Classes:</H2>
+	<table>
+	$(forall:docleaf:
+		<tr><td><code>&nbsp;</code><A HREF="../Class/$(content)">$(ObjectName)</A><td>$(ifset:brief:$(brief))</tr>
+	)
+	</table>
+)
+
+$(ifany:docleaf,$userlevel=Basic:<H2>Basic Classes:</H2>
+<table>
+$(forall:docleaf,$userlevel=Basic:
+<tr><td><code>&nbsp;</code><A HREF="../Class/$(content)">$(ObjectName)</A><td>$(ifset:brief:$(brief))</tr>
+)</table>)
+
+$(ifany:docleaf,$userlevel=Normal:<H2>Normal Classes:</H2>
+<table>
+$(forall:docleaf,$userlevel=Normal:
+<tr><td><code>&nbsp;</code><A HREF="../Class/$(content)">$(ObjectName)</A><td>$(ifset:brief:$(brief))</tr>
+)</table>)
+
+$(ifany:docleaf,$userlevel=Advanced:<H2>Advanced Classes:</H2>
+<table>
+$(forall:docleaf,$userlevel=Advanced:
+<tr><td><code>&nbsp;</code><A HREF="../Class/$(content)">$(ObjectName)</A><td>$(ifset:brief:$(brief))</tr>
+)</table>)
+
+$(if:$viewmode=developer:
+$(ifany:docleaf,$userlevel=Develop:<H2>Develop Classes:</H2>
+<table>
+$(forall:docleaf,$userlevel=Develop:
+<tr><td><code>&nbsp;</code><A HREF="../Class/$(content)">$(ObjectName)</A><td>$(ifset:brief:$(brief))</tr>
+)</table>))
+
+$(ifany:docleaf,$userlevel=Default:<H2>Default Classes:</H2>
+<table>
+$(forall:docleaf,$userlevel=Default:
+<tr><td><code>&nbsp;</code><A HREF="../Class/$(content)">$(ObjectName)</A><td>$(ifset:brief:$(brief))</tr>
+)</table>)
+
+			<TABLE BORDER="0" CELLPADDING="2" CELLSPACING="2">
+				$(ifset:author:<TR><TD BGCOLOR="#C0C0C0"><P><B>Author</B></P></TD><TD BGCOLOR="#C0C0F0"><P>$(author)</P></TD></TR>)
+				$(ifset:date:<TR><TD BGCOLOR="#C0C0C0"><P><B>Created</B></P></TD><TD BGCOLOR="#C0C0F0"><P>$(date)</P></TD></TR>)
+			</TABLE>
+
+			</TD></TR>
+		</TABLE>
+		</TD></TR>
+	</TABLE>
+	</TD>
+	<!-- Main End -->
+
+	</TR>
+	<TR>
+
+$(//:#===--- Footer)
+$(include:../class/footer.stmpl)
+
+	</TR>
+</TABLE>
+
+</BODY>
+</HTML>
+
+

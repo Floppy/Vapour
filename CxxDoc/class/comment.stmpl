@@ -1,0 +1,27 @@
+$(ident:
+	<P>
+	$(ifset:brief:<B>$(brief)</B><BR>)
+	$(ifset:detail:
+		$(if:$detail!=:
+			$(list:$(AutoLink:$(detail)))
+		)
+	)
+	</P>
+	$(ifset:param:
+		<P CLASS="CLASSPARAM"><B>PARAMETERS</B></P>
+		$(ident:<P CLASS="CLASSPARAM"><B>$(subst: - :</B> = :$(subst:
+:<BR><B>:$(param)))</B></P>)
+		
+	)
+	$(ifset:bug:
+		<P CLASS="CLASSBUG"><B>BUGS</B></P>$(ident:<P CLASS="CLASSBUG">$(list:$(bug))</P>)
+	)
+	$(if:$viewmode=developer:
+		$(ifset:todo:
+			<P CLASS="CLASSTODO"><B>TO DO</B></P>$(ident:<P CLASS="CLASSTODO">$(list:$(todo))</P>)
+		)
+	)
+	$(ifset:section:
+		<P>$(section)</P>
+	)
+)

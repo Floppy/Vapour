@@ -1,0 +1,10 @@
+$(silent:
+	$(ifset:!docroot:			$(set:docroot=/docs/VALET))
+	$(ifset:!tablewidth:		$(set:tablewidth=85%))
+	$(define:ident:
+		<TABLE WIDTH="100%" BORDER="0" CELLPADDING="0" CELLSACING="0">
+		<TR><TD WIDTH="2%"></TD><TD>%arg%</TD></TR>
+		</TABLE>)
+	$(define:list:$(subst:
+:<BR>:%arg%))
+)

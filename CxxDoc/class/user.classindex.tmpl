@@ -1,0 +1,6 @@
+$(FileObject:one)$(FilePattern:user/index.html)
+$(silent:
+	$(set:title=<A HREF="../developer/index.html">User Documentation</A>)
+	$(set:viewmode=user)
+)
+$(include:classindex.stmpl)

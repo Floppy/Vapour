@@ -1,0 +1,111 @@
+$(include:global.stmpl)
+<HTML>
+<HEAD>
+<TITLE>Vapour Technology - Source Documentation</TITLE>
+<LINK REL=STYLESHEET HREF="/vapourtech.css" TYPE="text/css">
+</HEAD>
+<BODY LINK="#6363E9" ALINK="#C5C5F5" VLINK="#000080" BGCOLOR="#6363E9">
+
+$(//:#===--- Top )
+$(include:top.stmpl)
+
+<TABLE WIDTH="100%" BORDER="0" CELLPADDING="0" CELLSPACING="4">
+	<TR VALIGN="TOP" WIDTH="10%">
+
+$(//:#===--- Menu)
+$(include:menu.stmpl)
+
+	<!-- Main Start -->
+	<TD WIDTH="$(tablewidth)">
+	<TABLE WIDTH="100%" BORDER="0" CELLPADDING="2" CELLSPACING="0" CLASS="ITEMBORDER" BGCOLOR="#000080">
+		<TR><TD>
+		<P CLASS="SECTIONTITLE">
+		Class Info
+		</P>
+		</TD></TR>
+		<TR><TD>
+		<TABLE WIDTH="100%" BORDER="0" CELLPADDING="2" CELLSPACING="0" BGCOLOR="#C0C0C0">
+		<TR><TD><P>
+		$(if:$NodeType!=namespace:
+			$(ifset:docentry:
+				$(set:parent=)
+				$(for:.:$docentry:
+					$(silent:
+							$(ifset:parent:$(set:parent=$(parent).$(subst: :_:%arg%)))
+						$(else:$(set:parent=$(subst: :_:%arg%)))
+					)
+					<A HREF="../tree/$(parent).html">%arg%</A> .
+				)
+			)
+			<B>$(FullName)</B>
+		)
+		</P></TD>
+		<TD><P ALIGN="RIGHT"><B>Functions</B></P></TD>
+		</TR>
+		</TABLE>
+		<TABLE WIDTH="100%" BORDER="0" CELLPADDING="2" CELLSPACING="0" CLASS="ITEM" BGCOLOR="#FFFFFF">
+			<TR><TD>
+			<TABLE BORDER="0" CELLPADDING="1" CELLSPACING="1" ALIGN="RIGHT">
+				<TR><TD><P>
+				$(ifany:$methodtype,$NodeType=method:
+					$(forall:$methodtype,$NodeType=method:
+						$(checkview:$(ParentScope)::<A HREF="#$(href)">$(ObjectName)</A><BR>)
+					)
+				)
+				</P></TD></TR>
+			</TABLE>
+			
+			$(include:info.stmpl)
+			
+			$(ifany:inherit:
+				<P CLASS="CLASSHEADING">Parent Classes</P>
+				$(ident:
+					$(forall:inherit:
+						<P>$(access)
+						$(ifset:!resolveFailed:
+							$(GotoInherit:<A HREF="$(MakeFilename:%.html)">$(ObjectName)</A>)
+						)
+						$(else:
+							$(classname)
+						)
+						</P>
+					)
+				)
+			)
+			
+			$(ifany:derived:
+				<P CLASS="CLASSHEADING">Derived Classes</P>
+				$(ident:
+					$(forall:derived:
+						<P>$(access)
+						$(ifset:!resolveFailed:
+							$(GotoInherit:<A HREF="$(MakeFilename:%.html)">$(ObjectName)</A>)
+						)
+						$(else:
+							$(classname)
+						)
+						</P>
+					)
+				)
+			)
+			
+			$(include:scope.stmpl)
+			
+			</TD></TR>
+		</TABLE>
+		</TD></TR>
+	</TABLE>
+	</TD>
+	<!-- Main End -->
+
+	</TR>
+	<TR>
+
+$(//:#===--- Footer)
+$(include:footer.stmpl)
+
+	</TR>
+</TABLE>
+
+</BODY>
+</HTML>

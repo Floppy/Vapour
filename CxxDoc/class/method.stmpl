@@ -1,0 +1,2 @@
+$(ident:<IMG SRC="/pics/docbar.gif" WIDTH="150" HEIGHT="4" BORDER="0" ALT="#===---"><P><A NAME="$(href)">$(HtmlMethodName:)</A></P>
+$(include:comment.stmpl))

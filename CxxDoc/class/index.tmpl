@@ -1,0 +1,74 @@
+$(FileObject:one)$(FilePattern:index.html)
+$(include:global.stmpl)
+<HTML>
+<HEAD>
+<TITLE>Vapour Technology - Source Documentation</TITLE>
+<LINK REL=STYLESHEET HREF="/vapourtech.css" TYPE="text/css">
+</HEAD>
+<BODY LINK="#6363E9" ALINK="#C5C5F5" VLINK="#000080" BGCOLOR="#6363E9">
+
+$(//:#===--- Top )
+$(include:top.stmpl)
+
+<TABLE WIDTH="100%" BORDER="0" CELLPADDING="0" CELLSPACING="4">
+	<TR VALIGN="TOP" WIDTH="10%">
+
+$(//:#===--- Menu)
+$(include:menu.stmpl)
+
+	<!-- Main Start -->
+	<TD WIDTH="$(tablewidth)">
+	<TABLE WIDTH="100%" BORDER="0" CELLPADDING="2" CELLSPACING="0" CLASS="ITEMBORDER" BGCOLOR="#000080">
+		<TR><TD>
+		<P CLASS="SECTIONTITLE">
+		Source Documentation
+		</P>
+		</TD></TR>
+		<TR><TD>
+		<TABLE WIDTH="100%" BORDER="0" CELLPADDING="2" CELLSPACING="0" CLASS="ITEM" BGCOLOR="#FFFFFF">
+			<TR><TD COLSPAN="2">
+			<CENTER><P CLASS="CLASSLARGETITLE">
+			Source Documentation
+			</P></CENTER>
+			</TD></TR>
+			<TR><TD>
+			<P CLASS="CLASSTITLE"><A HREF="user/index.html">Class List</A></P>
+			<P>
+			List of namespaces and classes documented
+			</P>
+			</TD>
+			<TD>
+			<P CLASS="CLASSTITLE"><A HREF="sitemap.html">Sitemap</A></P>
+			<P>
+			Hierarchical list of all documentation entries
+			</P>
+			</TD></TR>
+			<TR><TD>
+			<P CLASS="CLASSTITLE"><A HREF="todo.html">To Do List</A></P>
+			<P>
+			List of stuff left to do
+			</P>
+			</TD>
+			<TD>
+			<P CLASS="CLASSTITLE"><A HREF="bugs.html">Known Bugs</A></P>
+			<P>
+			List of known bugs in classes and their methods
+			</P>
+			</TD></TR>
+		</TABLE>
+		</TD></TR>
+	</TABLE>
+	</TD>
+	<!-- Main End -->
+
+	</TR>
+	<TR>
+
+$(//:#===--- Footer)
+$(include:footer.stmpl)
+
+	</TR>
+</TABLE>
+
+</BODY>
+</HTML>

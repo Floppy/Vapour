@@ -1,0 +1,21 @@
+<TD>
+<TABLE WIDTH="100%" BORDER="0" CELLPADDING="2" CELLSPACING="0" CLASS="MENUBORDER">
+	<TR><TD>
+	<P CLASS="MENUTITLE">
+	<A HREF="$(docroot)/index.html"><FONT COLOR="#FFFFFF">Home</FONT></A>
+	</P>
+	</TD></TR>
+	<TR><TD>
+	<TABLE WIDTH="100%" BORDER="0" CELLPADDING="2" CELLSPACING="0" CLASS="MENU">
+		<TR><TD>
+		<P CLASS="MENUITEM">
+		<A HREF="$(docroot)/$(if:$viewmode=developer:developer)$(else:user)/index.html">Class List</A><BR>
+		<A HREF="$(docroot)/sitemap.html">Sitemap</A><BR>
+		<A HREF="$(docroot)/todo.html">To Do List</A><BR>
+		<A HREF="$(docroot)/bugs.html">Known Bugs</A>
+		</TD></TR>
+	</TABLE>
+	</TD></TR>
+</TABLE>
+</TD>
+
