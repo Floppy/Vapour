@@ -64,7 +64,7 @@ LIB32=link.exe -lib
 # PROP Intermediate_Dir "Debug"
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_MBCS" /D "_LIB" /Yu"stdafx.h" /FD /GZ /c
-# ADD CPP /nologo /MDd /W3 /Gm /GX /ZI /Od /I "..\VALWin32\Render" /I "Application" /I "Avatar" /I "AvatarFiles" /I "DataTypes" /I "Image" /I "ImageFiles" /I "Wrapper" /I "Render" /I "Model" /D "WIN32" /D "_DEBUG" /D "_MBCS" /D "_LIB" /D "VAL_BUILD" /Yu"stdafx.h" /FD /GZ /c
+# ADD CPP /nologo /MDd /W3 /Gm /GX /ZI /Od /I "Application" /I "Avatar" /I "AvatarFiles" /I "DataTypes" /I "Image" /I "ImageFiles" /I "Wrapper" /I "Render" /I "Model" /D "WIN32" /D "_DEBUG" /D "_MBCS" /D "_LIB" /D "VAL_BUILD" /Yu"stdafx.h" /FD /GZ /c
 # ADD BASE RSC /l 0x809 /d "_DEBUG"
 # ADD RSC /l 0x809 /d "_DEBUG" /d "_AFXDLL"
 BSC32=bscmake.exe
@@ -106,6 +106,15 @@ SOURCE=.\AvatarFiles\AvatarFileDXF.cpp
 # Begin Source File
 
 SOURCE=.\AvatarFiles\avatarfilegeneric.cpp
+
+!IF  "$(CFG)" == "VAL - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "VAL - Win32 Debug"
+
+# SUBTRACT CPP /FA<none>
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
@@ -162,6 +171,10 @@ SOURCE=.\Application\CompressDeflate.cpp
 # Begin Source File
 
 SOURCE=.\Application\CRC32.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\Render\DisplayContext.cpp
 # End Source File
 # Begin Source File
 
@@ -234,6 +247,10 @@ SOURCE=.\DataTypes\Scalar.cpp
 # Begin Source File
 
 SOURCE=.\Render\Scene.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\Render\SceneAvatarPose.cpp
 # End Source File
 # Begin Source File
 
@@ -406,6 +423,10 @@ SOURCE=.\Application\CRC32.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\Render\DisplayContext.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\DataTypes\DList.h
 # End Source File
 # Begin Source File
@@ -507,6 +528,10 @@ SOURCE=.\DataTypes\Scalar.h
 # Begin Source File
 
 SOURCE=.\Render\Scene.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\Render\SceneAvatarPose.h
 # End Source File
 # Begin Source File
 
