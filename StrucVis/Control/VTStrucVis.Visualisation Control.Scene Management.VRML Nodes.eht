@@ -1,0 +1,4 @@
+! author="James Smith"
+: VRML Nodes
+
+The 3D scene is displayed inside the Cortona VRML browser. Therefore, the 3D display of individual elements is facilitated by a set of standard VRML PROTO nodes - when an element is added to the scene, an instantiation of the appropriate PROTO node is created. Each PROTO provides interfaces and controls to allow simple creation of 3D geometry from the input data. The syntax and behaviour of the individual PROTOs are described below.
