@@ -3,7 +3,7 @@
 
 <P>
 The user interface is stored as a Windows bitmap (.bmp) and can be edited to change the control's appearance.
-The image a 24-bit colour image of size is 360 x 315 pixels. Generally the left side of the image is
+The image a 24-bit colour image of size 360 x 315 pixels. Generally the left side of the image is
 used to show the control elements inactive and the right shows them active.
 </P>
 

@@ -48,13 +48,13 @@ Absolute URL to the VRML framework files (BeamElement.wrl, SlabElement.wrl and H
 Absolute or relative URL to the user interface bitmap.</LI>
 <LI><B>SimData</B> (Required) - 
 Absolute or relative URL to the converted simulation data.</LI>
-<LI><B>Position</B> (Default: 0.0, 0.0, 10.0) - 
+<LI><B>Position</B> (Default: <I>'0.0, 0.0, 10.0'</I>) - 
 A string of 3 comma seperated floating point values specifying the intial 
 <A HREF="VTStrucVis.Visualisation_Control.Scene_Management.VRML_Nodes.HUDView.html">viewpoint position</A>.</LI>
-<LI><B>Orientation</B> (Default: 0.0, 1.0, 0.0, 0.0) - 
+<LI><B>Orientation</B> (Default: <I>'0.0, 1.0, 0.0, 0.0'</I>) - 
 A string of 4 comma seperated floating point values specifying the intial 
 <A HREF="VTStrucVis.Visualisation_Control.Scene_Management.VRML_Nodes.HUDView.html">viewpoint orientation</A>.</LI>
-<LI><B>Scale</B> (Default: 1.0, 1.0, 1.0) - 
+<LI><B>Scale</B> (Default: <I>'1.0, 1.0, 1.0'</I>) - 
 A string of 3 comma seperated floating point values specifying the intial X, Y and Z scale factors</LI>
 </UL>
 
@@ -77,7 +77,7 @@ The control can be uninstalled a number of ways:-
 
 <UL>
 <LI>With the ActiveX Test Container (packaged with Visual C++), using the menu option 
-<I>'File->Register Controls...'</I>. The registered name of the control is <I>VTStrucVis.Control.1</I>.</LI>
+<I>'File->Register Controls...'</I>. The registered name of the control is <I>'VTStrucVis.Control.1'</I>.</LI>
 <LI>Using the Microsoft <A HREF="http://support.microsoft.com/default.aspx?scid=kb;EN-US;q146219">registry tools</A>.</LI>
 <LI>Using the <A HREF="http://www.4developers.com/xmgr/">ActiveX Control Manager</A> application.</LI>
 </UL>
