@@ -9,7 +9,7 @@
 //! file      = "Control/VTStrucVisCtl.cpp"
 //! author    = "Warren Moore"
 //! date      = "5/3/2002"
-//! rcsid     = "$Id: VTStrucVisCtl.cpp,v 1.30 2002/04/22 11:34:55 vap-warren Exp $"
+//! rcsid     = "$Id: VTStrucVisCtl.cpp,v 1.31 2002/04/24 16:25:22 vap-warren Exp $"
 
 #include "stdafx.h"
 #include "VTStrucVis.h"
@@ -745,9 +745,9 @@ void CVTStrucVisCtl::DrawUI(CDC *pDC, const CRect &rcBounds, bool bRun) {
    //#===--- Frame count bar
    unsigned int uiFrames = m_poScene->NumFrames();
    if (uiFrames > 0) {
-      const int iStep = 180 / (uiFrames - 1);
+      const float fStep = 180.0f / static_cast<float>(uiFrames - 1);
       // Copy the bar
-      oDCBuffer.BitBlt(0, 40, iStep * m_oSFrame.GetUnsignedInt(), 10, &oDCRemote, 180, 40, SRCCOPY);
+      oDCBuffer.BitBlt(0, 40, fStep * m_oSFrame.GetUnsignedInt(), 10, &oDCRemote, 180, 40, SRCCOPY);
    }
 
    //#===--- Tabs
@@ -1595,8 +1595,7 @@ void CVTStrucVisCtl::OnLButtonUp(UINT nFlags, CPoint point) {
       CheckSliders(point);
       uiFrame = m_uiFrame;
       // Update if the frame has changed
-      UpdateSliders(uiFrame);
-      if (uiFrame != m_uiFrame)
+      if (UpdateSliders(uiFrame) || uiFrame != m_uiFrame)
          ShowFrame(uiFrame);
 
       // Check the group list, if visibility tab set
