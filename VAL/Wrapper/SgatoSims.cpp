@@ -7,7 +7,7 @@
 // SGAToSim.cpp - 12/06/2000 - Warren Moore
 //	SGA Avatar to Sim converter wrapper 
 //
-// $Id: SgatoSims.cpp,v 1.3 2000/07/10 09:15:37 waz Exp $
+// $Id: SgatoSims.cpp,v 1.4 2000/07/11 14:20:57 waz Exp $
 //
 
 #include "StdAfx.h"
@@ -20,6 +20,7 @@
 #include "AvatarFileSims.h"
 #include "Avatar.h"
 #include "TimeLimit.h"
+#include "Wedgie.h"
 
 ///////////////
 // CSGAToSims
@@ -35,6 +36,7 @@ const char *CSGAToSims::m_pcError[] = {
 	"Evaluation time expired",
 	"Unable to allocate memory block",
 	"Error editing a model directory",
+	"Error opening self-extracting installer",
 	"Unknown error",
 };
 
@@ -213,7 +215,7 @@ VARESULT CSGAToSims::Export() {
 */
 // Show star-up text
 	if (m_bVerbose) {
-		cout << "SGA Avatar To The Sims model converter v1.2 (03/07/2000)" << endl;
+		cout << "SGA Avatar To The Sims model converter v1.5 (11/07/2000)" << endl;
 		cout << "Copyright 2000 Vapour Technology Ltd." << endl << endl;
 		cout << "Exclusively licensed to AvatarMe Ltd." << endl << endl;
 	}
@@ -307,6 +309,56 @@ VARESULT CSGAToSims::Export() {
 	}
 	return m_eResult;
 } // Export
+
+VARESULT CSGAToSims::Compress(const char *pcDir, const char *pcSFXName) {
+	ASSERT(g_poVAL);
+	// Check we have complete string names
+	if ((!pcDir) || (!pcSFXName))
+		return VA_SFX_ERROR;
+	// Get the sfx wedgie name
+	const char *pcAppDir = g_poVAL->GetAppDir();
+	char pcWJEName[STR_SIZE] = "";
+	if (pcAppDir)
+		strcpy(pcWJEName, pcAppDir);
+	strcat(pcWJEName, "simssfx.wje");
+	// Open the sfx wedgie
+	fstream oWJEFile;
+	oWJEFile.open(pcWJEName, ios::in|ios::binary|ios::nocreate);
+	if (oWJEFile.fail())
+		return VA_SFX_ERROR;
+	// Decompress the sfx
+	CWedgie oWJE;
+	if (oWJE.Open(&oWJEFile, "") != WJE_OK) {
+		oWJEFile.close();
+		return VA_SFX_ERROR;
+	}
+	if (oWJE.Files() != 1) {
+		oWJEFile.close();
+		return VA_SFX_ERROR;
+	}
+	if (oWJE.Extract(0, pcSFXName) != WJE_OK) {
+		oWJEFile.close();
+		return VA_SFX_ERROR;
+	}
+	oWJE.Close();
+	oWJEFile.close();
+	// Open the sfx application
+	fstream oSFXFile;
+	oSFXFile.open(pcSFXName, ios::out|ios::binary|ios::nocreate|ios::ate);
+	if (oSFXFile.fail()) {
+		oSFXFile.close();
+		return VA_SFX_ERROR;
+	}
+	// Create the sfx from the model directory
+	if (oWJE.Open(&oSFXFile, pcDir, true, true) != WJE_OK) {
+		oWJEFile.close();
+		return VA_SFX_ERROR;
+	}
+	oWJE.Close();
+	oSFXFile.close();
+
+	return VA_OK;
+} // Compress
 
 const char *CSGAToSims::GetErrorString() {
 	return m_pcError[(int)m_eResult];

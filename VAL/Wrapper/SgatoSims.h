@@ -7,7 +7,7 @@
 // SGAToSims.h - 01/06/2000 - Warren Moore
 //	Sims export class
 //
-// $Id: SgatoSims.h,v 1.2 2000/06/17 10:42:05 waz Exp $
+// $Id: SgatoSims.h,v 1.3 2000/07/11 14:20:57 waz Exp $
 //
 
 #ifndef _WRAP_SGATOSIMS_
@@ -61,7 +61,8 @@ enum VARESULT {
 	VA_TIME_EXPIRED = 7,
 	VA_OUT_OF_MEMORY = 8,
 	VA_DIRECTORY_ERROR = 9,
-	VA_ERROR = 10,
+	VA_SFX_ERROR = 10,
+	VA_ERROR = 11,
 };
 
 ///////////////
@@ -82,6 +83,9 @@ public:
 
 // Once options have been set, call export to generate the Sims model
 	VARESULT Export();
+
+// Once the model has been exported, compress it into a wedgie
+	VARESULT Compress(const char *pcDir, const char *pcSFXName);
 
 // Get string of current status/error of exporter class
 	const char *GetErrorString();
