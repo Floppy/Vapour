@@ -50,7 +50,7 @@ standard header and other included files.
 //! author     = "James Smith"
 //! date       = "09/10/2001"
 //! lib        = libVALET3d
-//! rcsid      = "$Id: VALET.Introduction.Documentation.eht,v 1.4 2001/10/21 15:57:11 vap-warren Exp $"
+//! rcsid      = "$Id: VALET.Introduction.Documentation.eht,v 1.5 2001/10/21 16:02:30 vap-warren Exp $"
 //! userlevel  = Normal
 //! docentry   = "VALET.3D.Surface Materials"
 </PRE>
@@ -64,7 +64,6 @@ CxxDoc tags. Class tags must be placed with the class definition information. No
 be placed with the function description.
 </P>
 
-<P>Class tags must be 
 <PRE>
 //!classtodo: Class to do details...
 //!classbug: Class bug or missing implementation details...
