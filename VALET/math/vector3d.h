@@ -14,7 +14,7 @@
 //! author 		= "James Smith"
 //! date 		= "01/10/2001"
 //! lib 		= libVALETmath
-//! rcsid 		= "$Id: vector3d.h,v 1.1 2001/10/02 13:35:37 vap-warren Exp $"
+//! rcsid 		= "$Id: vector3d.h,v 1.2 2001/10/02 14:35:14 vap-james Exp $"
 //! userlevel 	        = Normal
 //! docentry 	        = "VALET.Math.Geometry"
 
@@ -28,8 +28,6 @@ namespace VALET {
 
 	//: 3D Vector
 	// A class representing a 3D vector - 3 components, X Y and Z.
-	//!classbug: This class hasn't even been compiled yet becuase I don't
-	//!classbug: have a Makefile yet and it's late. Don't even think about it.
 	class CVector3D {
 	
 	protected:
@@ -211,10 +209,11 @@ namespace VALET {
 	
 		CVector3D& SetLength(double dLength);
 		//: Set length
-		// Resizes the vector to be a certain length.
+		// Rescales the vector to be a certain length.
+		//!param: dLength = desired length
 		//!param: return = reference to this vector
 	
-		CVector3D& Normalise() const;
+		CVector3D& Normalise();
 		//: Normalise this vector.
 		// i.e. make the length of the vector equal to 1.
 		// Equivalent to calling SetLength(1)

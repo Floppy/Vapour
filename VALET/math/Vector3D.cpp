@@ -11,7 +11,7 @@
 //! author 		= "James Smith"
 //! date 		= "01/10/2001"
 //! lib 		= libVALETmath
-//! rcsid 		= "$Id: Vector3D.cpp,v 1.1 2001/10/02 13:35:36 vap-warren Exp $"
+//! rcsid 		= "$Id: Vector3D.cpp,v 1.2 2001/10/02 14:35:14 vap-james Exp $"
 //! userlevel 	        = Normal
 //! docentry 	        = "VALET.Math.Geometry"
 
@@ -23,6 +23,10 @@
 
 // Standard includes
 #include <math.h>
+#include <string.h>
+#include <alloc.h>
+#include <ctype.h>
+#include <stdio.h>
 
 namespace VALET {
 
@@ -183,9 +187,9 @@ namespace VALET {
 	  return *this;
 	} //SetLength(double dLength)
 	
-	CVector3D CVector3D::Normalise() const {
-	  return *this / Length();
-	} //Normalise() const
+	CVector3D& CVector3D::Normalise() {
+	  return *this /= Length();
+	} //Normalise()
 	
 	//CVector3D CVector3D::Rotate(const CAxisRotation & oRot) const {
 	//CQuaternion quatRotation(oRot);
