@@ -9,7 +9,7 @@
 //! file      = "Control/Element.h"
 //! author    = "James Smith"
 //! date      = "19/3/2002"
-//! rcsid     = "$Id: Element.h,v 1.24 2002/04/04 22:31:35 vap-warren Exp $"
+//! rcsid     = "$Id: Element.h,v 1.25 2002/04/08 00:56:46 vap-warren Exp $"
 
 #ifndef __VTSTRUCVIS_ELEMENT__
 #define __VTSTRUCVIS_ELEMENT__
@@ -26,15 +26,13 @@ enum TElementType {
    ELEMENT_BEAM = 0x00,
    ELEMENT_SLAB = 0x01
 };
-//: Element types
-// Beam or slab elements
+// Element types
 
 enum TColourScheme {
    COLOUR_GROUP,
    COLOUR_STRESS
 };
-//: Colouring schemes
-// Group or stress colouring
+// Colouring schemes
 
 //: An interface to an element in a VRML scene
 // This class provides an base class for other specialised elements.

@@ -9,7 +9,7 @@
 //! file      = "Control/VTStrucVisCtl.h"
 //! author    = "Warren Moore"
 //! date      = "5/3/2002"
-//! rcsid     = "$Id: VTStrucVisCtl.h,v 1.26 2002/04/05 14:13:42 vap-warren Exp $"
+//! rcsid     = "$Id: VTStrucVisCtl.h,v 1.27 2002/04/08 00:56:46 vap-warren Exp $"
 
 #ifndef __VTSTRUCTVIS_CONTROL__
 #define __VTSTRUCTVIS_CONTROL__
@@ -195,7 +195,7 @@ protected:
       CR_NOCONTROL,                 // Cannot find Cortona control within container
       CR_OK,                        // Cortona initialised OK
    } ECortonaResult;
-   //: Cortona error states
+   // Cortona error states
 
    typedef enum TEUIResult {
       UI_UNKNOWN = 0,               // Unknown
@@ -208,14 +208,14 @@ protected:
       UI_WRONGFORMAT,               // Bitmap must be packed and not have a colour table
       UI_OK,                        // UI loaded OK
    } EUIResult;
-   //: UI data error states
+   // UI data error states
 
    typedef enum TESimResult {
       SD_UNKNOWN = 0,               // Unknown
       SD_ERROR,                     // Set when all data is loaded, yet setup not completed
       SD_OK,                        // Sim data loaded OK
    } ESimResult;
-   //: Simulation data error states
+   // Simulation data error states
 
    typedef enum TERunMode {
       RM_PAUSE = 0,                 // Not running
@@ -224,10 +224,9 @@ protected:
       RM_REWIND,                    // Rewind
       RM_FASTFORWARD,               // Fast forward
    } ERunMode;
-   //: Player run mode
+   // Player run mode
 
    const static int m_piAnimSpeed[5];
-   //: Animation speeds
    // Array of timer speeds for the five speed settings (in milliseconds)
 
    //: A virtual slider class
