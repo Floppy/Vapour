@@ -7,7 +7,7 @@
 // SGAToUnrealTournament.cpp - 12/06/2000 - Warren Moore
 //	SGA Avatar to Unreal Tournament converter wrapper 
 //
-// $Id: SgatoUnrealTournament.cpp,v 1.6 2000/08/29 13:49:26 waz Exp $
+// $Id: SgatoUnrealTournament.cpp,v 1.7 2000/09/22 11:42:54 waz Exp $
 //
 
 #include "StdAfx.h"
@@ -183,10 +183,10 @@ VARESULT CSGAToUnrealTournament::Export() {
 	}
 
 // Check for time limit validation
-	CTimeLimit oTimeLimit;
-	if (!oTimeLimit.Valid()) {
-		return (m_eResult = VA_TIME_EXPIRED);
-	}
+//	CTimeLimit oTimeLimit;
+//	if (!oTimeLimit.Valid()) {
+//		return (m_eResult = VA_TIME_EXPIRED);
+//	}
 
 // Check for required filenames
 	m_eResult = VA_OK;
