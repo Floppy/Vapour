@@ -5,9 +5,9 @@
 // Copyright 2000 Vapour Technology Ltd.
 //
 // SGAToSims.cpp - 12/06/2000 - Warren Moore
-//	SGA Avatar to Sim converter wrapper 
+//	SGA Avatar to The Sims converter wrapper 
 //
-// $Id: SgatoSims.cpp,v 1.5 2000/07/14 19:59:04 waz Exp $
+// $Id: SgatoSims.cpp,v 1.6 2000/07/19 08:49:02 waz Exp $
 //
 
 #include "StdAfx.h"
@@ -22,6 +22,13 @@
 #include "TimeLimit.h"
 #include "Wedgie.h"
 
+//#===--- Internal Defines
+
+#define VEM_GAMENAME			"The Sims"
+#define VEM_VERSION				"1.7"
+#define VEM_WJENAME				"simssfx.wje"
+#define VEM_SFXNAME				"simssfx.exe"
+
 ///////////////
 // CSGAToSims
 
@@ -33,19 +40,19 @@ CSGAToSims::CSGAToSims() {
 // Set vars
 	m_eResult = VA_OK;
 	m_pcSGAFilename = NULL;
-	m_pcSimModelname = NULL;
-	m_pcSimPath = NULL;
-	m_iAge = m_iSex = m_iSkinTone = m_iBuild = SIMS_UNKNOWN;
+	m_pcModelname = NULL;
+	m_pcPath = NULL;
+	m_iAge = m_iSex = m_iSkinTone = m_iBuild = VEM_UNKNOWN;
 	m_bVerbose = true;
 } // Contructor
 
 CSGAToSims::~CSGAToSims() {
 	if (m_pcSGAFilename)
 		delete [] m_pcSGAFilename;
-	if (m_pcSimModelname)
-		delete [] m_pcSimModelname;
-	if (m_pcSimPath)
-		delete [] m_pcSimPath;
+	if (m_pcModelname)
+		delete [] m_pcModelname;
+	if (m_pcPath)
+		delete [] m_pcPath;
 } // Destructor
 
 VARESULT CSGAToSims::SetOption(int iOption, int iArgument) {
@@ -75,9 +82,9 @@ VARESULT CSGAToSims::SetOption(int iOption, int iArgument) {
 			else
 				m_eResult = VA_INVALID_ARGUMENT;
 			break;
-		case SIMS_VERBOSE:
-			if ((iArgument == SIMS_TRUE) || (iArgument == SIMS_FALSE))
-				m_bVerbose = iArgument == SIMS_TRUE;
+		case VEM_VERBOSE:
+			if ((iArgument == VEM_TRUE) || (iArgument == VEM_FALSE))
+				m_bVerbose = iArgument == VEM_TRUE;
 			else
 				m_eResult = VA_INVALID_ARGUMENT;
 		default:
@@ -92,7 +99,7 @@ VARESULT CSGAToSims::SetOption(int iOption, const char *pcString) {
 	int iLength = 0;
 	char *pcBuffer = NULL;
 	switch (iOption) {
-		case SGA_FILENAME:
+		case VEM_SGANAME:
 			if (pcString) {
 				iLength = strlen(pcString) + 1;
 				pcBuffer = (char*) new char[iLength];
@@ -108,15 +115,15 @@ VARESULT CSGAToSims::SetOption(int iOption, const char *pcString) {
 			else 
 				m_eResult = VA_INVALID_ARGUMENT;
 			break;
-		case SIMS_MODELNAME:
+		case VEM_MODELNAME:
 			if (pcString) {
 				iLength = strlen(pcString) + 1;
 				pcBuffer = (char*) new char[iLength];
 				if (pcBuffer) {
 					strcpy(pcBuffer, pcString);
-					if (m_pcSimModelname)
-						delete [] m_pcSimModelname;
-					m_pcSimModelname = pcBuffer;
+					if (m_pcModelname)
+						delete [] m_pcModelname;
+					m_pcModelname = pcBuffer;
 				}
 				else
 					m_eResult = VA_OUT_OF_MEMORY;
@@ -124,7 +131,7 @@ VARESULT CSGAToSims::SetOption(int iOption, const char *pcString) {
 			else 
 				m_eResult = VA_INVALID_ARGUMENT;
 			break;
-		case SIMS_DIRECTORY:
+		case VEM_DIRECTORY:
 			if (pcString) {
 				iLength = strlen(pcString) + 1;
 				bool bAdd = false;
@@ -137,9 +144,9 @@ VARESULT CSGAToSims::SetOption(int iOption, const char *pcString) {
 					strcpy(pcBuffer, pcString);
 					if (bAdd)
 						strcat(pcBuffer, "\\");
-					if (m_pcSimPath)
-						delete [] m_pcSimPath;
-					m_pcSimPath = pcBuffer;
+					if (m_pcPath)
+						delete [] m_pcPath;
+					m_pcPath = pcBuffer;
 				}
 				else
 					m_eResult = VA_OUT_OF_MEMORY;
@@ -155,7 +162,7 @@ VARESULT CSGAToSims::SetOption(int iOption, const char *pcString) {
 } // SetOption
 
 const int CSGAToSims::GetOptionInt(int iOption) {
-	int iReturn = SIMS_UNKNOWN;
+	int iReturn = VEM_UNKNOWN;
 	switch (iOption) {
 		case SIMS_AGE:
 			iReturn = m_iAge;
@@ -169,8 +176,8 @@ const int CSGAToSims::GetOptionInt(int iOption) {
 		case SIMS_BUILD:
 			iReturn = m_iBuild;
 			break;
-		case SIMS_VERBOSE:
-			iReturn = m_bVerbose ? SIMS_TRUE : SIMS_FALSE;
+		case VEM_VERBOSE:
+			iReturn = m_bVerbose ? VEM_TRUE : VEM_FALSE;
 			break;
 		default:
 			m_eResult = VA_INVALID_OPTION;
@@ -181,14 +188,14 @@ const int CSGAToSims::GetOptionInt(int iOption) {
 const char *CSGAToSims::GetOptionString(int iOption) {
 	char *pcReturn = NULL;
 	switch (iOption) {
-		case SGA_FILENAME:
+		case VEM_SGANAME:
 			pcReturn = m_pcSGAFilename;
 			break;
-		case SIMS_MODELNAME:
-			pcReturn = m_pcSimModelname;
+		case VEM_MODELNAME:
+			pcReturn = m_pcModelname;
 			break;
-		case SIMS_DIRECTORY:
-			pcReturn = m_pcSimPath;
+		case VEM_DIRECTORY:
+			pcReturn = m_pcPath;
 			break;
 		default:
 			m_eResult = VA_INVALID_OPTION;
@@ -197,57 +204,62 @@ const char *CSGAToSims::GetOptionString(int iOption) {
 } // GetOptionString
 
 VARESULT CSGAToSims::Export() {
+// Show star-up text
+	if (m_bVerbose) {
+		cout << "SGA Avatar To " << VEM_GAMENAME << " model converter v";
+		cout << VEM_VERSION << " (" << __DATE__ << ")" << endl;
+		cout << "Copyright 2000 Vapour Technology Ltd." << endl << endl;
+		cout << "Exclusively licensed to AvatarMe Ltd." << endl << endl;
+	}
+
 /*
 // Check for time limit validation
 	CTimeLimit oTimeLimit;
 	if (!oTimeLimit.Valid()) {
-		m_eResult = VA_TIME_EXPIRED;
-		return m_eResult;
+		return (m_eResult = VA_TIME_EXPIRED);
 	}
 */
-// Show star-up text
-	if (m_bVerbose) {
-		cout << "SGA Avatar To The Sims model converter v1.5 (11/07/2000)" << endl;
-		cout << "Copyright 2000 Vapour Technology Ltd." << endl << endl;
-		cout << "Exclusively licensed to AvatarMe Ltd." << endl << endl;
-	}
-// Check for correct options
+
+// Check for required filenames
 	m_eResult = VA_OK;
-	bool bOk = m_pcSGAFilename && m_pcSimModelname;
+	bool bOk = m_pcSGAFilename && m_pcModelname;
+	if (!bOk)
+		m_eResult = VA_MISSING_FILENAME;
+
+// Check for model options
 	if (bOk) {
-		bOk = (m_iAge != SIMS_UNKNOWN) && (m_iSex != SIMS_UNKNOWN) &&
-					(m_iSkinTone != SIMS_UNKNOWN) && (m_iBuild != SIMS_UNKNOWN);
+		bOk = (m_iAge != VEM_UNKNOWN) && (m_iSex != VEM_UNKNOWN) &&
+					(m_iSkinTone != VEM_UNKNOWN) && (m_iBuild != VEM_UNKNOWN);
 		if (!bOk)
 			m_eResult = VA_MISSING_ARGUMENT;
 	}
-	else
-		m_eResult = VA_MISSING_FILENAME;
+	
 // Start model export
 	if (bOk) {
 		if (m_bVerbose) {
 		// Show startup text
-			cout << "SGA Avatar    : " << m_pcSGAFilename << endl;
-			cout << "Sim Model     : ";
-			if (m_pcSimPath)
-				cout << m_pcSimPath;
-			cout << m_pcSimModelname << endl;
-			cout << "Sim Age       : ";
+			cout << "SGA Avatar     : " << m_pcSGAFilename << endl;
+			cout << "Exported model : ";
+			if (m_pcPath)
+				cout << m_pcPath;
+			cout << m_pcModelname << endl;
+			cout << "Sim Age        : ";
 			switch (m_iAge) {
 				case SIMS_ADULT: cout << "Adult" << endl; break;
 				case SIMS_CHILD: cout << "Child" << endl; break;
 			}
-			cout << "Sim Sex       : ";
+			cout << "Sim Sex        : ";
 			switch (m_iSex) {
 				case SIMS_MALE: cout << "Male" << endl; break;
 				case SIMS_FEMALE: cout << "Female" << endl; break;
 			}
-			cout << "Sim Skin Tone : ";
+			cout << "Sim Skin Tone  : ";
 			switch (m_iSkinTone) {
 				case SIMS_LIGHT: cout << "Light" << endl; break;
 				case SIMS_MEDIUM: cout << "Medium" << endl; break;
 				case SIMS_DARK: cout << "Dark" << endl; break;
 			}
-			cout << "Sim Build     : ";
+			cout << "Sim Build      : ";
 			switch (m_iBuild) {
 				case SIMS_FIT: cout << "Fit" << endl; break;
 				case SIMS_FAT: cout << "Fat" << endl; break;
@@ -257,38 +269,38 @@ VARESULT CSGAToSims::Export() {
 			cout << "Starting model export..." << endl;
 		}
 
-	// Load the SGA avatar
+		// Load the SGA avatar
 		CAvatarFileAME oAME;
 		CAvatar *poAvatar = oAME.Load(m_pcSGAFilename);
-	// Check the avatar
+		// Check the avatar
 		if (!poAvatar) {
 			m_eResult = VA_AVATAR_LOAD_ERROR;
 			return m_eResult;
 		}
 
 	// Allocate the complete filename
-		int iLength = strlen(m_pcSimModelname) + 1;
-		if (m_pcSimPath)
-			iLength += strlen(m_pcSimPath);
+		int iLength = strlen(m_pcModelname) + 1;
+		if (m_pcPath)
+			iLength += strlen(m_pcPath);
 		char *pcFilename = NULL;
 		NEWBEGIN
 		pcFilename = (char*) new char[iLength];
-		NEWEND("CSGAToSims::Export - Temporary sim filename")
+		NEWEND("CSGAToSims::Export - Temporary model filename")
 		if (pcFilename) {
 			pcFilename[0] = 0;
 		// Generate the complete filename
-			if (m_pcSimPath)
-				strcpy(pcFilename, m_pcSimPath);
-			strcat(pcFilename, m_pcSimModelname);
+			if (m_pcPath)
+				strcpy(pcFilename, m_pcPath);
+			strcat(pcFilename, m_pcModelname);
 		// Create the exporter
-			CAvatarFileSims oSims;
+			CAvatarFileSims oAvatarFile;
 		// Set the options
-			oSims.SetOption(SIMS_AGE, m_iAge);
-			oSims.SetOption(SIMS_SEX, m_iSex);
-			oSims.SetOption(SIMS_SKINTONE, m_iSkinTone);
-			oSims.SetOption(SIMS_BUILD, m_iBuild);
-		// Save the Sims model
-			if (oSims.Save(pcFilename, poAvatar) == 0)
+			oAvatarFile.SetOption(SIMS_AGE, m_iAge);
+			oAvatarFile.SetOption(SIMS_SEX, m_iSex);
+			oAvatarFile.SetOption(SIMS_SKINTONE, m_iSkinTone);
+			oAvatarFile.SetOption(SIMS_BUILD, m_iBuild);
+		// Save the model
+			if (oAvatarFile.Save(pcFilename, poAvatar) == 0)
 				m_eResult = VA_MODEL_SAVE_ERROR;
 		}
 		else
@@ -312,7 +324,7 @@ VARESULT CSGAToSims::Compress(const char *pcDir, const char *pcSFXName) {
 	char pcWJEName[STR_SIZE] = "";
 	if (pcAppDir)
 		strcpy(pcWJEName, pcAppDir);
-	strcat(pcWJEName, "simssfx.wje");
+	strcat(pcWJEName, VEM_WJENAME);
 	// Open the sfx wedgie
 	fstream oWJEFile;
 	oWJEFile.open(pcWJEName, ios::in|ios::binary|ios::nocreate);
@@ -324,7 +336,7 @@ VARESULT CSGAToSims::Compress(const char *pcDir, const char *pcSFXName) {
 		oWJEFile.close();
 		return VA_WJE_ERROR;
 	}
-	if (oWJE.Extract("simssfx.exe", pcSFXName) != WJE_OK) {
+	if (oWJE.Extract(VEM_SFXNAME, pcSFXName) != WJE_OK) {
 		oWJEFile.close();
 		return VA_WJE_ERROR;
 	}
