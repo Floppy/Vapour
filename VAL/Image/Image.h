@@ -7,7 +7,7 @@
 // Image.h - 21/12/1999 - Warren Moore
 //	Image header
 //
-// $Id: Image.h,v 1.7 2000/07/22 23:23:07 waz Exp $
+// $Id: Image.h,v 1.8 2000/07/24 21:10:21 waz Exp $
 //
 
 #ifndef _VAL_IMAGE_
@@ -147,7 +147,7 @@ protected:
 	CImagePalette *m_pPalette;	// pointer to palette object
 
 //#===--- Friends
-	friend class CScene;
+	friend class CRCOpenGLBufferWin32;
 
 };
 
