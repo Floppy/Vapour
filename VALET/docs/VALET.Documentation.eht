@@ -1,4 +1,4 @@
-! author = "James Smith"
+! author = "James Smith &amp; Warren Moore"
 ! date = "09/10/2001"
 
 : Documentation Guidelines
@@ -17,18 +17,18 @@ All source files, including README's and example must contain the the standard f
 and confidentiality information must be included in EVERY file within the repository.
 </P>
 
-<P CLASS="HEADING">
-C++ Requirements
-</P>
-<P>
-Classes should have a description, as should all functions. Functions should have descriptions of their parameters and return types, describing what they 
-represent, and the range of vaild values if appropriate. For larger classes, functions should be divided into sensible sections.
-</P>
-
 <PRE>
 Include standard header here
 </PRE>
 
 <P>
 The file, author, date and rcsid CxxDoc tags must also be included in every file. Forgot them at your peril!
+</P>
+
+<P CLASS="HEADING">
+C++ Requirements
+</P>
+<P>
+Classes should have a description, as should all functions. Functions should have descriptions of their parameters and return types, describing what they 
+represent, and the range of vaild values if appropriate. For larger classes, functions should be divided into sensible sections.
 </P>

@@ -3,5 +3,22 @@
 
 : Vapour All-purpose Library
 
-Welcome to our library, VALET. This site should contain all the info required to
-get you started on all elements of using and developing the library.
+<P CLASS="HEADING">
+Introduction
+</P>
+<P>
+Welcome to our library, VALET. This section details all the basics required to run and develop VALET applications.
+Please read these carefully before you start, and they will certainly save you a lot of time and trouble. So, we'll start with the basics...
+</P>
+
+<P>
+<B>CVS Tutorial</B> - 
+</P>
+
+<P>
+<B>VMake</B> - 
+</P>
+
+<P>
+<B>Documentation Guidelines</B> - 
+</P>
