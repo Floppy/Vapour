@@ -7,7 +7,7 @@
 // TimeLimit.cpp - 07/06/2000 - Warren Moore
 //	Time limit validation
 //
-// $Id: TimeLimit.cpp,v 1.1 2000/06/16 21:57:48 waz Exp $
+// $Id: TimeLimit.cpp,v 1.2 2000/07/11 17:41:15 waz Exp $
 //
 
 #include "StdAfx.h"
@@ -39,7 +39,7 @@ bool CTimeLimit::Valid() {
 	unsigned int uMonth = pCurrentTime->tm_mon + 1;
 	unsigned int uDay = pCurrentTime->tm_mday;
 
-	bool bValid = (uYear == 2000) && (uMonth == 6) && (uDay > 6) && (uDay < 22);
+	bool bValid = (uYear == 2000) && (uMonth == 7) && (uDay > 10) && (uDay < 25);
 
 	return bValid;
 } // Valid
