@@ -1,25 +1,34 @@
 ! author = "James Smith"
 ! date = "09/10/2001"
 
-: Source Documentation Guidelines
+: Documentation Guidelines
 
+<P>
 All Vapour code should be well documented. The VALET source tree is documented using CxxDoc, a basic tutorial of which
 can be found <A HREF="http://ravl.sourceforge.net/doc/Auto/Basic/Tree/Ravl.Introduction.Documentation.html" TARGET=_blank">here</A>.
 Our usage of CxxDoc does have some modifications, and these will be documented soon.
+</P>
 
-:-----
-: Standard File Requirements
+<P CLASS="HEADING">
+Standard File Requirements
+</P>
+<P>
 All source files, including README's and example must contain the the standard file header, as the copyright
 and confidentiality information must be included in EVERY file within the repository.
+</P>
 
-:-----
-: C++ Requirements
+<P CLASS="HEADING>
+C++ Requirements
+</P>
+<P>
 Classes should have a description, as should all functions. Functions should have descriptions of their parameters and return types, describing what they 
 represent, and the range of vaild values if appropriate. For larger classes, functions should be divided into sensible sections.
+</P>
 
 <PRE>
 Include standard header here
 </PRE>
 
+<P>
 The file, author, date and rcsid CxxDoc tags must also be included in every file. Forgot them at your peril!
-
+</P>
