@@ -7,7 +7,7 @@
 // WJESFX.cpp - 11/07/2000 - Warren Moore
 //	Application and installation
 //
-// $Id: WJESFX.cpp,v 1.4 2000/07/14 19:56:15 waz Exp $
+// $Id: WJESFX.cpp,v 1.5 2000/07/15 16:28:32 waz Exp $
 //
 
 #include "stdafx.h"
@@ -221,7 +221,6 @@ void CWJESFXApp::InstallHL(CProgressDlg *poDlg) {
 				poDlg->Step();
 			uCount++;
 		}
-		// Add the successfully installed files to UT system\manifest.ini
 		// Clean up
 		oWedgie.Close();
 		poWJE->close();
@@ -304,7 +303,9 @@ void CWJESFXApp::InstallUT(CProgressDlg *poDlg) {
 		}
 		// Add the successfully installed files to UT system\manifest.ini
 		if (!AddFilesToUT(oWedgie)) 
-			AfxMessageBox("Error updating Unreal Tournament installed modules file");
+			AfxMessageBox("Error updating Unreal Tournament installed modules file", MB_OK|MB_ICONERROR);
+		else 
+			AfxMessageBox("Unreal Tournament file System\\Manifest.ini renamed to System\\Manifest.ini.bak", MB_OK);
 		// Clean up
 		oWedgie.Close();
 		poWJE->close();
@@ -319,21 +320,103 @@ void CWJESFXApp::InstallUT(CProgressDlg *poDlg) {
 bool CWJESFXApp::AddFilesToUT(CWedgie &oWJE) {
 	// Open the ini file
 	CString strININame;
-	strININame = oWJE.Directory() + "system\\manifest.ini";
+	strININame = oWJE.Directory();
+	strININame += "system\\manifest.ini";
 	ifstream oInFile;
-	oInFile.open(strININame, ios::in|ios::text|ios::nocreate);
+	oInFile.open(strININame, ios::in|ios::nocreate);
 	if (oInFile.fail()) {
 		oInFile.close();
 		return false;
 	}
 	// Create a temporary ini file
-	strININame += ".vap";
+	CString strTempName(strININame);
+	strTempName += ".vap";
 	ofstream oOutFile;
-	oOutFile.open(strININame, ios::out|ios::text|ios::trunc);
+	oOutFile.open(strTempName, ios::out|ios::trunc);
 	if (oOutFile.fail()) {
 		oInFile.close();
 		oOutFile.close();
 		return false;
 	}
-
+	// Generate the module name
+	const char *pcName = oWJE.Filename(0);
+	if (!pcName) {
+		oInFile.close();
+		oOutFile.close();
+		return false;
+	}
+	while(strchr(pcName, '\\') != NULL) 
+		pcName = strchr(pcName, '\\');
+	int iLength = strlen(pcName);
+	bool bFound = false;
+	while (!bFound && (iLength > 0))
+		if (pcName[iLength] == '.')
+			bFound = true;
+		else
+			iLength--;
+	char pcModName[STR_SIZE] = "";
+	memcpy(pcModName, pcName, iLength);
+	pcModName[iLength] = '\0';
+	// Read through the file
+	char pcSection[STR_SIZE] = "";
+	char pcLine[STR_SIZE] = "";
+	bool bWritten = false;
+	while (!oInFile.eof()) {
+		// Read a line
+		oInFile.getline(pcLine, STR_SIZE);
+		// Check if we need to add our lines
+		if ((!bWritten) && (strlen(pcSection) != 0) && 
+			 ((strlen(pcLine) == 0) || (pcLine[0] == '['))) {
+			// Check for the setup section
+			if (stricmp("Setup", pcSection) == 0)
+				oOutFile << "Group=" << pcModName << endl;
+			// Check for the ref count section
+			if (stricmp("RefCounts", pcSection) == 0) {
+				unsigned int uCount = 0;
+				while (uCount < oWJE.Files()) {
+					oOutFile << "File:" << oWJE.Filename(uCount) << "=1" << endl;
+					uCount++;
+				}
+			}
+			bWritten = true;
+		}
+		// Get the section name, if so
+		if (pcLine[0] == '[') {
+			strcpy(pcSection, pcLine + 1);
+			pcSection[strlen(pcSection) - 1] = '\0';
+			bWritten = false;
+		}
+		// Write out what we read in
+		oOutFile.write(pcLine, strlen(pcLine));
+		oOutFile << endl;
+	}
+	// Write the module settings
+	oOutFile << "[" << pcModName << "]" << endl;
+	unsigned int uCount = 0;
+	while (uCount < oWJE.Files()) {
+		oOutFile << "File=" << oWJE.Filename(uCount) << endl;
+		uCount++;
+	}
+	oOutFile << "Caption=" << pcModName << endl;
+	oOutFile << "Version=100" << endl << endl;
+	bool bOk = (!oInFile.bad()) && (!oOutFile.bad());
+	// Close the files
+	oInFile.close();
+	oOutFile.close();
+	// If all ok move the files
+	if (bOk) {
+		// Delete the back up file
+		CString strBAKName(strININame);
+		strBAKName += ".bak";
+		if ((remove(strBAKName) == -1) && (errno != ENOENT))
+			return false;
+		// Rename the ini file to ini.bak
+		if (rename(strININame, strBAKName) == -1)
+			return false;
+		// Rename the ini.vap to the ini file
+		if (rename(strTempName, strININame) == -1)
+			return false;
+	}
+	
+	return true;
 } // AddFilesToUT
