@@ -1,0 +1,46 @@
+! author="Warren Moore"
+: Editing the User Interface
+
+<P>
+The user interface is stored as a Windows bitmap (.bmp) and can be edited to change the control's appearance.
+The image a 24-bit colour image of size is 360 x 315 pixels. Generally the left side of the image is
+used to show the control elements inactive and the right shows them active.
+</P>
+
+<CENTER>
+<IMG SRC="../../uidata.png" WIDTH=360 HEIGHT=315 BORDER=0 ALT="UI">
+</CENTER>
+
+<UL>
+<LI><B>0, 0 - 179, 39</B><BR>
+Background for the frame counter. The right hand side is not used.</LI>
+<LI><B>0, 40 - 179, 49</B><BR>
+The frame position bar. Left shows the bar empty, right shows the bar full.</LI>
+<LI><B>0, 50 - 179, 139</B><BR>
+Images of size 60 x 30 for the VCR-stlye buttons. Right shows the buttons highlighted.
+From left to right, top to bottom the buttons are:-
+	<UL>
+	<LI>Play (or step) in reverse</LI>
+	<LI>Play (or step)</LI>
+	<LI>Pause</LI>
+	<LI>Rewind</LI>
+	<LI>Fast forward</LI>
+	<LI>Loop on/off</LI>
+	<LI>Jump to start</LI>
+	<LI>Jump to end</LI>
+	<LI>Step on/off</LI>
+	</UL>
+</LI>
+<LI><B>0, 140 - 179, 154</B><BR>
+The colour mode inidicator. Left is used for group colouring, right for stress colouring.</LI>
+<LI><B>0, 155 - 179, 169</B><BR>
+Images for the visibility, scale and animation tabs. Left shows the tabs unselected, right shows them selected.</LI>
+<LI><B>0, 170 - 179, 244</B><BR>
+The scale tab options. Scale values are displayed in the black boxes. The left sliders are empty, the right are full.</LI>
+<LI><B>0, 245 - 179, 269</B><BR>
+The animation speed tab. The speed setting is displayed in the black box. The left slider is empty, the right full.</LI>
+<LI><B>0, 270 - 179, 314</B><BR>
+The group visibility tab. The first row shows the row followed by the up arrow. The second row is repeated as necessary for
+the number of group and control size. The third row is used for the final row. The cube at the start of the row is 
+used to show if the group is visible (right) or invisible (left).</LI>
+</UL>

@@ -1,4 +1,6 @@
 ! author="Warren Moore"
 : Cortona Management Classes
 
-These classes wrap the Automation calls required to interact with Cortona
+These classes wrap the Automation calls required to interact with Cortona. 
+Communication is currently only possible from the control to Cortona, although further
+work will allow the control to receive VRML events from Cortona.
