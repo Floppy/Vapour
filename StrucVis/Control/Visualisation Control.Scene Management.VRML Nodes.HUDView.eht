@@ -1,0 +1,59 @@
+! author="James Smith"
+: HUDView
+
+This node defines a combined head-up display and VRML Viewpoint node. It acts as a Viewpoint that can display text to the user.
+<HR>
+<PRE>
+PROTO HUDView [
+   eventIn      SFBool     set_bind
+   eventIn      MFString   set_description
+   exposedField SFVec3f    position     0 0 10
+   exposedField SFRotation orientation  0 1 0 0
+   exposedField SFVec3f    textPosition -0.105 -0.06 -0.2
+   exposedField SFBool     jump         TRUE
+   eventOut     SFVec3f    currentPosition
+   eventOut     SFRotation currentOrientation
+]
+</PRE>
+<HR>
+<H2>Fields</H2>
+<DL>
+<DT><B><I>position</I></B></DT>
+<DD>3D position of the Viewpoint. Default is 0 0 10.</DD>
+<DT><B><I>orientation</I></B></DT>
+<DD>A rotation in axis-angle format that is applied to the default view direction, in order to rotate the camera. Default view direction is along -Z. Default rotation is 0 1 0 0.</DD>
+<DT><B><I>textPosition</I></B></DT>
+<DD>A 3D translation for the text position. Default positioning should work well with a 4:3 aspect display area.</DD>
+<DT><B><I>jump</I></B></DT>
+<DD>Specfies whether the camera should animate smoothly to the viewpoint position (TRUE) or jump immediately (FALSE).</DD>
+</DL>
+<HR>
+<H2>EventIns</H2>
+<DL>
+<DT><B><I>set_bind</I></B></DT>
+<DD>If set_bind TRUE is received, the Viewpoint will be selected and the camera will move to the specified position. If set_bind FALSE is received, the Viewpoint will be deselected, and the previous active Viewpoint will become active.</DD>
+<DT><B><I>set_description</I></B></DT>
+<DD>Sets the text to display in the text display area. The text display is positioned to display 3 lines of text.</DD>
+</DL>
+<HR>
+<H2>EventOuts</H2>
+<DL>
+<DT><B><I>currentPosition</I></B></DT>
+<DD>The current position of the camera. Can be used to save Viewpoint information.</DD>
+<DT><B><I>currentOrientation</I></B></DT>
+<DD>The current orientation of the camera. Can be used to save Viewpoint information.</DD>
+</DL>
+<HR>
+<H2>Notes</H2>
+<P>
+Viewpoint positioning is done by specifying a camera position and an orientation. The position is simply specified as a 3D vector defining the location of the camera.
+Orientation is more complex, as it is done by specifying a rotation to apply to the default view orientation, which is in the -Z direction. The rotation is 
+specified as an axis-angle rotation, which is a series of four floating-point values. The first three values define a vector, and the last specifies an angle (in radians) to rotate
+around that vector. Positive rotations are anti-clockwise when looking in the direction of the axis vector.
+</P>
+<P>
+Because of the non-intuitive nature of the rotation representation, Viewpoint parameters can be very hard to create by hand. We have therefore written a tool called 
+<A HREF="http://www.vapourtech.com/dev/vrmltools.php#Peek" TARGET="_blank">Peek</A>, which takes a number of simple parameters and creates a complete VRML Viewpoint node. Using a 
+camera position, a target location, and an up direction vector, it calculates the desired Viewpoint node. We recommend using this tool to calculate Viewpoint parameters. The output can be copied and pasted
+into the appropriate place, either in VRML, C++ or HTML code as appropriate.
+</P>

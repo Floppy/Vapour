@@ -1,0 +1,51 @@
+! author="James Smith"
+: SlabElement
+
+This node defines a Slab structural element. All geometry is generated from the nine node positions specified in the <B><I>nodes</I></B> field or set with the <B><I>set_nodes</I></B> eventIn.
+<HR>
+<PRE>
+PROTO BeamElement [
+   eventIn  MFColor  set_colours
+   eventIn  MFInt32  set_cracks
+   eventIn  MFVec3f  set_nodes
+   eventIn  SFBool   set_visible
+   field    MFColor  colours     [ 1 1 1, 1 1 1, 1 1 1, 1 1 1, 1 1 1, 1 1 1, 1 1 1, 1 1 1, 1 1 1]
+   field    MFInt32  cracks      [ 0 0 0 0 0 0 0 0 0 ]
+   field    MFString description ["ID:" "Group:" "Temperature:"]
+   field    MFVec3f  nodes       [ 0.5 0 0.5, -0.5 0 0.5, -0.5 0 -0.5, 0.5 0 -0.5, 0 0 0.5, -0.5 0 0, 0 0 -0.5, 0.5 0 0, 0 0 0]
+   field    SFFloat  thickness   1
+   eventOut MFString description_changed
+]
+</PRE>
+<HR>
+<H2>Fields</H2>
+<DL>
+<DT><B><I>colours</I></B></DT>
+<DD>Nine SFColor values which define the colour of each of the controlling nodes. Each colour defines the colour of one slab node and it's related geometry.</DD>
+<DT><B><I>cracks</I></B></DT>
+<DD>Nine SFInt32 values which define the apperance of cracks on the bottom surface of the slab. A marker is displayed for each crack present. In the field, a value of 1 means one crack (yellow marker), 2 means 2 cracks (red marker), and 3 means crushing is taking place (blue marker).
+<DT><B><I>description</I></B></DT>
+<DD>A textual description of the beam, for instance element IDs or temperature readings.
+<DT><B><I>nodes</I></B></DT>
+<DD>Nine SFVec3f values which define the 3D positions of the controlling nodes.</DD>
+<DT><B><I>thickness</I></B></DT>
+<DD>The thickness of the slab.</DD>
+</DL>
+<HR>
+<H2>EventIns</H2>
+<DL>
+<DT><B><I>set_colours</I></B></DT>
+<DD>Sets the <B><I>colours</I></B> field of the element. Should be an MFColor value made up of 9 SFColor values.</DD>
+<DT><B><I>set_cracks</I></B></DT>
+<DD>Sets the <B><I>cracks</I></B> field of the element. Should be an MFInt32 value made up of 9 SFInt32 values.</DD>
+<DT><B><I>set_nodes</I></B></DT>
+<DD>Sets the <B><I>nodes</I></B> field of the element. Should be an MFVec3f value made up of 9 SFVec3f values.</DD>
+<DT><B><I>set_visible</I></B></DT>
+<DD>Sets the visibility of the element. If set_visible FALSE is sent, the object becomes 90% transparent. If set_visible TRUE is sent, the object becomes solid once again.</DD>
+</DL>
+<HR>
+<H2>EventOuts</H2>
+<DL>
+<DT><B><I>description_changed</I></B></DT>
+<DD>When the mouse is moved over the object, the value of the <B><I>description</I></B> field is sent from this eventOut.</DD>
+</DL>
