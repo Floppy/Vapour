@@ -1,19 +1,20 @@
 <HTML>
 <TITLE>
-SGAToSim - Converter Usage & Avatar Installation Instructions
+SGAToSim 1.7 - Converter Usage & Avatar Installation Instructions
 </TITLE>
 <BODY>
 <CENTER>
-<H1>SGAToSim</H1>
+<H1>SGAToSim 1.7</H1>
 <H2>Converter Usage & Avatar Installation Instructions</H2>
 </CENTER>
 <H3>Usage</H3>
 <P>
-The application <FONT FACE="courier new">sgatosim.exe</FONT> is a Win32 command-line app used to generate models for 'The Sims' from SGA1 avatars. 
+The application <FONT FACE="courier new">sgatosim.exe</FONT> is a Win32 command-line app used to generate self-extracting executables containing 
+models for 'The Sims', created from SGA1 avatars. 
 It is executed from the MS-DOS command prompt in the form:-
 </P>
 <P>
-<FONT FACE="courier new">sgatosim avatar_filename.ame [sim_path\]sim_name.exe {-option argument ...}</FONT>
+<FONT FACE="courier new">sgatosim avatar_filename.ame [sfx_path\]sfx_name.exe {-option argument ...}</FONT>
 </P>
 <P>
 No model will be produced unless these options are specified:-
@@ -21,16 +22,17 @@ No model will be produced unless these options are specified:-
 <P>
 <TABLE CELLSPACING=0 CELLPADDING=0 BORDER=0 WIDTH=80% COLS=2>
 <TR><TD WIDTH=40% VALIGN="top"><FONT FACE="courier new">avatar_filename.ame</FONT></TD><TD>Filename for the input SGA avatar</TD></TR>
-<TR><TD WIDTH=40% VALIGN="top"><FONT FACE="courier new">[sim_path\]sim_name.exe</FONT></TD><TD>Output filename of the self-extracting zip file.
-The <FONT FACE="courier new">sim_path\</FONT> is optional, and is independent of the <FONT FACE="courier new">-path</FONT> option</TD></TR>
+<TR><TD WIDTH=40% VALIGN="top"><FONT FACE="courier new">[sfx_path\]sfx_name.exe</FONT></TD><TD>Output filename of the self-extracting executable.
+The <FONT FACE="courier new">sfx_path\</FONT> is optional, and is independent of the <FONT FACE="courier new">-path</FONT> option</TD></TR>
 </TABLE>
 </P>
 <P>
-These options may be used to specify a model output directory and properties for the Sim model.
+These options may be used to specify a model output directory and properties for the exported model.
 </P>
 <TABLE CELLSPACING=0 CELLPADDING=0 BORDER=0 WIDTH=80% COLS=2>
+<TR><TD WIDTH=40% VALIGN="top"><FONT FACE="courier new">-name [model_name]</FONT></TD><TD>Name to be used for model files - <I>Default: <FONT FACE="courier new">sfx_name</FONT></I></TD></TR>
 <TR><TD WIDTH=40% VALIGN="top"><FONT FACE="courier new">-path [pathname]</FONT></TD><TD>Directory in which to place temporary model files.
-Executable working directory is used if this option is not specified.</TD>
+The directory <FONT FACE="courier new">sga_temp</FONT> is created within the executable working directory and used if this option is not specified.</TD>
 <TR><TD WIDTH=40% VALIGN="top"><FONT FACE="courier new">-age (adult|child)</FONT></TD><TD>Sim age - <I>Default: adult</I></TD></TR>
 <TR><TD WIDTH=40% VALIGN="top"><FONT FACE="courier new">-sex (male|female)</FONT></TD><TD>Sim sex - <I>Default: male</I></TD></TR>
 <TR><TD WIDTH=40% VALIGN="top"><FONT FACE="courier new">-skin (light|medium|dark)</FONT></TD><TD>Sim skin tone - <I>Default: medium</I></TD></TR>
@@ -38,13 +40,13 @@ Executable working directory is used if this option is not specified.</TD>
 <TR><TD WIDTH=40% VALIGN="top"><FONT FACE="courier new">-0</FONT></TD><TD>No text output</TD></TR>
 </TABLE>
 <P>
-The default model produced, if no properties are specified, is an adult male of fit build with medium skin tone.<BR>
-This example set of command-line arguments will convert <FONT FACE="courier new">test.ame</FONT> into a female child with fit build and medium skin tone. 
-The temporary Sims model files (<FONT FACE="courier new">*_test.*</FONT>) will be placed in the directory <FONT FACE="courier new">d:\temp</FONT>.
-These files will then be moved into a self-extracting zip file called <FONT FACE="courier new">c:\Sims\GameData\test.exe</FONT>.
+The default model produced, if no properties are specified, is an adult male of fit build with light skin tone.<BR>
+This example set of command-line arguments will convert <FONT FACE="courier new">test.ame</FONT> into a female child with fit build and light skin tone. 
+The temporary model files (<FONT FACE="courier new">*_model.*</FONT>) will be placed in the directory <FONT FACE="courier new">d:\model_files</FONT>.
+These files will then be moved into a self-extracting executable called <FONT FACE="courier new">c:\sfx\test.exe</FONT>.
 </P>
 <P>
-<FONT FACE="courier new">sgatosim test.ame C:\Sims\GameData\test.exe -path D:\temp -age child -sex female</FONT>
+<FONT FACE="courier new">sgatosim test.ame c:\sfx\test.exe -name model -path d:\model_files -age child -sex female</FONT>
 </P>
 <P>
 N.B. This is the default usage of <FONT FACE="courier new">sgatosim</FONT>. These command-line arguments may be changed by editing <FONT FACE="courier new">sgatosim.cpp</FONT>.
@@ -54,43 +56,48 @@ Please read <A HREF="source.html">Source Documentation</A> for details.
 <P>
 The conversion process generates six files. Four model files:
 <UL>
-<LI><FONT FACE="courier new">C999xx_name.cmx</FONT></LI>
-<LI><FONT FACE="courier new">B999xxxxx_name.cmx</FONT></LI>
-<LI><FONT FACE="courier new">xskin-C999xx_name-HEAD-HEADB.skn</FONT></LI>
-<LI><FONT FACE="courier new">xskin-B999xxxxx_name-PELVIS-BODY.skn</FONT></LI>
+<LI><FONT FACE="courier new">cmx3\C999xx_name.cmx</FONT></LI>
+<LI><FONT FACE="courier new">cmx3\B999xxxxx_name.cmx</FONT></LI>
+<LI><FONT FACE="courier new">cmx3\xskin-C999xx_name-HEAD-HEADB.skn</FONT></LI>
+<LI><FONT FACE="courier new">cmx3\xskin-B999xxxxx_name-PELVIS-BODY.skn</FONT></LI>
 </UL>
 And two image files:
 <UL>
-<LI><FONT FACE="courier new">C999xxxxx_name.bmp</FONT></LI>
-<LI><FONT FACE="courier new">B999xxxxxxxx_name.bmp</FONT></LI>
+<LI><FONT FACE="courier new">Skins\C999xxxxx_name.bmp</FONT></LI>
+<LI><FONT FACE="courier new">Skins\B999xxxxxxxx_name.bmp</FONT></LI>
 </UL>
 </P>
 <P>
-These files are then compressed into the self-extracting zip file <FONT FACE="courier new">name.exe</FONT>.
+These files are then compressed into the self-extracting executable <FONT FACE="courier new">name.exe</FONT>.
 <H3>Installing models into 'The Sims'</H3>
 <P>
 The above files need to be installed in your Sims folder. This is normally <FONT FACE="courier new">
 C:\Program Files\Maxis\The Sims\</FONT>, but you may have installed to a different place on
 your computer. Within this folder, there is a folder called <FONT FACE="courier new">GameData</FONT>.
-Copy the self-extracting model executable into the <FONT FACE="courier new">GameData</FONT> directory and run with the
-command-line argument <FONT FACE="courier new">-dir</FONT> to extract the files into correct directories.
+The self-extracting executable can be run from any location on the computer on which you wish to install the model.
+If the game has been installed correctly, the Sims folder should be found automatically and the files installed into
+the correct subfolders without any other user intervention. Should the installer not be able to find the Sim folder,
+you will be prompted to specify the folder yourself. 
 </P>
 <H3>Installing models into 'SimShow'</H3>
 <P>
-The models can also be viewed in SimShow, a model viewer for The Sims. First of all, extract the files
+The models can also be viewed in SimShow, a model viewer for The Sims. First of all, install the files
 by running the executable. The files need to be installed in the SimShow folder instead. This is normally <FONT FACE="courier new">
 C:\Program Files\Maxis\SimShow\</FONT>, but you may have installed to a different place on
 your computer. Within this folder, there is a folder called <FONT FACE="courier new">GameData</FONT>.
-Within this folder, copy the model files into the <FONT FACE="courier new">cmx3</FONT> directory, and the image files into the directory
-named <FONT FACE="courier new">Textures</FONT>. Note that this is a different directory name to the
+Within this folder, copy the model files from <FONT FACE="courier new">The Sims\GameData\cmx3</FONT> into the
+<FONT FACE="courier new">SimShow\GameData\cmx3</FONT> folder, and the image files from <FONT FACE="courier new">The Sims\GameData\Skins</FONT>
+into the folder named <FONT FACE="courier new">SimShow\GameData\Textures</FONT>. Note that this is a different folder name to the
 normal Sims installation.
 </P>
 <H3>Use</H3>
 <P>
 In The Sims, go to the 'Create A Sim' screen, find the appropriate head and body, and start playing!
-In SimShow, select the right filter and then select the appropriate models. <STRONG>NOTE:</STRONG>
-Using the 'Install into game' button in SimShow will not work - this only works for textures, not complete
+In SimShow, select the correct model attributes, then select the appropriate head and body models and textures.
+<STRONG>NOTE:</STRONG> Using the 'Install into game' button in SimShow will not work - this only works for textures, not complete
 models.
+<STRONG>NOTE:</STRONG> Whilst the game will only allow the correct texture to be used with any given body, SimShow does not.
+Exported textures used on standard game meshes (or vice versa) will not display correctly.
 </P>
 <H3>Problems</H3>
 <DL>
@@ -107,7 +114,7 @@ other way round).</LI>
 </DD>
 </DL>
 <P>
-Copyright &copy; 2000 <A HREF="http://www.vapourtech.com">Vapour Technology Ltd.</A><BR>
+Copyright &copy; 2000 <A HREF="http://www.vapourtech.com">Vapour Technology Ltd.</A> - $Revision: 1.2 $ $Date: 2000/07/23 16:28:55 $<BR>
 Licensed to <A HREF="http://www.avatarme.com">AvatarMe Ltd.</A> under agreement.
 </P>
 </BODY>
