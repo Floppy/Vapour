@@ -9,7 +9,7 @@
 //! file      = "Convert/OChunk.h"
 //! author    = "James Smith"
 //! date      = "19/3/2002"
-//! rcsid     = "$Id: OChunk.h,v 1.8 2002/04/04 21:37:44 vap-warren Exp $"
+//! rcsid     = "$Id: OChunk.h,v 1.10 2002/04/04 21:46:31 vap-warren Exp $"
 
 #ifndef __VTSTRUCVIS_OCHUNK__
 #define __VTSTRUCVIS_OCHUNK__
@@ -22,8 +22,7 @@
 enum TOChunkType {
    CHUNK_NONE     = 0xFF,
    CHUNK_ROOT     = 0x00,
-   //-------------
-   // Setup Data
+
    CHUNK_SETUP    = 0x10,
    CHUNK_NODES    = 0x11,
    CHUNK_GROUPS   = 0x12,
@@ -33,8 +32,7 @@ enum TOChunkType {
    CHUNK_SLABS    = 0x16,
    CHUNK_STRESSR  = 0x17,
    CHUNK_FRAMEINF = 0x18,
-   //-------------
-   // Frame Data
+
    CHUNK_FRAME    = 0x20,
    CHUNK_TEMP     = 0x21,
    CHUNK_TIME     = 0x22,
@@ -44,7 +42,8 @@ enum TOChunkType {
    CHUNK_CRACKS   = 0x26
 };
 //: Chunk Types
-//
+// Setup data 0x10 - 0x1F
+// Frame data 0x20 - 0xFF
 
 //: A output-specific data chunk
 // This class provides an interface to a VSV file data chunk for output purposes.
