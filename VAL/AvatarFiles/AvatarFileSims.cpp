@@ -7,7 +7,7 @@
 // AvatarFileSims.cpp - 16/2/2000 - James Smith
 //	Sims export filter implementation
 //
-// $Id: AvatarFileSims.cpp,v 1.6 2000/11/21 16:44:25 waz Exp $
+// $Id: AvatarFileSims.cpp,v 1.7 2000/12/02 16:28:33 james Exp $
 //
 
 
@@ -708,12 +708,12 @@ FRESULT CAvatarFileSims::Save(const char* pszFilename, CAvatar* pAvatar) const {
          else if (bpPart == vt8)       bpPart = vt12;
          double dX = pBodyParts[bpPart].m_pntCurrentCentre.m_dComponents[0];
          double dY = pBodyParts[bpPart].m_pntCurrentCentre.m_dComponents[1];
+         double dZ = pBodyParts[bpPart].m_pntCurrentCentre.m_dComponents[2];
          // Correct leg positioning
          if (bpPart == l_hip || bpPart == r_hip) {
             pAvatar->BoundingBox(sacroiliac,pntMax,pntMin);
             dY = pntMin.m_dComponents[1];
          }
-         double dZ = pBodyParts[bpPart].m_pntCurrentCentre.m_dComponents[2];
          // Correct neck positioning
          if (bpPart == vc7) {
             dZ = (dZ + pBodyParts[vl5].m_pntCurrentCentre.m_dComponents[2]) / 2;
