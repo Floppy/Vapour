@@ -7,7 +7,7 @@
 // ColourOctree.h - 26/12/1999 - Warren Moore
 //	Octree colour cube declaration
 //
-// $Id: ColourOctree.h,v 1.4 2000/08/06 19:21:48 waz Exp $
+// $Id: ColourOctree.h,v 1.5 2000/08/07 18:58:12 waz Exp $
 //
 
 #ifndef _VAL_COLOUROCTREE_
@@ -54,12 +54,12 @@ public:
 	int GetVal(const unsigned char cNode) const;
 	// Returns the sum of all the values in this octant
 	int GetTotal() const;
-	// Returns the sum of all values in this and all child octants
-	int SumVals() const;
+	// Returns the sum of all values in this and all child octants (uses value cache)
+	int SumVals();
 	// Returns the number of values set
 	int NumSet() const;
-	// Returns the number of values set in this and all child octants
-	int SumSet() const;
+	// Returns the number of values set in this and all child octants (uses value cache);
+	int SumSet();
 
 	//#===--- Colour Functions
 	// Returns the current size of the octant (1 - 128)
@@ -69,17 +69,36 @@ public:
 	// Returns the colour of the specified node within the colour cube
 	void GetColour(unsigned char cNode, unsigned char &cR, unsigned char &cG, unsigned char &cB);
 
-	//#===--- Internal Data
+//#===--- Internal Functions
+private:
+	// Called when a recursive status functions is called so that sums are cached to speed up
+	// all subsequent calls
+	void SetCache();
+	// Called when a tree modifying function is called to clear cache
+	void ClearCache();
+	// Recursive function to clear cache values
+	void ClearCacheValues();
+	// Recursive function to find the top of the tree from an arbitrary position
+	void FindTop();
+
+//#===--- Internal Data
 private:
 	unsigned char m_cActive;
-	CColourOctree *m_pParent;
+	CColourOctree *m_poParent;
 	unsigned char m_cPNode;
-	CColourOctree *m_pChild[8];
+	CColourOctree *m_poChild[8];
 
 	unsigned char m_cRPos, m_cGPos, m_cBPos;
 	unsigned char m_cSize;
 	unsigned int m_iTotal;
 	unsigned char m_cColours;
+
+	bool m_bValCache;
+	bool m_bSetCache;
+	int m_iValSum;
+	int m_iSetSum;
+	bool m_bCacheClear;
+	bool *m_pbCacheClear;
 };
 
 //#===--- Inline Functions
@@ -92,7 +111,7 @@ inline bool CColourOctree::NodeActive(const unsigned char cNode) const {
 
 inline CColourOctree &CColourOctree::GetParent(unsigned char &cNode) const {
 	cNode = m_cPNode;
-	return *m_pParent;
+	return *m_poParent;
 } // GetParent
 
 inline unsigned char CColourOctree::Size() const {
