@@ -137,6 +137,15 @@ BOOL CTwisterDialog::OnInitDialog()
 	((CEdit*) GetDlgItem(IDC_Z_INPUT))->SetFont(fntCourier);
 	((CEdit*) GetDlgItem(IDC_RESULT_BOX))->SetFont(fntCourier);
 
+   // Subclass edit boxes
+   m_cXBox.SubclassDlgItem(IDC_X_INPUT,this);
+   m_cYBox.SubclassDlgItem(IDC_Y_INPUT,this);
+   m_cZBox.SubclassDlgItem(IDC_Z_INPUT,this);
+
+   // Setup edit boxes
+   m_cXBox.SetOptions(1);
+   m_cXBox.SetOptions(1);
+   m_cXBox.SetOptions(1);
 
 	m_strX = "0";
 	m_strY = "0";

@@ -7,6 +7,8 @@
 // TwisterDialog.h : header file
 //
 
+#include "NumericEdit.h"
+
 /////////////////////////////////////////////////////////////////////////////
 // CTwisterDialog dialog
 
@@ -41,6 +43,10 @@ protected:
 	CString	m_strZ;
 	CString	m_strResult;
 	CBitmapButton m_CopyLogo;
+
+   CNumericEdit m_cXBox;
+   CNumericEdit m_cYBox;
+   CNumericEdit m_cZBox;
 
 	// Generated message map functions
 	//{{AFX_MSG(CTwisterDialog)
