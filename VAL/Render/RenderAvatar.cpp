@@ -7,7 +7,7 @@
 // RenderAvatar.cpp - 29/02/2000 - Warren Moore
 //	Avatar render object implementation
 //
-// $Id: RenderAvatar.cpp,v 1.6 2000/11/25 22:34:44 waz Exp $
+// $Id: RenderAvatar.cpp,v 1.7 2000/11/29 21:22:41 james Exp $
 //
 
 #include "StdAfx.h"
@@ -311,9 +311,11 @@ void CRenderAvatar::CreateTextures() {
 		// For each texture in the model
 		for (int i = 0; i < iNumTextures; i++) {
 			CImage *pImg = m_poAvatar->Material(i)->Texture();
-			m_iTexture[i] = m_poContext->ImportTexture(*pImg);
-			if (m_iTexture[i] >= 0)
-				m_iNumTextures++;
+         if (pImg) {
+            m_iTexture[i] = m_poContext->ImportTexture(*pImg);
+			   if (m_iTexture[i] >= 0)
+				   m_iNumTextures++;
+         }
 		}
 		ASSERT(m_iNumTextures == iNumTextures);
 	}
