@@ -38,9 +38,7 @@ tar: clean
 # Made this detect whether it's on zim or sark
 install:
 	chmod 755 counter
-ifeq "$(ARCH)" "Linux"
 	cp counter /www/vapournet/cgi-bin
-else
-	cp counter /www/vapourisp/cgi-bin
-	chown web.web /www/vapourisp/counter
+ifneq "$(ARCH)" "Linux"
+	chown web.web /www/vapournet/counter
 endif
