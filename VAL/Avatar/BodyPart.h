@@ -7,7 +7,7 @@
 // BodyPart.h - 17/06/2000 - James Smith
 //	Body Part information structures and types
 //
-// $Id: BodyPart.h,v 1.6 2000/11/30 11:26:29 warren Exp $
+// $Id: BodyPart.h,v 1.7 2000/12/02 07:31:16 warren Exp $
 //
 
 #ifndef _VAL_BODYPART_
@@ -194,7 +194,6 @@ struct SBodyPart {
 
 	// Constructor
 	SBodyPart();
-
 	// Destructor
 	~SBodyPart();
 
