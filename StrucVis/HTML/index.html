@@ -17,6 +17,14 @@ P.MENUTITLE { COLOR: #C5C5F5; MARGIN-BOTTOM: 0PX; }
 <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=us-ascii">
 <META NAME=AUTHOR CONTENT="Vapour Technology Ltd.">
 
+<SCRIPT TYPE="text/javascript"><!--
+	dataset = location.search;
+	dataset = dataset.substring(dataset.indexOf("=") + 1) // Get rid of 'set='
+	// Set a default
+	if (dataset == '')
+		dataset = 'composite';
+//--></SCRIPT>
+
 </HEAD>
 <BODY LINK="#4B4FED" ALINK="#8385E5" VLINK="#171BBD" BGCOLOR="#6363E9">
 
@@ -28,7 +36,30 @@ P.MENUTITLE { COLOR: #C5C5F5; MARGIN-BOTTOM: 0PX; }
 	</P>
 	</TD>
 	<TD>
-	<IMG ALIGN="RIGHT" SRC="pics/place.gif" WIDTH=1 HEIGHT=65 BORDER=0 ALT="">
+	<IMG ALIGN=RIGHT SRC="pics/place.gif" WIDTH=1 HEIGHT=65 BORDER=0 ALT="">
+	<FORM>
+	<P ALIGN=RIGHT>
+	Select the data set
+	<SELECT NAME="dataset" onChange="location = this.form.dataset.value;">
+	<SCRIPT TYPE="text/javascript"><!--
+		// Composite
+		if (dataset == "composite")
+			document.write("<OPTION VALUE='index.html?set=composite' SELECTED>Composite (89kb)");
+		else
+			document.write("<OPTION VALUE='index.html?set=composite'>Composite (89kb)");
+		// Small
+		if (dataset == "small")
+			document.write("<OPTION VALUE='index.html?set=small' SELECTED>Small (1,662kb)");
+		else
+			document.write("<OPTION VALUE='index.html?set=small'>Small (1,662kb)");
+		// Large
+		if (dataset == "large")
+			document.write("<OPTION VALUE='index.html?set=large' SELECTED>Large (4,718kb)");
+		else
+			document.write("<OPTION VALUE='index.html?set=large'>Large (4,718kb)");
+	//--></SCRIPT>
+	</SELECT>
+	</FORM>
 	</TD>
 	</TR>
 </TABLE>
@@ -40,16 +71,35 @@ P.MENUTITLE { COLOR: #C5C5F5; MARGIN-BOTTOM: 0PX; }
 <OBJECT CLASSID="CLSID:86A88967-7A20-11d2-8EDA-00600818EDB1" WIDTH=640 HEIGHT=480>
 <PARAM NAME="BACKCOLOR" VALUE="11579568">
 </OBJECT>
-<OBJECT CLASSID="CLSID:AD64B056-E5E7-4C45-9243-755802D7CBF7" CODEBASE="VTStrucVis.ocx" WIDTH=180 HEIGHT=480>
-<PARAM NAME="BACKCOLOR" VALUE="9191229">
-<PARAM NAME="FORECOLOR" VALUE="16760507">
-<PARAM NAME="WRLPATH" VALUE="D:\Vapour\dev.local\src\Vapour\StrucVis\HTML\">
-<PARAM NAME="UIDATA" VALUE="uidata.bmp">
-<PARAM NAME="SIMDATA" VALUE="composite.vsv">
-<PARAM NAME="POSITION" VALUE="12.0, -26.5, 12.5">
-<PARAM NAME="ORIENTATION" VALUE="0.48, 0.75, -0.48, 1.88">
-<PARAM NAME="SCALE" VALUE="5.0, 5.0, 25.0">
-</OBJECT>
+<SCRIPT TYPE="text/javascript"><!--
+	document.write("<OBJECT CLASSID='CLSID:AD64B056-E5E7-4C45-9243-755802D7CBF7' CODEBASE='VTStrucVis.ocx' WIDTH=180 HEIGHT=480>");
+	document.write("<PARAM NAME='BACKCOLOR' VALUE='9191229'>");
+	document.write("<PARAM NAME='FORECOLOR' VALUE='16760507'>");
+	document.write("<PARAM NAME='WRLPATH' VALUE='D:\\Vapour\\dev.local\\src\\Vapour\\StrucVis\\HTML\\'>");
+	document.write("<PARAM NAME='UIDATA' VALUE='uidata.bmp'>");
+	switch(dataset) {
+		case "small":
+			document.write("<PARAM NAME='SIMDATA' VALUE='small.vsv'>");
+			document.write("<PARAM NAME='POSITION' VALUE='12.0, -26.5, 12.5'>");
+			document.write("<PARAM NAME='ORIENTATION' VALUE='0.48, 0.75, -0.48, 1.88'>");
+			document.write("<PARAM NAME='SCALE' VALUE='1.0, 1.0, 1.0'>");
+			break;
+		case "large":
+			document.write("<PARAM NAME='SIMDATA' VALUE='large.vsv'>");
+			document.write("<PARAM NAME='POSITION' VALUE='12.0, -26.5, 12.5'>");
+			document.write("<PARAM NAME='ORIENTATION' VALUE='0.48, 0.75, -0.48, 1.88'>");
+			document.write("<PARAM NAME='SCALE' VALUE='1.0, 1.0, 1.0'>");
+			break;
+		default:
+		case "composite":
+			document.write("<PARAM NAME='SIMDATA' VALUE='composite.vsv'>");
+			document.write("<PARAM NAME='POSITION' VALUE='12.0, -26.5, 12.5'>");
+			document.write("<PARAM NAME='ORIENTATION' VALUE='0.48, 0.75, -0.48, 1.88'>");
+			document.write("<PARAM NAME='SCALE' VALUE='5.0, 5.0, 5.0'>");
+			break;
+	}
+	document.write("</OBJECT>");
+//--></SCRIPT>
 </TD></TR>
 </TABLE>
 
@@ -68,7 +118,7 @@ Virtual Reality Software and Consultancy
 <TD>
 <P CLASS=FOOTER>
 Copyright &copy;1999-2002 <A HREF="http://www.vapourtech.com" TARGET="_blank">Vapour Technology Ltd</A>. - <A HREF="mailto:info@vapourtech.com">info@vapourtech.com</A><BR>
-$Id: index.html,v 1.8 2002/04/04 11:53:10 vap-warren Exp $
+$Id: index.html,v 1.9 2002/04/26 00:09:16 vap-warren Exp $
 </P>
 </TABLE>
 </TD></TR>
