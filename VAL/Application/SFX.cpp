@@ -7,7 +7,7 @@
 // SFX.h - 10/07/2000 - Warren Moore
 //	Class for self-management of self-extracting wedgies
 //
-// $Id: SFX.cpp,v 1.3 2000/07/10 14:17:26 waz Exp $
+// $Id: SFX.cpp,v 1.4 2000/07/11 15:07:40 waz Exp $
 //
 
 #include "StdAfx.h"
@@ -51,7 +51,7 @@ bool CSFX::SetEnd() {
 	// Open the application
 	fstream oFile;
 	oFile.open(pcAppName, ios::in|ios::binary|ios::nocreate|ios::ate);
-	if (oFile.bad())
+	if (oFile.fail())
 		return false;
 	// Get the end of the file
 	unsigned int uEnd = oFile.tellg();
@@ -66,7 +66,7 @@ bool CSFX::SetEnd() {
 
 	//#===--- TODO: Get this to open the app while running
 	oFile.open(pcAppName, ios::in|ios::out|ios::binary|ios::nocreate, filebuf::sh_write);
-	if (!oFile) {
+	if (oFile.fail()) {
 		//#=== TODO: Remove this once file open works ok
 		CString strAddress;
 		strAddress.Format("Pos address : 0x%08X - End pos : 0x%08X", uPos, uEnd);

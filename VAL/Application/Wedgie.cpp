@@ -7,7 +7,7 @@
 // Wedgie.cpp - 02/07/2000 - Warren Moore
 //	Creation and reading of compressed Wedgie files
 //
-// $Id: Wedgie.cpp,v 1.5 2000/07/11 14:20:02 waz Exp $
+// $Id: Wedgie.cpp,v 1.6 2000/07/11 15:07:40 waz Exp $
 //
 
 #include "StdAfx.h"
@@ -243,7 +243,7 @@ WJERESULT CWedgie::Extract1_0(unsigned int uEntry, const char *pcFilename) {
 	// Open the file
 	ofstream oFile;
 	oFile.open(pcFilename, ios::out|ios::binary|ios::trunc);
-	if (oFile.bad())
+	if (oFile.fail())
 		return WJE_FILE_CREATE_ERROR;
 
 	// Open the decompressor
@@ -567,7 +567,7 @@ WJERESULT CWedgie::ProcessFiles() {
 		// Open the file
 		ifstream oFile;
 		oFile.open(strPath, ios::in|ios::binary|ios::nocreate);
-		if (oFile.good()) {
+		if (!oFile.fail()) {
 		// Set the compressor
 			CCompressDeflate oDeflate;
 			oDeflate.WriteToFile(true, (ofstream*)m_poFile);

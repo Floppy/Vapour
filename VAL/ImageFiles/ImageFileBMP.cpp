@@ -7,7 +7,7 @@
 // ImageFileBMP.cpp - 21/12/1999 - Warren Moore
 //	BMP file format image implementation
 //
-// $Id: ImageFileBMP.cpp,v 1.1 2000/06/16 22:00:33 waz Exp $
+// $Id: ImageFileBMP.cpp,v 1.2 2000/07/11 15:07:40 waz Exp $
 //
 
 #include "stdafx.h"
@@ -54,9 +54,9 @@ const char *CImageFileBMP::GetFileTitle() const {
 FRESULT CImageFileBMP::LoadHeaders() {
 // Check the bitmap file header
 	BITMAPFILEHEADER bmfh;
-	m_iFile.read((char*)&bmfh, sizeof(bmfh));
+	m_oFile.read((char*)&bmfh, sizeof(bmfh));
 // File error checking
-	if (m_iFile.bad())
+	if (m_oFile.bad())
 		return F_FILEERROR;
 // Check bitmap type
 	if (bmfh.bfType != 0x4d42) // 'BM'
@@ -66,9 +66,9 @@ FRESULT CImageFileBMP::LoadHeaders() {
 
 // Check the bitmap info header
 	BITMAPINFOHEADER bmih;
-	m_iFile.read((char*)&bmih, sizeof(bmih));
+	m_oFile.read((char*)&bmih, sizeof(bmih));
 // File error checking
-	if (m_iFile.bad())
+	if (m_oFile.bad())
 		return F_FILEERROR;
 // Get resolution & orientation
 	m_iWidth = bmih.biWidth;
@@ -86,9 +86,9 @@ FRESULT CImageFileBMP::LoadHeaders() {
 		return F_WRONGIMAGETYPE;
 
 // Set the read pointer to the beginning of the data
-	m_iFile.seekg(bmfh.bfOffBits, ios::beg);
+	m_oFile.seekg(bmfh.bfOffBits, ios::beg);
 // File error checking
-	if (m_iFile.bad())
+	if (m_oFile.bad())
 		return F_FILEERROR;
 
 	return F_OK;
@@ -96,8 +96,8 @@ FRESULT CImageFileBMP::LoadHeaders() {
 
 FRESULT CImageFileBMP::GetImageType(const char *pFname, IMAGETYPE &eImgType) {
 // Open the file, don't create if it doesn't exist
-	m_iFile.open(pFname, ios::in | ios::binary | ios::nocreate);
-	if (!m_iFile)
+	m_oFile.open(pFname, ios::in | ios::binary | ios::nocreate);
+	if (m_oFile.fail())
 		return F_DOESNOTEXIST;
 
 // Check the bitmap headers for image type
@@ -106,15 +106,15 @@ FRESULT CImageFileBMP::GetImageType(const char *pFname, IMAGETYPE &eImgType) {
 		eImgType = IT_RGB;
 
 // Close the file
-	m_iFile.close();
+	m_oFile.close();
 
 	return eFResult;
 } // GetImageType
 
 FRESULT CImageFileBMP::Load(const char *pFname, int &x, int &y, unsigned char *&pData) {
 // Open the file, don't create if it doesn't exist
-	m_iFile.open(pFname, ios::in | ios::binary | ios::nocreate);
-	if (!m_iFile)
+	m_oFile.open(pFname, ios::in | ios::binary | ios::nocreate);
+	if (m_oFile.fail())
 		return F_DOESNOTEXIST;
 
 // Check the bitmap headers
@@ -150,7 +150,7 @@ FRESULT CImageFileBMP::Load(const char *pFname, int &x, int &y, unsigned char *&
 			while (iY--) {
 				pIDataPtr = pIData;
 				pTempPtr = pTemp;
-				m_iFile.read(pTempPtr, iLineSize);
+				m_oFile.read(pTempPtr, iLineSize);
 			// Reverse the pixel format
 				iX = m_iWidth;
 				while (iX--) {
@@ -181,7 +181,7 @@ FRESULT CImageFileBMP::Load(const char *pFname, int &x, int &y, unsigned char *&
 	}
 
 // Close the file prior to returning
-	m_iFile.close();
+	m_oFile.close();
 
 //	return fResult;
 	return fResult;
@@ -261,14 +261,14 @@ FRESULT CImageFileBMP::Save(const char *pFname, const int x, const int y,
 // Write the file header
 	oFile.write((unsigned char*)&bmfh, sizeof(bmfh));
 // File error checking
-	if (m_iFile.bad()) {
+	if (m_oFile.bad()) {
 		oFile.close();
 		return F_FILEERROR;
 	}
 // Write the info header
 	oFile.write((unsigned char*)&bmih, sizeof(bmih));
 // File error checking
-	if (m_iFile.bad()) {
+	if (m_oFile.bad()) {
 		oFile.close();
 		return F_FILEERROR;
 	}

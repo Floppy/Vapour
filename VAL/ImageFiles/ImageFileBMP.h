@@ -7,7 +7,7 @@
 // ImageFileBMP.h - 21/12/1999 - Warren Moore
 //	BMP file format image
 //
-// $Id: ImageFileBMP.h,v 1.2 2000/06/17 10:42:22 waz Exp $
+// $Id: ImageFileBMP.h,v 1.3 2000/07/11 15:07:41 waz Exp $
 //
 
 #ifndef _VAL_IMAGEFILEJPEG_
@@ -44,7 +44,7 @@ private:
 
 //#===--- Internal Data
 private:
-	fstream m_iFile;
+	fstream m_oFile;
 	bool m_bTopDown;
 	int m_iWidth, m_iHeight;
 	IMAGETYPE m_eSaveType;
