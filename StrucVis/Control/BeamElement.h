@@ -9,7 +9,7 @@
 //! file      = "Control/BeamElement.h"
 //! author    = "James Smith"
 //! date      = "19/3/2002"
-//! rcsid     = "$Id: BeamElement.h,v 1.15 2002/04/03 11:14:27 vap-james Exp $"
+//! rcsid     = "$Id: BeamElement.h,v 1.16 2002/04/03 15:06:01 vap-james Exp $"
 
 #ifndef __VTSTRUCVIS_BEAMELEMENT__
 #define __VTSTRUCVIS_BEAMELEMENT__
@@ -20,75 +20,99 @@
 
 #include "Element.h"
 
+//: An interface to an I-Beam element in a VRML scene
+// This class provides an interface to the PROTO object contained BeamElement.wrl.
+
 class CBeamElement : public CElement {
-//#===--- Construction/Destruction
+
 public:
+
+   //:-------------------------
+   //: Construction/Destruction
+
    CBeamElement(CCortonaUtil *poCortona, CNodeSet* poNodeSet);
-   // Constructor
+   //: Constructor
+   //!param: poCortona - A pointer to a valid CortonaUtil object, used to communicate with the browser.
+   //!param: poNodeSet - A pointer to a set of node positions.
 
    ~CBeamElement();
-   // Destructor
+   //: Destructor
 
-//#===--- Member Functions
+   //:-----------------
+   //: Member Functions
 
    TElementType Type(void) const {return ELEMENT_BEAM;}
-   // Return the element type.
+   //: The element type
 
    unsigned int Node(int iIndex) {return m_piNodes[iIndex];}
-   // Get the control node with the passed index
+   //: Control node index.
+   //!param: iIndex - The node to return. Valid values are 0 or 1.
 
    bool Display(const char* pcURL) const;
-   // Updates all information and displays the object
-   // Returns true if successful, false otherwise.
+   //: Updates all information and displays the object
    // If the object is not already displayed, it is created.
-   // Parameter is a URL for the auxiliary VRML files
+   //!param: pcURL - a URL for the directory containing BeamElement.wrl (i.e. excluding the filename).
+   //!param: return - true if successful, false otherwise.
 
    bool SetVisible(bool bVisible) const;
-   // Set whether the beam is visible or not.
-   // Returns true if successful
+   //: Set whether the beam is visible or not.
+   //!param: return - true if successful, false otherwise.
 
    void SetTemp(float fTemp) const;
-   // Sets the temperature of the element
+   //: Set the temperature of the element
 
    void SetSize(float fHeight, float fWidth, float fFlangeThickness, float fWebThickness);
-   // Sets the sizes of the I-beam
+   //: Set the size of the I-Beam
+   //!param: fHeight - the height of the beam
+   //!param: fWidth - the width of the beam
+   //!param: fFlangeThickness - the thickness of the flange part of the beam
+   //!param: fWebThickness - the thickness of the web part of the beam
 
    void SetNodes(const unsigned int* piNodes);
-   // Sets which nodes the beam is controlled by
-   // This function expects a pointer to a 9-uint array
+   //: Set which nodes the beam is controlled by
+   //!param: piNodes - a pointer to a length-2 array of unsigned integers.
 
    void SetStresses(const float* pfStresses) const;
-   // Sets stresses for individual nodes
-   // This function expects a pointer to a 9-float array
+   //: Sets stresses for individual nodes
+   //!param: pfStresses - a pointer to a length-2 array of floats.
 
 private:
 
    void CalculateColours(float* pfColours) const;
-   // Calculates a set of colours for the element.
-   // Expects an array of 6 floats in pfColours to return data in.
+   //: Calculates a set of colours for the element.
+   //!param: pfColours - an array of 6 floats in which the function will return data.
 
    void CalculateNodePositions(float* pfNodes) const;
-   // Calculates node positions for the element.
-   // Expects an array of 6 floats in pfNodes to return data in.
+   //: Calculates 3D node positions for the element.
+   //!param: pfColours - an array of 6 floats in which the function will return data.
 
-   //#===--- Member Variables
 protected:
 
+   //:-----------------
+   //: Member Variables
+
    unsigned int m_piNodes[2];
-   // The node indices that define the beam.
+   //: The node indices that define the beam.
 
    mutable float m_pfStresses[2];
-   // Per-node stress values
+   //: Per-node stress values
    
    float m_fHeight;
+   //: Beam height
+   
    float m_fWidth;
+   //: Beam width
+
    float m_fFlange;
+   //: Flange thickness
+
    float m_fWeb;
-   // Beam dimensions
+   //: Web thickness
 
    mutable CCortonaField *m_ppoField[3];
-   // Field value caches
+   //: Field value caches
    // Positions, colours, visible
+
 };
 
 #endif // __VTSTRUCVIS_BEAMELEMENT__
