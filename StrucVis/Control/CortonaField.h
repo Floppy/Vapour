@@ -9,7 +9,7 @@
 //! file      = "Control/CortonaField.h"
 //! author    = "Warren Moore"
 //! date      = "12/3/2002"
-//! rcsid     = "$Id: CortonaField.h,v 1.17 2002/04/05 14:13:42 vap-warren Exp $"
+//! rcsid     = "$Id: CortonaField.h,v 1.18 2002/04/08 00:16:35 vap-warren Exp $"
 
 #ifndef __VTSTRUCVIS_CORTONAFIELD__
 #define __VTSTRUCVIS_CORTONAFIELD__
@@ -71,7 +71,6 @@ public:
    bool TestMFVec3f();
    //: Get all MFVec3f values
    // Experimental function using an undocumented interface to manipulate entire MF field array
-   //!todo: Add return parameters - Not implemented as not used enough
    //!return: true if successful
 
    bool SetMFVec3f(const long liIndex, const float fX, const float fY, const float fZ);
