@@ -1,13 +1,14 @@
 #VRML V2.0 utf8
-#=============---
-# Arup Simulation Visualisation System
-#-------------
+#===================================---
+# VT Structure Visualisation Control
+#-----------------------------------
+# ActiveX Control for structure visualisation
 # Copyright 2002 Vapour Technology Ltd.
 #
 # BeamElement.wrl
 # 19/03/2002 - James Smith
 #
-# $Id: BeamElement.wrl,v 1.8 2002/03/22 19:06:30 vap-james Exp $
+# $Id: BeamElement.wrl,v 1.9 2002/03/28 13:31:05 vap-james Exp $
 
 PROTO BeamElement [
    eventIn MFColor  set_colours

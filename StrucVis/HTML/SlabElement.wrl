@@ -1,13 +1,14 @@
 #VRML V2.0 utf8
-#=============---
-# Arup Simulation Visualisation System
-#-------------
+#===================================---
+# VT Structure Visualisation Control
+#-----------------------------------
+# ActiveX Control for structure visualisation
 # Copyright 2002 Vapour Technology Ltd.
 #
 # SlabElement.wrl
 # 19/03/2002 - James Smith
 #
-# $Id: SlabElement.wrl,v 1.14 2002/03/28 13:29:51 vap-james Exp $
+# $Id: SlabElement.wrl,v 1.15 2002/03/28 13:31:05 vap-james Exp $
 
 PROTO SlabElement [
    eventIn MFColor  set_colours

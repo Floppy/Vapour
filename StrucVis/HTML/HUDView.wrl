@@ -1,13 +1,14 @@
 #VRML V2.0 utf8
-#=============---
-# Arup Simulation Visualisation System
-#-------------
+#===================================---
+# VT Structure Visualisation Control
+#-----------------------------------
+# ActiveX Control for structure visualisation
 # Copyright 2002 Vapour Technology Ltd.
 #
 # HUDView.wrl
 # 19/03/2002 - James Smith
 #
-# $Id: HUDView.wrl,v 1.5 2002/03/27 17:51:08 vap-james Exp $
+# $Id: HUDView.wrl,v 1.6 2002/03/28 13:31:05 vap-james Exp $
 
 PROTO HUDView [
    eventIn      SFBool set_bind
