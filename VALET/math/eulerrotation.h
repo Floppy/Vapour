@@ -14,12 +14,12 @@
 //! author 		= "James Smith"
 //! date 		= "02/10/2001"
 //! lib 		= libVALETmath
-//! rcsid 		= "$Id: eulerrotation.h,v 1.1 2001/10/02 22:08:30 vap-james Exp $"
+//! rcsid 		= "$Id: eulerrotation.h,v 1.2 2001/10/03 10:46:51 vap-james Exp $"
 //! userlevel 	        = Normal
 //! docentry 	        = "VALET.Math.Geometry"
 
 namespace VALET {
-	class CEulerRotation;
+  class CEulerRotation;
 }
 
 //#===--- Includes
