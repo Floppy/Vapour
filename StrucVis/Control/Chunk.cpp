@@ -7,7 +7,7 @@
 // Chunk.cpp
 // 19/03/2002 - James Smith
 //
-// $Id: Chunk.cpp,v 1.6 2002/03/27 11:10:00 vap-james Exp $
+// $Id: Chunk.cpp,v 1.7 2002/03/27 11:19:46 vap-james Exp $
 
 #include "stdafx.h"
 #include "Chunk.h"
@@ -132,8 +132,8 @@ bool CChunk::CreateChunk(const unsigned char* pcData, unsigned int iLength, unsi
          if (m_pTempSubChunk->CreateChunk(pcData,iLength,iUsed)) {
             // Store chunk if it's finished loading
             for (std::vector<CTOCEntry>::iterator pEntry=m_oTOC.begin(); pEntry!=m_oTOC.end(); pEntry++) {
-               if (pEntry->m_pSubChunk == NULL) {
-                  pEntry->m_pSubChunk = m_pTempSubChunk;
+               if (pEntry->m_pChunk == NULL) {
+                  pEntry->m_pChunk = m_pTempSubChunk;
                   m_pTempSubChunk = NULL;
                   break;
                }
@@ -148,6 +148,13 @@ bool CChunk::CreateChunk(const unsigned char* pcData, unsigned int iLength, unsi
    }
 
    return true;
+}
+
+const CChunk* CChunk::SubChunk(TChunkType oType) {
+   for (std::vector<CTOCEntry>::iterator pEntry=m_oTOC.begin(); pEntry!=m_oTOC.end(); pEntry++) {
+      if (pEntry->m_oType == oType) return pEntry->m_pChunk;
+   }
+   return NULL;
 }
 
 /////////////

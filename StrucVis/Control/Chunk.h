@@ -7,7 +7,7 @@
 // Chunk.h
 // 19/03/2002 - James Smith
 //
-// $Id: Chunk.h,v 1.6 2002/03/27 11:10:00 vap-james Exp $
+// $Id: Chunk.h,v 1.7 2002/03/27 11:19:46 vap-james Exp $
 
 #ifndef __VTSTRUCVIS_CHUNK__
 #define __VTSTRUCVIS_CHUNK__
@@ -64,22 +64,25 @@ public:
    TChunkType Type(void) {return m_oType;}
    // The type of the chunk
 
+   const CChunk* SubChunk(TChunkType oType);
+   // Get a subchunk with the specified type
+
 //#===--- Member Variables
 protected:
 
    class CTOCEntry {
    public:
 
-      CTOCEntry() : m_pSubChunk(NULL) {}
+      CTOCEntry() : m_pChunk(NULL) {}
 
       ~CTOCEntry() {
-         if (m_pSubChunk) delete m_pSubChunk;
+         if (m_pChunk) delete m_pChunk;
       }
 
       TChunkType m_oType;
       unsigned int m_iOffset;
       unsigned int m_iLength;
-      CChunk* m_pSubChunk;
+      CChunk* m_pChunk;
    };
    // TOC Information
 
