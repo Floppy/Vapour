@@ -14,7 +14,7 @@
 //! author 		= "Warren Moore"
 //! date 		= "17/10/2001"
 //! lib 			= libVALETimage
-//! rcsid 		= "$Id: palette.h,v 1.3 2001/10/17 22:19:45 vap-warren Exp $"
+//! rcsid 		= "$Id: palette.h,v 1.4 2001/10/17 22:25:01 vap-warren Exp $"
 //! userlevel 	= Advanced
 //! docentry 	= "VALET.Image.Palette"
 
@@ -118,6 +118,7 @@ namespace NValet {
       int FindLowest(unsigned int uColour);
       // Finds the entry with the lowest error
 
+   	//: Colour matching cache
    	struct SCacheStruct {
          unsigned int m_uColour;
          int m_iIndex;
@@ -131,17 +132,17 @@ namespace NValet {
          // Inline constructor
 
       };
-   	//: Colour matching cache
       typedef struct SCacheStruct SCache;
 
+      //: Hash table entries
       struct SHashEntryStruct {
          int m_iIndex;
          unsigned int m_uColour;
          int m_iR, m_iG, m_iB;
       };
-      //: Hash table entries
       typedef struct SHashEntryStruct SHashEntry;
 
+      //: Palette hash table
       struct SHashStruct {
          unsigned int m_uEntries;            // Number of entries in this part of the hash
          SHashEntry *m_psColour;
@@ -153,7 +154,6 @@ namespace NValet {
          // Inline constructor
 
       };
-      //: Palette hash table
       typedef struct SHashStruct SHash;
 
    protected:
