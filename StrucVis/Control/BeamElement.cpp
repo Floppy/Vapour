@@ -6,7 +6,7 @@
 // BeamElement.cpp
 // 19/03/2002 - James Smith
 //
-// $Id: BeamElement.cpp,v 1.8 2002/03/21 14:43:52 vap-james Exp $
+// $Id: BeamElement.cpp,v 1.9 2002/03/21 15:47:35 vap-james Exp $
 
 #include "stdafx.h"
 #include "BeamElement.h"
@@ -92,7 +92,35 @@ bool CBeamElement::Display(void) const {
       else return false;
    }
    else {
-      return true;
+      bool bOK = true;
+      // Update node positions
+      // Create MFVec3f field
+      CCortonaField* pField = m_poCortona->CreateField("MFVec3f");
+      if (pField==NULL) return false;
+      // Set values
+      for (int i=0; i<2 && bOK; i++) {
+         if (bOK && !pField->SetMFVec3f(i,pfNodes[(i*3)],pfNodes[(i*3)+1],pfNodes[(i*3)+2])) bOK = false;
+      }      
+      // Send event
+      if (bOK && !m_poCortona->AssignEventIn(*m_poNodePtr,"set_nodes",*pField)) bOK = false;
+      // Delete field
+      pField->Release();
+      delete pField;
+      // Update colours
+      // Create MFColor field
+      pField = m_poCortona->CreateField("MFColor");
+      if (pField==NULL) return false;
+      // Set values
+      for (i=0; i<2 && bOK; i++) {
+         if (bOK && !pField->SetMFColor(i,pfColours[(i*3)],pfColours[(i*3)+1],pfColours[(i*3)+2])) bOK = false;
+      }      
+      // Send event
+      if (bOK && !m_poCortona->AssignEventIn(*m_poNodePtr,"set_colours",*pField)) bOK = false;
+      // Delete field
+      pField->Release();
+      delete pField;
+      // Done
+      return bOK;
    }
 }
 
