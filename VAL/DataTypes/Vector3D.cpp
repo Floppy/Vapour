@@ -7,7 +7,7 @@
 // Vector3d.cpp - 18/05/2000 - James Smith
 //	3D vector class implementation
 //
-// $Id: Vector3D.cpp,v 1.2 2000/07/15 16:31:18 waz Exp $
+// $Id: Vector3D.cpp,v 1.3 2000/07/31 17:40:21 waz Exp $
 //
 
 // Windows includes/defines
@@ -151,6 +151,20 @@ CVector3D CVector3D::operator /(const CVector3D & oVec) const {
 	vecResult.m_pdVector[2] = m_pdVector[2] / oVec.m_pdVector[2];
 	return vecResult;	
 } //operator /(const CVector3D & oVec) const
+
+CVector3D& CVector3D::operator /=(const double & dScalar) {
+	m_pdVector[0] /= dScalar;
+	m_pdVector[1] /= dScalar;
+	m_pdVector[2] /= dScalar;
+	return *this;	
+} //operator /=(const double & dScalar)
+
+CVector3D& CVector3D::operator /=(const CVector3D & oVec) {
+	m_pdVector[0] /= oVec.m_pdVector[0];
+	m_pdVector[1] /= oVec.m_pdVector[1];
+	m_pdVector[2] /= oVec.m_pdVector[2];
+	return *this;	
+} //operator /=(const CVector3D & oVec)
 
 bool CVector3D::operator ==(const CVector3D & oVec) const
 {

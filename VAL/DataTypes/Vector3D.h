@@ -7,7 +7,7 @@
 // Vector3d.h - 18/05/2000 - James Smith
 //	3D vector class header
 //
-// $Id: Vector3D.h,v 1.3 2000/07/15 16:31:17 waz Exp $
+// $Id: Vector3D.h,v 1.4 2000/07/31 17:40:21 waz Exp $
 //
 
 #ifndef _VAL_VECTOR3D_
@@ -62,6 +62,8 @@ public:
 	CVector3D operator -(void) const;
 	CVector3D operator /(const double & dScalar) const;
 	CVector3D operator /(const CVector3D & oVec) const;
+	CVector3D& operator /=(const double & dScalar);
+	CVector3D& operator /=(const CVector3D & oVec);
 	bool operator ==(const CVector3D & oVec) const;
 	bool operator !=(const CVector3D & oVec) const;
 
