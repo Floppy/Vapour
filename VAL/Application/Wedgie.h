@@ -7,7 +7,7 @@
 // Wedgie.h - 02/07/2000 - Warren Moore
 //	Creation and reading of compressed Wedgie files
 //
-// $Id: Wedgie.h,v 1.3 2000/07/10 09:04:42 waz Exp $
+// $Id: Wedgie.h,v 1.4 2000/07/15 10:40:03 waz Exp $
 //
 
 #ifndef _VAL_WEDGIE_
@@ -90,6 +90,8 @@ public:
 
 	// Extracts the selected file. An alternative filename may be provided
 	WJERESULT Extract(unsigned int uEntry, const char *pcFilename = NULL);
+	// Extracts the selected file. An alternative filename may be provided
+	WJERESULT Extract(const char *pcEntryName, const char *pcFilename = NULL);
 	// Extract functions for specific version (complete filename created by base extract function)
 	WJERESULT Extract1_0(unsigned int uEntry, const char *pcFilename);
 

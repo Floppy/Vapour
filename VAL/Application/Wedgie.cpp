@@ -7,7 +7,7 @@
 // Wedgie.cpp - 02/07/2000 - Warren Moore
 //	Creation and reading of compressed Wedgie files
 //
-// $Id: Wedgie.cpp,v 1.6 2000/07/11 15:07:40 waz Exp $
+// $Id: Wedgie.cpp,v 1.7 2000/07/15 10:40:03 waz Exp $
 //
 
 #include "StdAfx.h"
@@ -235,11 +235,91 @@ WJERESULT CWedgie::Extract(unsigned int uEntry, const char *pcFilename) {
 		default:
 			return WJE_UNSUPPORTED_VERSION;
 	}
-} // Extract
+} // Extract (Index)
+
+WJERESULT CWedgie::Extract(const char *pcEntryName, const char *pcFilename) {
+	ASSERT(m_poFile && (!m_bCreate));
+	// Check it's a valid entry
+	unsigned int uEntry = 0;
+	bool bFound = false;
+	while (!bFound && (uEntry < m_uFiles)) {
+		if (stricmp(pcEntryName, m_psTable[uEntry].m_pcName) == 0)
+			bFound = true;
+		else
+			uEntry++;
+	}
+	if (!bFound)
+		return WJE_INVALID_ENTRY;
+
+	// Create the base directory name
+	sFileData &sEntry = m_psTable[uEntry];
+	char pcName[STR_SIZE] = "";
+	strcpy(pcName, m_pcBaseDir);
+	// Alternative name supplied
+	if (pcFilename) {
+		// Specific dir supplied
+		if ((strlen(pcFilename) > 0) && (pcFilename[0] == '\\'))
+			strcpy(pcName, pcFilename);
+		else 
+			// Specific drive and dir supplied
+			if ((strlen(pcFilename) > 1) && (pcFilename[1] == ':'))
+				strcpy(pcName, pcFilename);
+			else
+				// Relative name supplied
+				strcat(pcName, pcFilename);
+	}
+	else
+		// No alternative name supplied
+		strcat(pcName, sEntry.m_pcName);
+	// Seek to the beginning of the file
+	m_poFile->seekg(m_uStartPos, ios::beg);
+	m_poFile->seekg(sEntry.m_uOffset, ios::cur);
+	if (m_poFile->bad())
+		return WJE_FILE_READ_ERROR;
+	// Create the directories, necessary
+	char pcDir[STR_SIZE];
+	int iLength = strlen(pcName);
+	int iCount = 0;
+	if ((iLength > 0) && (pcName[0] == '\\'))
+		iCount = 1;
+	else
+		if ((iLength > 2) && (pcName[1] == ':'))
+			iCount = 3;
+	bool bMore = true;
+	while (bMore) {
+		// Find the next directory
+		while ((pcName[iCount] != '\\') && (pcName[iCount] != '\0'))
+			iCount++;
+		// If a dir is found, copy it out then create it
+		if (pcName[iCount] == '\\') {
+			// Copy the directory name out
+			memcpy(pcDir, pcName, iCount);
+			pcDir[iCount] = '\0';
+			// Create the directory
+			int iResult = _mkdir(pcDir);
+			if ((iResult == -1) && (errno != EEXIST)) {
+				return WJE_DIR_ERROR;
+			}
+			// Set the counter to look for the next dir
+			iCount++;
+		}
+		// otherwise stop
+		else
+			bMore = false;
+	}
+	// Select the specific extraction function
+	switch (m_uCurrentVer) {
+		case 0x0100:
+			return Extract1_0(uEntry, pcName);
+			break;
+		default:
+			return WJE_UNSUPPORTED_VERSION;
+	}
+} // Extract (Filename)
 
 WJERESULT CWedgie::Extract1_0(unsigned int uEntry, const char *pcFilename) {
-
 	ASSERT(pcFilename);
+	ASSERT(uEntry < m_uFiles);
 	// Open the file
 	ofstream oFile;
 	oFile.open(pcFilename, ios::out|ios::binary|ios::trunc);
