@@ -7,7 +7,7 @@
 // DList.h - 28/05/2000 - James Smith
 //	Doubly Linked list class header
 //
-// $Id: DList.h,v 1.3 2000/10/06 13:02:16 waz Exp $
+// $Id: DList.h,v 1.4 2000/11/21 16:37:12 waz Exp $
 //
 
 #ifndef _VAL_LIST_
@@ -51,8 +51,8 @@ public:
    // Gives the length of the list
    int Length(void) const {return m_iLength;}
 
-   // Adds an item to the back of the list
-   int AddBack(const T& newData);
+   // Adds an item to the back of the list - returns true if successful
+   bool AddBack(const T& newData);
 
    // Access to elements
    T& operator[](unsigned int iIndex) const throw(CDListRangeException);
@@ -101,14 +101,14 @@ CDList<T>::CDList(int iNum) {
 } //CDList(int iNum)
 
 template<class T>
-int CDList<T>::AddBack(const T& newData) {
-   int iRetVal = 0;
+bool CDList<T>::AddBack(const T& newData) {
+   bool bReturn = false;
    CDListItem<T>* pNewItem;
    NEWBEGIN
    pNewItem = new CDListItem<T>(newData);
    NEWEND("CList<T>::AddBack - new item allocation")
    if (pNewItem != NULL) {
-      iRetVal = 1;
+      bReturn = true;
       if (m_iLength == 0) m_pFront = pNewItem;
       else m_pBack->m_pNext = pNewItem;
       pNewItem->m_pPrev = m_pBack;
@@ -116,7 +116,7 @@ int CDList<T>::AddBack(const T& newData) {
       m_pBack = pNewItem;
       m_iLength++;
    }
-   return iRetVal;
+   return bReturn;
 } //AddBack(const T& newData)
 
 template<class T> 
