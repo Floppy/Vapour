@@ -5,7 +5,7 @@
 # script to emulate intended VMake functionality
 
 # 17/09/2001 - Warren Moore
-# $Id: VMake.pl,v 1.3 2001/09/19 12:31:26 vap-warren Exp $
+# $Id: VMake.pl,v 1.4 2001/09/20 23:24:38 vap-warren Exp $
 # Copyright 2000-2001 Vapour Technology Ltd.
 
 use strict;
@@ -109,37 +109,62 @@ else {
 }
 
 # remove any non-arch files
-my @file_list = split /\n/, `find . -name '*.*.*'`;
+my @file_list = split /\n/, `find . -name '*.*' -not -lname '*.*'`;
 my @rm_list;
 $count = 0;
 while ($count < scalar(@file_list)) {
 	my $file = $file_list[$count];
+	# search for files matching *.*.*
 	if ($file =~ /(.+\/)([^\.\/]+)\.([^\.]+)\.([^\.]+)$/) {
 		my $search = "$1$2.$arch_name.$4";
 		my $arch = $3;
 		# remove it if it's not an arch dependent file
 		if (not grep { /$arch/ } @arch_list) {
-			splice(@file_list, $count, 1);
+			# delete if in doc mode
+			if ($doc) {
+				push @rm_list, splice(@file_list, $count, 1);
+			}
+			# otherwise forget about it
+			else {
+				splice(@file_list, $count, 1);
+			}
 		}
 		# remove unused arch files
 		elsif ($arch ne "noarch" and $arch ne $arch_name) {
-			print "Unused: $file\n";
 			push @rm_list, splice(@file_list, $count, 1);
 		}
 		# remove unnecessary noarch's
 		elsif ($arch_name ne "noarch" and $arch eq "noarch" and (grep { /$search/ } @file_list)) {
-			print "Superfluous: $file\n";
 			push @rm_list, splice(@file_list, $count, 1);
 		}
-		# remove noarch files if doc build
-		elsif ($doc and $arch eq "noarch") {
-			print "Doc: $file\n";
+		# remove noarch files if doc build, unless it's a noarch build
+		elsif ($doc and $arch_name ne "noarch" and $arch eq "noarch") {
 			push @rm_list, splice(@file_list, $count, 1);
 		}
 		# step through the list
 		else {
 			$count++;
 		}
+	}
+	# so it's not an arch file then...
+	else {
+		# in documentation mode, remove unneccesary files, unless noarch build
+		if ($doc and $arch_name ne "noarch") {
+			push @rm_list, splice(@file_list, $count, 1);
+		}
+		# otherwise just forget about them
+		else {
+			splice(@file_list, $count, 1);
+		}
+	}
+}
+
+# remove unused files
+foreach my $file (@rm_list) {
+	# remove unused files for doc build
+	if ($doc) {
+		output("Removing: $file\n");
+		unlink $file;
 	}
 }
 
@@ -168,16 +193,4 @@ foreach my $file (@file_list) {
 	}
 }
 
-# show or remove unused files
-foreach my $file (@rm_list) {
-	# show unused files
-	if (not $doc) {
-		output("Unused: $file\n");
-	}
-	# remove them for doc build
-	else {
-		output("Removing unused: $file\n");
-		unlink $file;
-	}
-}
 
