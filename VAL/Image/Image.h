@@ -7,7 +7,7 @@
 // Image.h - 21/12/1999 - Warren Moore
 //	Image header
 //
-// $Id: Image.h,v 1.10 2000/08/07 18:57:47 waz Exp $
+// $Id: Image.h,v 1.11 2000/11/25 11:28:24 waz Exp $
 //
 
 #ifndef _VAL_IMAGE_
@@ -180,6 +180,7 @@ protected:
 
 //#===--- Friends
 	friend class CRCOpenGLBufferWin32;
+	friend class CRCOpenGLWin32;
 
 };
 
