@@ -7,7 +7,7 @@
 // Avatar.h - 16/06/2000 - James Smith
 //	Avatar class header
 //
-// $Id: Avatar.h,v 1.9 2000/10/10 17:53:31 waz Exp $
+// $Id: Avatar.h,v 1.10 2000/10/23 19:07:47 waz Exp $
 //
 
 #ifndef _VAL_AVATAR_
@@ -226,6 +226,9 @@ public:
 	// This new translation will only take effect when UpdateModel() is called.
    void SetRootTranslation(CVector3D& vecNewTranslation);
 
+	// Gets the translation of the entire model
+	CVector3D GetRootTranslation() const;
+
    // Sets the angle for the joint so that it points as close as possible
 	// towards the target position.
    void TargetBodyPart(BodyPart bpJoint, CVector3D& vecTarget, bool bLimit = true);
@@ -263,6 +266,10 @@ public:
    // Copies in all the rotations and translations from the passed CAvatarPose.
    // returns true if successful, false if not
    bool ImportPose(CAvatarPose& apNewPose);
+
+   // Copies in some of the rotations and translations from the passed CAvatarPose.
+   // returns true if successful, false if not
+   bool ImportPosePart(BodyPart bpJoint, CAvatarPose& apNewPose);
 
    ///////////////////////////////////////////////////////////////////////
    // Post-Load Functions ////////////////////////////////////////////////

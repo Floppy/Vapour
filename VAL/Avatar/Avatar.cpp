@@ -7,7 +7,7 @@
 // Avatar.cpp - 17/06/2000 - James Smith
 //	Avatar class implementation
 //
-// $Id: Avatar.cpp,v 1.10 2000/10/10 17:53:31 waz Exp $
+// $Id: Avatar.cpp,v 1.11 2000/10/23 19:07:46 waz Exp $
 //
 
 #include "stdafx.h"
@@ -427,6 +427,10 @@ void CAvatar::SetRootTranslation(CVector3D& vecNewTranslation) {
 	return;
 } //SetRootTranslation(CVector3D& vecNewTranslation)
 
+CVector3D CAvatar::GetRootTranslation() const {
+	return m_vecRootTranslation;
+} //GetRootTranslation()
+
 void CAvatar::TargetBodyPart(enum BodyPart bpJoint, CVector3D& vecTarget, bool bLimit) {
    BodyPart bpParent = m_pBodyParts[bpJoint].m_bpParent;
    // Calculate vectors
@@ -529,6 +533,22 @@ bool CAvatar::ImportPose(CAvatarPose& apNewPose) {
    }
    return true;
 } //ImportPose(CAvatarPose& apNewPose)
+
+bool CAvatar::ImportPosePart(BodyPart bpJoint, CAvatarPose& apNewPose) {
+   if (apNewPose.m_iNumJoints != TOTAL_NUMBER_BODYPARTS)
+		return false;
+	// Params
+	bool bReturn = true;
+	SBodyPart sPart = m_pBodyParts[bpJoint];
+	// Loop through children
+	for (int i=0; i<3; i++) {
+		if (sPart.m_bpChildren[i] > 0)
+			bReturn = ImportPosePart(sPart.m_bpChildren[i], apNewPose);
+	}
+	// Copy the joint data
+	SetJointAngle((BodyPart)bpJoint, apNewPose.m_pJointRotations[bpJoint], false, false);
+	return bReturn;
+} //ImportPosePart(BodyPart bpJoint, CAvatarPose& apNewPose)
 
 ///////////////////////////////////////////////////////////////////////
 // Post-Load Functions ////////////////////////////////////////////////
