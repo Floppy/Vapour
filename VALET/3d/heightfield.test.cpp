@@ -10,10 +10,12 @@
 //! file 		= "VALET/3D/heightfield.test.cpp"
 //! author 		= "James Smith"
 //! date 		= "18/10/2001"
-//! rcsid 		= "$Id: heightfield.test.cpp,v 1.4 2001/10/18 15:12:33 vap-james Exp $"
+//! rcsid 		= "$Id: heightfield.test.cpp,v 1.5 2001/10/24 19:55:44 vap-james Exp $"
 
 //#===--- Includes
+#include "VALET/valet.h"
 #include "VALET/heightfield.h"
+#include "VALET/log.h"
 
 #include <stdio.h>
 #include <math.h>
@@ -22,6 +24,9 @@
 using namespace NValet;
 
 int main(int argc, char *argv[]) {
+ 
+   g_oLogManager.SetLog("3d",true,LL_ALL);
+   g_oLogManager.SetLog("math",true,LL_ALL);
 
    bool bError = false;
 
