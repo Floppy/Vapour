@@ -14,7 +14,7 @@
 # VALET_CVSOPTIONS must contain all the options for co from the VALET cvs repos
 VALET_CVSOPTIONS="-z9 -Q -d :ext:vap-warren@cvs.vapourtech.com:/cvs"
 # VALET_DOCROOT is the local path for generated docs
-VALET_DOCROOT=/www/vapourtech/www/internal/docs/
+VALET_DOCROOT=/www/secure/www/internal/docs/
 export VALET_CVSOPTIONS VALET_DOCROOT
 
 # remove the previous documentation
