@@ -7,6 +7,10 @@ Project: "SGAToUT"=.\SGAToUT.dsp - Package Owner=<4>
 
 Package=<5>
 {{{
+    begin source code control
+    SGAToUT
+    .
+    end source code control
 }}}
 
 Package=<4>
@@ -27,7 +31,7 @@ Package=<5>
 {{{
     begin source code control
     VAL
-    ..\val
+    ..\VAL
     end source code control
 }}}
 
@@ -43,7 +47,7 @@ Package=<5>
 {{{
     begin source code control
     VALWin32
-    ..\valwin32
+    ..\VALWin32
     end source code control
 }}}
 
