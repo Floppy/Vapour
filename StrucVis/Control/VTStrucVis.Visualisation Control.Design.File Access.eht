@@ -1,0 +1,9 @@
+! author="Warren Moore"
+: Data Streaming Objects
+
+These classes manage the streaming of the user interface bitmap and simulation data.
+Unlike conventional file access, the file loading and management is performed by the ActiveX container
+(i.e. Internet Explorer) and these classes are informed by the container when new data arrives.
+Downloaded data is transparently streamed or copied to the user's temp directory. While you can access the
+file contents much like a regular file, through MFC's CFile class functions, you have no direct knowledge
+of the local file location.
