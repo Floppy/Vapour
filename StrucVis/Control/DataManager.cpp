@@ -7,7 +7,7 @@
 // DataManager.cpp
 // 19/03/2002 - James Smith
 //
-// $Id: DataManager.cpp,v 1.16 2002/03/27 16:40:01 vap-james Exp $
+// $Id: DataManager.cpp,v 1.17 2002/03/28 13:31:42 vap-james Exp $
 
 #include "stdafx.h"
 #include "DataManager.h"
@@ -625,7 +625,7 @@ const unsigned char* CDataManager::SlabCracks(unsigned int iSlab, unsigned int) 
    iSlab--;
    const CChunk* pChunk = m_pChunk->SubChunk(CHUNK_CRACKS);
    if (pChunk) {
-      return pChunk->Data() + sizeof(unsigned int);
+      return pChunk->Data() + sizeof(unsigned int) + (9*iSlab*sizeof(unsigned char));
    }
    return NULL;
 }
