@@ -9,7 +9,7 @@
 //! file      = "Control/CortonaUtil.cpp"
 //! author    = "Warren Moore"
 //! date      = "07/3/2002"
-//! rcsid     = "$Id: CortonaUtil.cpp,v 1.13 2002/04/04 11:01:33 vap-warren Exp $"
+//! rcsid     = "$Id: CortonaUtil.cpp,v 1.14 2002/04/22 11:36:00 vap-warren Exp $"
 
 #include "stdafx.h"
 
@@ -51,7 +51,7 @@ CCortonaNode *CCortonaUtil::CreateVrmlFromString(const char *pcVRML) {
    // If ok, create the node object
    CCortonaNode *poNode = NULL;
    if (SUCCEEDED(hResult)) {
-      poNode = (CCortonaNode*) new CCortonaNode(pNodeObject);
+      poNode = (CCortonaNode*) new CCortonaNode(m_pEngine, pNodeObject);
    }
 
    return poNode;
@@ -99,7 +99,7 @@ CCortonaNode *CCortonaUtil::GetNode(const char *pcName) {
    // If ok, create the node object
    CCortonaNode *poNode = NULL;
    if (SUCCEEDED(hResult)) {
-      poNode = (CCortonaNode*) new CCortonaNode(pNodeObject);
+      poNode = (CCortonaNode*) new CCortonaNode(m_pEngine, pNodeObject);
    }
 
    return poNode;
@@ -136,7 +136,7 @@ CCortonaField *CCortonaUtil::CreateField(const char *pcType) {
    // If ok, create the field object
    CCortonaField *poField = NULL;
    if (SUCCEEDED(hResult)) {
-      poField = (CCortonaField*) new CCortonaField(pFieldObject);
+      poField = (CCortonaField*) new CCortonaField(m_pEngine, pFieldObject);
    }
 
    return poField;

@@ -191,6 +191,20 @@ typedef struct _POSTAG { _VEC orig, ortx, orty, ortz; } _POS;
 
 	[
 		object,
+		uuid(E7FE0D60-1F44-11d3-8EDC-00600818EDB1),
+		helpstring("IUpdateManager Interface")
+	]
+	interface IUpdateManager : IUnknown
+	{
+		[propget] HRESULT transactedMode([out, retval] BOOL* value);
+		[propput] HRESULT transactedMode([in] BOOL value);
+		HRESULT beginUpdate();
+		HRESULT registerEvent([in] IUnknown* field, [in] IUnknown* value);
+		HRESULT endUpdate();
+	};
+
+	[
+		object,
 		uuid(86A88968-7A20-11d2-8EDA-00600818EDB1),
 		helpstring("IBADriver Interface"),
 		pointer_default(unique),

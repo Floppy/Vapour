@@ -9,7 +9,7 @@
 //! file      = "Control/CortonaNode.cpp"
 //! author    = "Warren Moore"
 //! date      = "10/3/2002"
-//! rcsid     = "$Id: CortonaNode.cpp,v 1.7 2002/04/04 11:01:33 vap-warren Exp $"
+//! rcsid     = "$Id: CortonaNode.cpp,v 1.8 2002/04/22 11:35:59 vap-warren Exp $"
 
 #include "stdafx.h"
 
@@ -24,7 +24,9 @@ static char THIS_FILE[] = __FILE__;
 /////////////////
 // CCortonaNode
 
-CCortonaNode::CCortonaNode(INodeObject *pNode) : m_pNode(pNode) {
+CCortonaNode::CCortonaNode(IEngine *pEngine, INodeObject *pNode) :
+   m_pEngine(pEngine),
+   m_pNode(pNode) {
 }
 
 CCortonaNode::~CCortonaNode() {
@@ -38,7 +40,7 @@ void CCortonaNode::Release() {
 
 CCortonaField *CCortonaNode::GetField(const char *pcName) {
    // Check for pointers
-   if (!pcName)
+   if (!pcName || !m_pEngine)
       return NULL;
 
    // Get the node fields
@@ -56,7 +58,7 @@ CCortonaField *CCortonaNode::GetField(const char *pcName) {
    CCortonaField *poField = NULL;
    if (SUCCEEDED(hResult)) {
       // Create the field object
-      poField = (CCortonaField*) new CCortonaField(pFieldObject);
+      poField = (CCortonaField*) new CCortonaField(m_pEngine, pFieldObject);
    }
 
    // Release the field collection

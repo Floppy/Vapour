@@ -9,7 +9,7 @@
 //! file      = "Control/CortonaNode.h"
 //! author    = "Warren Moore"
 //! date      = "10/3/2002"
-//! rcsid     = "$Id: CortonaNode.h,v 1.7 2002/04/04 19:55:03 vap-warren Exp $"
+//! rcsid     = "$Id: CortonaNode.h,v 1.8 2002/04/22 11:36:00 vap-warren Exp $"
 
 #ifndef __VSTRUCVIS_CORTONANODE__
 #define __VSTRUCVIS_CORTONANODE__
@@ -31,9 +31,10 @@ class CCortonaNode {
 //: Construction/Destruction
 public:
 
-   CCortonaNode(INodeObject *pNode);
+   CCortonaNode(IEngine *pEngine, INodeObject *pNode);
    //: Constructor
    // Create from a node interface
+   //!param: pEngine - IEngine interface to Cortona engine - must not be null
    //!param: pNode - INodeObject interface to Cortona field - must not be null
 
    ~CCortonaNode();
@@ -44,8 +45,7 @@ public:
 //: Node Functions
 
    void Release();
-   //: Release the field object
-   // Release the node object
+   //: Release the node object
 
    CCortonaField *GetField(const char *pcName);
    //: Create a field object from the specified name
@@ -70,6 +70,7 @@ protected:
 
 protected:
 
+   IEngine *m_pEngine;           //: The engine interface
    INodeObject *m_pNode;         //: The node interface
 
 };

@@ -9,7 +9,7 @@
 //! file      = "Control/CortonaField.h"
 //! author    = "Warren Moore"
 //! date      = "12/3/2002"
-//! rcsid     = "$Id: CortonaField.h,v 1.18 2002/04/08 00:16:35 vap-warren Exp $"
+//! rcsid     = "$Id: CortonaField.h,v 1.19 2002/04/22 11:35:59 vap-warren Exp $"
 
 #ifndef __VTSTRUCVIS_CORTONAFIELD__
 #define __VTSTRUCVIS_CORTONAFIELD__
@@ -29,9 +29,10 @@ class CCortonaField {
 //: Construction/Destruction
 public:
 
-   CCortonaField(IFieldObject *pField);
+   CCortonaField(IEngine *pEngine, IFieldObject *pField);
    //: Constructor
    // Creates a field object from a field interface
+   //!param: pEngine - IEngine interface to Cortona engine - must not be null
    //!param: pField - IFieldObject interface to Cortona field - must not be null
 
    ~CCortonaField();
@@ -222,6 +223,7 @@ protected:
 
 protected:
 
+   IEngine *m_pEngine;           //: The engine interface
    IFieldObject *m_pField;       //: The field interface
    FTYPE m_eType;                //: The field type
 
@@ -234,7 +236,11 @@ protected:
       ISFBoolObject *m_pSFBool;
       ISFRotationObject *m_pSFRotation;
       IMFStringObject *m_pMFString;
-   } m_uInterface;               
+   } m_uInterface;               //: The specific field interface
+
+   IMFieldObject *m_pMField;           //: The MF field interface
+   IUpdateManager *m_pUpdateManager;   //: Update manager interface for MF fields
+   IVariable *m_pVariable;             //: Variable interface for MF fields
 
 };
 
