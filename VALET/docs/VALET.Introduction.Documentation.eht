@@ -29,8 +29,20 @@ and confidentiality information must be included in EVERY file within the reposi
 
 <P>
 The file, author, date and rcsid CxxDoc tags must also be included in every file. Note that particular attention
-must be paid to class header files, as they are essential for correct documentation generation.
+must be paid to class header files, as they are essential for correct documentation generation. The following lines
+(taken from VALET/3d/material.h) can be used as a template, and should appear below the standard header.
 </P>
+
+<PRE>
+////////////////
+//! file 		= "VALET/3d/material.h"
+//! author 		= "James Smith"
+//! date 		= "09/10/2001"
+//! lib 		= libVALET3d
+//! rcsid 		= "$Id: VALET.Introduction.Documentation.eht,v 1.2 2001/10/10 13:53:46 vap-james Exp $"
+//! userlevel 	        = Normal
+//! docentry 	        = "VALET.3D.Surface Materials"
+</PRE>
 
 <P CLASS="HEADING">
 C++ Requirements
