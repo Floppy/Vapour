@@ -7,7 +7,7 @@
 // CortonaField.cpp
 // 07/03/2002 - Warren Moore
 //
-// $Id: CortonaField.cpp,v 1.4 2002/03/21 22:55:22 vap-warren Exp $
+// $Id: CortonaField.cpp,v 1.5 2002/03/22 10:42:29 vap-james Exp $
 
 #include "stdafx.h"
 #include "CortonaBase.h"
@@ -343,3 +343,56 @@ bool CCortonaField::SetSFBool(const bool bVal) {
    return SUCCEEDED(hResult);
 }
 
+bool CCortonaField::GetSFRotation(float &fX, float &fY, float &fZ, float &fAngle) {
+   // Check the field pointer
+   if (!m_pField)
+      return false;
+
+   // Check the type
+   if (m_eType != tSFRotation)
+      return false;
+
+   // Get the IMFVec3f interface
+   ISFRotationObject *pSFRotation = NULL;
+   HRESULT hResult = m_pField->QueryInterface(IID_ISFRotationObject, (void**)&pSFRotation);
+   if (FAILED(hResult))
+      return false;
+
+   // Get the values
+   bool bOk = SUCCEEDED(pSFRotation->get_X(&fX));
+   bOk &= SUCCEEDED(pSFRotation->get_Y(&fY));
+   bOk &= SUCCEEDED(pSFRotation->get_Z(&fZ));
+   bOk &= SUCCEEDED(pSFRotation->get_Angle(&fAngle));
+
+   // Release the MFVec3f interface
+   pSFRotation->Release();
+
+   return bOk;
+}
+
+bool CCortonaField::SetSFRotation(const float fX, const float fY, const float fZ, const float fAngle) {
+   // Check the field pointer
+   if (!m_pField)
+      return false;
+
+   // Check the type
+   if (m_eType != tSFRotation)
+      return false;
+
+   // Get the ISFRotation interface
+   ISFRotationObject *pSFRotation = NULL;
+   HRESULT hResult = m_pField->QueryInterface(IID_ISFRotationObject, (void**)&pSFRotation);
+   if (FAILED(hResult))
+      return false;
+
+   // Get the X value
+   bool bOk = SUCCEEDED(pSFRotation->put_X(fX));
+   bOk &= SUCCEEDED(pSFRotation->put_Y(fY));
+   bOk &= SUCCEEDED(pSFRotation->put_Z(fZ));
+   bOk &= SUCCEEDED(pSFRotation->put_Angle(fAngle));
+
+   // Release the SFRotation interface
+   pSFRotation->Release();
+
+   return bOk;
+}

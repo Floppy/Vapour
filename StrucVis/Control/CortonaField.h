@@ -7,7 +7,7 @@
 // CortonaField.h
 // 12/03/2002 - Warren Moore
 //
-// $Id: CortonaField.h,v 1.6 2002/03/21 22:55:22 vap-warren Exp $
+// $Id: CortonaField.h,v 1.7 2002/03/22 10:42:29 vap-james Exp $
 
 #ifndef __CORTONAFIELD__
 #define __CORTONAFIELD__
@@ -74,6 +74,14 @@ public:
 
    bool SetSFBool(const bool bVal);
    // Sets the bool value
+
+   //--- SFRotation
+
+   bool GetSFRotation(float &fX, float &fY, float &fZ, float &fAngle);
+   // Gets the rotation value
+
+   bool SetSFRotation(const float fX, const float fY, const float fZ, const float fAngle);
+   // Sets the rotation value
 
 protected:
 
