@@ -11,7 +11,7 @@
 //! author 		= "James Smith"
 //! date 		= "02/10/2001"
 //! lib 		= libVALETmath
-//! rcsid 		= "$Id: quaternion.cpp,v 1.2 2001/10/02 17:00:50 vap-james Exp $"
+//! rcsid 		= "$Id: quaternion.cpp,v 1.3 2001/10/02 22:16:45 vap-james Exp $"
 //! userlevel 	        = Normal
 //! docentry 	        = "VALET.Math.Geometry"
 
@@ -21,6 +21,11 @@
 
 // Standard includes
 #include <math.h>
+
+// defines
+#define X_AXIS 0x0
+#define Y_AXIS 0x1
+#define Z_AXIS 0x2
 
 namespace VALET {
 
@@ -47,26 +52,24 @@ namespace VALET {
 		m_dScalar = cos(dHalfRotation);
 	} //CQuaternion(const CAxisRotation & oRot)
 
-	/*CQuaternion::CQuaternion(const CEulerRotation & oRot) {
+	CQuaternion::CQuaternion(const CEulerRotation & oRot) {
 		int NextAngle[] = {Y_AXIS, Z_AXIS, X_AXIS, Y_AXIS};
-		double dFirst = oRot.Angle(0);
-		double dSecond = oRot.Angle(1);
-		double dThird = oRot.Angle(2);
-		UEulerType uType = oRot.Type();
+		CVector3D vecAngles = oRot.Angles();
+		CEulerRotation::UEulerType uType = oRot.Type();
 		int iFirstAxis = uType.m_sProperties.m_ucInnerAxis;	
 		int iSecondAxis = NextAngle[iFirstAxis + uType.m_sProperties.m_bOddParity];
 		int iThirdAxis = NextAngle[iFirstAxis +1 - uType.m_sProperties.m_bOddParity];
 		if (uType.m_sProperties.m_bRotatingFrame) {
-			double dTemp = dFirst;
-			dFirst = dThird;
-			dThird = dTemp;
+			double dTemp = vecAngles.X();
+			vecAngles.X() = vecAngles.Z();
+			vecAngles.Z() = dTemp;
 		}
 		if (uType.m_sProperties.m_bOddParity) {
-			dSecond = -dSecond;
+			vecAngles.Y() = -vecAngles.Y();
 		}	
-		double dHF = dFirst * 0.5;
-		double dHS = dSecond * 0.5;
-		double dHT = dThird * 0.5;
+		double dHF = vecAngles.X() * 0.5;
+		double dHS = vecAngles.Y() * 0.5;
+		double dHT = vecAngles.Z() * 0.5;
 		double dCHF = cos(dHF);
 		double dCHS = cos(dHS);
 		double dCHT = cos(dHT);
@@ -95,7 +98,7 @@ namespace VALET {
 		}	
 		m_oVector.FromDouble(a[0], a[1], a[2]);
 		return;
-	} //CQuaternion(const CEulerRotation & oRot)*/
+	} //CQuaternion(const CEulerRotation & oRot)
 
 	CQuaternion::~CQuaternion() {
 	} //~CQuaternion()
