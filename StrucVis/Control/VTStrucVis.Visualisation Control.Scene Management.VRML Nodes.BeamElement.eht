@@ -15,6 +15,7 @@ PROTO BeamElement [
    field    SFFloat  web         0.1
    field    SFFloat  width       1
    field    MFVec3f  nodes       [ 0 0 0.5, 0 0 -0.5]
+   field    MFInt32  nodeIndex   [ 0 1 ]
    eventOut MFString description_changed
 ]
 </PRE>
@@ -30,7 +31,9 @@ PROTO BeamElement [
 <DT><B><I>height</I></B></DT>
 <DD>The height of the beam.</DD>
 <DT><B><I>nodes</I></B></DT>
-<DD>Two SFVec3f values which define the 3D positions of the controlling nodes. The nodes are situated in the centre of the top side of each end of the beam.</DD>
+<DD>A number of SFVec3f values which define the 3D positions of the controlling nodes.</DD>
+<DT><B><I>nodeIndex</I></B></DT>
+<DD>Two SFInt32 values which define which of the nodes in the <EM>nodes</EM> field the Beam is controlled by. The beam is positioned so that the controlling nodes are situated in the centre of the top side of each end of the beam.</DD>
 <DT><B><I>web</I></B></DT>
 <DD>The thickness of the web section of the beam.</DD>
 <DT><B><I>width</I></B></DT>
@@ -42,7 +45,7 @@ PROTO BeamElement [
 <DT><B><I>set_colours</I></B></DT>
 <DD>Sets the <B><I>colours</I></B> field of the element. Should be an MFColor value made up of 2 SFColor values.</DD>
 <DT><B><I>set_nodes</I></B></DT>
-<DD>Sets the <B><I>nodes</I></B> field of the element. Should be an MFVec3f value made up of 2 SFVec3f values.</DD>
+<DD>Sets the <B><I>nodes</I></B> field of the element, and hence the position of the controlling nodes.</DD>
 <DT><B><I>set_visible</I></B></DT>
 <DD>Sets the visibility of the element. If set_visible FALSE is sent, the object becomes 90% transparent. If set_visible TRUE is sent, the object becomes solid once again.</DD>
 </DL>

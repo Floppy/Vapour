@@ -1,19 +1,20 @@
 ! author="James Smith"
 : SlabElement
 
-This node defines a Slab structural element. All geometry is generated from the nine node positions specified in the <B><I>nodes</I></B> field or set with the <B><I>set_nodes</I></B> eventIn.
+This node defines a Slab structural element. All geometry is generated from the node positions specified in the <B><I>nodes</I></B> field or set with the <B><I>set_nodes</I></B> eventIn.
 <HR>
 <PRE>
-PROTO BeamElement [
-   eventIn  MFColor  set_colours
-   eventIn  MFInt32  set_cracks
-   eventIn  MFVec3f  set_nodes
-   eventIn  SFBool   set_visible
-   field    MFColor  colours     [ 1 1 1, 1 1 1, 1 1 1, 1 1 1, 1 1 1, 1 1 1, 1 1 1, 1 1 1, 1 1 1]
-   field    MFInt32  cracks      [ 0 0 0 0 0 0 0 0 0 ]
-   field    MFString description ["ID:" "Group:" "Temperature:"]
-   field    MFVec3f  nodes       [ 0.5 0 0.5, -0.5 0 0.5, -0.5 0 -0.5, 0.5 0 -0.5, 0 0 0.5, -0.5 0 0, 0 0 -0.5, 0.5 0 0, 0 0 0]
-   field    SFFloat  thickness   1
+PROTO SlabElement [
+   eventIn MFColor  set_colours
+   eventIn MFInt32  set_cracks
+   eventIn MFVec3f  set_nodes
+   eventIn SFBool   set_visible
+   field   MFColor  colours     [ 1 1 1, 1 1 1, 1 1 1, 1 1 1, 1 1 1, 1 1 1, 1 1 1, 1 1 1, 1 1 1]
+   field   MFInt32  cracks      [ 0 0 0 0 0 0 0 0 0 ]
+   field   MFString description ["ID:" "Group:" "Temperature:"]
+   field   MFVec3f  nodes       [ 0.5 0 0.5, -0.5 0 0.5, -0.5 0 -0.5, 0.5 0 -0.5, 0 0 0.5, -0.5 0 0, 0 0 -0.5, 0.5 0 0, 0 0 0]
+   field   MFInt32  nodeIndex   [ 0 1 2 3 4 5 6 7 8 ]
+   field   SFFloat  thickness   1
    eventOut MFString description_changed
 ]
 </PRE>
@@ -27,7 +28,9 @@ PROTO BeamElement [
 <DT><B><I>description</I></B></DT>
 <DD>A textual description of the beam, for instance element IDs or temperature readings.
 <DT><B><I>nodes</I></B></DT>
-<DD>Nine SFVec3f values which define the 3D positions of the controlling nodes.</DD>
+<DD>A number of SFVec3f values which define the 3D positions of the controlling nodes.</DD>
+<DT><B><I>nodeIndex</I></B></DT>
+<DD>Nine SFInt32 values which define which of the nodes in the <EM>nodes</EM> field the Slab is controlled by. The slab is positioned so that the controlling nodes are situated on the underside of the slab.</DD>
 <DT><B><I>thickness</I></B></DT>
 <DD>The thickness of the slab.</DD>
 </DL>
@@ -39,7 +42,7 @@ PROTO BeamElement [
 <DT><B><I>set_cracks</I></B></DT>
 <DD>Sets the <B><I>cracks</I></B> field of the element. Should be an MFInt32 value made up of 9 SFInt32 values.</DD>
 <DT><B><I>set_nodes</I></B></DT>
-<DD>Sets the <B><I>nodes</I></B> field of the element. Should be an MFVec3f value made up of 9 SFVec3f values.</DD>
+<DD>Sets the <B><I>nodes</I></B> field of the element, and hence the position of the controlling nodes.</DD>
 <DT><B><I>set_visible</I></B></DT>
 <DD>Sets the visibility of the element. If set_visible FALSE is sent, the object becomes 90% transparent. If set_visible TRUE is sent, the object becomes solid once again.</DD>
 </DL>

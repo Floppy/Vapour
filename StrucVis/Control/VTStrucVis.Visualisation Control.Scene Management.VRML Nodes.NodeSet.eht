@@ -1,0 +1,16 @@
+! author="James Smith"
+: NodeSet
+
+This node defines a set of 3D control points, or <B>nodes</B>.
+<HR>
+<PRE>
+PROTO NodeSet [
+   exposedField MFVec3f point [ 0.5 0 0.5, -0.5 0 0.5, -0.5 0 -0.5, 0.5 0 -0.5, 0 0 0.5, -0.5 0 0, 0 0 -0.5, 0.5 0 0, 0 0 0 ]
+]
+</PRE>
+<HR>
+<H2>ExposedFields</H2>
+<DL>
+<DT><B><I>point</I></B></DT>
+<DD>An MFVec3f array of values, which define control node positions. This field can be modified using the <EM>set_point</EM> eventIn. After this event is recieved, a <EM>point_changed</EM> eventOut is sent.</DD>
+</DL>
