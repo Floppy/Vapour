@@ -1,25 +1,30 @@
 ! author="James Smith"
 : VRML Nodes
 
-<IMG SRC="../../vrml_framework.png" WIDTH="722" HEIGHT="481">
-
-The StrucVis ActiveX Control displays 3D objects inside the Cortona VRML browser by using a set of standard VRML PROTO nodes. 
+<P>The StrucVis ActiveX Control displays 3D objects inside the Cortona VRML browser by using a set of standard VRML PROTO nodes. 
 The control creates a number of elements inside the 3D world when the input file is loaded. First, it creates a <B>NodeSet</B>. This is a 
 VRML node which contains a complete set of control nodes for the scene. All other scene elements use this set to get their positions. 
 When the <B>NodeSet</B> it updated, it propogates the changes through to the other scene elements. The <B>NodeSet</B> has no physical representation 
 in the 3D world.
+
+<P>
+<IMG SRC="../../vrml_framework.png">
+
 <P>
 After the <B>NodeSet</B> is created, a number of Elements are created. These are the actual 3D objects within the scene. At present, there are 
 two types - <B>BeamElement</B> and <B>SlabElement</B>. The positions of the elements are controlled by the nodes in the <B>NodeSet</B> - depending 
 on the type of element, it will be controlled by a certain number of nodes. For instance, a <B>BeamElement</B> has two controlling nodes, one at 
 each end. The elements contain node indices, which are offsets into the node array distributed by the <B>NodeSet</B>. They use these indices to 
 look up the position of their control nodes, and then adjust their position to fit.
+
 <P>
 The last part of the scene is the <B>HUDView</B>, which is a heads-up display of scene information, particularly element information. Scene elements
 are sensitive to the mouse, and when the mouse moves over them, they send a signal to the <B>HUDView</B>. The signal contains a textual description 
 of the current state of the element, and is displayed in the HUD.
+
 <P>
 Each frame, node positions, element descriptions, and crack data (for <B>SlabElements</B>) are sent into the scene. The elements within the scene
 react to this information, updating their positions and appearance to match the new data.
+
 <P>
 Further details of the syntax and behaviour of individual PROTO nodes is described below.
