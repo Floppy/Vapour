@@ -7,7 +7,7 @@
 // Avatar.h - 16/06/2000 - James Smith
 //	Avatar class header
 //
-// $Id: Avatar.h,v 1.11 2000/11/21 16:43:34 waz Exp $
+// $Id: Avatar.h,v 1.12 2000/11/22 00:44:11 waz Exp $
 //
 
 #ifndef _VAL_AVATAR_
@@ -241,6 +241,15 @@ public:
    // returns true if successful, false if not
    bool ImportPosePart(BodyPart bpJoint, CAvatarPose& apNewPose);
 
+   // Pushes a copy of the current pose onto the pose stack. This can be
+   // restored with PopPose(). Returns true if successful, false otherwise.
+   bool PushPose(void);
+
+   // Pops off the pose at the top of the pose stack, and puts it back into 
+   // the avatar. If this function fails, the pose stays on top of the stack. 
+   // It is not discarded. Returns true if successful, false otherwise.
+   bool PopPose(void);
+
    ///////////////////////////////////////////////////////////////////////
    // Post-Load Functions ////////////////////////////////////////////////
    ///////////////////////////////////////////////////////////////////////
@@ -308,6 +317,9 @@ private:
    AV_AGE m_eAge;
    double m_dHeight;
    int m_iMissingParts;
+
+   // Pose storage
+   CDList<CAvatarPose*> m_oPoseStack;
 
    ///////////////////////////////////////////////////////////////////////
    // Post-Load Functions ////////////////////////////////////////////////

@@ -7,7 +7,7 @@
 // DList.h - 28/05/2000 - James Smith
 //	Doubly Linked list class header
 //
-// $Id: DList.h,v 1.4 2000/11/21 16:37:12 waz Exp $
+// $Id: DList.h,v 1.5 2000/11/22 00:44:36 waz Exp $
 //
 
 #ifndef _VAL_LIST_
@@ -42,26 +42,59 @@ public:
    // Range Exception - apparently this is a good idea...
    class CDListRangeException {};
    
+   ///////////////////////////////////////////////////////////////////////
+   // Construction/Destruction ///////////////////////////////////////////
+   ///////////////////////////////////////////////////////////////////////
+
    // Default Constructor
    CDList();
 
    // Constructor - precreates iNum elements in the list
    CDList(int iNum);
 
-   // Gives the length of the list
-   int Length(void) const {return m_iLength;}
+   ///////////////////////////////////////////////////////////////////////
+   // Adding Items ///////////////////////////////////////////////////////
+   ///////////////////////////////////////////////////////////////////////
+
+   // Adds an item to the front of the list - returns true if successful
+   bool AddFront(const T& newData);
 
    // Adds an item to the back of the list - returns true if successful
    bool AddBack(const T& newData);
 
-   // Access to elements
-   T& operator[](unsigned int iIndex) const throw(CDListRangeException);
+   ///////////////////////////////////////////////////////////////////////
+   // Removing Items ///////////////////////////////////////////////////////
+   ///////////////////////////////////////////////////////////////////////
 
-   // Convert to array
-   T* Convert(int& iLength);
+   // Removes the item at the front of the list
+   // Returns the data that was stored.
+   T RemoveFront(void);
+
+   // Removes the item at the back of the list
+   // Returns the data that was stored.
+   T RemoveBack(void);
 
    // Clear the list
    void Clear(void);
+
+   ///////////////////////////////////////////////////////////////////////
+   // Access /////////////////////////////////////////////////////////////
+   ///////////////////////////////////////////////////////////////////////
+
+   // Gives the length of the list
+   int Length(void) const {return m_iLength;}
+
+   // Access to specific elements
+   T& operator[](unsigned int iIndex) const throw(CDListRangeException);
+
+   // The data in the first element in the list
+   T& First(void) const {return m_pFront->m_tData;}
+
+   // The data in the last element in the list
+   T& Last(void) const {return m_pBack->m_tData;}
+
+   // Convert to array
+   T* Convert(int& iLength);
 
    // Destructor
    virtual ~CDList();
@@ -69,10 +102,11 @@ public:
 };
 
 template<class T>
-CDList<T>::CDList() {
-   m_pFront = NULL;
-   m_pBack = NULL;
-   m_iLength = 0;
+CDList<T>::CDList() :
+   m_pFront(NULL),
+   m_pBack(NULL),
+   m_iLength(0)
+{
    return;
 } //CDList()
 
@@ -101,6 +135,25 @@ CDList<T>::CDList(int iNum) {
 } //CDList(int iNum)
 
 template<class T>
+bool CDList<T>::AddFront(const T& newData) {
+   bool bReturn = false;
+   CDListItem<T>* pNewItem;
+   NEWBEGIN
+   pNewItem = new CDListItem<T>(newData);
+   NEWEND("CList<T>::AddFront - new item allocation")
+   if (pNewItem != NULL) {
+      bReturn = true;
+      if (m_iLength == 0) m_pBack = pNewItem;
+      else m_pFront->m_pPrev = pNewItem;
+      pNewItem->m_pPrev = NULL;
+      pNewItem->m_pNext = m_pFront;
+      m_pFront = pNewItem;
+      m_iLength++;
+   }
+   return bReturn;
+} //AddFront(const T& newData)
+
+template<class T>
 bool CDList<T>::AddBack(const T& newData) {
    bool bReturn = false;
    CDListItem<T>* pNewItem;
@@ -118,6 +171,38 @@ bool CDList<T>::AddBack(const T& newData) {
    }
    return bReturn;
 } //AddBack(const T& newData)
+
+template<class T>
+T CDList<T>::RemoveFront(void) {
+   // If the list is empty, do nothing
+   if (m_iLength == 0) return T(0);
+   // Otherwise, remove the item from the front of the list
+   CDListItem<T>* pOldItem;
+   pOldItem = m_pFront;
+   m_pFront = m_pFront->m_pNext;
+   if (m_pFront != NULL) m_pFront->m_pPrev = NULL;
+   m_iLength--;
+   // Delete the old item, and we're done!
+   T oData(pOldItem->m_tData);
+   delete pOldItem;
+   return oData;
+} //RemoveFront(void)
+
+template<class T>
+T CDList<T>::RemoveBack(void) {
+   // If the list is empty, do nothing
+   if (m_iLength == 0) return T(0);   
+   // Otherwise, remove the item from the back of the list
+   CDListItem<T>* pOldItem;
+   pOldItem = m_pBack;
+   m_pBack = m_pBack->m_pPrev;
+   if (m_pBack != NULL) m_pBack->m_pNext = NULL;
+   m_iLength--;
+   // Delete the old item, and we're done!
+   T oData(pOldItem->m_tData);
+   delete pOldItem;
+   return oData;
+} //RemoveBack(void)
 
 template<class T> 
 T& CDList<T>::operator[](unsigned int iIndex) const throw(CDListRangeException) {

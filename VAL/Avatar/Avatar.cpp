@@ -7,7 +7,7 @@
 // Avatar.cpp - 17/06/2000 - James Smith
 //	Avatar class implementation
 //
-// $Id: Avatar.cpp,v 1.12 2000/11/21 16:43:54 waz Exp $
+// $Id: Avatar.cpp,v 1.13 2000/11/22 00:44:11 waz Exp $
 //
 
 #include "stdafx.h"
@@ -33,25 +33,27 @@ static char THIS_FILE[] = __FILE__;
 // Construction/Destruction ///////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////
 
-CAvatar::CAvatar(int iNumVertices, int iNumFaces) : CTriMesh(iNumVertices,iNumFaces) {
-	m_eStatus = AV_OK;
-   m_pBodyParts = NULL;
+CAvatar::CAvatar(int iNumVertices, int iNumFaces) : 
+   CTriMesh(iNumVertices,iNumFaces),
+   m_eStatus(AV_OK),
+   m_pBodyParts(NULL),
+   m_pDefaultVertices(NULL),
+   m_piPartPerFaceMap(NULL),
+   m_piPartPerVertexMap(NULL),
+   m_bDirtyTranslation(false)
+{
    NEWBEGIN
    m_pBodyParts = new SBodyPart[TOTAL_NUMBER_BODYPARTS];
    NEWEND("CAvatar::CAvatar() - body part allocation")
-   m_pDefaultVertices = NULL;
    NEWBEGIN
    m_pDefaultVertices = new SPoint3D[m_iNumVertices];
    NEWEND("CAvatar::CAvatar() - default vertex allocation")
-   m_piPartPerFaceMap = NULL;
    NEWBEGIN
    m_piPartPerFaceMap = new int[m_iNumFaces];
    NEWEND("CAvatar::CAvatar() - face->part map allocation")
-   m_piPartPerVertexMap = NULL;
    NEWBEGIN
    m_piPartPerVertexMap = new int[m_iNumVertices];
    NEWEND("CAvatar::CAvatar() - vertex->part map allocation");
-   m_bDirtyTranslation = false;
 	if (m_pBodyParts          == NULL ||
        m_pDefaultVertices    == NULL ||
        m_piPartPerFaceMap    == NULL ||
@@ -97,6 +99,10 @@ CAvatar::~CAvatar() {
 		}
 		delete [] m_pBodyParts;
 	}
+   // Dump pose stack
+   while (m_oPoseStack.Length() > 0) {
+      delete m_oPoseStack.RemoveBack();
+   }
    // Delete model data
 	if (m_pDefaultVertices)    delete [] m_pDefaultVertices;
 	if (m_piPartPerFaceMap)    delete [] m_piPartPerFaceMap;
@@ -537,20 +543,20 @@ void CAvatar::Chop(BodyPart bpJoint, const CVector3D& vecPosition) {
 
 CAvatarPose CAvatar::ExportPose(void) const {
    CAvatarPose pose(TOTAL_NUMBER_BODYPARTS);
-   pose.m_vecRootTranslation = m_vecRootTranslation;
+   pose.SetRootTranslation(m_vecRootTranslation);
    for (int i=0; i<TOTAL_NUMBER_BODYPARTS; i++) {
       // Copy old rotation into array
-      pose.m_pJointRotations[i] = m_pBodyParts[i].m_rotCurrentRotation;
+      pose.SetJointRotation(i,m_pBodyParts[i].m_rotCurrentRotation);
    }
    return pose;
 } //ExportPose(void)
 
 bool CAvatar::ImportPose(CAvatarPose& apNewPose) {
    if (apNewPose.m_iNumJoints != TOTAL_NUMBER_BODYPARTS) return false;
-   m_vecRootTranslation = apNewPose.m_vecRootTranslation;
+   m_vecRootTranslation = apNewPose.GetRootTranslation();
    for (int i=0; i<TOTAL_NUMBER_BODYPARTS; i++) {
       // Set Joint angle
-      SetJointAngle((BodyPart)i,apNewPose.m_pJointRotations[i],false);
+      SetJointAngle((BodyPart)i,apNewPose.GetJointRotation(i),false);
    }
    return true;
 } //ImportPose(CAvatarPose& apNewPose)
@@ -567,9 +573,45 @@ bool CAvatar::ImportPosePart(BodyPart bpJoint, CAvatarPose& apNewPose) {
 			bReturn = ImportPosePart(sPart.m_bpChildren[i], apNewPose);
 	}
 	// Copy the joint data
-	SetJointAngle((BodyPart)bpJoint, apNewPose.m_pJointRotations[bpJoint], false, false);
+	SetJointAngle(bpJoint, apNewPose.GetJointRotation(bpJoint), false, false);
 	return bReturn;
 } //ImportPosePart(BodyPart bpJoint, CAvatarPose& apNewPose)
+
+bool CAvatar::PushPose(void) {
+   bool bResult = false;
+   CAvatarPose* pPose = NULL;
+   NEWBEGIN
+   pPose = new CAvatarPose(TOTAL_NUMBER_BODYPARTS);
+   NEWEND("CAvatar::PushPose - pose allocation")
+   if (pPose != NULL) {
+      // Copy information into pose object
+      pPose->SetRootTranslation(m_vecRootTranslation);
+      for (int i=0; i<TOTAL_NUMBER_BODYPARTS; i++) {
+         // Set Joint angle
+         pPose->SetJointRotation(i,m_pBodyParts[i].m_rotCurrentRotation);
+      }
+      // Store pointer at front of pose stack
+      bResult = m_oPoseStack.AddFront(pPose);
+      // If the pose wasn't stored, dump it and return false
+      if (!bResult) {
+         delete pPose;
+      }
+   }
+   return bResult;
+} //PushPose(void)
+
+bool CAvatar::PopPose(void) {
+   bool bResult = false;
+   if (m_oPoseStack.Length() > 0) {
+      CAvatarPose* pPose = m_oPoseStack.First();
+      bResult = ImportPose(*pPose);      
+      if (bResult) {
+         m_oPoseStack.RemoveFront();
+         delete pPose;
+      }
+   }
+   return bResult;
+} //PopPose(void)
 
 ///////////////////////////////////////////////////////////////////////
 // Post-Load Functions ////////////////////////////////////////////////

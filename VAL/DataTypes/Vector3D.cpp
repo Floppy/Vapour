@@ -7,7 +7,7 @@
 // Vector3d.cpp - 18/05/2000 - James Smith
 //	3D vector class implementation
 //
-// $Id: Vector3D.cpp,v 1.3 2000/07/31 17:40:21 waz Exp $
+// $Id: Vector3D.cpp,v 1.4 2000/11/22 00:44:36 waz Exp $
 //
 
 // Windows includes/defines
@@ -61,19 +61,17 @@ CVector3D::~CVector3D() {
 //////////////////////////////////////////////////////////////////////
 
 CVector3D CVector3D::operator *(const double & dScalar) const {
-	CVector3D vecResult;
-	vecResult.m_pdVector[0] = m_pdVector[0] * dScalar;
-	vecResult.m_pdVector[1] = m_pdVector[1] * dScalar;
-	vecResult.m_pdVector[2] = m_pdVector[2] * dScalar;
-	return vecResult;	
+	double dX = m_pdVector[0] * dScalar;
+	double dY = m_pdVector[1] * dScalar;
+	double dZ = m_pdVector[2] * dScalar;
+	return CVector3D(dX,dY,dZ);	
 } //operator *(const double & dScalar) const
 
 CVector3D CVector3D::operator *(const CVector3D & oVec) const {
-	CVector3D vecResult;
-	vecResult.m_pdVector[0] = m_pdVector[0] * oVec.m_pdVector[0];
-	vecResult.m_pdVector[1] = m_pdVector[1] * oVec.m_pdVector[1];
-	vecResult.m_pdVector[2] = m_pdVector[2] * oVec.m_pdVector[2];
-	return vecResult;	
+	double dX = m_pdVector[0] * oVec.m_pdVector[0];
+	double dY = m_pdVector[1] * oVec.m_pdVector[1];
+	double dZ = m_pdVector[2] * oVec.m_pdVector[2];
+	return CVector3D(dX,dY,dZ);	
 } //operator *(const CVector3D & oVec) const
 
 CVector3D& CVector3D::operator *=(const double & dScalar) {
@@ -91,19 +89,17 @@ CVector3D& CVector3D::operator *=(const CVector3D & oVec) {
 } //operator *=(const CVector3D & oVec)
 
 CVector3D CVector3D::operator +(const SPoint3D & oPoint) const {
-	CVector3D vecResult;
-	vecResult.m_pdVector[0] = m_pdVector[0] + oPoint.m_dComponents[0];
-	vecResult.m_pdVector[1] = m_pdVector[1] + oPoint.m_dComponents[1];
-	vecResult.m_pdVector[2] = m_pdVector[2] + oPoint.m_dComponents[2];
-	return vecResult;
+	double dX = m_pdVector[0] + oPoint.m_dComponents[0];
+	double dY = m_pdVector[1] + oPoint.m_dComponents[1];
+	double dZ = m_pdVector[2] + oPoint.m_dComponents[2];
+	return CVector3D(dX,dY,dZ);	
 } //operator +(const CVector3D & vec) const
 
 CVector3D CVector3D::operator +(const CVector3D & oVec) const {
-	CVector3D vecResult;
-	vecResult.m_pdVector[0] = m_pdVector[0] + oVec.m_pdVector[0];
-	vecResult.m_pdVector[1] = m_pdVector[1] + oVec.m_pdVector[1];
-	vecResult.m_pdVector[2] = m_pdVector[2] + oVec.m_pdVector[2];
-	return vecResult;
+	double dX = m_pdVector[0] + oVec.m_pdVector[0];
+	double dY = m_pdVector[1] + oVec.m_pdVector[1];
+	double dZ = m_pdVector[2] + oVec.m_pdVector[2];
+	return CVector3D(dX,dY,dZ);	
 } //operator +(const CVector3D & vec) const
 
 CVector3D& CVector3D::operator +=(const CVector3D & oVec) {
@@ -114,11 +110,10 @@ CVector3D& CVector3D::operator +=(const CVector3D & oVec) {
 } //operator +=(const CVector3D & oVec)
 
 CVector3D CVector3D::operator -(const CVector3D & oVec) const {
-	CVector3D vecResult;
-	vecResult.m_pdVector[0] = m_pdVector[0] - oVec.m_pdVector[0];
-	vecResult.m_pdVector[1] = m_pdVector[1] - oVec.m_pdVector[1];
-	vecResult.m_pdVector[2] = m_pdVector[2] - oVec.m_pdVector[2];
-	return vecResult;
+	double dX = m_pdVector[0] - oVec.m_pdVector[0];
+	double dY = m_pdVector[1] - oVec.m_pdVector[1];
+	double dZ = m_pdVector[2] - oVec.m_pdVector[2];
+	return CVector3D(dX,dY,dZ);	
 } //operator -(const CVector3D & oVec) const
 
 CVector3D& CVector3D::operator -=(const CVector3D & oVec) {
@@ -129,27 +124,24 @@ CVector3D& CVector3D::operator -=(const CVector3D & oVec) {
 } //operator -=(const CVector3D & oVec)
 
 CVector3D CVector3D::operator -(void) const {
-	CVector3D vecResult;
-	vecResult.m_pdVector[0] = -m_pdVector[0];
-	vecResult.m_pdVector[1] = -m_pdVector[1];
-	vecResult.m_pdVector[2] = -m_pdVector[2];
-	return vecResult;
+	double dX = -m_pdVector[0];
+	double dY = -m_pdVector[1];
+	double dZ = -m_pdVector[2];
+	return CVector3D(dX,dY,dZ);	
 } //operator -(void) const
 
 CVector3D CVector3D::operator /(const double & dScalar) const {
-	CVector3D vecResult;
-	vecResult.m_pdVector[0] = m_pdVector[0] / dScalar;
-	vecResult.m_pdVector[1] = m_pdVector[1] / dScalar;
-	vecResult.m_pdVector[2] = m_pdVector[2] / dScalar;
-	return vecResult;	
+	double dX = m_pdVector[0] / dScalar;
+	double dY = m_pdVector[1] / dScalar;
+	double dZ = m_pdVector[2] / dScalar;
+	return CVector3D(dX,dY,dZ);	
 } //operator /(const double & dScalar) const
 
 CVector3D CVector3D::operator /(const CVector3D & oVec) const {
-	CVector3D vecResult;
-	vecResult.m_pdVector[0] = m_pdVector[0] / oVec.m_pdVector[0];
-	vecResult.m_pdVector[1] = m_pdVector[1] / oVec.m_pdVector[1];
-	vecResult.m_pdVector[2] = m_pdVector[2] / oVec.m_pdVector[2];
-	return vecResult;	
+	double dX = m_pdVector[0] / oVec.m_pdVector[0];
+	double dY = m_pdVector[1] / oVec.m_pdVector[1];
+	double dZ = m_pdVector[2] / oVec.m_pdVector[2];
+	return CVector3D(dX,dY,dZ);	
 } //operator /(const CVector3D & oVec) const
 
 CVector3D& CVector3D::operator /=(const double & dScalar) {
@@ -180,16 +172,14 @@ bool CVector3D::operator !=(const CVector3D & oVec) const
 //////////////////////////////////////////////////////////////////////
 
 CVector3D CVector3D::Cross(const CVector3D & oVec) const {
-	CVector3D vecResult;
-	vecResult.m_pdVector[0] = m_pdVector[1] * oVec.m_pdVector[2] - m_pdVector[2] * oVec.m_pdVector[1];
-	vecResult.m_pdVector[1] = m_pdVector[2] * oVec.m_pdVector[0] - m_pdVector[0] * oVec.m_pdVector[2];
-	vecResult.m_pdVector[2] = m_pdVector[0] * oVec.m_pdVector[1] - m_pdVector[1] * oVec.m_pdVector[0];
-	return vecResult;
+	double dX = m_pdVector[1] * oVec.m_pdVector[2] - m_pdVector[2] * oVec.m_pdVector[1];
+	double dY = m_pdVector[2] * oVec.m_pdVector[0] - m_pdVector[0] * oVec.m_pdVector[2];
+	double dZ = m_pdVector[0] * oVec.m_pdVector[1] - m_pdVector[1] * oVec.m_pdVector[0];
+	return CVector3D(dX,dY,dZ);
 } //Cross(const CVector3D & oVec) const
 
 double CVector3D::Dot(const CVector3D & oVec) const {
-	double dResult = 0.0F;
-	dResult += m_pdVector[0] * oVec.m_pdVector[0];
+	double dResult = m_pdVector[0] * oVec.m_pdVector[0];
 	dResult += m_pdVector[1] * oVec.m_pdVector[1];
 	dResult += m_pdVector[2] * oVec.m_pdVector[2];
 	return dResult;
@@ -212,12 +202,10 @@ CVector3D CVector3D::Normalise() const {
 } //Normalise() const
 
 CVector3D CVector3D::Rotate(const CAxisRotation & oRot) const {
-	CVector3D vecResult;
 	CQuaternion quatRotation(oRot);
 	CQuaternion quatVector(0, *this);
 	CQuaternion quatResult = quatRotation.Inverse() * quatVector * quatRotation;
-	vecResult = quatResult.GetVector();
-	return vecResult;
+	return quatResult.GetVector();
 } //Rotate(const CAxisRotation & oRot) const
 
 //////////////////////////////////////////////////////////////////////

@@ -7,7 +7,7 @@
 // AxisRotation.cpp - 12/04/2000 - James Smith
 //	Axis-Angle rotation implementation
 //
-// $Id: AxisRotation.cpp,v 1.2 2000/08/10 22:44:40 waz Exp $
+// $Id: AxisRotation.cpp,v 1.3 2000/11/22 00:44:36 waz Exp $
 //
 
 // Windows includes/defines
@@ -30,24 +30,29 @@ static char THIS_FILE[]=__FILE__;
 // CAxisRotation
 
 // Constructor - creates an null rotation
-CAxisRotation::CAxisRotation() {
-   m_oAxis.FromDouble(0,1,0);
-   m_dRotation = 0.0F;
+CAxisRotation::CAxisRotation() :
+   m_oAxis(0,1,0),
+   m_dRotation(0.0F)
+{
+   return;
 } //CAxisRotation()
 
 
 // Constructor - creates a rotation from double values
-CAxisRotation::CAxisRotation(const double & dX, const double & dY, const double & dZ, const double & dR) {
-	CVector3D oNewVec(dX, dY, dZ);
-	m_oAxis = oNewVec;
-	m_dRotation = dR;
+CAxisRotation::CAxisRotation(const double & dX, const double & dY, const double & dZ, const double & dR) :
+   m_oAxis(dX,dY,dZ),
+   m_dRotation(dR)
+{
+   return;
 } //CAxisRotation(const double & dX, const double & dY, const double & dZ, const double & dR)
 
 
 // Constructor - creates a rotation from a vector and a double rotation value
-CAxisRotation::CAxisRotation(const CVector3D & oVec, const double & dRot) {
-	m_oAxis = oVec;
-	m_dRotation = dRot;
+CAxisRotation::CAxisRotation(const CVector3D & oVec, const double & dRot) :
+   m_oAxis(oVec),
+   m_dRotation(dRot)
+{
+   return;
 } //CAxisRotation(const CVector3D & oVec, const double & dRot)
 
 
@@ -82,9 +87,11 @@ CAxisRotation::CAxisRotation(const CEulerRotation & oEuler) {
 } //CAxisRotation(const CEulerRotation & oEuler)
 
 // Copy Constructor
-CAxisRotation::CAxisRotation(const CAxisRotation & oRot) {
-	m_oAxis = oRot.m_oAxis;
-	m_dRotation = oRot.m_dRotation;
+CAxisRotation::CAxisRotation(const CAxisRotation & oRot) :
+   m_oAxis(oRot.m_oAxis),
+   m_dRotation(oRot.m_dRotation)
+{
+   return;
 } //CAxisRotation(const CAxisRotation & rot)
 
 
@@ -113,8 +120,7 @@ bool CAxisRotation::operator ==(const CAxisRotation& oRot) const {
 CAxisRotation CAxisRotation::MergeInside(CAxisRotation & oRot) const{
 	CQuaternion first(*this);
 	CQuaternion second(oRot);
-	CAxisRotation rotResult(first * second);
-	return rotResult;
+	return CAxisRotation(first * second);
 }
 
 
@@ -122,15 +128,13 @@ CAxisRotation CAxisRotation::MergeInside(CAxisRotation & oRot) const{
 CAxisRotation CAxisRotation::MergeOutside(CAxisRotation & oRot) const{
 	CQuaternion first(oRot);
 	CQuaternion second(*this);
-	CAxisRotation rotResult(first * second);
-	return rotResult;
+	return CAxisRotation(first * second);
 }
 
 
 // Normalises the vector of rotation
 CAxisRotation CAxisRotation::Normalise() const {
-	CAxisRotation rotResult(m_oAxis.Normalise(), m_dRotation);
-	return rotResult;
+	return CAxisRotation(m_oAxis.Normalise(), m_dRotation);
 } //Normalise() const
 
 

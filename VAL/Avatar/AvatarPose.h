@@ -7,7 +7,7 @@
 // AvatarPose.h - 21/2/2000 - James Smith
 //	Avatar pose class header
 //
-// $Id: AvatarPose.h,v 1.7 2000/11/21 16:38:08 waz Exp $
+// $Id: AvatarPose.h,v 1.8 2000/11/22 00:44:11 waz Exp $
 //
 
 #ifndef _VAL_AVATARPOSE_
@@ -65,8 +65,8 @@ public:
    virtual ~CAvatarPose();
 
    // Assignment Functions
-   void SetRootTranslation(CVector3D& vecTranslation);
-   void SetJointRotation(int iJoint, CAxisRotation& rotNewAngle);
+   void SetRootTranslation(const CVector3D& vecTranslation);
+   void SetJointRotation(int iJoint, const CAxisRotation& rotNewAngle);
 
    // Access Functions
 	int GetNumJoints() const;

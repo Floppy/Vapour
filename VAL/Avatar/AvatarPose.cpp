@@ -7,7 +7,7 @@
 // AvatarPose.cpp - 21/2/2000 - James Smith
 //	Avatar pose class implementation
 //
-// $Id: AvatarPose.cpp,v 1.5 2000/08/24 22:17:16 waz Exp $
+// $Id: AvatarPose.cpp,v 1.6 2000/11/22 00:44:11 waz Exp $
 //
 
 
@@ -28,66 +28,83 @@ static char THIS_FILE[]=__FILE__;
 // CAvatarPose
 
 // Copy Constructor
-CAvatarPose::CAvatarPose(const CAvatarPose& apOtherPose) {
-   m_iNumJoints = apOtherPose.m_iNumJoints;
+CAvatarPose::CAvatarPose(const CAvatarPose& apOtherPose) :
+   m_iNumJoints(0),
+   m_vecRootTranslation(apOtherPose.m_vecRootTranslation),
+   m_pJointRotations(NULL),
+   m_pSourceQuats(NULL),
+   m_pTargetQuats(NULL),
+   m_pTargetTranslation(NULL)
+{
+   NEWBEGIN
    m_pJointRotations = new CAxisRotation[m_iNumJoints];
-   m_vecRootTranslation = apOtherPose.m_vecRootTranslation;
-   for (int i=0; i<m_iNumJoints; i++) {
-      m_pJointRotations[i] = apOtherPose.m_pJointRotations[i];
+   NEWEND("CAvatarPose::CAvatarPose - copy constructor joint allocation");
+   if (m_pJointRotations != NULL) {
+      for (int i=0; i<m_iNumJoints; i++) {
+         m_pJointRotations[i] = apOtherPose.m_pJointRotations[i];
+      }
+      m_iNumJoints = apOtherPose.m_iNumJoints;
    }
-   m_pSourceQuats = NULL;
-   m_pTargetQuats = NULL;
-   m_pTargetTranslation = NULL;
    return;
 } //CAvatarPose(const CAvatarPose& apOtherPose)
 
-CAvatarPose::CAvatarPose(int iNumJoints) {
-   m_iNumJoints = iNumJoints;
-   m_pJointRotations = new CAxisRotation[m_iNumJoints];
-   m_pSourceQuats = NULL;
-   m_pTargetQuats = NULL;
-   m_pTargetTranslation = NULL;
+CAvatarPose::CAvatarPose(int iNumJoints) :
+   m_iNumJoints(0),
+   m_pJointRotations(NULL),
+   m_pSourceQuats(NULL),
+   m_pTargetQuats(NULL),
+   m_pTargetTranslation(NULL)
+{
+   NEWBEGIN
+   m_pJointRotations = new CAxisRotation[iNumJoints];
+   NEWEND("CAvatarPose::CAvatarPose - constructor joint allocation");
+   if (m_pJointRotations != NULL) {
+      m_iNumJoints = iNumJoints;
+   }
    return;
 } //CAvatarPose(int iNumJoints)
 
 // Loads a pose directly from a file
-CAvatarPose::CAvatarPose(const char* pszFilename) {
-   m_iNumJoints = 0;
-   m_pJointRotations = NULL;
-   m_pSourceQuats = NULL;
-   m_pTargetQuats = NULL;
-   m_pTargetTranslation = NULL;
+CAvatarPose::CAvatarPose(const char* pszFilename) :
+   m_iNumJoints(0),
+   m_pJointRotations(NULL),
+   m_pSourceQuats(NULL),
+   m_pTargetQuats(NULL),
+   m_pTargetTranslation(NULL)
+{
    Load(pszFilename);
    return;
 } //CAvatarPose(const char* pszFilename)
 
 // Loads a pose directly from a wedgie
-CAvatarPose::CAvatarPose(const char* pszFilename, CWedgie &oWedgie) {
-   m_iNumJoints = 0;
-   m_pJointRotations = NULL;
-   m_pSourceQuats = NULL;
-   m_pTargetQuats = NULL;
-   m_pTargetTranslation = NULL;
+CAvatarPose::CAvatarPose(const char* pszFilename, CWedgie &oWedgie) :
+   m_iNumJoints(0),
+   m_pJointRotations(NULL),
+   m_pSourceQuats(NULL),
+   m_pTargetQuats(NULL),
+   m_pTargetTranslation(NULL)
+{
    Load(pszFilename, oWedgie);
    return;
 }
 
 // Loads a pose directly from a stream
-CAvatarPose::CAvatarPose(ifstream& isInputStream) {
-   m_iNumJoints = 0;
-   m_pJointRotations = NULL;
-   m_pSourceQuats = NULL;
-   m_pTargetQuats = NULL;
-   m_pTargetTranslation = NULL;
+CAvatarPose::CAvatarPose(ifstream& isInputStream) :
+   m_iNumJoints(0),
+   m_pJointRotations(NULL),
+   m_pSourceQuats(NULL),
+   m_pTargetQuats(NULL),
+   m_pTargetTranslation(NULL)
+{
    Load(isInputStream);
    return;
 }
 
 CAvatarPose::~CAvatarPose() {
-   delete [] m_pJointRotations;
-   if (m_pSourceQuats != NULL) delete [] m_pSourceQuats;
-   if (m_pTargetQuats != NULL) delete [] m_pTargetQuats;
-   if (m_pTargetTranslation != NULL) delete m_pTargetTranslation;
+   if (m_pJointRotations != NULL)    delete [] m_pJointRotations;
+   if (m_pSourceQuats != NULL)       delete [] m_pSourceQuats;
+   if (m_pTargetQuats != NULL)       delete [] m_pTargetQuats;
+   if (m_pTargetTranslation != NULL) delete    m_pTargetTranslation;
    return;
 } //~CAvatarPose()
 
@@ -95,15 +112,15 @@ CAvatarPose::~CAvatarPose() {
 // Assignment/Access
 //////////////////////////////////////////////////////////////////////
 
-void CAvatarPose::SetRootTranslation(CVector3D& vecTranslation) {
+void CAvatarPose::SetRootTranslation(const CVector3D& vecTranslation) {
    m_vecRootTranslation = vecTranslation;
    return;
-} //SetRootTranslation(CVector3D& vecTranslation)
+} //SetRootTranslation(const CVector3D& vecTranslation)
 
-void CAvatarPose::SetJointRotation(int iJoint, CAxisRotation& rotNewAngle) {
+void CAvatarPose::SetJointRotation(int iJoint, const CAxisRotation& rotNewAngle) {
    if ((iJoint < m_iNumJoints) && (iJoint >= 0)) m_pJointRotations[iJoint] = rotNewAngle;
    return;
-} //SetJointRotation(unsigned int iJoint, CAxisRotation& rotNewAngle)
+} //SetJointRotation(unsigned int iJoint, const CAxisRotation& rotNewAngle)
 
 CVector3D CAvatarPose::GetRootTranslation(void) {
    return m_vecRootTranslation;
