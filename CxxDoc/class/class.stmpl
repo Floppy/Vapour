@@ -34,7 +34,7 @@ $(include:menu.stmpl)
 							$(ifset:parent:$(set:parent=$(parent).$(subst: :_:%arg%)))
 						$(else:$(set:parent=$(subst: :_:%arg%)))
 					)
-					<A HREF="../tree/$(parent).html">%arg%</A> .
+					<A HREF="$(docroot)/$(if:$viewmode=developer:developer)$(else:user)/tree/$(parent).html">%arg%</A> .
 				)
 			)
 			<B>$(FullName)</B>
@@ -55,6 +55,14 @@ $(include:menu.stmpl)
 				</P></TD></TR>
 			</TABLE>
 			
+			<P CLASS="CLASSHEADING">Architecture</P>
+			<?php
+				$doc_path = "$(docpath)";
+				include_once("vsrcdoc_core.php");
+				
+				make_arch_class_list("$(file)");
+			?>
+
 			$(include:info.stmpl)
 			
 			$(ifany:inherit:
