@@ -5,7 +5,7 @@
 # script to check out the source modules and build docs for each supported arch
 
 # 13/09/2001 - Warren Moore
-# $Id: create_docs.pl,v 1.15 2001/09/24 13:35:21 vap-warren Exp $
+# $Id: create_docs.pl,v 1.16 2001/09/26 01:32:40 vap-warren Exp $
 # Copyright 2000-2001 Vapour Technology Ltd.
 
 # bring in the environment vars
@@ -82,7 +82,7 @@ ARCH_READ_SKIP: while (<ARCH_LIST>) {
 	# remove any trailing newlines
 	chomp;
 	# look for the values, and push them onto the correct lists
-	if (/^([\w\d]+)\s+(.+)$/ && $1 ne "noarch") {
+	if (/^([\w\d]+)\s+(.+)$/) {
 		push @arch, $1;
 		push @arch_desc, $2;
 		# also, write the data to the site arch list
