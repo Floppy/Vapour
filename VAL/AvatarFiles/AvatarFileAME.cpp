@@ -7,7 +7,7 @@
 // AvatarFileAME.cpp - 17/06/2000 - James Smith
 //	AME import filter implementation
 //
-// $Id: AvatarFileAME.cpp,v 1.11 2000/11/29 21:17:50 james Exp $
+// $Id: AvatarFileAME.cpp,v 1.12 2000/11/29 22:06:18 james Exp $
 //
 
 #include "stdafx.h"
@@ -162,7 +162,7 @@ CAvatar* CAvatarFileAME::Load(const char* pszFilename) const {
                   int iHeight = 0;
                   pNewImage->GetSize(iWidth, iHeight);
                   // If not, we have either run out of memory or got bad data
-                  if ((iWidth & iHeight) == 0) {
+                  if ((iWidth | iHeight) == 0) {
                      delete pNewImage;
                      pNewImage = NULL;
                      if ((AMeModel.TextureArr[t].ptrRGBData == 0) || 
