@@ -236,7 +236,7 @@ BOOL CDizzyDialog::OnInitDialog()
 
 	// Set up numeric edit controls
 	m_InputBox.SubclassDlgItem(IDC_INPUT_BOX,this);
-	m_InputBox.setNumEntries(4);
+	m_InputBox.SetOptions(4);
 
 	// Enable tooltips
 	EnableToolTips(TRUE);
