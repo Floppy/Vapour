@@ -12,9 +12,6 @@ Package=<5>
 Package=<4>
 {{{
     Begin Project Dependency
-    Project_Dep_Name gd
-    End Project Dependency
-    Begin Project Dependency
     Project_Dep_Name VAL
     End Project Dependency
 }}}
@@ -22,18 +19,6 @@ Package=<4>
 ###############################################################################
 
 Project: "VAL"=..\VAL\VAL.dsp - Package Owner=<4>
-
-Package=<5>
-{{{
-}}}
-
-Package=<4>
-{{{
-}}}
-
-###############################################################################
-
-Project: "gd"=.\gd\gd.dsp - Package Owner=<4>
 
 Package=<5>
 {{{

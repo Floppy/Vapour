@@ -79,11 +79,6 @@ BSC32=bscmake.exe
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:console /debug /machine:I386 /pdbtype:sept
 # ADD LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:console /debug /machine:I386 /nodefaultlib:"libcd.lib" /nodefaultlib:"nafxcwd.lib" /pdbtype:sept
-# Begin Special Build Tool
-SOURCE="$(InputPath)"
-PostBuild_Desc=Copy out app
-PostBuild_Cmds=copy debug\counter.exe c:\progra~1\apache\cgi-bin
-# End Special Build Tool
 
 !ENDIF 
 
@@ -98,10 +93,18 @@ PostBuild_Cmds=copy debug\counter.exe c:\progra~1\apache\cgi-bin
 
 SOURCE=.\counter.cpp
 # End Source File
+# Begin Source File
+
+SOURCE=.\gd.cpp
+# End Source File
 # End Group
 # Begin Group "Header Files"
 
 # PROP Default_Filter "h;hpp;hxx;hm;inl"
+# Begin Source File
+
+SOURCE=.\gd.h
+# End Source File
 # End Group
 # Begin Group "Resource Files"
 
