@@ -5,6 +5,7 @@
 # script to check out the source modules and build docs for each supported arch
 
 # 13/09/2001 - Warren Moore
+# $Id: create_docs.pl,v 1.10 2001/09/16 23:52:33 vap-warren Exp $
 # Copyright 2000-2001 Vapour Technology Ltd.
 
 # bring in the environment vars
@@ -64,6 +65,12 @@ if (not open (ARCH_LIST, "<VArch/arch.list")) {
 	error("Unable to open arch.list");
 }
 
+# open the doc site arch list
+my $web_listname = $VALET_DOCROOT . "arch.list";
+if (not open (WEB_ARCH_LIST, ">$web_listname")) {
+	error("Unable to open web arch list");
+}
+
 # read through the list
 my @arch;
 my @arch_desc;
@@ -77,11 +84,14 @@ ARCH_READ_SKIP: while (<ARCH_LIST>) {
 	if (/^([\w\d]+)\s+(.+)$/ && $1 ne "noarch") {
 		push @arch, $1;
 		push @arch_desc, $2;
+		# also, write the data to the site arch list
+		print WEB_ARCH_LIST "$1\t$2\n";
 	}
 }
 
-# all done, close the list
+# all done, close the lists
 close(ARCH_LIST);
+close(WEB_ARCH_LIST);
 
 # make the eht directory
 if (not mkdir "eht", 0700) {
@@ -99,6 +109,8 @@ foreach my $mod_name (@modules) {
 	}
 	
 	#=== run vmake to generate noarch source tree
+	# using pseudo-VMake make targets
+	`cd $mod_fullname && make vmake_noarch && cd ../..`;
 	
 	# pull all the eht's in the dir
 	my $find_results = `find . -name '$mod_fullname/*.eht'`;
@@ -107,9 +119,7 @@ foreach my $mod_name (@modules) {
 		`cp $find_results eht`;
 	}
 	# run CxxDoc for the default architecture
-	# NOTE: use back ticks
-	print "CxxDoc -pn $proj_name -o $VALET_DOCROOT -p $mod_prefix -i $mod_prefix -eht eht -tc class -td docnode > /dev/null 2>&1";
-	print "\n";
+	`CxxDoc -pn $proj_name -o $VALET_DOCROOT -p $mod_prefix -i $mod_prefix -eht eht -tc class -td docnode > /dev/null 2>&1`;
 }
 
 # build source trees for each arch and generate doc trees
@@ -132,12 +142,14 @@ foreach my $arch_name (@arch) {
 		}
 		
 		#=== run vmake to generate the relevant source tree
+		# using pseudo-VMake make targets
+		my $make_target = "vmake_$arch_name";
+		`cd $mod_fullname && make $make_target && cd ../..`;
 		
 	}
 
 	# run CxxDoc to generate the doc tree in the right place
 	# NOTE: use back ticks
 	my $doc_root = $VALET_DOCROOT . "arch/" . $arch_name;
-	print "CxxDoc -pn $proj_name -o $doc_root -p $mod_prefix -i $mod_prefix -eht eht -tc class -td docnode > /dev/null 2>&1";
-	print "\n";
+	`CxxDoc -pn $proj_name -o $doc_root -p $mod_prefix -i $mod_prefix -eht eht -tc class -td docnode > /dev/null 2>&1`;
 }
