@@ -7,7 +7,7 @@
 // Vector3d.h - 18/05/2000 - James Smith
 //	3D vector class header
 //
-// $Id: Vector3D.h,v 1.4 2000/07/31 17:40:21 waz Exp $
+// $Id: Vector3D.h,v 1.5 2000/11/21 16:39:24 waz Exp $
 //
 
 #ifndef _VAL_VECTOR3D_
@@ -19,22 +19,22 @@
 #include "Point3D.h"
 
 // DLL import/export definitions
-#ifndef DLL_IMP_EXP
-	#ifdef _EXP_VAPOUR_COMMON_DLL_
-		#define DLL_IMP_EXP __declspec(dllexport)
+#ifndef DLL
+	#ifdef VAL_DLL_EXPORT
+		#define DLL __declspec(dllexport)
 	#endif
-	#ifdef _IMP_VAPOUR_COMMON_DLL_
-		#define DLL_IMP_EXP __declspec(dllimport)
+	#ifdef VAL_DLL_IMPORT
+		#define DLL __declspec(dllimport)
 	#endif
-	#ifndef DLL_IMP_EXP
-		#define DLL_IMP_EXP
+	#ifndef DLL
+		#define DLL
 	#endif
 #endif
 
 // Class declarations
 class CAxisRotation;
 
-class DLL_IMP_EXP CVector3D {
+class DLL CVector3D {
 
 protected:
 

@@ -7,7 +7,7 @@
 // EulerRotation.h - 12/04/2000 - James Smith
 //	Euler rotation class header
 //
-// $Id: EulerRotation.h,v 1.3 2000/08/21 23:07:50 waz Exp $
+// $Id: EulerRotation.h,v 1.4 2000/11/21 16:38:31 waz Exp $
 //
 
 #ifndef _VAL_EULERROTATION_
@@ -28,21 +28,21 @@ class CEulerRotation;
 #define Z_AXIS 0x2
 
 // DLL import/export definitions
-#ifndef DLL_IMP_EXP
-	#ifdef _EXP_VAPOUR_COMMON_DLL_
-		#define DLL_IMP_EXP __declspec(dllexport)
+#ifndef DLL
+	#ifdef VAL_DLL_EXPORT
+		#define DLL __declspec(dllexport)
 	#endif
-	#ifdef _IMP_VAPOUR_COMMON_DLL_
-		#define DLL_IMP_EXP __declspec(dllimport)
+	#ifdef VAL_DLL_IMPORT
+		#define DLL __declspec(dllimport)
 	#endif
-	#ifndef DLL_IMP_EXP
-		#define DLL_IMP_EXP
+	#ifndef DLL
+		#define DLL
 	#endif
 #endif
 
 // Definitions of Euler angle types
 // Allows angles to be specified as encoding or ordering
-enum DLL_IMP_EXP EulerType {
+enum DLL EulerType {
 	// Type specified as encoding
 	XEDS = 0x00,
 	XEDR = 0x01,
@@ -97,7 +97,7 @@ enum DLL_IMP_EXP EulerType {
 
 // Euler Type Structure. This can be used as an EulerType, 
 // or the individual properties can eb extracted
-union DLL_IMP_EXP UEulerType {
+union DLL UEulerType {
 	EulerType m_eIdentifier;
 	struct SEulerTypeProperties {
 		bool m_bRotatingFrame : 1;
@@ -108,7 +108,7 @@ union DLL_IMP_EXP UEulerType {
 };
 
 // Euler Rotation class
-class DLL_IMP_EXP CEulerRotation {
+class DLL CEulerRotation {
 
 public:
 

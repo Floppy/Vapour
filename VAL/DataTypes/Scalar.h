@@ -7,7 +7,7 @@
 // Scalar.h - 10/08/2000 - James Smith
 //	Scalar value class header
 //
-// $Id: Scalar.h,v 1.0 2000/08/18 12:03:32 waz Exp $
+// $Id: Scalar.h,v 1.1 2000/11/21 16:39:16 waz Exp $
 //
 
 #ifndef _VAL_SCALAR_
@@ -16,19 +16,19 @@
 #pragma once
 
 // DLL import/export definitions
-#ifndef DLL_IMP_EXP
-	#ifdef _EXP_VAPOUR_COMMON_DLL_
-		#define DLL_IMP_EXP __declspec(dllexport)
+#ifndef DLL
+	#ifdef VAL_DLL_EXPORT
+		#define DLL __declspec(dllexport)
 	#endif
-	#ifdef _IMP_VAPOUR_COMMON_DLL_
-		#define DLL_IMP_EXP __declspec(dllimport)
+	#ifdef VAL_DLL_IMPORT
+		#define DLL __declspec(dllimport)
 	#endif
-	#ifndef DLL_IMP_EXP
-		#define DLL_IMP_EXP
+	#ifndef DLL
+		#define DLL
 	#endif
 #endif
 
-class DLL_IMP_EXP CScalar {
+class DLL CScalar {
 protected:
 	double m_dScalar;
 public:

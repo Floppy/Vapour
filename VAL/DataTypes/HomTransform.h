@@ -7,7 +7,7 @@
 // HomTransform.h - 12/04/2000 - James Smith
 //	Homogeneous transformation matrix header
 //
-// $Id: HomTransform.h,v 1.2 2000/06/17 10:42:14 waz Exp $
+// $Id: HomTransform.h,v 1.3 2000/11/21 16:38:38 waz Exp $
 //
 
 #ifndef _VAL_HOMTRANSFORM_
@@ -25,19 +25,19 @@ class CHomTransform;
 #include "Quaternion.h"
 
 // DLL import/export definitions
-#ifndef DLL_IMP_EXP
-	#ifdef _EXP_VAPOUR_COMMON_DLL_
-		#define DLL_IMP_EXP __declspec(dllexport)
+#ifndef DLL
+	#ifdef VAL_DLL_EXPORT
+		#define DLL __declspec(dllexport)
 	#endif
-	#ifdef _IMP_VAPOUR_COMMON_DLL_
-		#define DLL_IMP_EXP __declspec(dllimport)
+	#ifdef VAL_DLL_IMPORT
+		#define DLL __declspec(dllimport)
 	#endif
-	#ifndef DLL_IMP_EXP
-		#define DLL_IMP_EXP
+	#ifndef DLL
+		#define DLL
 	#endif
 #endif
 
-class DLL_IMP_EXP CHomTransform {
+class DLL CHomTransform {
 
 public:
 

@@ -7,7 +7,7 @@
 // AvatarFileStore.h - 16/03/2000 - James Smith
 //	Avatar import/export filter speciality store header
 //
-// $Id: AvatarFileStore.h,v 1.2 2000/06/17 10:42:10 waz Exp $
+// $Id: AvatarFileStore.h,v 1.3 2000/11/21 16:40:13 waz Exp $
 //
 
 #pragma once
@@ -21,15 +21,15 @@
 #include "AvatarFile.h"
 
 // DLL import/export definitions
-#ifndef DLL_IMP_EXP
-	#ifdef _EXP_VAPOUR_COMMON_DLL_
-		#define DLL_IMP_EXP __declspec(dllexport)
+#ifndef DLL
+	#ifdef VAL_DLL_EXPORT
+		#define DLL __declspec(dllexport)
 	#endif
-	#ifdef _IMP_VAPOUR_COMMON_DLL_
-		#define DLL_IMP_EXP __declspec(dllimport)
+	#ifdef VAL_DLL_IMPORT
+		#define DLL __declspec(dllimport)
 	#endif
-	#ifndef DLL_IMP_EXP
-		#define DLL_IMP_EXP
+	#ifndef DLL
+		#define DLL
 	#endif
 #endif
 
@@ -46,7 +46,7 @@ bool CompareFilters(const CAvatarFileProxyBase* pFilterOne ,const CAvatarFilePro
 ////////////////////
 // CAvatarFileStore
 
-class DLL_IMP_EXP CAvatarFileStore {
+class DLL CAvatarFileStore {
 
 private:
 	void Init();

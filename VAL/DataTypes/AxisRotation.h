@@ -7,7 +7,7 @@
 // AxisRotation.h - 12/04/2000 - James Smith
 //	Axis-Angle rotation header
 //
-// $Id: AxisRotation.h,v 1.3 2000/08/10 22:44:40 waz Exp $
+// $Id: AxisRotation.h,v 1.4 2000/11/21 16:38:24 waz Exp $
 //
 
 #ifndef _VAL_AXISROTATION_
@@ -23,19 +23,19 @@ class CAxisRotation;
 #include "Quaternion.h"
 
 // DLL import/export definitions
-#ifndef DLL_IMP_EXP
-	#ifdef _EXP_VAPOUR_COMMON_DLL_
-		#define DLL_IMP_EXP __declspec(dllexport)
+#ifndef DLL
+	#ifdef VAL_DLL_EXPORT
+		#define DLL __declspec(dllexport)
 	#endif
-	#ifdef _IMP_VAPOUR_COMMON_DLL_
-		#define DLL_IMP_EXP __declspec(dllimport)
+	#ifdef VAL_DLL_IMPORT
+		#define DLL __declspec(dllimport)
 	#endif
-	#ifndef DLL_IMP_EXP
-		#define DLL_IMP_EXP
+	#ifndef DLL
+		#define DLL
 	#endif
 #endif
 
-class DLL_IMP_EXP CAxisRotation {
+class DLL CAxisRotation {
 public:
 	// Construction & Destruction functions ///////////////////////////////
 

@@ -7,7 +7,7 @@
 // AvatarFile.h - 18/05/2000 - James Smith
 //	Import/Export filter base class header
 //
-// $Id: AvatarFile.h,v 1.3 2000/08/02 18:05:07 waz Exp $
+// $Id: AvatarFile.h,v 1.4 2000/11/21 16:37:42 waz Exp $
 //
 
 #pragma once
@@ -19,22 +19,22 @@
 #include <fstream.h>
 
 // DLL import/export definitions
-#ifndef DLL_IMP_EXP
+#ifndef DLL
 	#ifdef _VAPOUR_EXPORT_DLL_
-		#define DLL_IMP_EXP __declspec(dllexport)
+		#define DLL __declspec(dllexport)
 	#endif
 	#ifdef _VAPOUR_IMPORT_DLL_
-		#define DLL_IMP_EXP __declspec(dllimport)
+		#define DLL __declspec(dllimport)
 	#endif
-	#ifndef DLL_IMP_EXP
-		#define DLL_IMP_EXP
+	#ifndef DLL
+		#define DLL
 	#endif
 #endif
 
 ////////////////
 // CAvatarFile
 
-class DLL_IMP_EXP CAvatarFile {
+class DLL CAvatarFile {
 public:
 	CAvatarFile() {};
 

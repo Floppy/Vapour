@@ -7,7 +7,7 @@
 // RenderContextStore.h - 05/10/2000 - Warren Moore
 //	Render Context selection speciality store header
 //
-// $Id: RenderContextStore.h,v 1.1 2000/10/06 13:04:44 waz Exp $
+// $Id: RenderContextStore.h,v 1.2 2000/11/21 16:39:05 waz Exp $
 //
 
 #pragma once
@@ -19,15 +19,15 @@
 #include <vector>
 
 // DLL import/export definitions
-#ifndef DLL_IMP_EXP
-	#ifdef _EXP_VAPOUR_COMMON_DLL_
-		#define DLL_IMP_EXP __declspec(dllexport)
+#ifndef DLL
+	#ifdef VAL_DLL_EXPORT
+		#define DLL __declspec(dllexport)
 	#endif
-	#ifdef _IMP_VAPOUR_COMMON_DLL_
-		#define DLL_IMP_EXP __declspec(dllimport)
+	#ifdef VAL_DLL_IMPORT
+		#define DLL __declspec(dllimport)
 	#endif
-	#ifndef DLL_IMP_EXP
-		#define DLL_IMP_EXP
+	#ifndef DLL
+		#define DLL
 	#endif
 #endif
 
@@ -51,7 +51,7 @@ typedef std::vector<SRCOptionTuple> RCOptionListVector;
 ////////////////////////
 // CRenderContextStore
 
-class DLL_IMP_EXP CRenderContextStore {
+class DLL CRenderContextStore {
 public:
 //#===--- External Functions
 	CRenderContextStore() { m_pParentStore=NULL; };

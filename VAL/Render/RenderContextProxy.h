@@ -7,7 +7,7 @@
 // RenderContextProxy.h - 05/10/2000 - Warren Moore
 //	Render context selection speciality store proxy header
 //
-// $Id: RenderContextProxy.h,v 1.1 2000/10/06 13:04:43 waz Exp $
+// $Id: RenderContextProxy.h,v 1.2 2000/11/21 16:38:59 waz Exp $
 //
 
 #pragma once
@@ -26,15 +26,15 @@
 extern CRenderContextStore g_oRenderContextStore;
 
 // DLL import/export definitions
-#ifndef DLL_IMP_EXP
-	#ifdef _EXP_VAPOUR_COMMON_DLL_
-		#define DLL_IMP_EXP __declspec(dllexport)
+#ifndef DLL
+	#ifdef VAL_DLL_EXPORT
+		#define DLL __declspec(dllexport)
 	#endif
-	#ifdef _IMP_VAPOUR_COMMON_DLL_
-		#define DLL_IMP_EXP __declspec(dllimport)
+	#ifdef VAL_DLL_IMPORT
+		#define DLL __declspec(dllimport)
 	#endif
-	#ifndef DLL_IMP_EXP
-		#define DLL_IMP_EXP
+	#ifndef DLL
+		#define DLL
 	#endif
 #endif
 
@@ -55,7 +55,7 @@ public:
 // CRenderContextProxy Template
 
 template <class T>
-class DLL_IMP_EXP CRenderContextProxy : public CRenderContextProxyBase {
+class DLL CRenderContextProxy : public CRenderContextProxyBase {
 public:
 	CRenderContext* CreateObject() const { 
 		T *pT = NULL;

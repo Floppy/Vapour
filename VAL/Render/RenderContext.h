@@ -7,7 +7,7 @@
 // RenderContext.h - 23/07/2000 - Warren Moore
 //	Base class for render contexts
 //
-// $Id: RenderContext.h,v 1.5 2000/10/10 17:53:46 waz Exp $
+// $Id: RenderContext.h,v 1.6 2000/11/21 16:37:53 waz Exp $
 //
 
 #ifndef _VAL_RENDERCONTEXT_
@@ -112,15 +112,15 @@ enum RCRESULT {
 	"Unknown error", \
 
 // DLL import/export definitions
-#ifndef DLL_IMP_EXP
+#ifndef DLL
 	#ifdef _VAPOUR_EXPORT_DLL_
-		#define DLL_IMP_EXP __declspec(dllexport)
+		#define DLL __declspec(dllexport)
 	#endif
 	#ifdef _VAPOUR_IMPORT_DLL_
-		#define DLL_IMP_EXP __declspec(dllimport)
+		#define DLL __declspec(dllimport)
 	#endif
-	#ifndef DLL_IMP_EXP
-		#define DLL_IMP_EXP
+	#ifndef DLL
+		#define DLL
 	#endif
 #endif
 

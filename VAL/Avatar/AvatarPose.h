@@ -7,7 +7,7 @@
 // AvatarPose.h - 21/2/2000 - James Smith
 //	Avatar pose class header
 //
-// $Id: AvatarPose.h,v 1.6 2000/08/24 22:17:32 waz Exp $
+// $Id: AvatarPose.h,v 1.7 2000/11/21 16:38:08 waz Exp $
 //
 
 #ifndef _VAL_AVATARPOSE_
@@ -26,15 +26,15 @@ class CAvatarPose;
 #include "Wedgie.h"
 
 // DLL import/export definitions
-#ifndef DLL_IMP_EXP
-	#ifdef _EXP_VAPOUR_COMMON_DLL_
-		#define DLL_IMP_EXP __declspec(dllexport)
+#ifndef DLL
+	#ifdef VAL_DLL_EXPORT
+		#define DLL __declspec(dllexport)
 	#endif
-	#ifdef _IMP_VAPOUR_COMMON_DLL_
-		#define DLL_IMP_EXP __declspec(dllimport)
+	#ifdef VAL_DLL_IMPORT
+		#define DLL __declspec(dllimport)
 	#endif
-	#ifndef DLL_IMP_EXP
-		#define DLL_IMP_EXP
+	#ifndef DLL
+		#define DLL
 	#endif
 #endif
 
@@ -42,7 +42,7 @@ class CAvatarPose;
 // CAvatarPose
 //////////////////////////////////////////////////////////////////
 
-class DLL_IMP_EXP CAvatarPose {
+class DLL CAvatarPose {
 
 public:
 
