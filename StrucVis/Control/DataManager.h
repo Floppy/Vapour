@@ -7,7 +7,7 @@
 // DataManager.h
 // 19/03/2002 - James Smith
 //
-// $Id: DataManager.h,v 1.8 2002/03/27 02:20:38 vap-james Exp $
+// $Id: DataManager.h,v 1.9 2002/03/27 15:11:18 vap-james Exp $
 
 #ifndef __VTSTRUCVIS_DATAMANAGER__
 #define __VTSTRUCVIS_DATAMANAGER__
@@ -128,12 +128,13 @@ protected:
    std::vector<CGroup> m_oGroups;
    // Group information
 
-   unsigned int m_iCurrentFrame;
-   // Current frame (temporary hack for testing)
-
    CRootChunk m_oRoot;
    // The root chunk of the file. 
    // Contains the complete TOC.
+
+   unsigned int m_iNumBeams;
+   unsigned int m_iNumSlabs;
+   // beam & slab counters
 
    CChunk* m_pChunk;
    // Temporary chunk storage
