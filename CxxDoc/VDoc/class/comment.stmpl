@@ -8,22 +8,21 @@ $(ident:
 	)
 	</P>
 	$(ifset:param:
-		<P CLASS="CLASSPARAM"><B>PARAMETERS</B></P>
-		$(ident:<P CLASS="CLASSPARAM"><B>$(subst: - :</B> = :$(subst:
+		<P CLASS=CLASSPARAM><B>PARAMETERS</B></P>
+		$(ident:<P CLASS=CLASSPARAM><B>$(subst: - :</B> = :$(subst:
 :<BR><B>:$(param)))</B></P>)
 		
 	)
 	$(ifset:return:
-		<P CLASS="CLASSPARAM"><B>RETURNS</B></P>
-		$(ident:<P CLASS="CLASSPARAM">$(return)</P>)
+		<P CLASS=CLASSPARAM><B>RETURNS</B></P>$(ident:<P CLASS=CLASSPARAM>$(return)</P>)
 		
 	)
 	$(ifset:bug:
-		<P CLASS="CLASSBUG"><B>BUGS</B></P>$(ident:<P CLASS="CLASSBUG">$(list:$(bug))</P>)
+		<P CLASS=CLASSBUG><B>BUGS</B></P>$(ident:<P CLASS=CLASSBUG>$(list:$(bug))</P>)
 	)
 	$(if:$viewmode=developer:
 		$(ifset:todo:
-			<P CLASS="CLASSTODO"><B>TO DO</B></P>$(ident:<P CLASS="CLASSTODO">$(list:$(todo))</P>)
+			<P CLASS=CLASSTODO><B>TO DO</B></P>$(ident:<P CLASS=CLASSTODO>$(list:$(todo))</P>)
 		)
 	)
 	$(ifset:section:

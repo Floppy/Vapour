@@ -3,19 +3,19 @@
 
 <!-- FILENAME:$(file) -->
 
-<P CLASS="CLASSHEADING">File Info</P>
-<TABLE BORDER="0" CELLPADDING="2" CELLSPACING="2">
-	$(if:$NodeType!=namespace:<TR><TD BGCOLOR="#C0C0C0"><P><B>In Scope</B></P></TD><TD BGCOLOR="#C0C0F0"><P><A HREF="$(docroot)/$(if:$viewmode=developer:developer)$(else:user)/class/$(ParentScope).html">$(ParentScope)</A></P></TD></TR>)
-	$(ifset:lib:<TR><TD BGCOLOR="#C0C0C0"><P><B>Library</B></P></TD><TD BGCOLOR="#C0C0F0"><P>$(lib)</P></TD></TR>)
-	$(ifset:file:<TR><TD BGCOLOR="#C0C0C0"><P><B>File</B></P></TD><TD BGCOLOR="#C0C0F0"><P>$(file)</P></TD></TR>)
-	$(ifset:cvsid:<TR><TD BGCOLOR="#C0C0C0"><P><B>Version</B></P></TD><TD BGCOLOR="#C0C0F0"><P>$(cvsid)</P></TD></TR>)
-	$(ifset:author:<TR><TD BGCOLOR="#C0C0C0"><P><B>Author</B></P></TD><TD BGCOLOR="#C0C0F0"><P>$(author)</P></TD></TR>)
-	$(ifset:date:<TR><TD BGCOLOR="#C0C0C0"><P><B>Created</B></P></TD><TD BGCOLOR="#C0C0F0"><P>$(date)</P></TD></TR>)
-	$(ifset:userlevel:<TR><TD BGCOLOR="#C0C0C0"><P><B>User Level</B></P></TD><TD BGCOLOR="#C0C0F0"><P>$(userlevel)</P></TD></TR>)
-	$(ifset:example:<TR><TD BGCOLOR="#C0C0C0"><P><B>Example Source</B></P></TD><TD BGCOLOR="#C0C0F0"><P>$(example)</P></TD></TR>)
+<P CLASS=CLASSHEADING>File Info</P>
+<TABLE BORDER=0 CELLPADDING=2 CELLSPACING=2>
+	$(if:$NodeType!=namespace:<TR><TD BGCOLOR="#C0C0C0"><B>In Scope</B></TD><TD BGCOLOR="#C0C0F0"><A HREF="$(docroot)/$(if:$viewmode=developer:developer)$(else:user)/class/$(ParentScope).html">$(ParentScope)</A></TD></TR>)
+	$(ifset:lib:<TR><TD BGCOLOR="#C0C0C0"><B>Library</B></TD><TD BGCOLOR="#C0C0F0">$(lib)</TD></TR>)
+	$(ifset:file:<TR><TD BGCOLOR="#C0C0C0"><B>File</B></TD><TD BGCOLOR="#C0C0F0">$(file)</TD></TR>)
+	$(ifset:cvsid:<TR><TD BGCOLOR="#C0C0C0"><B>Version</B></TD><TD BGCOLOR="#C0C0F0">$(cvsid)</TD></TR>)
+	$(ifset:author:<TR><TD BGCOLOR="#C0C0C0"><B>Author</B></TD><TD BGCOLOR="#C0C0F0">$(author)</TD></TR>)
+	$(ifset:date:<TR><TD BGCOLOR="#C0C0C0"><B>Created</B></TD><TD BGCOLOR="#C0C0F0">$(date)</TD></TR>)
+	$(ifset:userlevel:<TR><TD BGCOLOR="#C0C0C0"><B>User Level</B></TD><TD BGCOLOR="#C0C0F0">$(userlevel)</TD></TR>)
+	$(ifset:example:<TR><TD BGCOLOR="#C0C0C0"><B>Example Source</B></TD><TD BGCOLOR="#C0C0F0">$(example)</TD></TR>)
 </TABLE>
 
-<P CLASS="CLASSHEADING">Architecture</P>
+<P CLASS=CLASSHEADING>Architecture</P>
 <?php
 	$doc_path = "$(docpath)";
 	include_once("vsrcdoc_core.php");
@@ -24,18 +24,18 @@
 ?>
 
 $(ifset:detail:
-	<P CLASS="CLASSHEADING">Description</P>
+	<P CLASS=CLASSHEADING>Description</P>
 	<P>$(list:$(detail))</P>
 )
 
 $(ifset:classbug:
-	<P CLASS="CLASSHEADING">Known Bugs</P>
-	$(ident:<P CLASS="CLASSBUG">$(list:$(classbug))</P>)
+	<P CLASS=CLASSHEADING>Known Bugs</P>
+	$(ident:<P CLASS=CLASSBUG>$(list:$(classbug))</P>)
 )
 
 $(if:$viewmode=developer:
 	$(ifset:classtodo:
-		<P CLASS="CLASSHEADING">To Do List</P>
+		<P CLASS=CLASSHEADING>To Do List</P>
 		$(ident:<P>$(list:$(classtodo))</P>)
 	)
 )

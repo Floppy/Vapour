@@ -3,20 +3,20 @@ $(silent:
 	$(define:chk_header:
 		$(if:$filename!=$lastFilename:
 			$(set:lastFilename=$(filename))
-			<TABLE WIDTH="100%" BORDER="0" CELLPADDING="0" CELLSPACING="0">
-			<TR><TD BGCOLOR="#C0C0F0" BACKGROUND="/pics/docbarback.gif"><P><B>#include "$(filename)"</B></P></TD></TR>
+			<TABLE WIDTH="100%" BORDER=0 CELLPADDING=0 CELLSPACING=0>
+			<TR><TD BGCOLOR="#C0C0F0" BACKGROUND="/pics/docbarback.gif"><B>#include "$(filename)"</B></TD></TR>
 			</TABLE>
 		)
 	)
 )
 
-$(ifany:namespace:<P CLASS="CLASSHEADING">Child namespaces</P>
+$(ifany:namespace:<P CLASS=CLASSHEADING>Child namespaces</P>
 	$(forall:namespace:
 		$(ident:<P><A HREF="$(MakeFilename:%.html)">$(ObjectName)</A> - $(brief)</P>)
 	)
 )
 
-$(ifany:class:<P CLASS="CLASSHEADING">Child Classes</P>
+$(ifany:class:<P CLASS=CLASSHEADING>Child Classes</P>
 	$(set:lastFilename=.)
 	$(forall:class:
 		$(checkview:
@@ -25,7 +25,7 @@ $(ifany:class:<P CLASS="CLASSHEADING">Child Classes</P>
 	)
 )
 
-$(ifany:enum:<P CLASS="CLASSHEADING">Enumerated types</P>
+$(ifany:enum:<P CLASS=CLASSHEADING>Enumerated types</P>
 	$(set:lastFilename=.)
 	$(forall:enum:
 		$(checkview:
@@ -35,7 +35,7 @@ $(ifany:enum:<P CLASS="CLASSHEADING">Enumerated types</P>
 	)
 )
 
-$(ifany:typedef:<P CLASS="CLASSHEADING">Typedefs</P>
+$(ifany:typedef:<P CLASS=CLASSHEADING>Typedefs</P>
 	$(set:lastFilename=.)
 	$(forall:typedef:
 		$(checkview:
@@ -47,7 +47,7 @@ $(ifany:typedef:<P CLASS="CLASSHEADING">Typedefs</P>
 
 $(ifany:variable:
 	$(set:lastFilename=.)
-	<P CLASS="CLASSHEADING">Variables</P>
+	<P CLASS=CLASSHEADING>Variables</P>
 	$(forall:variable:
 		$(checkview:
 			$(chk_header:)$(ident:<P>$(datatype) <B>$(ObjectName)</B>;</P>
@@ -58,14 +58,14 @@ $(ifany:variable:
 
 $(ifany:$methodtype,$NodeType=method:
 	$(set:lastFilename=.)
-	<P CLASS="CLASSHEADING">Methods</P>
+	<P CLASS=CLASSHEADING>Methods</P>
 	$(forall:$methodtype,$NodeType=method|$NodeType=docnode:
 		$(if:$NodeType=method:
 			$(checkview:$(chk_header:)
 			$(include:method.stmpl))
 		)
 		$(else:$(ident:
-			<P CLASS="CLASSHEADING"><B>$(brief)</B></P>
+			<P CLASS=CLASSHEADING><B>$(brief)</B></P>
 			$(ifset:detail:
 				$(if:$detail!=:
 					<P>
@@ -74,11 +74,11 @@ $(ifany:$methodtype,$NodeType=method:
 				)
 			)
 			$(ifset:bug:
-				<P CLASS="CLASSBUG"><B>BUGS</B><BR>$(ident:<P CLASS="CLASSBUG">$(list:$(bug))</P>)</P>
+				<P CLASS=CLASSBUG><B>BUGS</B><BR>$(ident:<P CLASS=CLASSBUG>$(list:$(bug))</P>)</P>
 			)
 			$(if:$viewmode=developer:
 				$(ifset:todo:
-					<P CLASS="CLASSTODO"><B>TO DO</B><BR>$(ident:<P CLASS="CLASSTODO">$(list:$(todo))</P>)</P>
+					<P CLASS=CLASSTODO><B>TO DO</B><BR>$(ident:<P CLASS=CLASSTODO>$(list:$(todo))</P>)</P>
 				)
 			)
 		))
