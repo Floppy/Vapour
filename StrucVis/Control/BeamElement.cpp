@@ -6,7 +6,7 @@
 // BeamElement.cpp
 // 19/03/2002 - James Smith
 //
-// $Id: BeamElement.cpp,v 1.18 2002/03/23 10:59:33 vap-james Exp $
+// $Id: BeamElement.cpp,v 1.19 2002/03/23 11:02:30 vap-james Exp $
 
 #include "stdafx.h"
 #include "BeamElement.h"
@@ -73,7 +73,7 @@ bool CBeamElement::Display(void) const {
       // Add the basic BeamElement syntax
       strBeam << pcBeamStart;
       // Set the description
-      strBeam << " description [\"ID: " << m_iElement << "\" ";
+      strBeam << " description [\"Beam: " << m_iElement << "\" ";
       strBeam << " \"Group: " << m_iGroup << "\" ";
       strBeam << " \"Temp: " << m_fTemp << "\"] ";
       // Set the size

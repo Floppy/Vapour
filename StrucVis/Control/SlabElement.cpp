@@ -6,7 +6,7 @@
 // SlabElement.cpp
 // 19/03/2002 - James Smith
 //
-// $Id: SlabElement.cpp,v 1.19 2002/03/23 10:59:32 vap-james Exp $
+// $Id: SlabElement.cpp,v 1.20 2002/03/23 11:02:30 vap-james Exp $
 
 #include "stdafx.h"
 #include "SlabElement.h"
@@ -70,7 +70,7 @@ bool CSlabElement::Display(void) const {
       // Add the basic SlabElement syntax
       strSlab << pcSlabStart;
       // Set the description
-      strSlab << " description [\"ID: " << m_iElement << "\" ";
+      strSlab << " description [\"Slab: " << m_iElement << "\" ";
       strSlab << " \"Group: " << m_iGroup << "\" ";
       strSlab << " \"Temp: " << m_fTemp << "\"] ";
       // Set the size
