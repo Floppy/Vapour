@@ -7,7 +7,7 @@
 // Element.h
 // 19/03/2002 - James Smith
 //
-// $Id: Element.h,v 1.14 2002/03/25 14:55:35 vap-james Exp $
+// $Id: Element.h,v 1.15 2002/03/27 16:40:01 vap-james Exp $
 
 #ifndef __VTSTRUCVIS_ELEMENT__
 #define __VTSTRUCVIS_ELEMENT__
@@ -20,13 +20,14 @@
 #include "NodeSet.h"
 
 enum TElementType {
-   BEAM,
-   SLAB
+   ELEMENT_NONE = 0xFF,
+   ELEMENT_BEAM = 0x00,
+   ELEMENT_SLAB = 0x01
 };
 
 enum TColourScheme {
-   GROUP,
-   STRESS
+   COLOUR_GROUP,
+   COLOUR_STRESS
 };
 
 class CElement {
@@ -41,7 +42,7 @@ public:
       m_iGroup(0),
       m_fMinStress(0.0f),
       m_fMaxStress(1000000.0f),
-      m_oColourScheme(GROUP)
+      m_oColourScheme(COLOUR_GROUP)
    {
          m_pfColour[0] = m_pfColour[1] = m_pfColour[2] = 0.5;
    }

@@ -7,7 +7,7 @@
 // BeamElement.h
 // 19/03/2002 - James Smith
 //
-// $Id: BeamElement.h,v 1.11 2002/03/25 14:55:36 vap-james Exp $
+// $Id: BeamElement.h,v 1.12 2002/03/27 16:40:02 vap-james Exp $
 
 #ifndef __VTSTRUCVIS_BEAMELEMENT__
 #define __VTSTRUCVIS_BEAMELEMENT__
@@ -26,7 +26,7 @@ public:
 
 //#===--- Member Functions
 
-   TElementType Type(void) const {return BEAM;}
+   TElementType Type(void) const {return ELEMENT_BEAM;}
    // Return the element type.
 
    unsigned int Node(int iIndex) {return m_piNodes[iIndex];}

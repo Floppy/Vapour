@@ -7,7 +7,7 @@
 // BeamElement.cpp
 // 19/03/2002 - James Smith
 //
-// $Id: BeamElement.cpp,v 1.25 2002/03/26 20:09:41 vap-james Exp $
+// $Id: BeamElement.cpp,v 1.26 2002/03/27 16:40:02 vap-james Exp $
 
 #include "stdafx.h"
 #include "BeamElement.h"
@@ -173,7 +173,7 @@ void CBeamElement::SetStresses (const float* pfStresses) const {
 
 void CBeamElement::CalculateColours(float* pfColours) const {
    switch (m_oColourScheme) {
-   case GROUP:
+   case COLOUR_GROUP:
       {
          for (int i=0; i<2; i++) {
             pfColours[(i*3) + 0] = m_pfColour[0];
@@ -182,7 +182,7 @@ void CBeamElement::CalculateColours(float* pfColours) const {
          }
       }
       break;
-   case STRESS:
+   case COLOUR_STRESS:
       {
          for (int i=0; i<2; i++) {
             float fStress = (m_pfStresses[i] - m_fMinStress) / (m_fMaxStress - m_fMinStress);

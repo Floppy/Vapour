@@ -7,7 +7,7 @@
 // Chunk.cpp
 // 19/03/2002 - James Smith
 //
-// $Id: Chunk.cpp,v 1.9 2002/03/27 16:01:03 vap-james Exp $
+// $Id: Chunk.cpp,v 1.10 2002/03/27 16:40:02 vap-james Exp $
 
 #include "stdafx.h"
 #include "Chunk.h"
@@ -29,7 +29,7 @@ CChunk::CChunk() :
    m_iDataProcessed(0),
    m_iChunkLength(0),
    m_pcBuffer(NULL),
-   m_oType(NONE),
+   m_oType(CHUNK_NONE),
    m_pTempSubChunk(NULL)
 {
 }

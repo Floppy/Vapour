@@ -7,7 +7,7 @@
 // SlabElement.cpp
 // 19/03/2002 - James Smith
 //
-// $Id: SlabElement.cpp,v 1.25 2002/03/26 19:22:27 vap-warren Exp $
+// $Id: SlabElement.cpp,v 1.26 2002/03/27 16:40:01 vap-james Exp $
 
 #include "stdafx.h"
 #include "SlabElement.h"
@@ -188,7 +188,7 @@ void CSlabElement::SetSize(float fThickness) {
 
 void CSlabElement::CalculateColours(float* pfColours) const {
    switch (m_oColourScheme) {
-   case GROUP:
+   case COLOUR_GROUP:
       {
          for (int i=0; i<9; i++) {
             pfColours[(i*3) + 0] = m_pfColour[0];
@@ -197,7 +197,7 @@ void CSlabElement::CalculateColours(float* pfColours) const {
          }
       }
       break;
-   case STRESS:
+   case COLOUR_STRESS:
       {
          for (int i=0; i<9; i++) {
             float fStress = (m_pfStresses[i] - m_fMinStress) / (m_fMaxStress - m_fMinStress);

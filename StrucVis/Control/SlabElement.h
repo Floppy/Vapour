@@ -7,7 +7,7 @@
 // SlabElement.h
 // 19/03/2002 - James Smith
 //
-// $Id: SlabElement.h,v 1.12 2002/03/25 14:55:35 vap-james Exp $
+// $Id: SlabElement.h,v 1.13 2002/03/27 16:40:00 vap-james Exp $
 
 #ifndef __VTSTRUCVIS_SLABELEMENT__
 #define __VTSTRUCVIS_SLABELEMENT__
@@ -26,7 +26,7 @@ public:
 
 //#===--- Member Functions
 
-   TElementType Type(void) const {return SLAB;}
+   TElementType Type(void) const {return ELEMENT_SLAB;}
    // Return the element type.
 
    unsigned int Node(int iIndex) {return m_piNodes[iIndex];}

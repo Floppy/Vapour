@@ -7,7 +7,7 @@
 // SceneManager.cpp
 // 19/03/2002 - James Smith
 //
-// $Id: SceneManager.cpp,v 1.26 2002/03/27 15:09:19 vap-james Exp $
+// $Id: SceneManager.cpp,v 1.27 2002/03/27 16:40:01 vap-james Exp $
 
 #include "stdafx.h"
 #include "SceneManager.h"
@@ -192,7 +192,7 @@ bool CSceneManager::ShowFrame(const unsigned char* pcData, unsigned int iLength)
       // Set new temperature
       (*pElem)->SetTemp(m_oDataMgr.GroupTemp((*pElem)->Group()));
       // Load node stresses
-      if ((*pElem)->Type() == BEAM) {
+      if ((*pElem)->Type() == ELEMENT_BEAM) {
          // Enter beam node stresses
          float pfStresses[2];
          int iID = (*pElem)->ID();
@@ -203,7 +203,7 @@ bool CSceneManager::ShowFrame(const unsigned char* pcData, unsigned int iLength)
          }
          if (pfStresses) (*pElem)->SetStresses(pfStresses);
       }
-      else if ((*pElem)->Type() == SLAB) {
+      else if ((*pElem)->Type() == ELEMENT_SLAB) {
          // Enter slab node stresses and cracks
          float pfStresses[9];
          int iID = (*pElem)->ID();
