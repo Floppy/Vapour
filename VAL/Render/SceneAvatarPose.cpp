@@ -4,10 +4,10 @@
 // Vapour Technology All-Purpose Library
 // Copyright 2000 Vapour Technology Ltd.
 //
-// SceneHLThumbnail.h - 23/11/2000 - Warren Moore
-//	Scene rendering class for avatar posing
+// SceneAvatarPose.cpp - 23/11/2000 - Warren Moore
+//	  Scene rendering class for avatar posing
 //
-// $Id: SceneAvatarPose.cpp,v 1.2 2000/11/27 01:28:18 waz Exp $
+// $Id: SceneAvatarPose.cpp,v 1.3 2000/11/27 20:31:17 waz Exp $
 //
 
 #include "StdAfx.h"
@@ -234,7 +234,6 @@ SCRESULT CSceneAvatarPose::SetSize(int iWidth, int iHeight) {
 		return SC_NO_CONTEXT;
 	// Set the size
 	m_poRC->SetSize(iWidth, iHeight);
-	m_poRC->Resize();
 	return SC_OK;
 } // SetSize
 
