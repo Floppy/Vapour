@@ -1,0 +1,114 @@
+$(silent:
+	$(set:docentry_=$(subst: :_:$(docentry)))
+)
+
+$(//:#===--- Top )
+$(include:../class/top.stmpl)
+
+
+<TABLE WIDTH="100%" BORDER=0 CELLPADDING=2 CELLSPACING=0 BGCOLOR="#C0C0F0">
+<TR><TD><P>
+$(ifset:docentry:
+	$(set:parent=)
+	$(for:.:$docentry:
+		$(silent:
+			$(ifset:parent:$(set:parent=$(parent).$(subst: :_:%arg%)))$(else:$(set:parent=$(subst: :_:%arg%)))
+		)
+		$(if:$docentry_!=$parent:<A HREF="$(parent).html">%arg%</A> . )$(else:<B>%arg%</B>)
+	)
+)
+</P></TD>
+$(ifany:docnode:
+	<TD><P ALIGN=RIGHT><B>Subtopics</B></P></TD>
+)
+</TR>
+</TABLE>
+
+$(ifany:docnode:
+	<TABLE BORDER=0 CELLPADDING=1 CELLSPACING=1 ALIGN=RIGHT BGCOLOR="#C0C0F0">
+		<TR><TD>
+		$(forall:docnode:
+			<P><A HREF="$(MakeFilename:%.html)"><B>$(subst:_: :$(ObjectName))</B></A>$(ifset:brief: - $(brief))</P>
+		)
+		</TD></TR>
+	</TABLE>
+)			
+
+<P CLASS=SUBTITLE>
+$(ifset:brief:$(brief))$(else:$(ObjectName))
+</P>
+
+$(ifset:detail:
+	<!-- Begining of EHT content -->
+	<P>
+	$(detail)
+	</P>
+	<!-- End of EHT content -->
+)
+
+$(ifany:docleaf,$userlevel=Basic:
+	<P CLASS=HEADING>Basic Classes</P>
+	$(ident:
+		<TABLE BORDER=0 CELLPADDING=0 CELLSPACING=0>
+		$(forall:docleaf,$userlevel=Basic:
+			<TR><TD><P><A HREF="../class/$(content)">$(ObjectName)</A></P></TD><TD><P>$(ifset:brief:- $(brief))</P></TD></TR>
+		)
+		</TABLE>
+	)
+)
+
+$(ifany:docleaf,$userlevel=Normal:
+	<P CLASS=HEADING>Normal Classes</P>
+	$(ident:
+		<TABLE BORDER=0 CELLPADDING=0 CELLSPACING=0>
+		$(forall:docleaf,$userlevel=Normal:
+			<TR><TD><P><A HREF="../class/$(content)">$(ObjectName)</A></P></TD><TD><P>$(ifset:brief:- $(brief))</P></TD></TR>
+		)
+		</TABLE>
+	)
+)
+
+$(ifany:docleaf,$userlevel=Advanced:
+	<P CLASS=HEADING>Advanced Classes</P>
+	$(ident:
+		<TABLE BORDER=0 CELLPADDING=0 CELLSPACING=0>
+		$(forall:docleaf,$userlevel=Advanced:
+			<TR><TD><P><A HREF="../class/$(content)">$(ObjectName)</A></P></TD><TD><P>$(ifset:brief:- $(brief))</P></TD></TR>
+		)
+		</TABLE>
+	)
+)
+
+$(if:$viewmode=developer:
+	$(ifany:docleaf,$userlevel=Develop:
+		<P CLASS=HEADING>Develop Classes</P>
+		$(ident:
+			<TABLE BORDER=0 CELLPADDING=0 CELLSPACING=0>
+			$(forall:docleaf,$userlevel=Develop:
+				<TR><TD><P><A HREF="../class/$(content)">$(ObjectName)</A></P></TD><TD><P>$(ifset:brief:- $(brief))</P></TD></TR>
+			)
+			</TABLE>
+		)
+	)
+)
+
+$(ifany:docleaf,$userlevel=Default:
+	<P CLASS=CLASSHEADING>Default Classes</P>
+	$(ident:
+		<TABLE BORDER=0 CELLPADDING=0 CELLSPACING=0>
+		$(forall:docleaf,$userlevel=Default:
+			<TR><TD><P><A HREF="../class/$(content)">$(ObjectName)</A></P></TD><TD><P>$(ifset:brief:- $(brief))</P></TD></TR>
+		)
+		</TABLE>
+	)
+)
+
+$(if:$author!="" | $date != "":
+	<BR><P>Written
+	$(ifset:author:by <B>$(author)</B>)
+	$(ifset:date:on <B>$(date)</B>)
+	</P>
+)
+			
+$(//:#===--- Footer)
+$(include:../class/footer.stmpl)

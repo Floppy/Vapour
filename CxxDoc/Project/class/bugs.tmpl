@@ -1,0 +1,30 @@
+$(FileObject:one)$(FilePattern:bugs.html)
+
+$(//:#===--- Top )
+$(include:top.stmpl)
+
+<P CLASS=SUBTITLE>
+Bug List
+</P>
+
+<TABLE BORDER=0 CELLPADDING=2 CELLSPACING=2>
+<TR>
+<TD BGCOLOR="#C0C0C0"><B>Class</B></TD>
+<TD BGCOLOR="#C0C0C0"><B>Method</B></TD>
+<TD BGCOLOR="#C0C0C0"><B>Description</B></TD>
+</TR>
+$(forall:class:
+	$(ifset:classbug:
+		<TR VALIGN=TOP><TD COLSPAN=2 BGCOLOR="#C0C0F0">Class <A HREF="$(MakeFilename:developer/class/%.html)">$(ObjectName)</A></TD><TD BGCOLOR="#C0C0F0">$(list:$(classbug))</TD></TR>
+	)
+	$(set:inclass=$(ObjectName))$(set:infile=$(MakeFilename:developer/class/%.html))
+	$(forall:method:
+		$(ifset:bug:
+			<TR VALIGN=TOP><TD BGCOLOR="#C0C0F0"><A HREF="$(infile)">$(inclass)</A></TD><TD BGCOLOR="#C0C0F0"><A HREF="$(infile)#$(href)">$(ObjectName)</A></TD><TD BGCOLOR="#C0C0F0">$(list:$(bug))</TD></TR>
+		)
+	)
+)
+</TABLE>
+
+$(//:#===--- Footer)
+$(include:footer.stmpl)

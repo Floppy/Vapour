@@ -1,0 +1,2 @@
+$(ident:<HR><P><A NAME="$(href)">$(HtmlMethodName:)</A></P>
+$(include:comment.stmpl))

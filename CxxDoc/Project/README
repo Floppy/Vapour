@@ -1,0 +1,32 @@
+#========---
+#=- PROJECT Documentation Generation
+#=====---
+Copyright 2002 Vapour Technology Ltd.
+
+Add confidentiality notice
+
+07/04/2002 - Warren Moore
+
+#===--- Intro
+
+This document details how to use these templates to generate project documentation for client viewing from a local filesystem.
+
+#===--- Requirements
+
+To run:-
+CxxDoc from Ravl/SourceTools
+  available from http://ravl.sourceforge.net, but only CxxDoc binary required
+  
+To view:-
+  A web browser
+  
+#===--- Customizing
+
+When starting a new project documentation system, make CxxDoc and Doc directories in the root directory of the project. Copy all the files from this directory (except this README) into the CxxDoc directory.
+Edit the word PROJECT in the new files to match the name of the project to document (find using 'grep -r PROJECT *').
+
+#===--- Building
+
+Running builddocs.sh should now generate the documentation in the Doc directory.
+
+$Id: README,v 1.1 2002/04/07 14:10:28 vap-warren Exp $

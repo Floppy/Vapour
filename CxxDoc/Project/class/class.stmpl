@@ -1,0 +1,75 @@
+$(//:#===--- Top )
+$(include:top.stmpl)
+
+<TABLE WIDTH="100%" BORDER=0 CELLPADDING=2 CELLSPACING=0 BGCOLOR="#C0C0F0">
+<TR><TD>
+<P>
+$(if:$NodeType!=namespace:
+	$(ifset:docentry:
+		$(set:parent=)
+		$(for:.:$docentry:
+			$(silent:
+					$(ifset:parent:$(set:parent=$(parent).$(subst: :_:%arg%)))
+				$(else:$(set:parent=$(subst: :_:%arg%)))
+			)
+			<A HREF="../../$(if:$viewmode=developer:developer)$(else:user)/tree/$(parent).html">%arg%</A> .
+		)
+	)
+	<B>$(FullName)</B>
+)
+</P>
+</TD>
+<TD><P ALIGN="RIGHT"><B>Functions</B></P></TD>
+</TR>
+</TABLE>
+
+	<TABLE BORDER=0 CELLPADDING=1 CELLSPACING=0 ALIGN=RIGHT>
+		<TR><TD BGCOLOR="#C0C0F0">
+		<P>
+		$(ifany:$methodtype,$NodeType=method:
+			$(forall:$methodtype,$NodeType=method:
+				$(checkview:$(ParentScope)::<A HREF="#$(href)">$(ObjectName)</A><BR>)
+			)
+		)
+		</P>
+		</TD></TR>
+	</TABLE>
+	
+	$(include:info.stmpl)
+	
+	$(ifany:inherit:
+		<P CLASS=HEADING>Parent Classes</P>
+		$(ident:
+			$(forall:inherit:
+				<P>$(access)
+				$(ifset:!resolveFailed:
+					$(GotoInherit:<A HREF="$(MakeFilename:%.html)">$(ObjectName)</A>)
+				)
+				$(else:
+					$(classname)
+				)
+				</P>
+			)
+		)
+	)
+	
+	$(ifany:derived:
+		<P CLASS=HEADING>Derived Classes</P>
+		$(ident:
+			$(forall:derived:
+				<P>$(access)
+				$(ifset:!resolveFailed:
+					$(GotoInherit:<A HREF="$(MakeFilename:%.html)">$(ObjectName)</A>)
+				)
+				$(else:
+					$(classname)
+				)
+				</P>
+			)
+		)
+	)
+	
+	$(include:scope.stmpl)
+
+$(//:#===--- Footer)
+$(include:footer.stmpl)
