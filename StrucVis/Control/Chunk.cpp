@@ -7,7 +7,7 @@
 // Chunk.cpp
 // 19/03/2002 - James Smith
 //
-// $Id: Chunk.cpp,v 1.5 2002/03/27 11:02:17 vap-james Exp $
+// $Id: Chunk.cpp,v 1.6 2002/03/27 11:10:00 vap-james Exp $
 
 #include "stdafx.h"
 #include "Chunk.h"
@@ -27,6 +27,7 @@ CChunk::CChunk() :
    m_iBufferLength(0),
    m_iDataSize(0),
    m_iDataProcessed(0),
+   m_iChunkLength(0),
    m_pcBuffer(NULL),
    m_oType(NONE),
    m_pTempSubChunk(NULL)
@@ -68,7 +69,7 @@ bool CChunk::CreateChunk(const unsigned char* pcData, unsigned int iLength, unsi
    
       // Read chunk size
       if (m_iDataSize < 5) return false;
-      unsigned int iSize = *reinterpret_cast<unsigned int*>(m_pcBuffer+1);
+      m_iChunkLength = *reinterpret_cast<unsigned int*>(m_pcBuffer+1);
 
       // Read number of TOC entries?
       if (m_iDataSize < 6) return false;
@@ -76,11 +77,11 @@ bool CChunk::CreateChunk(const unsigned char* pcData, unsigned int iLength, unsi
 
       if (m_pcBuffer[5] == 0xFF) {
          // have we loaded the entire chunk?
-         if (m_iDataSize < iSize) {
+         if (m_iDataSize < m_iChunkLength) {
             iUsed = iLength;
             return false;   
          }
-         iUsed = iLength - (m_iDataSize - iSize);
+         iUsed = iLength - (m_iDataSize - m_iChunkLength);
          return true;
       }
       else {
@@ -106,18 +107,23 @@ bool CChunk::CreateChunk(const unsigned char* pcData, unsigned int iLength, unsi
             }
             m_oTOC.push_back(oEntry);
          }
+         // We've finished creating the TOC
+         m_iDataProcessed = iTOCLength;
+         // Dump stored data
+         if (m_pcBuffer) delete [] m_pcBuffer;
+         m_pcBuffer = NULL;
+         m_iDataSize = 0;
+         m_iBufferLength = 0;         
       }
-      m_iDataProcessed = iTOCLength;
    }
 
    // Load subchunks if necessary
    if (bLoadSubChunks) {
-      unsigned int iSize = *reinterpret_cast<unsigned int*>(m_pcBuffer+1);
       // Update data pointers
       pcData += iUsed;
       iLength -= iUsed;
       // While we have data
-      while (iLength != 0 && m_iDataProcessed < iSize) {
+      while (iLength != 0 && m_iDataProcessed < m_iChunkLength) {
          // Create new subchunk if we don't have one
          if (m_pTempSubChunk == NULL) {
             m_pTempSubChunk = new CChunk;
@@ -138,10 +144,9 @@ bool CChunk::CreateChunk(const unsigned char* pcData, unsigned int iLength, unsi
          iLength -= iUsed;
          m_iDataProcessed += iUsed;
       }
-      if (m_iDataProcessed < iSize) return false;
+      if (m_iDataProcessed < m_iChunkLength) return false;
    }
 
-   // Done
    return true;
 }
 
@@ -174,6 +179,7 @@ void CRootChunk::Reset(void) {
    m_iDataSize = 0;
    m_iBufferLength = 0;
    m_iDataProcessed = 0;
+   m_iChunkLength = 0;
    // Empty TOC
    m_oTOC.empty();
    return;
