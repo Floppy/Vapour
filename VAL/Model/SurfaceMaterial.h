@@ -7,7 +7,7 @@
 // SurfaceMaterial.h - 17/11/2000 - James Smith
 //	Surface material class declaration
 //
-// $Id: SurfaceMaterial.h,v 1.0 2000/11/21 16:47:16 waz Exp $
+// $Id: SurfaceMaterial.h,v 1.1 2000/11/30 09:37:41 warren Exp $
 //
 
 #ifndef _VAL_SURFACEMATERIAL_
@@ -31,21 +31,49 @@
 	#endif
 #endif
 
+///////////////////////////////////////////////////////////////////////
+// Structures /////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////
+
+// Colour components go from 0..1
+struct SColour {
+double m_dRed;
+double m_dGreen;
+double m_dBlue;
+double m_dAlpha;
+
+// Default 
+SColour() :
+	m_dRed(1.0),
+	m_dGreen(1.0),
+	m_dBlue(1.0),
+	m_dAlpha(1.0) {
+}
+
+// RGB Constructor
+SColour(double dRed, double dGreen, double dBlue) :
+	m_dRed(dRed),
+	m_dGreen(dGreen),
+	m_dBlue(dBlue),
+	m_dAlpha(1.0) {
+}
+
+// RGBA Constructor
+SColour(double dRed, double dGreen, double dBlue, double dAlpha) :
+	m_dRed(dRed),
+	m_dGreen(dGreen),
+	m_dBlue(dBlue),
+	m_dAlpha(dAlpha) {
+}
+
+};
+
+/////////////////////
+// CSurfaceMaterial
+
 class DLL CSurfaceMaterial {
 
 public:
-
-   ///////////////////////////////////////////////////////////////////////
-   // Structures /////////////////////////////////////////////////////////
-   ///////////////////////////////////////////////////////////////////////
-
-   // Colour components go from 0..1
-   struct Colour {
-      double m_dRed;
-      double m_dGreen;
-      double m_dBlue;
-      double m_dAlpha;
-   };
 
    ///////////////////////////////////////////////////////////////////////
    // Construction/Destruction ///////////////////////////////////////////
@@ -65,16 +93,16 @@ public:
    ///////////////////////////////////////////////////////////////////////
 
    // Assigns the diffuse colour of the material
-   void SetDiffuse(const Colour& colDiffuse) {m_colDiffuse = colDiffuse;}
+   void SetDiffuse(const SColour& sDiffuse) { m_sDiffuse = sDiffuse; }
 
    // Assigns the specular colour of the material
-   void SetSpecular(const Colour& colSpecular) {m_colSpecular = colSpecular;}
+   void SetSpecular(const SColour& sSpecular) { m_sSpecular = sSpecular; }
 
    // Assigns the emissive colour of the material
-   void SetEmissive(const Colour& colEmissive) {m_colEmissive = colEmissive;}
+   void SetEmissive(const SColour& sEmissive) { m_sEmissive = sEmissive;}
 
    // Assigns the shininess of the material
-   void SetShininess(double dShininess) {m_dShininess = dShininess;}
+   void SetShininess(double dShininess) { m_dShininess = dShininess; }
 
    // Assigns the texture for the material - any old texture is automatically deleted
    void SetTexture(CImage* pTexture);
@@ -84,16 +112,16 @@ public:
    ///////////////////////////////////////////////////////////////////////
 
    // Returns the diffuse colour of the material
-   Colour Diffuse(void) const {return m_colDiffuse;}
+   SColour Diffuse(void) const {return m_sDiffuse; }
 
    // Returns the specular colour of the material
-   Colour Specular(void) const {return m_colSpecular;}
+   SColour Specular(void) const {return m_sSpecular; }
 
    // Returns the emissive colour of the material
-   Colour Emissive(void) const {return m_colEmissive;}
+   SColour Emissive(void) const {return m_sEmissive; }
 
    // Returns the shininess of the material
-   double Shininess(void) const {return m_dShininess;}
+   double Shininess(void) const {return m_dShininess; }
 
    // Returns the texture for the material
    CImage* Texture(void) const {return m_pTexture;}
@@ -105,13 +133,13 @@ protected:
    ///////////////////////////////////////////////////////////////////////
 
    // The diffuse colour of the material
-   Colour m_colDiffuse;
+   SColour m_sDiffuse;
 
    // The specular colour of the material
-   Colour m_colSpecular;
+   SColour m_sSpecular;
 
    // The emissive colour of the material
-   Colour m_colEmissive;
+   SColour m_sEmissive;
 
    // The shininess of the material
    double m_dShininess;
