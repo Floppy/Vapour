@@ -11,7 +11,7 @@
 //! author 	= "James Smith"
 //! date	= "02/10/2001"
 //! lib 	= libVALETmath
-//! rcsid 	= "$Id: eulerrotation.cpp,v 1.5 2001/10/27 13:06:08 vap-james Exp $"
+//! rcsid 	= "$Id: eulerrotation.cpp,v 1.6 2001/11/01 14:12:54 vap-james Exp $"
 //! userlevel	= Normal
 //! docentry	= "VALET.Math.Geometry"
 
@@ -52,7 +52,18 @@ namespace NVALET {
       CLog("math","CEulerRotation::Constructor (doubles, CEulerType)",LL_OBJECT);
    } //CEulerRotation(double dAngle0, double dAngle1, double dAngle2, const CEulerType& oType)
 
+   CEulerRotation::CEulerRotation(const CAxisRotation& oRot, const CEulerType& oType) {      
+      CLog("math","CEulerRotation::Constructor (CAxisRotation,CEulerType)",LL_OBJECT);
+      CHomTransform oTransform(oRot);
+      *this = CEulerRotation(oTransform,oType);
+   } //CEulerRotation(const CAxisRotation& oRot, const CEulerType& oType)
 
+   CEulerRotation::CEulerRotation(const CQuaternion& oQuat, const CEulerType& oType) {    
+      CLog("math","CEulerRotation::Constructor (CQuaternion,CEulerType)",LL_OBJECT);
+      CHomTransform oTransform(oQuat);
+      *this = CEulerRotation(oTransform,oType);
+   } //CEulerRotation(const CQuaternion& oQuat, const CEulerType& oType)
+   
    CEulerRotation::CEulerRotation(const CHomTransform & oTransform, const CEulerType& oType) : 
       m_oType(oType)
    {
@@ -99,12 +110,6 @@ namespace NVALET {
          m_oAngles.Z() = dTemp;
       }
    } //CEulerRotation(const CHomTransform & oTransform, const CEulerType& oType)
-  
-   CEulerRotation::CEulerRotation(const CQuaternion& oQuat, const CEulerType& oType) {    
-      CLog("math","CEulerRotation::Constructor (CQuaternion,CEulerType)",LL_OBJECT);
-      CHomTransform oTransform(oQuat);
-      *this = CEulerRotation(oTransform,oType);
-   } //CEulerRotation(const CQuaternion& oQuat, const CEulerType& oType)
   
    CEulerRotation::~CEulerRotation() {
       CLog("math","CEulerRotation::Destructor",LL_OBJECT);

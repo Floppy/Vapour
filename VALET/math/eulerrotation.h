@@ -14,7 +14,7 @@
 //! author     = "James Smith"
 //! date       = "02/10/2001"
 //! lib        = libVALETmath
-//! rcsid      = "$Id: eulerrotation.h,v 1.9 2001/10/27 13:06:08 vap-james Exp $"
+//! rcsid      = "$Id: eulerrotation.h,v 1.10 2001/11/01 14:12:54 vap-james Exp $"
 //! userlevel  = Normal
 //! docentry   = "VALET.Math.Geometry"
 
@@ -28,6 +28,7 @@ namespace NVALET {
 #include "VALET/eulertype.h"
 #include "VALET/quaternion.h"
 #include "VALET/homtransform.h"
+#include "VALET/axisrotation.h"
 
 namespace NVALET {
     
@@ -71,6 +72,11 @@ namespace NVALET {
       //!param: dAngle2 = the third angle in the rotation.
       //!param: oType = the type of the new object
     
+      CEulerRotation(const CAxisRotation& oRot, const CEulerType& oType);
+      //: Constructor from an axis rotation
+      //!param: oRot = the rotation to convert
+      //!param: oType = the type of the new object
+
       CEulerRotation(const CQuaternion& oQuat, const CEulerType& oType);
       //: Constructor from a Quaternion
       //!param: oQuat = the quaternion to convert
