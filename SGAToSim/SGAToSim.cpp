@@ -8,7 +8,7 @@
 //	Main application source for command-line parsing, 
 //  export and progress bar updates
 //
-// $Id: SGAToSim.cpp,v 1.1 2000/06/16 21:56:29 waz Exp $
+// $Id: SGAToSim.cpp,v 1.2 2000/07/03 04:56:38 waz Exp $
 //
 
 // Pre-compiled header include
@@ -82,10 +82,15 @@ int main(int argc, char **argv) {
 		}
 	// Save the current directory
 		char pcWorkingDir[STR_LENGTH];
-		if (GetCurrentDirectory((unsigned int)STR_LENGTH, pcWorkingDir) == 0) {
+		if (GetModuleFileName( NULL, pcWorkingDir, STR_LENGTH) == 0) {
 			cout << "Error encountered : Unable to store working directory" << endl << endl;
 			return -1;
 		}
+		char *pch;
+		pch = (pcWorkingDir + strlen(pcWorkingDir) - 1);
+		while( *pch != '\\' )
+			pch--;
+		*pch = '\0';
 	// Get the self-extracting zip filename
 		pcTemp = oCmdLine.GetValue(2);
 		char pcZipfile[STR_LENGTH] = "";
@@ -172,7 +177,7 @@ VARESULT SetOptions(CCommandLine &oCmdLine, CSGAToSims &oSimsExport) {
 // Set export defaults
 	int iAge = SIMS_ADULT;
 	int iSex = SIMS_MALE;
-	int iSkinTone = SIMS_MEDIUM;
+	int iSkinTone = SIMS_LIGHT;
 	int iBuild = SIMS_FIT;
 	int iVerbose = SIMS_TRUE;
 
@@ -235,6 +240,18 @@ VARESULT SetOptions(CCommandLine &oCmdLine, CSGAToSims &oSimsExport) {
 	if (bOk) {
 	// Get the base directory
 		pcTemp = oCmdLine.GetValue("path");
+	// If none specified, set the working directory
+		char pcWorkingDir[STR_LENGTH] = "";
+		if (!pcTemp) {
+			if (GetModuleFileName( NULL, pcWorkingDir, STR_LENGTH) == 0)
+				return VA_ERROR;
+			char *pch;
+			pch = (pcWorkingDir + strlen(pcWorkingDir) - 1);
+			while( *pch != '\\' )
+				pch--;
+			*pch = '\0';
+			pcTemp = pcWorkingDir;
+		}
 	// Find a suitable working directory
 		char pcPath[STR_LENGTH] = "";
 		bool bFound = false;
