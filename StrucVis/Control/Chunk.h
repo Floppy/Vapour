@@ -7,7 +7,7 @@
 // Chunk.h
 // 19/03/2002 - James Smith
 //
-// $Id: Chunk.h,v 1.3 2002/03/27 09:42:51 vap-james Exp $
+// $Id: Chunk.h,v 1.4 2002/03/27 10:21:32 vap-james Exp $
 
 #ifndef __VTSTRUCVIS_CHUNK__
 #define __VTSTRUCVIS_CHUNK__
@@ -69,9 +69,17 @@ protected:
 
    class CTOCEntry {
    public:
+
+      CTOCEntry() : m_pSubChunk(NULL) {}
+
+      ~CTOCEntry() {
+         if (m_pSubChunk) delete m_pSubChunk;
+      }
+
       TChunkType m_oType;
       unsigned int m_iOffset;
       unsigned int m_iLength;
+      CChunk* m_pSubChunk;
    };
    // TOC Information
 
@@ -89,6 +97,9 @@ protected:
 
    TChunkType m_oType;
    // The type of the chunk
+
+   CChunk* m_pTempSubChunk;
+   // Temporary storage for currently-building subchunk
 
 };
 
