@@ -10,7 +10,7 @@
 //! file 		= "VALET/core/log.test.cpp"
 //! author 		= "Warren Moore"
 //! date 		= "23/09/2001"
-//! rcsid 		= "$Id: log.test.cpp,v 1.5 2001/10/24 21:31:38 vap-james Exp $"
+//! rcsid 		= "$Id: log.test.cpp,v 1.6 2001/10/27 00:01:40 vap-warren Exp $"
 
 //#===--- Includes
 #include "log_test.h"
@@ -23,18 +23,28 @@
 using namespace NVALET;
 	
 //#===--- Defines
-#define LOOP_MAX 5
+const static int g_uiMaxDepth = 5;
+const static int g_uiMaxLoop = 2;
 
 //#===--- Test Functions
 
-void AddOne(int x) {
-	CLog oLog("test", "AddOne");
-	register int i = LOOP_MAX;
-	while (i--) {
-		oLog.Trace("Adding one", 1);
-		x++;
+void LoopTest() {
+	CLog oLog("loop", "LoopTest");
+   // Call the trace function several times
+	register int iCount = g_uiMaxLoop;
+	while (iCount--) {
+		oLog.Trace("Trace called");
 	}
 } // AddOne
+
+void StartTest(int iCurDepth) {
+   CLog oLog("start", "StartTest");
+   if (iCurDepth < g_uiMaxDepth) {
+      oLog.Trace("Calling StartTest at increased depth", LL_BLOCK);
+      StartTest(iCurDepth + 1);
+   }
+   LoopTest();
+}
 
 //#===--- Main function loop
 
@@ -46,11 +56,11 @@ int main(int argc, char *argv[]) {
 	}
 	
 	// Set the log attributes
-	NVALET::g_oLogManager.SetLog("test", true, 0);
+	NVALET::g_oLogManager.SetLog("loop", true, LL_ALL);
+	NVALET::g_oLogManager.SetLog("start", true, LL_ALL);
 
 	// Start the loop test
-	int x = 0;
-	AddOne(x);
+	StartTest(0);
 
 	bool bOk = true;
 	// Confirm the log results output
