@@ -7,7 +7,7 @@
 // DataManager.cpp
 // 19/03/2002 - James Smith
 //
-// $Id: DataManager.cpp,v 1.8 2002/03/25 13:18:18 vap-warren Exp $
+// $Id: DataManager.cpp,v 1.9 2002/03/26 17:52:17 vap-james Exp $
 
 #include "stdafx.h"
 #include "DataManager.h"
@@ -125,6 +125,14 @@ const float g_pfBeamStresses[g_iNumFrames][g_iNumBeams][6] = {
       {
          0,0,0,
          0,0,0
+      },
+      {
+         0,0,0,
+         0,0,0
+      },
+      {
+         0,0,0,
+         0,0,0
       }
    },
    {
@@ -135,6 +143,14 @@ const float g_pfBeamStresses[g_iNumFrames][g_iNumBeams][6] = {
       {
          10,0,0,
          25,0,0
+      },
+      {
+         0,0,0,
+         0,0,0,
+      },
+      {
+         0,0,0,
+         10,0,0,
       },
       {
          10,0,0,
@@ -155,6 +171,14 @@ const float g_pfBeamStresses[g_iNumFrames][g_iNumBeams][6] = {
          50,0,0
       },
       {
+         0,0,0,
+         10,0,0
+      },
+      {
+         10,0,0,
+         25,0,0
+      },
+      {
          25,0,0,
          50,0,0
       },
@@ -171,6 +195,14 @@ const float g_pfBeamStresses[g_iNumFrames][g_iNumBeams][6] = {
       {
          50,0,0,
          100,0,0
+      },
+      {
+         0,0,0,
+         25,0,0
+      },
+      {
+         25,0,0,
+         50,0,0
       },
       {
          50,0,0,
@@ -262,7 +294,10 @@ typedef std::vector<CDataManager::CGroup>::iterator grpIter;
 
 CDataManager::CDataManager() :
    m_pcBuffer(NULL),
-   m_iNumFrames(0)
+   m_iNumFrames(0)//,
+   //m_iBufferLength(0),
+   //m_iDataSize(0),
+   //m_iTOCLength(0)
 {
 }
 
@@ -271,7 +306,65 @@ CDataManager::~CDataManager() {
 }
 
 bool CDataManager::Setup(const unsigned char* pcData, unsigned int iLength) {
-   // Read in setup data
+   /*// Is this the first lump of data?
+   if (m_pcBuffer == NULL) {
+      // Create a minimum buffer space
+      m_pcBuffer = (unsigned char*) malloc(iLength);
+      if (m_pcBuffer == NULL) return false;
+      m_iBufferLength = iLength;
+   }
+   // Make sure buffer is big enough to take the data
+   if (iLength + m_iDataSize > m_iBufferLength) {
+      m_pcBuffer = (unsigned char*) realloc(m_pcBuffer,(iLength + m_iDataSize) * 2);
+      if (m_pcBuffer == NULL) return false;
+      m_iBufferLength = (iLength + m_iDataSize) * 2;
+   }
+   // Append data to buffer
+   memcpy(m_pcBuffer+m_iDataSize,pcData,iLength);
+   m_iDataSize += iLength;
+   
+   // Check the header
+   if (m_iDataSize < 4) return false;
+   if (m_pcBuffer[0] != 'A' ||
+       m_pcBuffer[1] != 'S' ||
+       m_pcBuffer[2] != 'V' ||
+       m_pcBuffer[3] != 0x01) {
+      // Header error
+      return false;
+   }
+
+   // Make sure we've got a root chunk
+   if (m_iDataSize < 5) return false;
+   if (m_pcBuffer[4] != 0x00) {
+      // Chunk error
+      return false;
+   }
+
+   // Work out TOC size
+   if (m_iDataSize < 10) return false;
+   if (m_oTOC.capacity() == 0) {
+      // Reserve space in both TOC and buffer
+      unsigned char iNumTOCEntries = m_pcBuffer[9];
+      m_oTOC.reserve(iNumTOCEntries);
+      m_iTOCLength = 10 + (iNumTOCEntries * 5);
+      if (m_iBufferLength < m_iTOCLength) {
+         m_pcBuffer = (unsigned char*) realloc(m_pcBuffer,m_iTOCLength);
+         if (m_pcBuffer == NULL) return false;
+         m_iBufferLength = m_iTOCLength;
+      }
+   }
+
+   // If we haven't got the entire TOC, stop
+   if (m_iDataSize < m_iTOCLength) return false;
+   // Create TOC
+   unsigned int iNumTOCEntries = (m_iTOCLength - 10) / 5;
+   for (int i=0; i<iNumTOCEntries; i++) {
+      CTOCEntry oEntry;
+      oEntry.m_oType = static_cast<TChunkType>(m_pcBuffer[10 + (i*5)]);
+      oEntry.m_iOffset = *reinterpret_cast<unsigned int*>(m_pcBuffer + 11 + (i*5));
+      m_oTOC.push_back(oEntry);
+   }*/
+
    // Initialise frame counters.
    m_iNumFrames = g_iNumFrames;
 
@@ -291,9 +384,13 @@ bool CDataManager::Setup(const unsigned char* pcData, unsigned int iLength) {
 
 bool CDataManager::FrameInfo(unsigned int iFrame, unsigned int& iOffset, unsigned int& iLength) {
    if (iFrame < m_iNumFrames) {
+      // TESTING --------------
+      m_iCurrentFrame = iFrame;
+      // TESTING --------------
       iOffset = 0;
       iLength = 1;
-      m_iCurrentFrame = iFrame;
+      //iOffset = m_oTOC[iFrame+1].m_iOffset;
+      //iLength = m_oTOC[iFrame+1].m_iLength;
       return true;
    }
    else return false;
