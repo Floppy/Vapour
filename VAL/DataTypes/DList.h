@@ -7,7 +7,7 @@
 // DList.h - 28/05/2000 - James Smith
 //	Doubly Linked list class header
 //
-// $Id: DList.h,v 1.5 2000/11/22 00:44:36 waz Exp $
+// $Id: DList.h,v 1.6 2000/11/29 21:20:28 james Exp $
 //
 
 #ifndef _VAL_LIST_
@@ -39,9 +39,6 @@ private:
 
 public:
 
-   // Range Exception - apparently this is a good idea...
-   class CDListRangeException {};
-   
    ///////////////////////////////////////////////////////////////////////
    // Construction/Destruction ///////////////////////////////////////////
    ///////////////////////////////////////////////////////////////////////
@@ -85,7 +82,7 @@ public:
    int Length(void) const {return m_iLength;}
 
    // Access to specific elements
-   T& operator[](unsigned int iIndex) const throw(CDListRangeException);
+   T& operator[](unsigned int iIndex) const;
 
    // The data in the first element in the list
    T& First(void) const {return m_pFront->m_tData;}
@@ -205,7 +202,7 @@ T CDList<T>::RemoveBack(void) {
 } //RemoveBack(void)
 
 template<class T> 
-T& CDList<T>::operator[](unsigned int iIndex) const throw(CDListRangeException) {
+T& CDList<T>::operator[](unsigned int iIndex) const {
    CDListItem<T>* pItem = m_pFront;
    if (iIndex < m_iLength) {
       for (int i=0; i<iIndex; i++) {
@@ -214,7 +211,7 @@ T& CDList<T>::operator[](unsigned int iIndex) const throw(CDListRangeException) 
       }
       return pItem->m_tData;
    }
-   else throw CDListRangeException();
+   else return m_pBack->m_tData;
 } //operator[](unsigned int iIndex)
 
 template<class T> 
