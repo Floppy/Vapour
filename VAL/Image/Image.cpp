@@ -7,7 +7,7 @@
 // Image.h - 21/12/1999 - Warren Moore
 //	Image implementation
 //
-// $Id: Image.cpp,v 1.1 2000/06/16 21:59:44 waz Exp $
+// $Id: Image.cpp,v 1.2 2000/06/17 08:24:40 waz Exp $
 //
 
 #include "stdafx.h"
@@ -420,7 +420,7 @@ IRESULT CImage::CreatePaletteFromRGB(int iColours) {
 				uColour = (uColour >> 24) | (uInput << 8);
 				oQuant.AddColour(uColour);
 			}
-			if (iLeft > 3) {
+			if (iLeft > 2) {
 			// Third pixel
 				uColour = uInput >> 16;
 				uInput = *pIDataPtr++;
