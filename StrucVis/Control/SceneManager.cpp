@@ -6,7 +6,7 @@
 // SceneManager.cpp
 // 19/03/2002 - James Smith
 //
-// $Id: SceneManager.cpp,v 1.6 2002/03/22 00:23:15 vap-james Exp $
+// $Id: SceneManager.cpp,v 1.7 2002/03/22 00:52:01 vap-james Exp $
 
 #include "stdafx.h"
 #include "SceneManager.h"
@@ -90,6 +90,17 @@ const float g_pfNodeStresses[g_iNumFrames][9] = {
    {0,50,100,0,75,100,50,100,100}
 };
 
+const float g_fStartTemp = 20.0f;
+
+const g_iNumGroups = 2;
+
+const TElementType g_ptGroupTypes[g_iNumGroups] = {
+   BEAM, SLAB
+};
+const float g_pfGroupTemps[g_iNumFrames][g_iNumGroups] = {
+   {30,30},{40,40},{60,50},{80,60}
+};
+
 const unsigned int g_iNumBeams = 6;
 const float g_fBeamHeight = 0.5446f;
 const float g_fBeamWidth = 0.2119f;
@@ -103,17 +114,24 @@ const unsigned int g_piBeamNodes[g_iNumBeams][2] = {
    {7, 8},
    {8, 9}
 };
+const unsigned int g_piNodeGroups[g_iNumBeams] = {
+   1,1,1,1,1,1
+};
 
 const unsigned int g_iNumSlabs = 1;
 const float g_fSlabThickness = 0.3f;
 const unsigned int g_piSlabNodes[1][9] = {
    {9, 6, 3, 2, 1, 4, 7, 8, 5}
 };
+const unsigned int g_piSlabGroups[g_iNumSlabs] = {
+   2
+};
 
 ///////////
 // CSceneManager
 
 typedef std::vector<CElement*>::iterator elemIter;
+typedef std::vector<CSceneManager::CGroup>::iterator grpIter;
 
 CSceneManager::CSceneManager(CCortonaUtil *poCortona) :
    m_poCortona(poCortona),
@@ -136,22 +154,21 @@ void CSceneManager::Load(void) {
    m_oNodeSet.SetDefault(g_pfDefaultNodes);
 
    // Create groups
-   CGroup oGroup1;
-   oGroup1.m_fTemperature = 20.0f;
-   oGroup1.m_oType = BEAM;
-   m_oGroups.push_back(oGroup1);
-   CGroup oGroup2;
-   oGroup2.m_fTemperature = 20.0f;
-   oGroup2.m_oType = SLAB;
-   m_oGroups.push_back(oGroup2);
+   for (int i=0; i<g_iNumGroups; i++) {
+      CGroup oGroup;
+      oGroup.m_fTemperature = g_fStartTemp;
+      oGroup.m_oType = g_ptGroupTypes[i];
+      m_oGroups.push_back(oGroup);      
+   }
 
+   // Load frame info
    m_iNumFrames = g_iNumFrames;
       
    // Create some beams
-   for (int i=0; i<g_iNumBeams; i++) {
+   for (i=0; i<g_iNumBeams; i++) {
       CBeamElement* pBeam = new CBeamElement(m_poCortona,&m_oNodeSet);
       pBeam->SetID(i);
-      pBeam->SetGroup(1);
+      pBeam->SetGroup(g_piNodeGroups[i]);
       pBeam->SetSize(g_fBeamHeight,g_fBeamWidth,g_fFlange,g_fWeb);
       pBeam->SetNodes(g_piBeamNodes[i]);
       pBeam->SetColourScheme(STRESS);
@@ -163,7 +180,7 @@ void CSceneManager::Load(void) {
    for (i=0; i<g_iNumSlabs; i++) {
       CSlabElement* pSlab = new CSlabElement(m_poCortona,&m_oNodeSet);
       pSlab->SetID(i+g_iNumBeams);
-      pSlab->SetGroup(2);
+      pSlab->SetGroup(g_piSlabGroups[i]);
       pSlab->SetSize(g_fSlabThickness);
       pSlab->SetNodes(g_piSlabNodes[i]);
       pSlab->SetColourScheme(STRESS);
@@ -245,6 +262,10 @@ void CSceneManager::SetViewpoint(float pfPosition[3], float pfRotation[4]) {
 }
 
 void CSceneManager::ShowFrame(void) {
+   // Load temperatures into groups
+   for (int g=0; g<m_oGroups.size(); g++) {
+      m_oGroups[g].m_fTemperature = g_pfGroupTemps[m_iCurrentFrame][g];
+   }
    // Load node displacements
    m_oNodeSet.Displace(g_pfNodeDisplacments[m_iCurrentFrame]);
    // Load node stresses
