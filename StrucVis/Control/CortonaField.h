@@ -7,7 +7,7 @@
 // CortonaField.h
 // 07/03/2002 - Warren Moore
 //
-// $Id: CortonaField.h,v 1.1 2002/03/19 01:48:59 vap-warren Exp $
+// $Id: CortonaField.h,v 1.2 2002/03/19 23:34:31 vap-james Exp $
 
 #ifndef __CORTONA_FIELD__
 #define __CORTONA_FIELD__
@@ -40,19 +40,40 @@ public:
    // Returns the X value at the specified index
 
    bool GetMFVec3f_Y(long liIndex, float &fY);
-   // Returns the X value at the specified index
+   // Returns the Y value at the specified index
 
    bool GetMFVec3f_Z(long liIndex, float &fZ);
-   // Returns the X value at the specified index
+   // Returns the Z value at the specified index
 
    bool SetMFVec3f_X(long liIndex, const float fX);
    // Sets the X value at the specified index
 
    bool SetMFVec3f_Y(long liIndex, const float fY);
-   // Sets the X value at the specified index
+   // Sets the Y value at the specified index
 
    bool SetMFVec3f_Z(long liIndex, const float fZ);
-   // Sets the X value at the specified index
+   // Sets the Z value at the specified index
+
+   //--- SFVec3f Functions
+   // These access functions could be extensively improved
+
+   bool GetSFVec3f_X(float &fX);
+   // Returns the X value
+
+   bool GetSFVec3f_Y(float &fY);
+   // Returns the Y value
+
+   bool GetSFVec3f_Z(float &fZ);
+   // Returns the Z value
+
+   bool SetSFVec3f_X(const float fX);
+   // Sets the X value
+
+   bool SetSFVec3f_Y(const float fY);
+   // Sets the Y value
+
+   bool SetSFVec3f_Z(const float fZ);
+   // Sets the Z value
 
 //#===--- Member Variables
 protected:

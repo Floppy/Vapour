@@ -7,7 +7,7 @@
 // CortonaField.cpp
 // 07/03/2002 - Warren Moore
 //
-// $Id: CortonaField.cpp,v 1.1 2002/03/19 01:48:59 vap-warren Exp $
+// $Id: CortonaField.cpp,v 1.2 2002/03/19 23:34:31 vap-james Exp $
 
 #include "stdafx.h"
 #include "CortonaBase.h"
@@ -181,4 +181,149 @@ bool CCortonaField::SetMFVec3f_Z(long liIndex, const float fZ) {
 
    return SUCCEEDED(hResult);
 }
+
+bool CCortonaField::GetSFVec3f_X(float &fX) {
+   // Check the field pointer
+   if (!m_pField)
+      return false;
+
+   // Check the type
+   if (m_eType != tSFVec3f)
+      return false;
+
+   // Get the ISFVec3f interface
+   ISFVec3fObject *pSFVec3f = NULL;
+   HRESULT hResult = m_pField->QueryInterface(IID_ISFVec3fObject, (void**)&pSFVec3f);
+   if (FAILED(hResult))
+      return false;
+
+   // Get the X value
+   hResult = pSFVec3f->get_X(&fX);
+
+   // Release the SFVec3f interface
+   pSFVec3f->Release();
+
+   return SUCCEEDED(hResult);
+}
+
+bool CCortonaField::GetSFVec3f_Y(float &fY) {
+   // Check the field pointer
+   if (!m_pField)
+      return false;
+
+   // Check the type
+   if (m_eType != tSFVec3f)
+      return false;
+
+   // Get the ISFVec3f interface
+   ISFVec3fObject *pSFVec3f = NULL;
+   HRESULT hResult = m_pField->QueryInterface(IID_ISFVec3fObject, (void**)&pSFVec3f);
+   if (FAILED(hResult))
+      return false;
+
+   // Get the X value
+   hResult = pSFVec3f->get_Y(&fY);
+
+   // Release the SFVec3f interface
+   pSFVec3f->Release();
+
+   return SUCCEEDED(hResult);
+}
+
+bool CCortonaField::GetSFVec3f_Z(float &fZ) {
+   // Check the field pointer
+   if (!m_pField)
+      return false;
+
+   // Check the type
+   if (m_eType != tSFVec3f)
+      return false;
+
+   // Get the ISFVec3f interface
+   ISFVec3fObject *pSFVec3f = NULL;
+   HRESULT hResult = m_pField->QueryInterface(IID_ISFVec3fObject, (void**)&pSFVec3f);
+   if (FAILED(hResult))
+      return false;
+
+   // Get the X value
+   hResult = pSFVec3f->get_Z(&fZ);
+
+   // Release the SFVec3f interface
+   pSFVec3f->Release();
+
+   return SUCCEEDED(hResult);
+}
+
+bool CCortonaField::SetSFVec3f_X(const float fX) {
+   // Check the field pointer
+   if (!m_pField)
+      return false;
+
+   // Check the type
+   if (m_eType != tSFVec3f)
+      return false;
+
+   // Get the ISFVec3f interface
+   ISFVec3fObject *pSFVec3f = NULL;
+   HRESULT hResult = m_pField->QueryInterface(IID_ISFVec3fObject, (void**)&pSFVec3f);
+   if (FAILED(hResult))
+      return false;
+
+   // Get the X value
+   hResult = pSFVec3f->put_X(fX);
+
+   // Release the SFVec3f interface
+   pSFVec3f->Release();
+
+   return SUCCEEDED(hResult);
+}
+
+bool CCortonaField::SetSFVec3f_Y(const float fY) {
+   // Check the field pointer
+   if (!m_pField)
+      return false;
+
+   // Check the type
+   if (m_eType != tSFVec3f)
+      return false;
+
+   // Get the ISFVec3f interface
+   ISFVec3fObject *pSFVec3f = NULL;
+   HRESULT hResult = m_pField->QueryInterface(IID_ISFVec3fObject, (void**)&pSFVec3f);
+   if (FAILED(hResult))
+      return false;
+
+   // Get the X value
+   hResult = pSFVec3f->put_Y(fY);
+
+   // Release the SFVec3f interface
+   pSFVec3f->Release();
+
+   return SUCCEEDED(hResult);
+}
+
+bool CCortonaField::SetSFVec3f_Z(const float fZ) {
+   // Check the field pointer
+   if (!m_pField)
+      return false;
+
+   // Check the type
+   if (m_eType != tSFVec3f)
+      return false;
+
+   // Get the ISFVec3f interface
+   ISFVec3fObject *pSFVec3f = NULL;
+   HRESULT hResult = m_pField->QueryInterface(IID_ISFVec3fObject, (void**)&pSFVec3f);
+   if (FAILED(hResult))
+      return false;
+
+   // Get the X value
+   hResult = pSFVec3f->put_Z(fZ);
+
+   // Release the SFVec3f interface
+   pSFVec3f->Release();
+
+   return SUCCEEDED(hResult);
+}
+
 
