@@ -1,13 +1,13 @@
-//=======---
-// Avanew
-//-------
-// Avatar editor and exporter
+//====---
+// VAL
+//----
+// Vapour Technology All-Purpose Library
 // Copyright 2000 Vapour Technology Ltd.
 //
 // Avatar.h - 16/06/2000 - James Smith
 //	Avatar class header
 //
-// $Id: Avatar.h,v 1.2 2000/06/17 10:42:09 waz Exp $
+// $Id: Avatar.h,v 1.3 2000/07/10 09:14:32 waz Exp $
 //
 
 #ifndef _VAL_AVATAR_
@@ -17,7 +17,7 @@
 #include <vector>
 
 // libVapour includes
-#include "Defs.h"
+#include "VAL.h"
 #include "Point3D.h"
 #include "TriFace.h"
 #include "DList.h"
