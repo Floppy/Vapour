@@ -7,7 +7,7 @@
 // DataManager.cpp
 // 19/03/2002 - James Smith
 //
-// $Id: DataManager.cpp,v 1.9 2002/03/26 17:52:17 vap-james Exp $
+// $Id: DataManager.cpp,v 1.10 2002/03/26 20:10:48 vap-james Exp $
 
 #include "stdafx.h"
 #include "DataManager.h"
@@ -245,41 +245,41 @@ const float g_pfSlabStresses[g_iNumFrames][g_iNumSlabs][27] = {
    },
    {
       {
+         25,0,0,
+         25,0,0,
+         25,0,0,
+         10,0,0,
+         0,0,0,
          0,0,0,
          10,0,0,
          25,0,0,
+         15,0,0
+      }
+   },
+   {
+      {
+         50,0,0,
+         50,0,0,
+         50,0,0,
+         20,0,0,
          0,0,0,
-         15,0,0,
+         0,0,0,
          25,0,0,
-         10,0,0,
-         25,0,0,
+         50,0,0,
          25,0,0
       }
    },
    {
       {
-         0,0,0,
-         20,0,0,
+         100,0,0,
+         100,0,0,
+         100,0,0,
          50,0,0,
          0,0,0,
-         25,0,0,
-         50,0,0,
-         25,0,0,
-         50,0,0,
-         50,0,0
-      }
-   },
-   {
-      {
          0,0,0,
          50,0,0,
          100,0,0,
-         0,0,0,
-         75,0,0,
-         100,0,0,
-         50,0,0,
-         100,0,0,
-         100,0,0
+         75,0,0
       }
    }
 };
@@ -397,18 +397,21 @@ bool CDataManager::FrameInfo(unsigned int iFrame, unsigned int& iOffset, unsigne
 }
 
 bool CDataManager::LoadFrame(const unsigned char* pcData, unsigned int iLength) {
-   if (true) {
-      // Load frame data from passed memory chunk
-
-      // Load temperature data
-      for (int i=0; i<g_iNumGroups; i++) {
-         m_oGroups[i].m_fTemperature = g_pfGroupTemps[m_iCurrentFrame][i];
-      }
-      
-      // Done
-      return true;
+   if (m_pcBuffer) {
+      delete [] m_pcBuffer;
+      m_pcBuffer = NULL;
    }
-   else return false;
+   
+   // Load frame data from passed memory chunk
+   //m_pcBuffer = new unsigned char
+
+   // Load temperature data
+   for (int i=0; i<g_iNumGroups; i++) {
+      m_oGroups[i].m_fTemperature = g_pfGroupTemps[m_iCurrentFrame][i];
+   }
+   
+   // Done
+   return true;
 }
 
 unsigned int CDataManager::NumFrames(void) {
