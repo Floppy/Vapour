@@ -7,10 +7,9 @@
 // CortonaUtil.cpp
 // 07/03/2002 - Warren Moore
 //
-// $Id: CortonaUtil.cpp,v 1.8 2002/03/24 23:00:08 vap-james Exp $
+// $Id: CortonaUtil.cpp,v 1.9 2002/03/25 01:38:52 vap-warren Exp $
 
 #include "stdafx.h"
-#include "CortonaBase.h"
 
 #include "CortonaUtil.h"
 
@@ -19,9 +18,6 @@
 #undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
 #endif
-
-// To link in all the GUIDs
-#include "shelley_i.c"
 
 /////////////////
 // CCortonaUtil

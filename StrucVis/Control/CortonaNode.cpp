@@ -7,10 +7,9 @@
 // CortonaNode.cpp
 // 10/03/2002 - Warren Moore
 //
-// $Id: CortonaNode.cpp,v 1.3 2002/03/24 13:51:59 vap-warren Exp $
+// $Id: CortonaNode.cpp,v 1.4 2002/03/25 01:38:52 vap-warren Exp $
 
 #include "stdafx.h"
-#include "CortonaBase.h"
 
 #include "CortonaNode.h"
 

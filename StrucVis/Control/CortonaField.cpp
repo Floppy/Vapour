@@ -7,10 +7,9 @@
 // CortonaField.cpp
 // 07/03/2002 - Warren Moore
 //
-// $Id: CortonaField.cpp,v 1.10 2002/03/24 13:51:59 vap-warren Exp $
+// $Id: CortonaField.cpp,v 1.11 2002/03/25 01:38:52 vap-warren Exp $
 
 #include "stdafx.h"
-#include "CortonaBase.h"
 
 #include "CortonaField.h"
 
