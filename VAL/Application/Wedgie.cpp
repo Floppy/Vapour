@@ -7,7 +7,7 @@
 // Wedgie.cpp - 02/07/2000 - Warren Moore
 //	Creation and reading of compressed Wedgie files
 //
-// $Id: Wedgie.cpp,v 1.8 2000/07/19 08:51:30 waz Exp $
+// $Id: Wedgie.cpp,v 1.9 2000/07/21 16:27:57 waz Exp $
 //
 
 #include "StdAfx.h"
@@ -21,6 +21,7 @@
 #include <direct.h>
 #include <errno.h>
 #include <stdio.h>
+#include <vector>
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -713,37 +714,79 @@ WJERESULT CWedgie::EndHeader() {
 } // EndHeader
 
 WJERESULT CWedgie::RemoveFiles(const char *pcDir) {
+	// Create the file and dir lists
+	std::vector<char*> oDirList, oFileList;
 	WJERESULT eResult = WJE_OK;
+	// Create the search path
 	CString strSearch;
-	strSearch.Format("%s*.*", pcDir);
+	if (pcDir[strlen(pcDir) - 1] == '\\') 
+		strSearch.Format("%s*.*", pcDir);
+	else
+		strSearch.Format("%s\\*.*", pcDir);
+	// Find the directory contents
 	CFileFind oFind;
 	bool bFound = oFind.FindFile((LPCSTR)strSearch) == TRUE;
 	while (bFound) {
+		// Any more files to search?
 		bFound = oFind.FindNextFile() == TRUE;
 		if (!oFind.IsDots()) {
-			if (oFind.IsDirectory()) {
-				// Process subdirectories
-				strSearch.Format("%s%s\\", pcDir, oFind.GetFileName());
-				eResult = RemoveFiles(strSearch);
-				if (eResult != WJE_OK)
-					// Fail on error
-					bFound = false;
+			// Create the name string
+			char *pcName = NULL;
+			NEWBEGIN
+			pcName = (char*) new char[strlen(oFind.GetFilePath()) + 1];
+			NEWEND("CWedgie::RemoveFiles - Saved directory name")
+			if (pcName) {
+				// Save the name ...
+				strcpy(pcName, oFind.GetFilePath());
+				// ... into the correct list
+				if (oFind.IsDirectory())
+					oDirList.push_back(pcName);
+				else
+					oFileList.push_back(pcName);
 			}
 			else {
-				// Delete the file
-				int iResult = remove(oFind.GetFilePath());
-				if ((iResult == -1) && (errno != EACCES) && (errno != ENOENT)) {
-					eResult = WJE_CANNOT_MOVE;
-					bFound = false;
-				}
-			} 
+				// Couldn't allocate the name
+				bFound = true;
+				eResult = WJE_OUT_OF_MEMORY;
+			}
 		}
 	}
+	// Close the search object
+	oFind.Close();
+	// Process subdirectories
+	std::vector<char*>::iterator pDir = oDirList.begin();
+	while (pDir != oDirList.end()) {
+		// Process the subdirectory
+		eResult = RemoveFiles(*pDir);
+		if (eResult != WJE_OK)
+			// Fail on error
+			bFound = false;
+		// Delete the string
+		delete [] *pDir;
+		// Carry on along the list
+		pDir++;
+	}
+	// Delete the files
+	std::vector<char*>::iterator pFile = oFileList.begin();
+	while (pFile != oFileList.end()) {
+		// Delete the file
+		int iResult = remove(*pFile);
+		if ((iResult == -1) && (errno != EACCES) && (errno != ENOENT)) {
+			eResult = WJE_CANNOT_MOVE;
+			bFound = false;
+		}
+		// Delete the string
+		delete [] *pFile;
+		// Carry on along the list
+		pFile++;
+	}
+	// Delete the search directory
 	int iResult = _rmdir(pcDir);
 	if ((iResult == -1) && (errno != ENOTEMPTY) && (errno != ENOENT)) {
 		eResult = WJE_CANNOT_MOVE;
 		bFound = false;
 	}
-	// Delete the initial directory
+
 	return eResult;
 } // RemoveFiles
+
