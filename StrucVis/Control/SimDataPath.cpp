@@ -7,7 +7,7 @@
 // SimDataPath.cpp
 // 19/03/2002 - Warren Moore
 //
-// $Id: SimDataPath.cpp,v 1.7 2002/03/25 13:15:58 vap-warren Exp $
+// $Id: SimDataPath.cpp,v 1.8 2002/03/27 02:55:21 vap-warren Exp $
 
 #include "stdafx.h"
 #include "vtstrucvis.h"
@@ -27,6 +27,7 @@ static char THIS_FILE[] = __FILE__;
 CSimDataPath::CSimDataPath() :
    m_uiDataRead(0),
    m_bSetup(false),
+   m_uiFrame(0),
    m_uiFrameSeek(0),
    m_uiFrameLength(0) {
 }
@@ -84,7 +85,7 @@ void CSimDataPath::OnDataAvailable(DWORD dwSize, DWORD bscfFlag)  {
          // Read in the data
          unsigned int uiRead = Read((void*) pucData, m_uiFrameLength);
          if (uiRead == m_uiFrameLength) {
-            ((CVTStrucVisCtl*)GetControl())->ShowFrame(pucData, m_uiFrameLength);
+            ((CVTStrucVisCtl*)GetControl())->ShowFrame(m_uiFrame, pucData, m_uiFrameLength);
          }
          // Delete the data
          delete [] pucData;
@@ -104,7 +105,10 @@ void CSimDataPath::OnDataAvailable(DWORD dwSize, DWORD bscfFlag)  {
    CDataPathProperty::OnDataAvailable(dwSize, bscfFlag);
 }
 
-void CSimDataPath::ShowFrame(unsigned int uiSeek, unsigned int uiLength) {
+bool CSimDataPath::ShowFrame(const unsigned int uiFrame, 
+                             const unsigned int uiSeek,
+                             const unsigned int uiLength) {
+   bool bDefer = true;
    // Do we have enough data?
    if (m_uiDataRead > uiSeek + uiLength) {
       // Allocate the memory
@@ -115,7 +119,8 @@ void CSimDataPath::ShowFrame(unsigned int uiSeek, unsigned int uiLength) {
          // Read in the data
          unsigned int uiRead = Read((void*) pucData, uiLength);
          if (uiRead == uiLength) {
-            ((CVTStrucVisCtl*)GetControl())->ShowFrame(pucData, m_uiFrameLength);
+            ((CVTStrucVisCtl*)GetControl())->ShowFrame(uiFrame, pucData, m_uiFrameLength);
+            bDefer = false;
          }
          // Delete the data
          delete [] pucData;
@@ -125,9 +130,11 @@ void CSimDataPath::ShowFrame(unsigned int uiSeek, unsigned int uiLength) {
    }
    // Otherwise defer until it's arrived
    else {
+      m_uiFrame = uiFrame;
       m_uiFrameSeek = uiSeek;
       m_uiFrameLength = uiLength;
    }
+   return bDefer;
 }
 
 

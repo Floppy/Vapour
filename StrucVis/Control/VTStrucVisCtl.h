@@ -7,7 +7,7 @@
 // VTStructVisCtl.cpp
 // 05/03/2002 - Warren Moore
 //
-// $Id: VTStrucVisCtl.h,v 1.14 2002/03/25 15:57:03 vap-warren Exp $
+// $Id: VTStrucVisCtl.h,v 1.15 2002/03/27 02:55:21 vap-warren Exp $
 
 #ifndef __VTSTRUCTVIS_CONTROL__
 #define __VTSTRUCTVIS_CONTROL__
@@ -73,13 +73,13 @@ public:
    void SimLoaded();
    // Called by CSimDataPath to indicate that the data is loaded
 
-   bool SceneSetup(const unsigned char *pucData, unsigned int uiLength);
+   bool SceneSetup(const unsigned char *pucData, const unsigned int uiLength);
    // Passes loaded data into the scene, when true is returned
 
-   void ShowFrame(unsigned int uiFrame);
+   bool ShowFrame(const unsigned int uiFrame);
    // Displays the chosen frame
 
-   void ShowFrame(const unsigned char *pucData, unsigned int uiLength);
+   void ShowFrame(const unsigned int uiFrame, const unsigned char *pucData, const unsigned int uiLength);
    // Passes the frame data to the scene manager for display
    // Only to be called by CSimDataPath
 
@@ -115,14 +115,20 @@ protected:
    // Tries to load the bitmap from the UIDataPath object, and sets
    // m_eUIResult accordingly - returns true if successful
 
-   void FrameControl();
-   // Update frame controller dependent on UI states
+   bool FrameControl(unsigned int &uiFrame);
+   // Update frame controller dependent on UI states, returns true if changed
 
-   void UIControl();
-   // Update the UI state when UI event happens
+   void ButtonControl(unsigned int &uiFrame);
+   // Update the button states when UI event happens
 
    bool Interactive();
    // Checks all possible conditions to see if we are interactive
+
+   bool Running();
+   // Check whether we are in run or dev mode, returns true if running
+
+   bool CheckSliders(const CPoint oPoint, unsigned int &uiFrame);
+   // Checks the sliders for activation, returns true if a slider was set
 
 //#===--- Private Data Types
 protected:
@@ -165,6 +171,59 @@ protected:
       RM_FASTFORWARD,               // Fast forward
    } ERunMode;
 
+   // A virtual slider class
+   class CSlider {
+
+   //#===--- Member Functions
+   public:
+
+      CSlider();
+      // Constructor
+
+      void SetPos(const unsigned int uiX, const unsigned int uiY);
+      // Set the position of the slider
+
+      void SetSize(const unsigned int uiW, const unsigned int uiH);
+      // Set the size of the slider
+
+      void SetLimitI(const int iLow, const int iHigh);
+      // Set the int limits
+
+      void SetLimitUI(const unsigned uiLow, const unsigned int uiHigh);
+      // Set the unsigned int limits
+
+      void SetLimitF(const float fLow, const float fHigh);
+      // Set the float limits
+
+      void SetSteps(const unsigned int uiSteps);
+      // Sets the number of steps for the slider (set automatically for ints and unsigned ints)
+
+      bool GetPosition(const CPoint oPoint);
+      // Returns the true if the point is within the slider
+
+      float GetPosition() const;
+      // Returns the value set by the last GetPosition(const CPoint) call
+
+      int GetInt();
+      // Returns the int value (GetPosition must be called to update value)
+
+      unsigned int GetUnsignedInt();
+      // Returns the unsigned int value (GetPosition must be called to update value)
+
+      float GetFloat();
+      // Returns the float value (GetPosition must be called to update value)
+
+   //#===--- Internal Variables
+   protected:
+
+      unsigned int m_uiX, m_uiY, m_uiW, m_uiH;     // Size vars
+      unsigned int m_uiSteps;                      // Slider steps
+      float m_fPos;                                //
+      int m_iLow, m_iHigh;                         // Int limits
+      unsigned m_uiLow, m_uiHigh;                  // Unsigned int limits
+      float m_fLow, m_fHigh;                       // Float limits
+   };
+
 //#===--- Member Variables
 protected:
 
@@ -180,10 +239,15 @@ protected:
    bool m_bMouseOver;                        // Mouse over control indicator
    int m_iUIZone;                            // Current remote button under mouse (-1 if none)
    unsigned int m_uiFrame;                   // Current animation frame
-   bool m_bDirty;                            // Frame change indicator
    ERunMode m_eRunMode;                      // Current run mode
    bool m_bRunning;                          // Animation running indicator
    bool m_bLoop;                             // Looping play indicator
+   bool m_bStep;                             // Single step indicator
+   bool m_bStressColour;                     // Stress colouring indicator
+   unsigned int m_uiUITab;                   // UI tab marker
+
+   // Slider vars
+   CSlider m_oSFrame;                        // Frame counter slider
 
    // Render buffers
    CBitmap m_oBackBuffer;                    // Screen back buffer

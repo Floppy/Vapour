@@ -7,7 +7,7 @@
 // VTStructVisCtl.cpp
 // 05/03/2002 - Warren Moore
 //
-// $Id: VTStrucVisCtl.cpp,v 1.15 2002/03/25 15:57:03 vap-warren Exp $
+// $Id: VTStrucVisCtl.cpp,v 1.16 2002/03/27 02:55:21 vap-warren Exp $
 
 #include "stdafx.h"
 #include "VTStrucVis.h"
@@ -150,6 +150,103 @@ HRESULT UnregisterCLSIDInReqCategory(REFCLSID clsid, CATID catid) {
    return hResult;
 }
 
+////////////////////////////
+// CVTStrucVisCtl::CSlider
+
+CVTStrucVisCtl::CSlider::CSlider() :
+   m_uiX(0),
+   m_uiY(0),
+   m_uiW(0),
+   m_uiH(0),
+   m_uiSteps(0),
+   m_fPos(0.0f),
+   m_iLow(0),
+   m_iHigh(0),
+   m_uiLow(0),
+   m_uiHigh(0),
+   m_fLow(0.0f),
+   m_fHigh(0.0f)
+{
+}
+
+void CVTStrucVisCtl::CSlider::SetPos(const unsigned int uiX, const unsigned int uiY) {
+   m_uiX = uiX;
+   m_uiY = uiY;
+}
+
+void CVTStrucVisCtl::CSlider::SetSize(const unsigned int uiW, const unsigned int uiH) {
+   m_uiW = uiW;
+   m_uiH = uiH;
+}
+
+void CVTStrucVisCtl::CSlider::SetLimitI(const int iLow, const int iHigh) {
+   if (iHigh > iLow) {
+      m_iLow = iLow;
+      m_iHigh = iHigh;
+      m_uiSteps = iHigh - iLow;
+   }
+}
+
+void CVTStrucVisCtl::CSlider::SetLimitUI(const unsigned uiLow, const unsigned int uiHigh) {
+   if (uiHigh > uiLow) {
+      m_uiLow = uiLow;
+      m_uiHigh = uiHigh;
+      m_uiSteps = uiHigh - uiLow;
+   }
+}
+
+void CVTStrucVisCtl::CSlider::SetLimitF(const float fLow, const float fHigh) {
+   if (fHigh > fLow) {
+      m_fLow = fLow;
+      m_fHigh = fHigh;
+   }
+}
+
+void CVTStrucVisCtl::CSlider::SetSteps(const unsigned int uiSteps) {
+   m_uiSteps = uiSteps;
+}
+
+bool CVTStrucVisCtl::CSlider::GetPosition(const CPoint oPoint) {
+   bool bFound = false;
+   // Is the point in the box?
+   m_fPos = 0.0f;
+   if ((oPoint.x >= m_uiX) && (oPoint.y >= m_uiY) &&
+      (oPoint.x < m_uiX + m_uiW) && (oPoint.y < m_uiY + m_uiH)) {
+      const float fX = (float)(oPoint.x - m_uiX);
+      const float fSize = ((float)m_uiW / (float)m_uiSteps);
+      const float fHalfSize = fSize / 2.0f;
+      const float fPos = fX / fSize;
+      // Go through the steps
+      for (unsigned int i = 0; i <= m_uiSteps && !bFound; i++) {
+         const float fStep = (float)i * fSize;
+         if ((fX >= fStep - fHalfSize) && (fX < fStep + fHalfSize)) {
+            m_fPos = fStep / (float)m_uiW;
+            bFound = true;
+         }
+      }
+   }
+   return bFound;
+}
+
+float CVTStrucVisCtl::CSlider::GetPosition() const {
+   return m_fPos;
+}
+
+int CVTStrucVisCtl::CSlider::GetInt() {
+   const int fStep = (float)(m_iHigh - m_iLow);
+   return (int)((fStep * m_fPos) + (float)m_iLow);
+}
+
+unsigned int CVTStrucVisCtl::CSlider::GetUnsignedInt() {
+   const int fStep = (float)(m_uiHigh - m_uiLow);
+   return (int)((fStep * m_fPos) + (float)m_uiLow);
+}
+
+float CVTStrucVisCtl::CSlider::GetFloat() {
+   const float fStep = m_fHigh - m_fLow;
+   return (fStep * m_fPos) + m_fLow;
+}
+
 ///////////////////
 // CVTStrucVisCtl
 
@@ -288,9 +385,11 @@ CVTStrucVisCtl::CVTStrucVisCtl() :
    m_iUIZone(-1),
    m_oBufferSize(0, 0),
    m_uiFrame(0),
-   m_bDirty(true),
    m_eRunMode(RM_PLAY),
    m_bLoop(false),
+   m_bStep(false),
+   m_bStressColour(false),
+   m_uiUITab(0),
    m_bRunning(false) {
 
    InitializeIIDs(&IID_DVTStrucVis, &IID_DVTStrucVisEvents);
@@ -304,6 +403,10 @@ CVTStrucVisCtl::CVTStrucVisCtl() :
 
    // Set the initial window size
    SetInitialSize(180, 250);
+
+   // Set up the sliders
+   m_oSFrame.SetPos(0, 40);
+   m_oSFrame.SetSize(180, 10);
 }
 
 // Destructor
@@ -598,7 +701,7 @@ void CVTStrucVisCtl::DrawPlaceholder(CDC *pDC, const CRect &rcBounds, bool bRun)
          oStr += "WRL path not set\n";
 
       // Display the error text
-      pDC->SetTextColor(TranslateColor(GetEnabled() ? RGB(0xFF, 0x00, 0x00): RGB(0xFF, 0xC0, 0xC0)));
+      pDC->SetTextColor(TranslateColor(GetEnabled() ? RGB(0xFF, 0x00, 0x00) : RGB(0xFF, 0xC0, 0xC0)));
       pDC->DrawText(oStr, oTextRect, DT_CENTER | DT_WORDBREAK);
    }
    // Display the caption text
@@ -610,16 +713,12 @@ void CVTStrucVisCtl::DrawPlaceholder(CDC *pDC, const CRect &rcBounds, bool bRun)
 }
 
 void CVTStrucVisCtl::DrawUI(CDC *pDC, const CRect &rcBounds, bool bRun) {
-   // If we haven't started it already, run the animation
+   // If we haven't started it already, start the timer
    if (!m_bRunning) {
-      // Set the animation vars
-      m_uiFrame = 0;
-      m_eRunMode = RM_PLAY;
       SetTimer(TI_ANIMATE, 30, NULL);
       m_bRunning = true;
-      // Show the first frame
-      ShowFrame(0);
    }
+
    // Create compatible DCs for the remote and the back buffer
 	CDC oDCRemote, oDCBuffer;
 	oDCRemote.CreateCompatibleDC(pDC);
@@ -632,8 +731,8 @@ void CVTStrucVisCtl::DrawUI(CDC *pDC, const CRect &rcBounds, bool bRun) {
       m_oBackBuffer.CreateCompatibleBitmap(pDC, rcBounds.Width(), rcBounds.Height());
    }
    // Initialise the buffers with bitmaps
-   CBitmap *pRemoteBitmap = oDCRemote.SelectObject(&m_oUIBitmap);
-   CBitmap *pBufferBitmap = oDCBuffer.SelectObject(&m_oBackBuffer);
+   CBitmap *poRemoteBitmap = oDCRemote.SelectObject(&m_oUIBitmap);
+   CBitmap *poBufferBitmap = oDCBuffer.SelectObject(&m_oBackBuffer);
    // Set the background to the background colour
    CBrush oBrush;
    oBrush.CreateSolidBrush(TranslateColor(GetBackColor()));
@@ -650,6 +749,18 @@ void CVTStrucVisCtl::DrawUI(CDC *pDC, const CRect &rcBounds, bool bRun) {
    // Loop indicator
    if (m_bLoop)
       oDCBuffer.BitBlt(120, 80, 60, 30, &oDCRemote, 300, 80, SRCCOPY);
+
+   // Step indicator
+   if (m_bStep)
+      oDCBuffer.BitBlt(120, 110, 60, 30, &oDCRemote, 300, 110, SRCCOPY);
+
+   // Colour indicator
+   if (m_bStressColour)
+      oDCBuffer.BitBlt(0, 140, 180, 15, &oDCRemote, 180, 140, SRCCOPY);
+
+   // Tab top
+   if (m_uiUITab < 3)
+      oDCBuffer.BitBlt(m_uiUITab * 60, 155, 60, 15, &oDCRemote, 180 + m_uiUITab * 60, 155, SRCCOPY);
 
    // If we're running and enabled
    if (bRun && GetEnabled()) {
@@ -689,13 +800,63 @@ void CVTStrucVisCtl::DrawUI(CDC *pDC, const CRect &rcBounds, bool bRun) {
       }
    }
 
-   //#===--- Frame count
+   //#===--- Frame count bar
+   unsigned int uiFrames = m_poScene->NumFrames();
+   if (uiFrames > 0) {
+      const int iStep = 180 / (uiFrames - 1);
+      // Copy the bar
+      oDCBuffer.BitBlt(0, 40, iStep * m_uiFrame, 10, &oDCRemote, iWidth, 40, SRCCOPY);
+   }
+
+   //#===--- Frame counter
+   // Set the the DC
+   oDCBuffer.SetMapMode(MM_ANISOTROPIC);
+   oDCBuffer.SetWindowExt(1440, 1440);
+   oDCBuffer.SetViewportExt(oDCBuffer.GetDeviceCaps(LOGPIXELSX), oDCBuffer.GetDeviceCaps(LOGPIXELSY));
+   // Set the text map mode
+   oDCBuffer.SetBkMode(TRANSPARENT);
+   oDCBuffer.SetTextColor(TranslateColor(GetForeColor()));
+   // Create and select the font
+   CFont oFont;
+   const int iPoints = 20;
+   oFont.CreateFont(iPoints * 20,
+                    0,
+                    0,
+                    0,
+                    400,
+                    FALSE,
+                    FALSE,
+                    0,
+                    ANSI_CHARSET,
+                    OUT_DEFAULT_PRECIS,
+                    CLIP_DEFAULT_PRECIS,
+                    DEFAULT_QUALITY,
+                    DEFAULT_PITCH | FF_SWISS,
+                    "Arial");
+   CFont *poBufferFont = oDCBuffer.SelectObject(&oFont);
+   // Create the font text
+   CString oFrameText("");
+   oFrameText.Format("%d/%d", m_uiFrame + 1, uiFrames);
+   // Set the coords
+   TEXTMETRIC sTM;
+   oDCBuffer.GetTextMetrics(&sTM);
+   CSize oTextSize = oDCBuffer.GetTextExtent(oFrameText);
+   oTextSize.cy = sTM.tmHeight + sTM.tmExternalLeading;
+   oDCBuffer.LPtoDP(&oTextSize);
+   CSize oDevSize(173 - oTextSize.cx, 7);
+   oDCBuffer.DPtoLP(&oDevSize);
+   // Output the font
+   oDCBuffer.TextOut(oDevSize.cx, oDevSize.cy, oFrameText);
+   // Restore the DC mapping mode
+   oDCBuffer.SetMapMode(MM_TEXT);
 
    // Copy over the back buffer
-   pDC->BitBlt(rcBounds.left, rcBounds.top, rcBounds.Width(), rcBounds.Height(), &oDCBuffer, 0, 0, SRCCOPY); 
+   pDC->BitBlt(rcBounds.left, rcBounds.top, rcBounds.Width(), rcBounds.Height(), &oDCBuffer, 0, 0, SRCCOPY);
+
    // Restore the saved objects
-   oDCRemote.SelectObject(pRemoteBitmap);
-   oDCBuffer.SelectObject(pBufferBitmap);
+   oDCRemote.SelectObject(poRemoteBitmap);
+   oDCBuffer.SelectObject(poBufferBitmap);
+   oDCBuffer.SelectObject(poBufferFont);
 }
 
 bool CVTStrucVisCtl::LoadBitmap() {
@@ -785,55 +946,68 @@ bool CVTStrucVisCtl::LoadBitmap() {
 	return true;
 }
 
-void CVTStrucVisCtl::FrameControl() {
+bool CVTStrucVisCtl::FrameControl(unsigned int &uiFrame) {
+   uiFrame = m_uiFrame;
    // Check we have a scene manager present
    if (!m_poScene)
-      return;
+      return false;
    // Get the max number of frames
    unsigned int uiFrames = m_poScene->NumFrames();
    // Set the fast forward/ rewind step
    const unsigned int uiStep = 2;
-   // Store the current frame
-   const unsigned int uiCurrent = m_uiFrame;
+   // Store the current frame and state
+   const ERunMode eRunMode = m_eRunMode;
    // Update dependent on the run mode
    switch (m_eRunMode) {
       // PLAY
       case RM_PLAY:
-         if (m_uiFrame + 1 < uiFrames)
-            m_uiFrame++;
+         if (uiFrame + 1 < uiFrames)
+            uiFrame++;
          else
             if (m_bLoop)
-               m_uiFrame = 0;
+               uiFrame = 0;
             else
                m_eRunMode = RM_PAUSE;
+         if (m_bStep)
+            m_eRunMode = RM_PAUSE;
          break;
       // PLAY REVERSE
       case RM_PLAYREV:
-         if (m_uiFrame > 0)
-            m_uiFrame--;
+         if (uiFrame > 0)
+            uiFrame--;
          else
             if (m_bLoop)
-               m_uiFrame = uiFrames - 1;
+               uiFrame = uiFrames - 1;
             else
                m_eRunMode = RM_PAUSE;
+         if (m_bStep)
+            m_eRunMode = RM_PAUSE;
          break;
       // REWIND
       case RM_REWIND:
-         if (m_uiFrame > uiStep)
-            m_uiFrame -= uiStep;
+         if (m_bStep) {
+            m_eRunMode = RM_PAUSE;
+            break;
+         }
+         if (uiFrame > uiStep)
+            uiFrame -= uiStep;
          else
             if (m_bLoop)
-               m_uiFrame = uiFrames - 1;
+               uiFrame = uiFrames - 1;
             else
                m_eRunMode = RM_PAUSE;
          break;
       // FAST FORWARD
       case RM_FASTFORWARD:
-         if (m_uiFrame + uiStep < uiFrames)
-            m_uiFrame += uiStep;
+         if (m_bStep) {
+            m_eRunMode = RM_PAUSE;
+            break;
+         }
+         if (uiFrame + uiStep < uiFrames)
+            uiFrame += uiStep;
          else
             if (m_bLoop)
-               m_uiFrame = 0;
+               uiFrame = 0;
             else
                m_eRunMode = RM_PAUSE;
          break;
@@ -841,12 +1015,12 @@ void CVTStrucVisCtl::FrameControl() {
       default:
          break;
    }
-   // Check to see if the frame number is modified
-   if (uiCurrent != m_uiFrame)
-      m_bDirty = true;
+   // Changed if the frame number or the run mode has change
+   return ((uiFrame != m_uiFrame) || (eRunMode != m_eRunMode));
 }
 
-void CVTStrucVisCtl::UIControl() {
+void CVTStrucVisCtl::ButtonControl(unsigned int &uiFrame) {
+   uiFrame = m_uiFrame;
    // Check we have a scene manager present
    if (!m_poScene)
       return;
@@ -879,16 +1053,16 @@ void CVTStrucVisCtl::UIControl() {
       // GO TO START
       case 6:
          m_eRunMode = RM_PAUSE;
-         m_bLoop = false;
-         m_uiFrame = 0;
-         m_bDirty = true;
+         uiFrame = 0;
          break;
       // GO TO END
       case 7:
          m_eRunMode = RM_PAUSE;
-         m_bLoop = false;
-         m_uiFrame = m_poScene->NumFrames() - 1;
-         m_bDirty = true;
+         uiFrame = m_poScene->NumFrames() - 1;
+         break;
+      // STEP
+      case 8:
+         m_bStep = !m_bStep;
          break;
       // Unknown
       default:
@@ -909,6 +1083,30 @@ bool CVTStrucVisCtl::Interactive() {
    bOk &= (m_poScene != NULL);
 
    return bOk;
+}
+
+bool CVTStrucVisCtl::Running() {
+   // Check ambient modes
+   return (AmbientUserMode() && !AmbientUIDead());
+}
+
+bool CVTStrucVisCtl::CheckSliders(const CPoint oPoint, unsigned int &uiFrame) {
+   uiFrame = m_uiFrame;
+   // Don't bother if the mouse is down
+   if (!m_bLButtonDown)
+      return false;
+
+   bool bModified = false;
+
+   // Check the frame slider
+   if (m_oSFrame.GetPosition(oPoint)) {
+      uiFrame = m_oSFrame.GetUnsignedInt();
+      if (uiFrame != m_uiFrame) {
+         bModified = true;
+      }
+   }
+
+   return bModified;
 }
 
 void CVTStrucVisCtl::UILoading() {
@@ -953,7 +1151,7 @@ void CVTStrucVisCtl::SimLoaded() {
    InvalidateControl();
 }
 
-bool CVTStrucVisCtl::SceneSetup(const unsigned char *pucData, unsigned int uiLength) {
+bool CVTStrucVisCtl::SceneSetup(const unsigned char *pucData, const unsigned int uiLength) {
    // Check we have a scene manager present
    if (!m_poScene)
       return false;
@@ -966,28 +1164,38 @@ bool CVTStrucVisCtl::SceneSetup(const unsigned char *pucData, unsigned int uiLen
    return bDone;
 }
 
-void CVTStrucVisCtl::ShowFrame(unsigned int uiFrame) {
+bool CVTStrucVisCtl::ShowFrame(const unsigned int uiFrame) {
    // Check we have a scene manager present
    if (!m_poScene)
-      return;
+      return false;
    // Show the current frame
    unsigned int uiSeek, uiLength;
-   m_poScene->FrameInfo(m_uiFrame, uiSeek, uiLength);
+   TRACE("ShowFrame(%d)\n", uiFrame);
+   m_poScene->FrameInfo(uiFrame, uiSeek, uiLength);
    if (uiLength > 0)
-      m_oSimData.ShowFrame(uiSeek, uiLength);
+      return m_oSimData.ShowFrame(uiFrame, uiSeek, uiLength);
+   return false;
 }
 
-void CVTStrucVisCtl::ShowFrame(const unsigned char *pucData, unsigned int uiLength) {
+void CVTStrucVisCtl::ShowFrame(const unsigned int uiFrame,
+                               const unsigned char *pucData,
+                               const unsigned int uiLength) {
    // Check we have a scene manager present
    if (!m_poScene)
       return;
    // Pass the data through
+   TRACE("ShowFrame(%d, data, offset)\n", uiFrame);
    m_poScene->ShowFrame(pucData, uiLength);
+   m_uiFrame = uiFrame;
+   // Refresh the display
+   InvalidateControl();
 }
 
 void CVTStrucVisCtl::GoInteractive() {
    // Set the control interactive if we have all the properties available
    InternalSetReadyState(READYSTATE_INTERACTIVE);
+   // Set the frame count slider
+   m_oSFrame.SetLimitUI(0, m_poScene->NumFrames() - 1);
    // Refresh the control
    InvalidateControl();
 }
@@ -996,10 +1204,9 @@ void CVTStrucVisCtl::GoInteractive() {
 // Message handlers
 
 void CVTStrucVisCtl::OnDraw(CDC* pdc, const CRect& rcBounds, const CRect& rcInvalid) {
-   // Check our operating mode
-   bool bRun = AmbientUserMode() && !AmbientUIDead();
    // If we're in run mode, the UI is loaded and the ready state is marked interactive
    // render the full-on interface
+   bool bRun = Running();
    if (bRun && Interactive()) {
       // Draw the full-on interface
       DrawUI(pdc, rcBounds, bRun);
@@ -1044,7 +1251,7 @@ void CVTStrucVisCtl::DoPropExchange(CPropExchange* pPX) {
       }
       m_eRunMode = RM_PLAY;
       m_uiFrame = 0;
-      m_bDirty = true;
+      ShowFrame(0);
    }
 
    // Start the asynchronous downloads
@@ -1070,11 +1277,13 @@ void CVTStrucVisCtl::OnResetState() {
    }
    m_eRunMode = RM_PLAY;
    m_uiFrame = 0;
-   m_bDirty = true;
 
    // Restart Cortona
    ExitCortona();
    InitCortona();
+
+   // Load the initial frame
+   ShowFrame(0);
 }
 
 void CVTStrucVisCtl::AboutBox() {
@@ -1094,6 +1303,14 @@ void CVTStrucVisCtl::OnAmbientPropertyChange(DISPID dispid) {
 
 void CVTStrucVisCtl::OnLButtonDown(UINT nFlags, CPoint point) {
    m_bLButtonDown = true;
+
+   // Check the sliders
+   unsigned int uiFrame = m_uiFrame;
+   CheckSliders(point, uiFrame);
+   if (uiFrame != m_uiFrame)
+      ShowFrame(uiFrame);
+
+   // Refresh the display
    InvalidateControl();
 
    COleControl::OnLButtonDown(nFlags, point);
@@ -1102,12 +1319,32 @@ void CVTStrucVisCtl::OnLButtonDown(UINT nFlags, CPoint point) {
 void CVTStrucVisCtl::OnLButtonUp(UINT nFlags, CPoint point) {
    m_bLButtonDown = false;
 	
-   // Check our operating mode
-   bool bRun = AmbientUserMode() && !AmbientUIDead();
-   bool bInteractive = (GetReadyState() == READYSTATE_INTERACTIVE) || (GetReadyState() == READYSTATE_COMPLETE);
    // If we have a scene and we're interactive and running, process the event
-   if (bRun && Interactive())
-      UIControl();
+   if (Running() && Interactive()) {
+      // Process the controls
+      unsigned int uiFrame = m_uiFrame;
+      ButtonControl(uiFrame);
+      if (uiFrame != m_uiFrame)
+         ShowFrame(uiFrame);
+
+      // Check for colouring change
+      if ((point.y >= 140) && (point.y < 155)) {
+         m_bStressColour = !m_bStressColour;
+         m_poScene->SetColourScheme(m_bStressColour ? STRESS : GROUP);
+      }
+
+      // Check for the tab change
+      if ((point.y >= 155) && (point.y < 170)) {
+         m_uiUITab = point.x / 60;
+      }
+
+      // Check the sliders
+      uiFrame = m_uiFrame;
+      CheckSliders(point, uiFrame);
+      if (uiFrame != m_uiFrame)
+         ShowFrame(uiFrame);
+   }
+
    // Refresh the display
    InvalidateControl();
 
@@ -1115,21 +1352,34 @@ void CVTStrucVisCtl::OnLButtonUp(UINT nFlags, CPoint point) {
 }
 
 void CVTStrucVisCtl::OnMouseMove(UINT nFlags, CPoint point) {
-   // Work out where the mouse is
-   const int iCol = point.x / 60;
-   const int iRow = (point.y - 50) / 30;
-   int iUIZone = iRow * 3 + iCol;
-   iUIZone = (iUIZone < 0 ? -1 : (iUIZone > 7 ? -1 : iUIZone));
-   // Update if the value has changed
-   if (iUIZone != m_iUIZone)
-      InvalidateControl();
+   // If we're running, react to the movement
+   if (Running() && Interactive()) {
+      // Is the mouse in a zone?
+      const int iCol = point.x / 60;
+      const int iRow = point.y - 50;
+      int iUIZone = (iRow >= 0 ? (iRow / 30) * 3 + iCol : -1);
+      iUIZone = (iUIZone > 8 ? -1 : iUIZone);
+      bool bModified = (iUIZone != m_iUIZone);
+      // Update the zone
+      m_iUIZone = iUIZone;
+
+      // Check the sliders
+      unsigned int uiFrame = m_uiFrame;
+      bModified |= CheckSliders(point, uiFrame);
+      if (uiFrame != m_uiFrame)
+         ShowFrame(uiFrame);
+
+      // Repaint if necessary
+      if (bModified)
+         InvalidateControl();
+   }
+
    // Check if the mouse is over the control
    if (!m_bMouseOver) {
       m_bMouseOver = true;
       // Set a timer to check for the mouse every 1/10 of a second
       SetTimer(TI_MOUSEOVER, 100, NULL);
    }
-   m_iUIZone = iUIZone;
 
 	COleControl::OnMouseMove(nFlags, point);
 }
@@ -1159,15 +1409,15 @@ void CVTStrucVisCtl::OnTimer(UINT nIDEvent) {
 
    // Animate event
    if (nIDEvent == TI_ANIMATE) {
-      bool bInteractive = (GetReadyState() == READYSTATE_INTERACTIVE) || (GetReadyState() == READYSTATE_COMPLETE);
-      if (m_poScene && bInteractive) {
-         // Update the frame number
-         FrameControl();
-         if (m_bDirty) {
+      if (Running() && Interactive()) {
+         // Update the frame number if we're not still waiting on the last
+         unsigned int uiFrame = m_uiFrame;
+         if (!m_oSimData.Waiting() || m_eRunMode == RM_PLAYREV || m_eRunMode == RM_REWIND)
+            FrameControl(uiFrame);
+         // Update the frame if it's been modified
+         if (uiFrame != m_uiFrame) {
             // Show the frame
-            ShowFrame(m_uiFrame);
-            // Show updated
-            m_bDirty = false;
+            ShowFrame(uiFrame);
          }
          // Redraw the control
          InvalidateControl();
