@@ -7,7 +7,7 @@
 // Image.h - 21/12/1999 - Warren Moore
 //	Image implementation
 //
-// $Id: Image.cpp,v 1.9 2000/07/31 14:45:02 waz Exp $
+// $Id: Image.cpp,v 1.10 2000/07/31 15:42:39 waz Exp $
 //
 
 #include "stdafx.h"
@@ -1049,11 +1049,12 @@ IRESULT CImage::ScaleVerticalRGB(int iHeight, IMAGEFILTERTYPE eFilter) {
 
 FRESULT CImage::Load(const char *pFname, CImageFile *pImageFile) {
 	// Check the image type
-	IMAGETYPE eInputType;
+	IMAGETYPE eInputType = IT_UNKNOWN;
 	FRESULT eFResult = pImageFile->GetImageType(pFname, eInputType);
 	if (eFResult != F_OK)
 		return eFResult;
-	m_eImageType = eInputType;
+	if (eInputType != IT_UNKNOWN)
+		m_eImageType = eInputType;
 
 	// Delete the original image
 	if (m_pData)

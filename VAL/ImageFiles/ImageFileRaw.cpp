@@ -7,7 +7,7 @@
 // ImageFileBMP.cpp - 31/07/2000 - Warren Moore
 //	Raw image file implementation
 //
-// $Id: ImageFileRaw.cpp,v 1.1 2000/07/31 15:07:08 waz Exp $
+// $Id: ImageFileRaw.cpp,v 1.2 2000/07/31 15:42:38 waz Exp $
 //
 
 #include "stdafx.h"
@@ -52,8 +52,8 @@ const char *CImageFileRaw::GetFileTitle() const {
 //#===--- ImageFile Functions
 
 FRESULT CImageFileRaw::GetImageType(const char *pFname, IMAGETYPE &eImgType) {
-	eImgType == IT_UNKNOWN;
-	return I_OK;
+	eImgType = IT_UNKNOWN;
+	return F_OK;
 } // GetImageType
 
 FRESULT CImageFileRaw::Load(const char *pFname, int &x, int &y, unsigned char *&pData) {
@@ -62,57 +62,54 @@ FRESULT CImageFileRaw::Load(const char *pFname, int &x, int &y, unsigned char *&
 	if (m_oFile.fail())
 		return F_DOES_NOT_EXIST;
 
-	FRESULT fResult = F_OK;
-	if (fResult == F_OK) {
-		// Read in the image data
-		unsigned int uLineLength = m_iWidth;
-		if (m_eImgType == IT_RGB)
-			uLineLength *= 3;
-		unsigned int uLineSize = uLineLength;
-		if (uLineSize % 4)
-			uLineSize += (4 - (uLineSize % 4));
-		unsigned int uMemSize = uLineSize * m_iHeight;
-		unsigned char *pInputData = NULL;
-		NEWBEGIN
-		pInputData = new unsigned char[iMemSize];
-		NEWEND("CImageFileRaw::Load - New image data")
-		unsigned char *pIData = pInputData;
-		// Load data if memory okay
-		if (pInputData) {
-			memset(pInputData, 0, iMemSize);
-			register unsigned int uY = m_iHeight;
-			while (uY--) {
-				m_oFile.read(pTempPtr, uLineSize);
-				// Read the image
-				m_oFile.read(pIData, uLineSize);
-				// Check the file read
-				if (m_oFile.gcount() != uLineSize) {
-					delete [] pInputData;
-					eResult = F_FILE_ERROR;
-					break;
-				}
-				// Add the line step
-				pIData += iPitch;
+	FRESULT eResult = F_OK;
+	// Read in the image data
+	unsigned int uLineLength = x;
+	if (m_eSaveType == IT_RGB)
+		uLineLength *= 3;
+	unsigned int uLineSize = uLineLength;
+	if (uLineSize % 4)
+		uLineSize += (4 - (uLineSize % 4));
+	unsigned int uMemSize = uLineSize * y;
+	unsigned char *pInputData = NULL;
+	NEWBEGIN
+	pInputData = new unsigned char[uMemSize];
+	NEWEND("CImageFileRaw::Load - New image data")
+	unsigned char *pIData = pInputData;
+	// Load data if memory okay
+	if (pInputData) {
+		memset(pInputData, 0, uMemSize);
+		register unsigned int uY = y;
+		while (uY--) {
+			// Read the image
+			m_oFile.read(pIData, uLineLength);
+			// Check the file read
+			if (m_oFile.gcount() != uLineLength) {
+				delete [] pInputData;
+				eResult = F_FILE_ERROR;
+				break;
 			}
-			// Set return parameters
+			// Add the line step
+			pIData += uLineSize;
+		}
+		// Set return parameters
+		if (eResult == F_OK) {
 			if (pData)
 				delete [] pData;
 			pData = pInputData;
-			x = m_iWidth;
-			y = m_iHeight;
 		}
-		else
-			fResult = F_OUT_OF_MEMORY;
 	}
+	else
+		eResult = F_OUT_OF_MEMORY;
 
 	// Close the file prior to returning
 	m_oFile.close();
 
-	return fResult;
+	return eResult;
 } // Load
 
 bool CImageFileRaw::CheckSaveType(IMAGETYPE eImgType) const {
-	return (eImgType == IT_RGB) || (eImgType == IT_PALETTE) || (emMgType == IT_GREY);
+	return (eImgType == IT_RGB) || (eImgType == IT_PALETTE) || (eImgType == IT_GREY);
 } // CheckSaveType
 
 void CImageFileRaw::SetSaveType(IMAGETYPE eImgType) {

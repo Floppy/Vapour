@@ -7,7 +7,7 @@
 // ImageFileBMP.h - 31/07/2000 - Warren Moore
 //	Raw bitmap file format image
 //
-// $Id: ImageFileRaw.h,v 1.1 2000/07/31 15:07:09 waz Exp $
+// $Id: ImageFileRaw.h,v 1.2 2000/07/31 15:42:39 waz Exp $
 //
 
 #ifndef _VAL_IMAGEFILERAW_
@@ -43,8 +43,6 @@ public:
 	//#===--- Internal Data
 private:
 	fstream m_oFile;
-	bool m_bTopDown;
-	int m_iWidth, m_iHeight;
 	IMAGETYPE m_eSaveType;
 	CImagePalette *m_pPalette;
 

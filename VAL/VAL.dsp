@@ -165,6 +165,19 @@ SOURCE=.\ImageFiles\ImageFileJPEG.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\ImageFiles\ImageFileRaw.cpp
+
+!IF  "$(CFG)" == "VAL - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "VAL - Win32 Debug"
+
+# SUBTRACT CPP /FA<none>
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
 SOURCE=.\Image\ImageFileStore.cpp
 # End Source File
 # Begin Source File
@@ -355,6 +368,10 @@ SOURCE=.\ImageFiles\ImageFileJPEG.h
 # Begin Source File
 
 SOURCE=.\Image\ImageFileProxy.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\ImageFiles\ImageFileRaw.h
 # End Source File
 # Begin Source File
 

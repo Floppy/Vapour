@@ -7,7 +7,7 @@
 // ImageFileBMP.cpp - 21/12/1999 - Warren Moore
 //	BMP file format image implementation
 //
-// $Id: ImageFileBMP.cpp,v 1.3 2000/07/31 14:45:02 waz Exp $
+// $Id: ImageFileBMP.cpp,v 1.4 2000/07/31 15:42:39 waz Exp $
 //
 
 #include "stdafx.h"
@@ -218,7 +218,7 @@ FRESULT CImageFileBMP::Save(const char *pFname, const int x, const int y,
 
 // Open the file, destroy the previous file contents
 	ofstream oFile(pFname, ios::out | ios::binary | ios::trunc);
-	if (!oFile)
+	if (oFile.fail())
 		return F_FILE_ERROR;
 
 // Calculate the image parameters
