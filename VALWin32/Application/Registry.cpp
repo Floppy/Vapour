@@ -7,7 +7,7 @@
 // Registry.cpp - 13/01/2000 - Warren Moore
 //	  Utility class for registry key management
 //
-// $Id: Registry.cpp,v 1.2 2000/11/27 20:39:20 waz Exp $
+// $Id: Registry.cpp,v 1.3 2001/07/11 11:29:30 vap-james Exp $
 //
 
 #include "StdAfx.h"
@@ -42,6 +42,7 @@ bool CRegistry::OpenKey(KEYTYPE eType, const char *pcKey, bool bRead) {
 	switch (eType) {
 		case LOCAL_MACHINE:		m_hRoot = HKEY_LOCAL_MACHINE; break;
 		case CURRENT_USER:		m_hRoot = HKEY_CURRENT_USER; break;
+		case CLASSES_ROOT:		m_hRoot = HKEY_CLASSES_ROOT; break;
 	}
 
 	// Open for reading
@@ -79,7 +80,9 @@ void CRegistry::CloseKey() {
 } // CloseKey
 
 void CRegistry::ReadString(const char *pcSubKey, const char *pcDefault, char *const pcValue) {
-	ASSERT(m_bRead && pcSubKey && pcValue);
+	ASSERT(m_bRead /*&& pcSubKey*/ && pcValue);
+	// commented out pcSubKey, because it IS allowed to be NULL for default values.
+
 	if (!m_bOpen) {
 		strcat(pcValue, pcDefault);
 		return;
@@ -106,7 +109,9 @@ void CRegistry::ReadString(const char *pcSubKey, const char *pcDefault, char *co
 } // ReadString
 
 void CRegistry::WriteString(const char *pcSubKey, const char *pcString) {
-	ASSERT(m_bOpen && (!m_bRead) && pcSubKey && pcString);
+	ASSERT(m_bOpen && (!m_bRead) /*&& pcSubKey*/ && pcString); 
+	// commented out pcSubKey, because it IS allowed to be NULL for default values.
+
 	// Key data
 	DWORD uSize = strlen(pcString);
 	// Write the value
@@ -164,6 +169,7 @@ void CRegistry::ReadString(KEYTYPE eType, const char *pcKey, const char *pcSubKe
 	switch (eType) {
 		case LOCAL_MACHINE:			hRoot = HKEY_LOCAL_MACHINE; break;
 		case CURRENT_USER:			hRoot = HKEY_CURRENT_USER; break;
+		case CLASSES_ROOT:			hRoot = HKEY_CLASSES_ROOT; break;
 	}
 // Read key
 	// Open the key
@@ -204,6 +210,7 @@ void CRegistry::WriteString(KEYTYPE eType, const char *pcKey, const char *pcSubK
 	switch (eType) {
 		case LOCAL_MACHINE:			hRoot = HKEY_LOCAL_MACHINE; break;
 		case CURRENT_USER:			hRoot = HKEY_CURRENT_USER; break;
+		case CLASSES_ROOT:			hRoot = HKEY_CLASSES_ROOT; break;
 	}
 // Read key
 	// Open the key
@@ -239,6 +246,7 @@ DWORD CRegistry::ReadInt(KEYTYPE eType, const char *pcKey, const char *pcSubKey,
 	switch (eType) {
 		case LOCAL_MACHINE:			hRoot = HKEY_LOCAL_MACHINE; break;
 		case CURRENT_USER:			hRoot = HKEY_CURRENT_USER; break;
+		case CLASSES_ROOT:			hRoot = HKEY_CLASSES_ROOT; break;
 	}
 // Read key
 	// Open the key
@@ -273,6 +281,7 @@ void CRegistry::WriteInt(KEYTYPE eType, const char *pcKey, const char *pcSubKey,
 	switch (eType) {
 		case LOCAL_MACHINE:			hRoot = HKEY_LOCAL_MACHINE; break;
 		case CURRENT_USER:			hRoot = HKEY_CURRENT_USER; break;
+		case CLASSES_ROOT:			hRoot = HKEY_CLASSES_ROOT; break;
 	}
 // Read key
 	// Open the key
@@ -296,4 +305,3 @@ void CRegistry::WriteInt(KEYTYPE eType, const char *pcKey, const char *pcSubKey,
 		::RegCloseKey(hKey);
 	}
 } // WriteInt - Monolithic
-

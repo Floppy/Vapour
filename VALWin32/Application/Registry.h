@@ -7,7 +7,7 @@
 // Registry.h - 13/01/2000 - Warren Moore
 //	  Utility class for registry key management
 //
-// $Id: Registry.h,v 1.2 2000/11/27 20:39:20 waz Exp $
+// $Id: Registry.h,v 1.3 2001/07/11 11:29:31 vap-james Exp $
 //
 
 #ifndef _REGISTRY_
@@ -19,6 +19,7 @@
 enum KEYTYPE {
 	LOCAL_MACHINE,
 	CURRENT_USER,
+	CLASSES_ROOT,
 };
 
 //////////////
@@ -61,4 +62,3 @@ private:
 };
 
 #endif // _REGISTRY_
-
