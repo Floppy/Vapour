@@ -1,0 +1,19 @@
+! author="James Smith"
+: VTStrucVisCnv
+
+VTStrucVisCnv is a windows console application which converts Arup simulation data files into the VSV file format. VSV is a binary format which represents
+simulation data in a much more compact and progressive manner.
+<P>
+Once compiled, the tool is used as follows:
+<PRE>
+VTStrucVisCtl <input_file> <output_file>
+</PRE>
+For example;
+<PRE>
+VTStrucVisCtl "Composite Steel Beam S.txt" Composite.vsv
+</PRE>
+For correct operation, ensure that filenames containing spaces are enclosed within double quotes, as in the example above. The .vsv file extension on
+the output file is not mandatory, but is recommended for clarity and ease of use.
+<P>
+During conversion, the program will generate a summary of the data being processed. Each section that is read from the input is printed to the console, along with it's frame number. At the
+end of the run, the program will summarise the number of elements read from the file, and the number of chunks created. The data is then written to the output file.
