@@ -7,7 +7,7 @@
 // VTStructVisCtl.cpp
 // 05/03/2002 - Warren Moore
 //
-// $Id: VTStrucVisCtl.h,v 1.8 2002/03/24 02:20:17 vap-warren Exp $
+// $Id: VTStrucVisCtl.h,v 1.9 2002/03/24 13:37:08 vap-warren Exp $
 
 #ifndef __VTSTRUCTVIS_CONTROL__
 #define __VTSTRUCTVIS_CONTROL__
@@ -90,7 +90,7 @@ protected:
 //#===--- Private Data Types
 protected:
 
-   // Error states
+   // Cortona error states
    typedef enum TECortonaResult {
       CR_UNKNOWN = 0,               // Unknown
       CR_NOCONTAINER,               // Unable to connect to control container
@@ -99,11 +99,25 @@ protected:
       CR_OK,                        // Cortona initialised OK
    } ECortonaResult;
 
+   // UI data error states
+   typedef enum TEUIResult {
+      UI_UNKNOWN = 0,               // Unknown
+      UI_OK,                        // UI loaded OK
+   } EUIResult;
+
+   // Simulation data error states
+   typedef enum TESimResult {
+      SD_UNKNOWN = 0,               // Unknown
+      SD_OK,                        // Sim data loaded OK
+   } ESimResult;
+
 //#===--- Member Variables
 protected:
 
    // State variables
    ECortonaResult m_eCortonaResult;          // GetCortona result
+   EUIResult m_eUIResult;                    // UIDataPath result
+   ESimResult m_eSimResult;                  // SimDataPath result
    DWORD m_uiAsyncFlags;                     // Asynchronous data flags
 
    // Control objects
@@ -121,6 +135,8 @@ protected:
 	virtual void OnResetState();
 	virtual DWORD GetControlFlags();
 	virtual void OnAmbientPropertyChange(DISPID dispid);
+	protected:
+	virtual void OnDrawMetafile(CDC* pDC, const CRect& rcBounds);
 	//}}AFX_VIRTUAL
 
 protected:

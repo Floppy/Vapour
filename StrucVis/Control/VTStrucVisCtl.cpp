@@ -7,7 +7,7 @@
 // VTStructVisCtl.cpp
 // 05/03/2002 - Warren Moore
 //
-// $Id: VTStrucVisCtl.cpp,v 1.8 2002/03/24 02:20:16 vap-warren Exp $
+// $Id: VTStrucVisCtl.cpp,v 1.9 2002/03/24 13:37:08 vap-warren Exp $
 
 #include "stdafx.h"
 #include "VTStrucVis.h"
@@ -271,6 +271,8 @@ BOOL CVTStrucVisCtl::CVTStrucVisCtlFactory::UpdateRegistry(BOOL bRegister) {
 // Constructor
 CVTStrucVisCtl::CVTStrucVisCtl() :
    m_eCortonaResult(CR_UNKNOWN),
+   m_eUIResult(UI_UNKNOWN),
+   m_eSimResult(SD_UNKNOWN),
    m_uiAsyncFlags(AD_EMPTY) {
 
    InitializeIIDs(&IID_DVTStrucVis, &IID_DVTStrucVisEvents);
@@ -327,6 +329,7 @@ void CVTStrucVisCtl::ExitCortona() {
 }
 
 bool CVTStrucVisCtl::GetCortona() {
+   m_eCortonaResult = CR_UNKNOWN;
    LPOLECONTAINER pContainer = NULL;
    // Get a pointer to the IOleItemContainer interface
    HRESULT hResult = GetClientSite()->GetContainer(&pContainer);
@@ -342,7 +345,7 @@ bool CVTStrucVisCtl::GetCortona() {
          // What have we got?
          LPUNKNOWN pNextControl = NULL;
          bool bNext = true;
-         while (bNext && pEnumUnknown->Next(1, &pNextControl, NULL) == S_OK) {
+         while (bNext && SUCCEEDED(pEnumUnknown->Next(1, &pNextControl, NULL))) {
             // Get the OLE object interface
             LPOLEOBJECT pOleObject = NULL;
             hResult = pNextControl->QueryInterface(IID_IOleObject, (LPVOID*)&pOleObject);
@@ -429,21 +432,27 @@ void CVTStrucVisCtl::DrawPlaceholder(CDC *pDC, const CRect &rcBounds, bool bRun)
    if (bRun) {
       //#===--- Asynchronous data status
       CString oStr = "";
-      // Is the UI loading?
-      if ((m_uiAsyncFlags & AD_UILOADING) > 0)
-         oStr += "UI data loading\n";
-      else
-         // Is the UI loaded?
-         if ((m_uiAsyncFlags & AD_UILOADED) > 0)
-            oStr += "UI data loaded\n";
+      // If the UI data is in error
+      if ((m_eUIResult == UI_UNKNOWN) || (m_eUIResult == UI_OK)) {
+         // Is the UI loading?
+         if ((m_uiAsyncFlags & AD_UILOADING) > 0)
+            oStr += "UI data loading\n";
+         else
+            // Is the UI loaded?
+            if ((m_uiAsyncFlags & AD_UILOADED) > 0)
+               oStr += "UI data loaded\n";
+      }
 
-      // Is the simulation data loading?
-      if ((m_uiAsyncFlags & AD_SIMLOADING) > 0)
-         oStr += "Simulation data loading\n";
-      else
-         // Is the simulation data loaded?
-         if ((m_uiAsyncFlags & AD_SIMLOADED) > 0)
-            oStr += "Simulation data loaded\n";
+      // If the sim data is in error
+      if ((m_eSimResult == SD_UNKNOWN) || (m_eSimResult == SD_OK)) {
+         // Is the simulation data loading?
+         if ((m_uiAsyncFlags & AD_SIMLOADING) > 0)
+            oStr += "Simulation data loading\n";
+         else
+            // Is the simulation data loaded?
+            if ((m_uiAsyncFlags & AD_SIMLOADED) > 0)
+               oStr += "Simulation data loaded\n";
+      }
 
       // Display the status text
       pDC->DrawText(oStr, oTextRect, DT_CENTER | DT_WORDBREAK);
@@ -479,6 +488,18 @@ void CVTStrucVisCtl::DrawPlaceholder(CDC *pDC, const CRect &rcBounds, bool bRun)
          // Data set but is it loading?
          if ((m_uiAsyncFlags & AD_UIACTIVE) == 0)
             oStr += "Error loading UI data\n";
+         else
+            // Has an error condition been reached?
+            switch (m_eUIResult) {
+               // Result OK or unknown yet
+               case UI_UNKNOWN:
+               case UI_OK:
+                  break;
+               // Unknown result
+               default:
+                  oStr += "Unknown UI data error\n";
+                  break;
+            }
 
       // Check to see if the simulation data param set
       if (m_oSimData.GetPath() == "")
@@ -487,6 +508,18 @@ void CVTStrucVisCtl::DrawPlaceholder(CDC *pDC, const CRect &rcBounds, bool bRun)
          // Data set but is it loading?
          if ((m_uiAsyncFlags & AD_SIMACTIVE) == 0)
             oStr += "Error loading simulation data\n";
+         else
+            // Has an error condition been reached?
+            switch (m_eSimResult) {
+               // Result OK or unknown yet
+               case SD_UNKNOWN:
+               case SD_OK:
+                  break;
+               // Unknown result
+               default:
+                  oStr += "Unknown simulation data error\n";
+                  break;
+            }
 
       // Display the error text
       pDC->SetTextColor(TranslateColor(GetEnabled() ? RGB(0xFF, 0x00, 0x00): RGB(0xFF, 0xC0, 0xC0)));
@@ -559,11 +592,20 @@ void CVTStrucVisCtl::OnDraw(CDC* pdc, const CRect& rcBounds, const CRect& rcInva
    // render the full-on interface
    if (bRun && (m_uiAsyncFlags & AD_UILOADED) && (GetReadyState() == READYSTATE_INTERACTIVE)) {
       // Draw the full-on interface
+      DrawUI(pdc, rcBounds);
    }
    else {
       // Draw the placeholder
       DrawPlaceholder(pdc, rcBounds, bRun);
    }
+}
+
+// Detached DC drawing (for printing, etc)
+void CVTStrucVisCtl::OnDrawMetafile(CDC* pDC, const CRect& rcBounds) {
+   // Just do something simple
+   DrawPlaceholder(pDC, rcBounds, false);
+	
+	COleControl::OnDrawMetafile(pDC, rcBounds);
 }
 
 // Persistence support
@@ -572,8 +614,11 @@ void CVTStrucVisCtl::DoPropExchange(CPropExchange* pPX) {
 	COleControl::DoPropExchange(pPX);
 
    // Reset the async data flags if loading
-   if (pPX->IsLoading())
+   if (pPX->IsLoading()) {
       m_uiAsyncFlags = AD_EMPTY;
+      m_eUIResult = UI_UNKNOWN;
+      m_eSimResult = SD_UNKNOWN;
+   }
 
    // Mark the other persistant properties with PX_ calls
    PX_DataPath(pPX, _T("UIData"), m_oUIData);
@@ -594,7 +639,12 @@ void CVTStrucVisCtl::DoPropExchange(CPropExchange* pPX) {
 void CVTStrucVisCtl::OnResetState() {
 	COleControl::OnResetState();  // Resets defaults found in DoPropExchange
 
+   // Set the ready state back to LOADED
    InternalSetReadyState(READYSTATE_LOADED);
+
+   // Reset the data result
+   m_eUIResult = UI_UNKNOWN;
+   m_eSimResult = SD_UNKNOWN;
 }
 
 // Display an "About" box to the user
@@ -631,6 +681,7 @@ BSTR CVTStrucVisCtl::GetUIData() {
 void CVTStrucVisCtl::SetUIData(LPCTSTR lpszNewValue) {
    // Reset the UI data flags
    m_uiAsyncFlags &= AD_UIMASK;
+   m_eUIResult = UI_UNKNOWN;
    // Load the new data
    Load(lpszNewValue, m_oUIData);
 
@@ -647,6 +698,7 @@ BSTR CVTStrucVisCtl::GetSimData() {
 void CVTStrucVisCtl::SetSimData(LPCTSTR lpszNewValue) {
    // Reset the simulatio data flags
    m_uiAsyncFlags &= AD_SIMMASK;
+   m_eSimResult = SD_UNKNOWN;
    // Load the new data
    Load(lpszNewValue, m_oSimData);
 
