@@ -4,10 +4,10 @@
 // Vapour Technology All-Purpose Library
 // Copyright 2000 Vapour Technology Ltd.
 //
-// SGAToUnrealTournament.h - 06/07/2000 - Warren Moore
+// SGAToUnrealTournament.h - 12/06/2000 - Warren Moore
 //	SGA Avatar to Unreal Tournament converter wrapper 
 //
-// $Id: SgatoUnrealTournament.h,v 1.2 2000/07/16 12:28:05 waz Exp $
+// $Id: SgatoUnrealTournament.h,v 1.3 2000/07/19 08:49:40 waz Exp $
 //
 
 #ifndef _WRAP_SGATOUNREALTOURNAMENT_
@@ -18,22 +18,6 @@
 #include "Wrapper.h"
 
 //#===--- Defines
-
-// Definitions of class options and arguments
-// Option IDs
-#define SGA_FILENAME			1
-#define UT_MODELNAME		2
-#define UT_DIRECTORY		3
-#define UT_VERBOSE			4
-// Option values
-#define UT_UNKNOWN			0
-// SIMS_VERBOSE
-#define UT_TRUE		1
-#define UT_FALSE	2
-
-// App defines
-#define SFX_NAME				"utsfx.wje"
-#define VER_DATE				"v1.0 (11/07/2000)"
 
 //#===--- Data types
 
@@ -68,8 +52,8 @@ private:
 //#===--- Internal Data
 private:
 	char *m_pcSGAFilename;												// SGA filename storage
-	char *m_pcModelname;													// Filename storage
-	char *m_pcPath;																// Model directory
+	char *m_pcModelname;													// Model filename storage
+	char *m_pcPath;																// Model temp directory
 
 	bool m_bVerbose;															// Verbose output indicator
 
