@@ -7,7 +7,7 @@
 // Wrapper.h - 06/06/2000 - Warren Moore
 //	Global definitions for avatar converter wrappers
 //
-// $Id: Wrapper.h,v 1.1 2000/07/11 15:14:00 waz Exp $
+// $Id: Wrapper.h,v 1.2 2000/07/15 10:41:53 waz Exp $
 //
 
 #ifndef _WRAP_
@@ -31,8 +31,11 @@ enum VARESULT {
 	VA_TIME_EXPIRED = 7,
 	VA_OUT_OF_MEMORY = 8,
 	VA_DIRECTORY_ERROR = 9,
-	VA_SFX_ERROR = 10,
-	VA_ERROR = 11,
+	VA_WJE_MISSING = 10,
+	VA_WJE_ERROR = 11,
+	VA_SFX_ERROR = 12,
+	VA_COMPRESS_ERROR = 13,
+	VA_ERROR = 14,
 };
 
 // Exporter error strings
@@ -47,7 +50,10 @@ enum VARESULT {
 	"Evaluation time expired", \
 	"Unable to allocate memory block", \
 	"Error editing a model directory", \
+	"Error WJE containing self-extractor missing", \
+	"Error opening WJE file", \
 	"Error opening self-extracting installer", \
+	"Error compressing avatar", \
 	"Unknown error",
 
 #endif // _WRAP_
