@@ -6,7 +6,7 @@
 // SceneManager.cpp
 // 19/03/2002 - James Smith
 //
-// $Id: SceneManager.cpp,v 1.14 2002/03/22 15:59:10 vap-james Exp $
+// $Id: SceneManager.cpp,v 1.15 2002/03/22 16:07:08 vap-james Exp $
 
 #include "stdafx.h"
 #include "SceneManager.h"
@@ -152,7 +152,8 @@ void CSceneManager::SetColourScheme(TColourScheme oColour) {
    m_tColourScheme = oColour;
    for (elemIter pElem = m_oElements.begin(); pElem != m_oElements.end(); pElem++) {
       (*pElem)->SetColourScheme(m_tColourScheme);
-   }   
+   }
+   Update();
 }
 
 void CSceneManager::ShowFrame(unsigned int iFrame) {
