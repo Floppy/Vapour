@@ -6,7 +6,7 @@
 // SlabElement.cpp
 // 19/03/2002 - James Smith
 //
-// $Id: SlabElement.cpp,v 1.12 2002/03/21 23:35:31 vap-james Exp $
+// $Id: SlabElement.cpp,v 1.13 2002/03/22 11:09:57 vap-james Exp $
 
 #include "stdafx.h"
 #include "SlabElement.h"
@@ -28,19 +28,23 @@ CSlabElement::CSlabElement(CCortonaUtil *poCortona, CNodeSet* poNodeSet) :
 {
    memset(m_pfStresses,0,9*sizeof(float));
    memset(m_piNodes,0,9*sizeof(unsigned int));
+   memset(m_pcCracks,0,9*sizeof(unsigned char));
 }
 
 // Beginning of SlabElement node
 const char pcSlabStart[] = " \
    EXTERNPROTO SlabElement [ \
       eventIn MFColor set_colours \
+      eventIn MFInt32 set_cracks \
       eventIn MFVec3f set_nodes \
       eventIn SFBool  set_visible \
       field MFColor colours \
+      field MFInt32 cracks  \
       field MFVec3f nodes \
       field SFFloat thickness \
    ] \
    [ \
+      \"SlabElement.wrl\" \
       \"file://D:\\Vapour\\Dev\\Src\\Research\\CortonaBase\\SlabElement.wrl\" \
       \"file://D:\\James\\vapour\\dev.local\\src\\Research\\CortonaBase\\SlabElement.wrl\" \
    ] \
@@ -73,6 +77,10 @@ bool CSlabElement::Display(void) const {
       strSlab << " nodes [ ";
       for (int n=0; n<27; n++) strSlab << " " << pfNodes[n];
       strSlab << " ] ";
+      // Setup cracks
+      strSlab << " cracks [ ";
+      for (int cr=0; cr<9; cr++) strSlab << " " << static_cast<int>(m_pcCracks[cr]);
+      strSlab << " ] ";
       // Close the SlabElement
       strSlab << "}";
       // Create VRML nodes from the buffer
@@ -84,8 +92,8 @@ bool CSlabElement::Display(void) const {
    }
    else {
       bool bOK = true;
+
       // Update node positions
-      // Create MFVec3f field
       CCortonaField* pField = m_poCortona->CreateField("MFVec3f");
       if (pField==NULL) return false;
       // Set values
@@ -99,14 +107,14 @@ bool CSlabElement::Display(void) const {
       // Delete field
       pField->Release();
       delete pField;
+
       // Update colours
-      // Create MFColor field
       pField = m_poCortona->CreateField("MFColor");
       if (pField==NULL) return false;
       // Set values
       for (i=0; i<9 && bOK; i++) {
-         if (bOK && !pField->SetMFColor(i, pfColours[(i*3)], pfColours[(i*3)+1], pfColours[(i*3)+2]))
-            bOK = false;
+         //if (bOK && !pField->SetMFColor(i, pfColours[(i*3)], pfColours[(i*3)+1], pfColours[(i*3)+2]))
+            //bOK = false;
       }      
       // Send event
       if (bOK && !m_poNodePtr->AssignEventIn("set_colours",*pField))
@@ -114,6 +122,22 @@ bool CSlabElement::Display(void) const {
       // Delete field
       pField->Release();
       delete pField;
+
+      // Update cracks
+      pField = m_poCortona->CreateField("MFInt32");
+      if (pField == NULL) return false;
+      // Set values
+      for (i=0; i<9 && bOK; i++) {
+         //if (bOK && !pField->SetMFInt32(i, m_pcCracks[i])
+            //bOK = false;
+      }      
+      // Send event
+      if (bOK && !m_poNodePtr->AssignEventIn("set_cracks",*pField))
+         bOK = false;
+      // Delete field
+      pField->Release();
+      delete pField;
+
       // Done
       return bOK;
    }
@@ -121,6 +145,11 @@ bool CSlabElement::Display(void) const {
 
 void CSlabElement::SetNodes(const unsigned int* piNodes) {
    memcpy(m_piNodes,piNodes,9*sizeof(int));
+   return;
+}
+
+void CSlabElement::SetCracks(unsigned int iLayer, const unsigned char* pcCracks) const {
+   memcpy(m_pcCracks,pcCracks,9*sizeof(char));
    return;
 }
 

@@ -7,13 +7,15 @@
 # SlabElement.wrl
 # 19/03/2002 - James Smith
 #
-# $Id: SlabElement.wrl,v 1.4 2002/03/21 15:09:28 vap-james Exp $
+# $Id: SlabElement.wrl,v 1.5 2002/03/22 11:09:56 vap-james Exp $
 
 PROTO SlabElement [
    eventIn MFColor set_colours
+   eventIn MFInt32 set_cracks
    eventIn MFVec3f set_nodes
    eventIn SFBool  set_visible
    field MFColor colours [ 1 1 1, 1 1 1, 1 1 1, 1 1 1, 1 1 1, 1 1 1, 1 1 1, 1 1 1, 1 1 1]
+   field MFInt32 cracks  [ 0 0 0 0 0 0 0 0 0 ]
    field MFVec3f nodes   [ 0.5 0 0.5, 0 0 0.5, -0.5 0 0.5, -0.5 0 0, -0.5 0 -0.5, 0 0 -0.5, 0.5 0 -0.5, , 0.5 0 0, 0 0 0]
    field SFFloat thickness 1
 ]
@@ -98,9 +100,11 @@ PROTO SlabElement [
       directOutput TRUE
       mustEvaluate TRUE
       eventIn MFColor set_colours IS set_colours
+      eventIn MFInt32 set_cracks IS set_cracks
       eventIn MFVec3f set_nodes IS set_nodes
       eventIn SFBool  set_visible IS set_visible
       field MFColor colours IS colours
+      field MFInt32 cracks IS cracks
       field SFFloat thickness IS thickness
       field MFVec3f nodes  IS nodes
       field MFVec3f points []
@@ -118,6 +122,7 @@ PROTO SlabElement [
             // Calculate initial node positions and colours
             update_nodes(nodes);
             update_colours(colours);
+            update_cracks(cracks);
          }
          function set_colours(value,time) {
             update_colours(value);
@@ -138,6 +143,12 @@ PROTO SlabElement [
                   coordNode.point[(i*4) + j] = nodeset[i].add(points[j]);
                }
             }
+         }
+         function set_cracks(value,time) {
+            update_cracks(value);
+         }
+         function update_cracks(nodeset) {
+            // Implement this
          }
          function set_visible(value,time) {
             if (value == true) {

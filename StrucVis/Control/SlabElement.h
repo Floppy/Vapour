@@ -6,7 +6,7 @@
 // SlabElement.h
 // 19/03/2002 - James Smith
 //
-// $Id: SlabElement.h,v 1.8 2002/03/21 23:35:30 vap-james Exp $
+// $Id: SlabElement.h,v 1.9 2002/03/22 11:09:56 vap-james Exp $
 
 #ifndef __SLAB_ELEMENT__
 #define __SLAB_ELEMENT__
@@ -44,6 +44,10 @@ public:
    // Sets which nodes the slab is controlled by
    // This function expects a pointer to a 9-uint array
 
+   void SetCracks(unsigned int iLayer, const unsigned char* pcCracks) const;
+   // Sets crack information for the specified layer.
+   // Layer parameter isn't used at the moment.
+
    void SetStresses(const float* pfStresses) const;
    // Sets stresses for individual nodes
    // This function expects a pointer to a 9-float array
@@ -70,6 +74,9 @@ protected:
    mutable float m_pfStresses[9];
    // Per-node stress values
    
+   mutable unsigned char m_pcCracks[9];
+   // Crack values
+
    float m_fThickness;
    // Slab dimensions
 };
