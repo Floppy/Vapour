@@ -24,7 +24,7 @@ Extensions &amp; Improvements
 </P>
 <UL>
 <LI><B>Speed</B><BR>
-Simulation data manipulation within the control and within Cortona a fast operations, however transfer of
+Simulation data manipulation within the control and within Cortona are fast operations, however transfer of
 data from the control to Cortona is marshalled by Microsoft's Automation engine. This external mashalling
 results in a slow frame update. Through extensive use of Cortona's internal JavaScript engine it will be
 possible to work around this bottleneck and dramatically improve animation speed.</LI>
