@@ -13,6 +13,11 @@ $(ident:
 :<BR><B>:$(param)))</B></P>)
 		
 	)
+	$(ifset:return:
+		<P CLASS="CLASSPARAM"><B>RETURNS</B></P>
+		$(ident:<P CLASS="CLASSPARAM">$(return)</P>)
+		
+	)
 	$(ifset:bug:
 		<P CLASS="CLASSBUG"><B>BUGS</B></P>$(ident:<P CLASS="CLASSBUG">$(list:$(bug))</P>)
 	)
