@@ -7,7 +7,7 @@
 // VTStructVisCtl.cpp
 // 05/03/2002 - Warren Moore
 //
-// $Id: VTStrucVisCtl.cpp,v 1.23 2002/04/02 22:40:00 vap-warren Exp $
+// $Id: VTStrucVisCtl.cpp,v 1.24 2002/04/02 23:04:29 vap-warren Exp $
 
 #include "stdafx.h"
 #include "VTStrucVis.h"
@@ -1772,8 +1772,9 @@ BSTR CVTStrucVisCtl::GetPosition() {
 
    // Check for the scene
    if (m_poScene) {
-      strResult.Format("%s", m_poScene->GetCurrentPosition());
-      // Now delete the string
+      m_oPosition.Format("%s", m_poScene->GetCurrentPosition());
+      strResult = m_oPosition;
+      // Now delete the temp string
       delete [] m_poScene;
    }
 
@@ -1781,7 +1782,23 @@ BSTR CVTStrucVisCtl::GetPosition() {
 }
 
 void CVTStrucVisCtl::SetPosition(LPCTSTR lpszNewValue) {
-   // Do nothing yet
+   CString oPos(lpszNewValue);
+
+   // Check the position
+   float pfPosition[3] = {0.0f, 0.0f, 0.0f};
+   if (ParseFloat(oPos, 3, pfPosition) == 3) { 
+      // String checks out, so save it
+      m_oPosition = oPos;
+      // Mark the porperty as modified
+      BoundPropertyChanged(dispidPosition);
+      // Mark the properties modified
+      SetModifiedFlag();
+      // If we have a scene, get the orientation and set the viewpoint
+      float pfOrientation[4] = {0.0f, 0.0f, 0.0f, 0.0f};
+      if (m_poScene && (ParseFloat(m_oOrientation, 4, pfOrientation) == 4)) {
+         m_poScene->SetViewpoint(pfPosition, pfOrientation);
+      }
+   }
 }
 
 BSTR CVTStrucVisCtl::GetOrientation() {
@@ -1791,7 +1808,7 @@ BSTR CVTStrucVisCtl::GetOrientation() {
    if (m_poScene) {
       m_oOrientation.Format("%s", m_poScene->GetCurrentOrientation());
       strResult = m_oOrientation;
-      // Now delete the string
+      // Now delete the temp string
       delete [] m_poScene;
    }
 
@@ -1799,7 +1816,23 @@ BSTR CVTStrucVisCtl::GetOrientation() {
 }
 
 void CVTStrucVisCtl::SetOrientation(LPCTSTR lpszNewValue) {
-   // Do nothing yet
+   CString oOrientation(lpszNewValue);
+
+   // Check the position
+   float pfOrientation[4] = {0.0f, 0.0f, 0.0f, 0.0f};
+   if (ParseFloat(oOrientation, 4, pfOrientation) == 4) { 
+      // String checks out, so save it
+      m_oOrientation = oOrientation;
+      // Mark the porperty as modified
+      BoundPropertyChanged(dispidOrientation);
+      // Mark the properties modified
+      SetModifiedFlag();
+      float pfPosition[3] = {0.0f, 0.0f, 0.0f};
+      // If we have a scene, get the orientation and set the viewpoint
+      if (m_poScene && (ParseFloat(m_oPosition, 3, pfPosition) == 3)) {
+         m_poScene->SetViewpoint(pfPosition, pfOrientation);
+      }
+   }
 }
 
 BSTR CVTStrucVisCtl::GetScale() {
