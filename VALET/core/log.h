@@ -6,15 +6,15 @@
 //
 // Add confidentiality notice
 
-#ifndef _VALET_LOG_
-#define _VALET_LOG_
+#ifndef _VALET_CORE_LOG_
+#define _VALET_CORE_LOG_
 
 ////////////////
 //! file 		= "VALET/core/log.h"
 //! author 		= "Warren Moore"
 //! date 		= "23/09/2001"
 //! lib 			= libVALETcore
-//! rcsid 		= "$Id: log.h,v 1.4 2001/10/17 14:44:55 vap-warren Exp $"
+//! rcsid 		= "$Id: log.h,v 1.5 2001/10/17 22:00:54 vap-warren Exp $"
 //! userlevel 	= Normal
 //! docentry 	= "VALET.Core.Log"
 //! example 	= VALET/core/log.test.cpp
@@ -37,6 +37,7 @@ namespace NValet {
 
 	class CLog {
 	public:
+
 		CLog(const char *pcType, const char *pcFunction);
 		//: Constructor
 		// Registers the trace object with the specified type
@@ -68,4 +69,4 @@ namespace NValet {
 #include "log_inline.cpp"
 #endif // VALET_INLINE
 
-#endif // _VALET_LOG_
+#endif // _VALET_CORE_LOG_

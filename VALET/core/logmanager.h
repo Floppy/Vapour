@@ -6,15 +6,15 @@
 //
 // Add confidentiality notice
 
-#ifndef _VALET_LOGMANAGER_NOARCH_
-#define _VALET_LOGMANAGER_NOARCH_
+#ifndef _VALET_CORE_LOGMANAGER_
+#define _VALET_CORE_LOGMANAGER_
 
 ////////////////
 //! file 		= "VALET/core/logmanager.h"
 //! author 		= "Warren Moore"
 //! date 		= "23/09/2001"
 //! lib 			= libVALETcore
-//! rcsid 		= "$Id: logmanager.h,v 1.5 2001/10/17 14:44:56 vap-warren Exp $"
+//! rcsid 		= "$Id: logmanager.h,v 1.6 2001/10/17 22:00:55 vap-warren Exp $"
 //! userlevel 	= Develop
 //! docentry 	= "VALET.Core.Log"
 //! example 	= VALET/core/log.test.cpp
@@ -103,4 +103,4 @@ namespace NValet {
 #include "logmanager_inline.cpp"
 #endif // VALET_INLINE
 
-#endif // _VALET_LOGMANAGER_NOARCH_
+#endif // _VALET_CORE_LOGMANAGER_

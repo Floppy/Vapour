@@ -11,15 +11,15 @@
 //! author		= "Warren Moore"
 //! date			= "23/09/2001"
 //! lib 			= libVALETcore
-//! rcsid		= "$Id: log.cpp,v 1.2 2001/10/09 20:44:29 vap-james Exp $"
+//! rcsid		= "$Id: log.cpp,v 1.3 2001/10/17 22:00:54 vap-warren Exp $"
 
 //#===--- Includes
 #include "log.h"
 
-//#===--- CLog
-
 namespace NValet {
 	
+   //#===--- CLog
+
 	CLog::CLog(const char* pcType, const char* pcFunction) :
 		m_iID(-1) {
 		ASSERT(pcType);

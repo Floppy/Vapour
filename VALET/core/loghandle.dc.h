@@ -6,15 +6,15 @@
 //
 // Add confidentiality notice
 
-#ifndef _VALET_LOGHANDLE_DC_
-#define _VALET_LOGHANDLE_DC_
+#ifndef _VALET_CORE_LOGHANDLE_DC_
+#define _VALET_CORE_LOGHANDLE_DC_
 
 ////////////////
 //! file 		= "VALET/core/loghandle.dc.h"
 //! author 		= "Warren Moore"
 //! date 		= "26/09/2001"
 //! lib 			= libVALETcore
-//! rcsid 		= "$Id: loghandle.dc.h,v 1.5 2001/10/17 14:44:55 vap-warren Exp $"
+//! rcsid 		= "$Id: loghandle.dc.h,v 1.6 2001/10/17 22:00:55 vap-warren Exp $"
 //! userlevel 	= Develop
 //! docentry 	= "VALET.Core.Log"
 //! example 	= VALET/core/log.test.cpp
@@ -31,6 +31,7 @@ namespace NValet {
 
 	class CLogHandle {
 	public:
+
 		CLogHandle(const char *pcType);
 		// Constructor
 		//!param: pcType = Type of log stream
@@ -51,4 +52,4 @@ namespace NValet {
 
 }
 	
-#endif // _VALET_LOGHANDLE_DC_
+#endif // _VALET_CORE_LOGHANDLE_DC_
