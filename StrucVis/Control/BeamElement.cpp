@@ -7,7 +7,7 @@
 // BeamElement.cpp
 // 19/03/2002 - James Smith
 //
-// $Id: BeamElement.cpp,v 1.22 2002/03/25 14:55:36 vap-james Exp $
+// $Id: BeamElement.cpp,v 1.23 2002/03/26 17:45:20 vap-james Exp $
 
 #include "stdafx.h"
 #include "BeamElement.h"
@@ -137,7 +137,6 @@ bool CBeamElement::Display(const char* pcURL) const {
 
 void CBeamElement::SetTemp(float fTemp) const {
    m_fTemp = fTemp;
-   // Update description
    // Update description
    if (m_poNodePtr) {
       CCortonaField* poString = m_poNodePtr->GetField("description");
