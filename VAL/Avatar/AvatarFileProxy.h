@@ -7,7 +7,7 @@
 // AvatarFileProxy.h - 04/03/2000 - James Smith
 //	Avatar import/export speciality store proxy header
 //
-// $Id: AvatarFileProxy.h,v 1.2 2000/06/17 10:42:11 waz Exp $
+// $Id: AvatarFileProxy.h,v 1.3 2000/11/21 16:40:39 waz Exp $
 //
 
 #pragma once
@@ -26,15 +26,15 @@
 extern CAvatarFileStore g_oAvatarFileStore;
 
 // DLL import/export definitions
-#ifndef DLL_IMP_EXP
-	#ifdef _EXP_VAPOUR_COMMON_DLL_
-		#define DLL_IMP_EXP __declspec(dllexport)
+#ifndef DLL
+	#ifdef VAL_DLL_EXPORT
+		#define DLL __declspec(dllexport)
 	#endif
-	#ifdef _IMP_VAPOUR_COMMON_DLL_
-		#define DLL_IMP_EXP __declspec(dllimport)
+	#ifdef VAL_DLL_IMPORT
+		#define DLL __declspec(dllimport)
 	#endif
-	#ifndef DLL_IMP_EXP
-		#define DLL_IMP_EXP
+	#ifndef DLL
+		#define DLL
 	#endif
 #endif
 
@@ -53,13 +53,24 @@ public:
 	virtual bool CanLoadStream() const = 0;
 	virtual bool CanSaveFile() const = 0;
 	virtual bool CanSaveStream() const = 0;
+
+   // Less-than operator - use for sorting proxies into alphabetical order.
+   virtual bool operator<(const CAvatarFileProxyBase& other) const {
+      // Compare titles
+      int iTitleResult = strcmp(GetTitle(),other.GetTitle());
+      // If different, return title1 < title2
+      if (iTitleResult != 0) return iTitleResult < 0 ? true : false;
+      // If not, return ext1 < ext2
+      else return strcmp(GetExtension(),other.GetExtension()) < 0 ? true : false;
+   }
+   
 };
 
 ////////////////////////////
 // CAvatarFileProxy Template
 
 template <class T>
-class DLL_IMP_EXP CAvatarFileProxy : public CAvatarFileProxyBase {
+class DLL CAvatarFileProxy : public CAvatarFileProxyBase {
 public:
 	CAvatarFile* CreateObject() const { 
 		return new T;
