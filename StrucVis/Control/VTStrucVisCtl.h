@@ -7,7 +7,7 @@
 // VTStructVisCtl.cpp
 // 05/03/2002 - Warren Moore
 //
-// $Id: VTStrucVisCtl.h,v 1.17 2002/03/27 13:10:45 vap-warren Exp $
+// $Id: VTStrucVisCtl.h,v 1.18 2002/03/27 16:28:58 vap-warren Exp $
 
 #ifndef __VTSTRUCTVIS_CONTROL__
 #define __VTSTRUCTVIS_CONTROL__
@@ -253,6 +253,8 @@ protected:
    unsigned int m_uiUITab;                   // UI tab marker
    float m_fXScale, m_fYScale, m_fZScale;    // Scale vars
    unsigned int m_uiAnimSpeed;               // Animation speed (5 = fast, 1 = slow);
+   unsigned int m_uiStartGroup;              // Start group for UI list box
+   bool *m_pbVisibleGroup;                   // Array of visible groups
 
    // Slider vars
    CSlider m_oSFrame;                        // Frame counter slider

@@ -7,7 +7,7 @@
 // VTStructVisCtl.cpp
 // 05/03/2002 - Warren Moore
 //
-// $Id: VTStrucVisCtl.cpp,v 1.18 2002/03/27 13:10:44 vap-warren Exp $
+// $Id: VTStrucVisCtl.cpp,v 1.19 2002/03/27 16:28:57 vap-warren Exp $
 
 #include "stdafx.h"
 #include "VTStrucVis.h"
@@ -415,7 +415,9 @@ CVTStrucVisCtl::CVTStrucVisCtl() :
    m_fXScale(1.0f), 
    m_fYScale(1.0f), 
    m_fZScale(1.0f),
-   m_uiAnimSpeed(5) {
+   m_uiAnimSpeed(5),
+   m_uiStartGroup(0),
+   m_pbVisibleGroup(NULL) {
 
    InitializeIIDs(&IID_DVTStrucVis, &IID_DVTStrucVisEvents);
 
@@ -487,8 +489,8 @@ bool CVTStrucVisCtl::InitCortona() {
          m_poScene->SetBaseURL(m_oWRLPath);
 
          // Setup viewpoint location
-         float pfPosition[3] = {5.0f, 5.0f, 5.0f};
-         float pfRotation[4] = {-0.59f, 0.77f, 0.24f, 0.99f};
+         float pfPosition[3] = {20.0f, -0.5f, 20.0f};
+         float pfRotation[4] = {0.0f, 1.0f, 0.0f, 1.3f};
          m_poScene->SetViewpoint(pfPosition, pfRotation);
 
          // Set scale factor
@@ -849,31 +851,57 @@ void CVTStrucVisCtl::DrawUI(CDC *pDC, const CRect &rcBounds, bool bRun) {
    }
 
    //#===--- Tabs
-   int iVal;
-   switch (m_uiUITab) {
-      case 0:
-         break;
-      case 1:
-         // Back
-         oDCBuffer.BitBlt(0, 170, 180, 75, &oDCRemote, 0, 170, SRCCOPY);
-         // X Scale
-         iVal = (int)(180.0f * m_oSXScale.GetPosition());
-         oDCBuffer.BitBlt(0, 185, iVal, 10, &oDCRemote, 180, 185, SRCCOPY);
-         // Y Scale
-         iVal = (int)(180.0f * m_oSYScale.GetPosition());
-         oDCBuffer.BitBlt(0, 210, iVal, 10, &oDCRemote, 180, 210, SRCCOPY);
-         // Z Scale
-         iVal = (int)(180.0f * m_oSZScale.GetPosition());
-         oDCBuffer.BitBlt(0, 235, iVal, 10, &oDCRemote, 180, 235, SRCCOPY);
-         break;
-      case 2:
-         oDCBuffer.BitBlt(0, 170, 180, 25, &oDCRemote, 0, 245, SRCCOPY);
-         // Anim speed
-         iVal = (int)(180.0f * m_oSAnimSpeed.GetPosition());
-         oDCBuffer.BitBlt(0, 185, iVal, 10, &oDCRemote, 180, 185, SRCCOPY);
-         break;
-      default:
-         break;
+   // Visibility Tab
+   if (m_uiUITab == 0) {
+      // Get the number of groups
+      unsigned int uiGroups = m_poScene->NumGroups();
+      // Get the size of the remain screen
+      CRect oScreen;
+      GetClientRect(oScreen);
+      unsigned int uiMaxGroups = (oScreen.bottom - 270) / 10;
+      // Set the extent
+      unsigned int uiViewGroups = uiGroups - m_uiStartGroup;
+      if (uiViewGroups > uiMaxGroups)
+         uiViewGroups = uiMaxGroups;
+      // Paint the group holders
+      unsigned int uiOffset = 0;
+      for (unsigned int i = 0; i < uiViewGroups; i++) {
+         // Move to the last one
+         if (i + 1 == uiViewGroups)
+            uiOffset += 15;
+         // Paint the group holder
+         oDCBuffer.BitBlt(0, 170 + i * 15,
+                          180, 15,
+                          &oDCRemote,
+                          (m_pbVisibleGroup[i + m_uiStartGroup] ? 180 : 0), 270 + uiOffset,
+                          SRCCOPY);
+         // Next off the first one
+         if (i == 0)
+            uiOffset += 15;
+      }
+   }
+
+   // Scale Tab
+   if (m_uiUITab == 1) {
+      // Back
+      oDCBuffer.BitBlt(0, 170, 180, 75, &oDCRemote, 0, 170, SRCCOPY);
+      // X Scale
+      int iVal = (int)(180.0f * m_oSXScale.GetPosition());
+      oDCBuffer.BitBlt(0, 185, iVal, 10, &oDCRemote, 180, 185, SRCCOPY);
+      // Y Scale
+      iVal = (int)(180.0f * m_oSYScale.GetPosition());
+      oDCBuffer.BitBlt(0, 210, iVal, 10, &oDCRemote, 180, 210, SRCCOPY);
+      // Z Scale
+      iVal = (int)(180.0f * m_oSZScale.GetPosition());
+      oDCBuffer.BitBlt(0, 235, iVal, 10, &oDCRemote, 180, 235, SRCCOPY);
+   }
+
+   // Animate Tab
+   if (m_uiUITab == 2) {
+      oDCBuffer.BitBlt(0, 170, 180, 25, &oDCRemote, 0, 245, SRCCOPY);
+      // Anim speed
+      int iVal = (int)(180.0f * m_oSAnimSpeed.GetPosition());
+      oDCBuffer.BitBlt(0, 185, iVal, 10, &oDCRemote, 180, 185, SRCCOPY);
    }
 
    //#===--- Frame counter
@@ -934,6 +962,38 @@ void CVTStrucVisCtl::DrawUI(CDC *pDC, const CRect &rcBounds, bool bRun) {
                        DEFAULT_PITCH | FF_SWISS,
                        "Arial");
    oDCBuffer.SelectObject(oTabFont);
+
+   // Visibility tab
+   if (m_uiUITab == 0) {
+      // Get the number of groups
+      unsigned int uiGroups = m_poScene->NumGroups();
+      // Get the size of the remain screen
+      CRect oScreen;
+      GetClientRect(oScreen);
+      unsigned int uiMaxGroups = (oScreen.bottom - 270) / 10;
+      // Set the extent
+      unsigned int uiViewGroups = uiGroups - m_uiStartGroup;
+      if (uiViewGroups > uiMaxGroups)
+         uiViewGroups = uiMaxGroups;
+      // Go through each group
+      for (unsigned int i = 0; i < uiViewGroups; i++) {
+         // Set the text
+         unsigned int uiGroupNum = i + m_uiStartGroup;
+         TElementType eType = m_poScene->GroupType(uiGroupNum + 1);
+         unsigned int uiElements = m_poScene->NumElements(uiGroupNum + 1);
+         oText.Format("%d: %s (%d)", uiGroupNum + 1, (eType == SLAB ? "Slab" : "Beam"), uiElements);
+         // Set the coords
+         oDCBuffer.GetTextMetrics(&sTM);
+         oTextSize = oDCBuffer.GetTextExtent(oText);
+         oTextSize.cy = sTM.tmHeight + sTM.tmExternalLeading;
+         oDCBuffer.LPtoDP(&oTextSize);
+         oDevSize.cx = 13;
+         oDevSize.cy = 171 + i * 15;
+         oDCBuffer.DPtoLP(&oDevSize);
+         // Output the font
+         oDCBuffer.TextOut(oDevSize.cx, oDevSize.cy, oText);
+      }
+   }
 
    // Scale Tab
    if (m_uiUITab == 1) {
@@ -1398,6 +1458,14 @@ bool CVTStrucVisCtl::SceneSetup(const unsigned char *pucData, const unsigned int
    if (bDone) {
       m_eSimResult = SD_OK;
       GoInteractive();
+      // Create the visible group list
+      ASSERT(!m_pbVisibleGroup);
+      unsigned int uiGroups = m_poScene->NumGroups();
+      m_pbVisibleGroup = (bool*) new bool[uiGroups];
+      if (m_pbVisibleGroup) {
+         for (int i = 0; i < uiGroups; i++)
+            m_pbVisibleGroup[i] = true;
+      }
    }
    return bDone;
 }
@@ -1408,7 +1476,6 @@ bool CVTStrucVisCtl::ShowFrame(const unsigned int uiFrame) {
       return false;
    // Show the current frame
    unsigned int uiSeek, uiLength;
-   TRACE("ShowFrame(%d)\n", uiFrame);
    // Only get the frame when setup is complete
    if (m_eSimResult == SD_OK) {
       // Get the frame info
@@ -1427,7 +1494,6 @@ void CVTStrucVisCtl::ShowFrame(const unsigned int uiFrame,
    if (!m_poScene)
       return;
    // Pass the data through
-   TRACE("ShowFrame(%d, data, offset)\n", uiFrame);
    m_oCortona.Freeze(true);
    m_poScene->ShowFrame(pucData, uiLength);
    m_oCortona.Freeze(false);
@@ -1497,6 +1563,11 @@ void CVTStrucVisCtl::DoPropExchange(CPropExchange* pPX) {
       m_eRunMode = RM_PLAY;
       m_uiFrame = 0;
       ShowFrame(0);
+      m_uiStartGroup = 0;
+      if (m_pbVisibleGroup) {
+         delete [] m_pbVisibleGroup;
+         m_pbVisibleGroup = NULL;
+      }
    }
 
    // Start the asynchronous downloads
@@ -1522,6 +1593,11 @@ void CVTStrucVisCtl::OnResetState() {
    }
    m_eRunMode = RM_PLAY;
    m_uiFrame = 0;
+   m_uiStartGroup = 0;
+   if (m_pbVisibleGroup) {
+      delete [] m_pbVisibleGroup;
+      m_pbVisibleGroup = NULL;
+   }
 
    // Restart Cortona
    ExitCortona();
@@ -1588,6 +1664,27 @@ void CVTStrucVisCtl::OnLButtonUp(UINT nFlags, CPoint point) {
       CheckSliders(point, uiFrame);
       if (uiFrame != m_uiFrame)
          ShowFrame(uiFrame);
+
+      // Check the group list
+      unsigned int uiGroups = m_poScene->NumGroups();
+      // Get the size of the remain screen
+      CRect oScreen;
+      GetClientRect(oScreen);
+      unsigned int uiMaxGroups = (oScreen.bottom - 270) / 10;
+      // Set the extent
+      unsigned int uiViewGroups = uiGroups - m_uiStartGroup;
+      if (uiViewGroups > uiMaxGroups)
+         uiViewGroups = uiMaxGroups;
+      // Go through each group
+      for (unsigned int i = 0; i < uiViewGroups; i++) {
+         unsigned int uiGroup = i + m_uiStartGroup; 
+         int iYLow = 172 + i * 15;
+         int iYHigh = iYLow + 10;
+         if ((point.x >= 2) && (point.x < 10) && (point.y >= iYLow) && (point.y < iYHigh)) {
+            m_pbVisibleGroup[uiGroup] = !m_pbVisibleGroup[uiGroup];
+            m_poScene->SetVisibility(uiGroup + 1, m_pbVisibleGroup[uiGroup]);
+         }
+      }
    }
 
    // Refresh the display
