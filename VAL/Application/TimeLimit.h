@@ -7,7 +7,7 @@
 // TimeLimit.h - 07/06/2000 - Warren Moore
 //	Time limit validation class 
 //
-// $Id: TimeLimit.h,v 1.2 2000/06/17 10:42:04 waz Exp $
+// $Id: TimeLimit.h,v 1.3 2000/07/15 10:40:54 waz Exp $
 //
 
 #ifndef _VAL_TIMELIMIT_
@@ -16,7 +16,6 @@
 #pragma once
 
 //#===--- Defines
-#define TL_FILENAME		"sim.dat"
 
 //#===--- Data types
 
