@@ -7,7 +7,7 @@
 // SFX.h - 10/07/2000 - Warren Moore
 //	Class for self-management of self-extracting wedgies
 //
-// $Id: SFX.h,v 1.3 2000/11/27 20:32:40 waz Exp $
+// $Id: SFX.h,v 1.4 2000/11/29 15:51:16 warren Exp $
 //
 
 #ifndef _VAL_SFX_
@@ -37,6 +37,8 @@ public:
 	bool EndSet();
 	// Inserts the file end position, if not previously set. Returns true if ok
 	bool SetEnd(const char *pcEXEName = NULL);
+	// Trys to attach the specified file to the end of the SFX
+	bool AttachFile(const char *pcDataName, const char *pcEXEName = NULL);
 	
 	// Returns an input file stream set to the end of the file, NULL on error
 	// The file stream must be deleted after use

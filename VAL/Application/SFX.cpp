@@ -7,7 +7,7 @@
 // SFX.h - 10/07/2000 - Warren Moore
 //	Class for self-management of self-extracting wedgies
 //
-// $Id: SFX.cpp,v 1.5 2000/11/27 20:32:40 waz Exp $
+// $Id: SFX.cpp,v 1.6 2000/11/29 15:51:16 warren Exp $
 //
 
 #include "StdAfx.h"
@@ -66,7 +66,7 @@ bool CSFX::SetEnd(const char *pcEXEName) {
 	// Close the app and reopen writeable
 
 	//#===--- TODO: Get this to open the app while running
-	oFile.open(pcAppName, ios::in|ios::out|ios::binary|ios::nocreate, filebuf::sh_write);
+	oFile.open(pcAppName, ios::in|ios::out|ios::binary|ios::nocreate);
 	if (oFile.fail())
 		return false;
 //	printf ("Pos address : 0x%08X - End pos : 0x%08X\n", uPos, uEnd);
@@ -91,6 +91,41 @@ bool CSFX::SetEnd(const char *pcEXEName) {
 	return true;
 } // SetEnd
 	
+bool CSFX::AttachFile(const char *pcDataName, const char *pcEXEName) {
+	// Get the app name
+	ASSERT(g_poVAL);
+	// Are we running on ourself, or another file
+	const char *pcAppName = pcEXEName ? pcEXEName : g_poVAL->GetAppName();
+	if (!pcAppName)
+		return false;
+
+	bool bReturn = true;
+	// Open the application
+	fstream oEXEFile;
+	//#===--- TODO: Get this to open the app while running
+	oEXEFile.open(pcAppName, ios::out|ios::binary|ios::ate);
+	if (oEXEFile.fail())
+		return false;
+	// Open the data file
+	fstream oDataFile;
+	oDataFile.open(pcDataName, ios::in|ios::binary|ios::nocreate);
+	if (!oDataFile.fail()) {
+		unsigned char cByte;
+		while (!oDataFile.eof()) {
+			oDataFile.get(cByte);
+			oEXEFile.put(cByte);
+		}
+		// Close the data file
+		oDataFile.close();
+	}
+	else
+		bReturn = false;
+	// Close the application file
+	oEXEFile.close();
+
+	return bReturn;
+} // AttachFile
+
 ifstream *CSFX::GetWedgie() {
 	// Check the pos paramters
 	if ((m_pcMagic[3] != 0xFF) || (m_uWJEPos == 0xFFFFFFFF))
