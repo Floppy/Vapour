@@ -51,33 +51,35 @@ BEGIN
     DEFPUSHBUTTON   "Fix",IDOK,7,133,50,14
     PUSHBUTTON      "Cancel",IDCANCEL,67,133,50,14
     PUSHBUTTON      "About",ID_ABOUT,127,133,50,14
-    LTEXT           "This program will make a number of registry changes ",
-                    IDC_STATIC,5,7,167,8
+    LTEXT           "If you have not read README.TXT, read it now!!",
+                    IDC_STATIC,7,7,156,8
     LTEXT           "to enable Microsoft Visual C++ (versions 4 to 6) to",
-                    IDC_STATIC,5,19,156,8
+                    IDC_STATIC,7,27,156,8
     LTEXT           "recognise *.cc and *.hh files as C++. See the article ",
-                    IDC_STATIC,5,31,164,8
-    LTEXT           "in the",IDC_STATIC,5,43,18,8
-    LTEXT           "Microsoft Knowledge Base",IDC_MICROSOFT_LINK,29,43,85,8
-    LTEXT           "for a complete",IDC_STATIC,120,43,46,8
-    LTEXT           "description of what this program will do.",IDC_STATIC,5,
-                    55,124,8
+                    IDC_STATIC,7,37,164,8
+    LTEXT           "in the",IDC_STATIC,7,47,18,8
+    LTEXT           "Microsoft Knowledge Base",IDC_MICROSOFT_LINK,29,47,85,8
+    LTEXT           "for a complete",IDC_STATIC,120,47,46,8
+    LTEXT           "description of what this program will do.",IDC_STATIC,7,
+                    57,124,8
     LTEXT           "This program is provided without warranty or",
-                    IDC_STATIC,5,67,139,8
+                    IDC_STATIC,7,67,139,8
     LTEXT           "guarantee. Vapour Technology Ltd. accept no liability",
-                    IDC_STATIC,5,79,169,8
-    LTEXT           "for any damage caused by this program. We",IDC_STATIC,5,
-                    91,140,8
+                    IDC_STATIC,7,77,169,8
+    LTEXT           "for any damage caused by this program. We",IDC_STATIC,7,
+                    87,140,8
     LTEXT           "recommend that you back up your registry BEFORE ",
-                    IDC_STATIC,5,103,165,8
-    LTEXT           "running this program.",IDC_STATIC,5,115,66,8
+                    IDC_STATIC,7,96,165,8
+    LTEXT           "running this program.",IDC_STATIC,7,105,66,8
+    LTEXT           "This program will make a number of registry changes ",
+                    IDC_STATIC,7,17,167,8
 END
 
 IDD_DONE_DIALOG DIALOGEX 0, 0, 135, 127
 STYLE DS_MODALFRAME | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
 EXSTYLE WS_EX_APPWINDOW
 CAPTION "CCFix - Finished!"
-FONT 8, "MS Sans Serif"
+FONT 8, "MS Sans Serif", 0, 0, 0x1
 BEGIN
     DEFPUSHBUTTON   "Quit",IDOK,42,107,50,14
     LTEXT           "Microsoft Knowledge Base",IDC_MICROSOFT_LINK,19,81,85,8
