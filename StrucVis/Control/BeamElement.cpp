@@ -9,7 +9,7 @@
 //! file      = "Control/BeamElement.cpp
 //! author    = "James Smith"
 //! date      = "19/3/2002"
-//! rcsid     = "$Id: BeamElement.cpp,v 1.33 2002/04/22 10:42:04 vap-james Exp $"
+//! rcsid     = "$Id: BeamElement.cpp,v 1.34 2002/04/22 15:03:25 vap-warren Exp $"
 
 #include "stdafx.h"
 #include "BeamElement.h"
@@ -118,10 +118,18 @@ bool CBeamElement::Display(const char* pcURL) const {
          else
             return false;
          m_ppoField[2] = m_poCortona->CreateField("SFBool");
+         /*
+         // Create test vars
+         CCortonaField *pTestField0 = m_poCortona->CreateField("MFVec3f");
+         pTestField0->TestMFVec3f0();
+         pTestField0->Release();
+         CCortonaField *pTestField1 = m_poCortona->CreateField("MFVec3f");
+         pTestField1->TestMFVec3f1();
+         pTestField1->Release();
+         */
          return ((m_ppoField[0]->GetMFCount() == 2) &&
                  (m_ppoField[1]->GetMFCount() == 2) && 
                   m_ppoField[2]);
-         return true;
       }
       else 
          return false;

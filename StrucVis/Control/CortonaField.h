@@ -9,7 +9,7 @@
 //! file      = "Control/CortonaField.h"
 //! author    = "Warren Moore"
 //! date      = "12/3/2002"
-//! rcsid     = "$Id: CortonaField.h,v 1.19 2002/04/22 11:35:59 vap-warren Exp $"
+//! rcsid     = "$Id: CortonaField.h,v 1.20 2002/04/22 15:03:25 vap-warren Exp $"
 
 #ifndef __VTSTRUCVIS_CORTONAFIELD__
 #define __VTSTRUCVIS_CORTONAFIELD__
@@ -20,6 +20,9 @@
 
 // Automation interfaces for Cortona
 #include "shelley.h"
+
+#define TEST_LOOP 1000
+#define TEST_SIZE 1000
 
 //: Cortona field access
 // Wrapper around Cortona field Automation interfaces
@@ -69,10 +72,8 @@ public:
    //!param: fZ - Reference to Z value returned
    //!return: true if successful
 
-   bool TestMFVec3f();
-   //: Get all MFVec3f values
-   // Experimental function using an undocumented interface to manipulate entire MF field array
-   //!return: true if successful
+   bool TestMFVec3f0();
+   bool TestMFVec3f1();
 
    bool SetMFVec3f(const long liIndex, const float fX, const float fY, const float fZ);
    //: Set MFVec3f values
@@ -241,6 +242,8 @@ protected:
    IMFieldObject *m_pMField;           //: The MF field interface
    IUpdateManager *m_pUpdateManager;   //: Update manager interface for MF fields
    IVariable *m_pVariable;             //: Variable interface for MF fields
+
+   float m_pfTestVals[3 * TEST_SIZE];
 
 };
 

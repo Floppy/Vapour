@@ -7,13 +7,15 @@
 // CortonaField.cpp
 // 07/03/2002 - Warren Moore
 //
-// $Id: CortonaField.cpp,v 1.20 2002/04/22 11:35:59 vap-warren Exp $
+// $Id: CortonaField.cpp,v 1.21 2002/04/22 15:03:25 vap-warren Exp $
 
 #include "stdafx.h"
 
 #include "CortonaField.h"
 
 #include <comdef.h>
+
+//#include "profiler.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -72,6 +74,14 @@ CCortonaField::CCortonaField(IEngine *pEngine, IFieldObject *pField) :
             TRACE("Unknown field type\n");
       }
    }
+
+   /*
+   for (int i = 0; i < TEST_SIZE; i++) {
+      m_pfTestVals[i * 3] = 1.0f;
+      m_pfTestVals[i * 3 + 1] = 2.0f;
+      m_pfTestVals[i * 3 + 2] = 3.0f;
+   }
+   */
 }
 
 CCortonaField::~CCortonaField() {
@@ -199,119 +209,46 @@ bool CCortonaField::GetMFVec3f(const long liIndex, float &fX, float &fY, float &
    return bOk;
 }
 
-bool CCortonaField::TestMFVec3f() {
-   // Experimental function to get entire MFVec3f array using undocumented interface
-
-   // Check the field pointer
-   if (!m_pField || !m_pEngine)
-      return false;
-
-   // Check the type
-   if (m_eType != tMFVec3f)
-      return false;
-
+bool CCortonaField::TestMFVec3f0() {
+   return true;
    /*
-   // Get the values
-   VARIANT sVarArray;
-   VariantInit(&sVarArray);
-
-   // Get the complete value
-   hResult = pVariable->get_Contents(&sVarArray);
-   // If we got the variant array, get access to the data
-   if (SUCCEEDED(hResult)) {
-      float *pfArray = NULL;
-      hResult = SafeArrayAccessData(sVarArray.parray, (void**)&pfArray);
-      // If we got access, get each element
-//      if (SUCCEEDED(hResult)) {
-//      }
-      SafeArrayUnaccessData(sVarArray.parray);
-   }
-
-   // Clear the variant
-   VariantClear(&sVarArray);
-   */
-
-   // Initialise the variant
-   VARIANT sVarArray; 
-   VariantInit(&sVarArray); 
-   // Create the safe array
-   const int iCount = 6;
-   sVarArray.vt = VT_ARRAY | VT_R4; 
-   sVarArray.parray = SafeArrayCreateVector(VT_R4, 0, iCount); 
-
-   HRESULT hResult = S_OK;
-   // Get access to the values
-   if (sVarArray.parray != NULL) { 
-      // Populate the array
-      float *pfVal; 
-      hResult = SafeArrayAccessData(sVarArray.parray, reinterpret_cast<void**>(&pfVal)); 
-      if (SUCCEEDED(hResult)) { 
-         // Populate the array
-         pfVal[0] = 0.0f;
-         pfVal[1] = 1.0f;
-         pfVal[2] = 2.0f;
-         pfVal[3] = 3.0f;
-         pfVal[4] = 4.0f;
-         pfVal[5] = 5.0f;
-         SafeArrayUnaccessData(sVarArray.parray); 
+   bool bOk = SetMFCount(TEST_SIZE);
+   static bool bDone = false;
+   if (bDone)
+      return false;
+   bDone = true;
+   CString oStr;
+   oStr.Format("CCortonaField::TestMFVec3f0() - Setting array of %ld values %ld times", TEST_SIZE, TEST_LOOP);
+   CProfiler oLoop;
+   oLoop.Start(oStr);
+   for (int j = 0; bOk && (j < TEST_LOOP); j++) {
+      for (int i = 0; bOk && (i < TEST_SIZE); i++) {
+         bOk &= SetMFVec3f(i, m_pfTestVals[i * 3], m_pfTestVals[i * 3 + 1], m_pfTestVals[i * 3 + 2]);
       }
-
-      // Get te current transacted mode
-      BOOL bTransactedMode = FALSE; 
-      m_pUpdateManager->get_transactedMode(&bTransactedMode); 
-      // Make sure the transacted mode is true
-      if (!bTransactedMode)
-         m_pUpdateManager->put_transactedMode(TRUE);
-      // Put the contents
-      hResult = m_pVariable->put_Contents(&sVarArray); 
-      // Restore the old transacted mode
-      if (!bTransactedMode) 
-         m_pUpdateManager->put_transactedMode(FALSE); 
    }
-   
-   /*
-   SAFEARRAYBOUND sSABound[1];
-   SAFEARRAY *pSA;
-
-   sSABound[0].cElements = iCount;
-   sSABound[0].lLbound = 0;
-   pSA = SafeArrayCreate(VT_R4, 1, sSABound);
-
-   // Gain access to the values
-   float *pfVal = NULL;
-   hResult = SafeArrayAccessData(pSA, (void**)&pfVal);
-   if (SUCCEEDED(hResult)) {
-      // Populate the array
-      pfVal[0] = 0.0f;
-      pfVal[1] = 1.0f;
-      pfVal[2] = 2.0f;
-      pfVal[3] = 3.0f;
-      pfVal[4] = 4.0f;
-      pfVal[5] = 5.0f;
-      SafeArrayUnaccessData(pSA);
-   }
-   else {
-      SafeArrayDestroy(pSA);
-      pVariable->Release();
-      return false;
-   }
-
-   // Initialise the variant
-   VARIANT sVarArray;
-   VariantInit(&sVarArray);
-
-   // Set the type and value
-   sVarArray.vt = VT_ARRAY | VT_R4;
-   sVarArray.parray = pSA;
-
-   // Add the value
-   hResult = pVariable->put_Contents(&sVarArray);
+   oLoop.Stop();
+   return bOk;
    */
+}
 
-   // Clear the variant
-   VariantClear(&sVarArray);
-
-   return SUCCEEDED(hResult);
+bool CCortonaField::TestMFVec3f1() {
+   return true;
+   /*
+   bool bOk = SetMFCount(TEST_SIZE);
+   static bool bDone = false;
+   if (bDone)
+      return false;
+   bDone = true;
+   CString oStr;
+   oStr.Format("CCortonaField::TestMFVec3f1() - Setting array of %ld values %ld times", TEST_SIZE, TEST_LOOP);
+   CProfiler oLoop;
+   oLoop.Start(oStr);
+   for (int j = 0; bOk && (j < TEST_LOOP); j++) {
+      bOk &= SetMFVec3f(m_pfTestVals, TEST_SIZE);
+   }
+   oLoop.Stop();
+   return bOk;
+   */
 }
 
 bool CCortonaField::SetMFVec3f(const long liIndex, const float fX, const float fY, const float fZ) {
