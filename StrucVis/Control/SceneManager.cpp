@@ -9,7 +9,7 @@
 //! file      = "Control/SceneManager.cpp"
 //! author    = "James Smith"
 //! date      = "19/3/2002"
-//! rcsid     = "$Id: SceneManager.cpp,v 1.33 2002/04/04 11:01:36 vap-warren Exp $"
+//! rcsid     = "$Id: SceneManager.cpp,v 1.34 2002/04/23 11:35:58 vap-james Exp $"
 
 #include "stdafx.h"
 #include "SceneManager.h"
@@ -31,6 +31,7 @@ typedef std::vector<CElement*>::iterator elemIter;
 CSceneManager::CSceneManager(CCortonaUtil *poCortona) :
    m_poCortona(poCortona),
    m_oViewpoint(poCortona),
+   m_oNodeSet(poCortona),
    m_bLoading(false),
    m_pcURL(NULL)
 {
@@ -63,8 +64,9 @@ void CSceneManager::Empty(void) {
    }
    // Clear element list
    m_oElements.clear();
-   // Redisplay viewpoint geometry, in case we're not closing down completely
+   // Redisplay viewpoint and nodeset geometry, in case we're not closing down completely
    m_oViewpoint.Redisplay();
+   m_oNodeSet.Redisplay();
 }
 
 void CSceneManager::Load(void) {
@@ -72,6 +74,7 @@ void CSceneManager::Load(void) {
    // Initialise the NodeSet
    m_oNodeSet.SetSize(m_oDataMgr.NumNodes());
    m_oNodeSet.SetDefault(m_oDataMgr.NodePositions());
+   m_oNodeSet.Display(m_pcURL);
 
    // Create some beams
    for (int i=1; i<=m_oDataMgr.NumBeams(); i++) {
@@ -123,9 +126,15 @@ void CSceneManager::Load(void) {
    
    Update();
 
+   // Make event connections
    for (elemIter pElem = m_oElements.begin(); pElem != m_oElements.end(); pElem++) {
       m_oViewpoint.Connect(*pElem);
+      m_oNodeSet.Connect(*pElem);
    }      
+
+   // Update node positions
+   m_oNodeSet.Update();
+
 }
 
 bool CSceneManager::FrameInfo(unsigned int iFrame, unsigned int& iOffset, unsigned int& iLength) {
@@ -165,10 +174,6 @@ void CSceneManager::SetVisibility(unsigned int iGroup, bool bVisible) {
 void CSceneManager::SetScaleFactor(float fX, float fY, float fZ) {
    // Set scale factor
    m_oNodeSet.SetScaleFactor(fX,fY,fZ);
-   // Reload node displacements
-   m_oNodeSet.Displace(m_oDataMgr.NodeDisplacements());
-   // Done
-   Update();
 }
 
 void CSceneManager::SetViewpoint(float pfPosition[3], float pfRotation[4]) {
