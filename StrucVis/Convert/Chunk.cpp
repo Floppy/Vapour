@@ -7,7 +7,7 @@
 // Chunk.cpp
 // 19/03/2002 - James Smith
 //
-// $Id: Chunk.cpp,v 1.6 2002/03/31 17:26:03 vap-james Exp $
+// $Id: Chunk.cpp,v 1.7 2002/04/02 22:57:17 vap-james Exp $
 
 #include "Chunk.h"
 
@@ -816,4 +816,23 @@ unsigned int CChunk::NumNodes(void) const {
    unsigned char* pcData = m_pcData + 2 + sizeof(unsigned int);
    // Get number of displacements
    return *reinterpret_cast<unsigned int*>(pcData);
+}
+
+void CChunk::ZeroDisplacements(void) {
+   // Check chunk type
+   if (m_oType != CHUNK_NODEDISP) return;
+   // Get pointer to displacement data
+   unsigned char* pcData = m_pcData + 2 + sizeof(unsigned int);
+   // Get number of displacements
+   unsigned int iNumValues = *reinterpret_cast<unsigned int*>(pcData) * 3;
+   pcData += sizeof(unsigned int);
+   // Get displacement pointer
+   float* pfData = reinterpret_cast<float*>(pcData);
+   // Zero displacements one by one
+   for (unsigned int i=0; i<iNumValues; i++) {
+      *pfData = 0.0f;
+      pfData++;
+   }
+   // Done
+   return;
 }

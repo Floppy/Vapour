@@ -7,7 +7,7 @@
 // StrucVisCnv.cpp
 // 19/03/2002 - James Smith
 //
-// $Id: VTStrucVisCnv.cpp,v 1.6 2002/03/31 17:26:02 vap-james Exp $
+// $Id: VTStrucVisCnv.cpp,v 1.7 2002/04/02 22:57:17 vap-james Exp $
 
 #include <iostream>
 #include <vector>
@@ -86,6 +86,7 @@ int main(int argc, char* argv[]) {
          const CChunk* pSubChunk = pChunk->SubChunk(CHUNK_NODEDISP);
          if (pSubChunk == NULL) {
             CChunk* pOldChunk = new CChunk(*(oFrames.back()->SubChunk(CHUNK_NODEDISP)));
+            pOldChunk->ZeroDisplacements();
             pChunk->AddSubChunk(pOldChunk);
             iNumChunks++;
          }

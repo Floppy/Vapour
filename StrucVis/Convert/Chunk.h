@@ -7,7 +7,7 @@
 // Chunk.cpp
 // 19/03/2002 - James Smith
 //
-// $Id: Chunk.h,v 1.4 2002/03/31 17:26:02 vap-james Exp $
+// $Id: Chunk.h,v 1.5 2002/04/02 22:57:17 vap-james Exp $
 
 #ifndef __VTSTRUCVIS_CHUNK__
 #define __VTSTRUCVIS_CHUNK__
@@ -100,6 +100,9 @@ public:
    unsigned int NumNodes(void) const;
    // How many nodes are there in the chunk?
    // Only works on CHUNK_NODES chunks
+
+   void ZeroDisplacements(void);
+   // Zeroes displacement values for CHUNK_NODEDISP chunks.
 
 private:
 
