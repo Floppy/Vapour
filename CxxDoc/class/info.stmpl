@@ -15,6 +15,16 @@
 	$(ifset:example:<TR><TD BGCOLOR="#C0C0C0"><P><B>Example Source</B></P></TD><TD BGCOLOR="#C0C0F0"><P>$(example)</P></TD></TR>)
 </TABLE>
 
+$(if:$NodeType!=namespace:
+<P CLASS="CLASSHEADING">Architecture</P>
+<?php
+	$doc_path = "$(docpath)";
+	include_once("vsrcdoc_core.php");
+				
+	make_arch_class_list("$(file)");
+?>
+)
+
 $(ifset:detail:
 	<P CLASS="CLASSHEADING">Description</P>
 	<P>$(list:$(detail))</P>

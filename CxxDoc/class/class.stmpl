@@ -55,14 +55,6 @@ $(include:menu.stmpl)
 				</P></TD></TR>
 			</TABLE>
 			
-			<P CLASS="CLASSHEADING">Architecture</P>
-			<?php
-				$doc_path = "$(docpath)";
-				include_once("vsrcdoc_core.php");
-				
-				make_arch_class_list("$(file)");
-			?>
-
 			$(include:info.stmpl)
 			
 			$(ifany:inherit:
