@@ -7,7 +7,7 @@
 // AvatarFileHalflife.cpp - 16/2/2000 - James Smith
 //	Halflife export filter implementation
 //
-// $Id: AvatarFileHalflife.cpp,v 1.5 2000/07/21 17:00:09 waz Exp $
+// $Id: AvatarFileHalflife.cpp,v 1.6 2000/07/22 23:24:58 waz Exp $
 //
 
 
@@ -23,6 +23,8 @@
 #include <float.h>
 #include <direct.h>
 #include <errno.h>
+
+#include "Wedgie.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -183,7 +185,6 @@ int CAvatarFileHalflife::Save(ofstream& osOutputStream, CAvatar* pAvatar) const 
    int iRetVal = 1;        // Return value
    int iCurrentPos = 0;    // Temporary counter
    int i=0;                // predeclared loop variable
-   ifstream ifInputStream; // Input data stream
 
    // Set model scale factor - all models will be the same size, 
    // as this is based on height. However, gamers prefer this :)
@@ -301,6 +302,20 @@ int CAvatarFileHalflife::Save(ofstream& osOutputStream, CAvatar* pAvatar) const 
    sHeader.iLength += sizeof(SHalflifeMDLHeader);
 
    g_poVAL->StepProgress("HLSave");
+   g_poVAL->SetProgressText("HLSave", "Loading external data");
+
+	 // Open the data wedgie
+	 char pcWJEName[STR_SIZE] = "";
+	 strcpy(pcWJEName, g_poVAL->GetAppDir());
+	 strcat(pcWJEName, "hldata.wje");
+	 fstream oDataWJE;
+	 oDataWJE.open(pcWJEName, ios::in|ios::binary|ios::nocreate);
+	 if (oDataWJE.fail())
+		 iRetVal = 0;
+	 CWedgie oWedgie;
+	 oWedgie.Open(&oDataWJE);
+	 	 
+   g_poVAL->StepProgress("HLSave");
    g_poVAL->SetProgressText("HLSave", "Creating bones");
 
    // Prepare Skeleton
@@ -316,12 +331,16 @@ int CAvatarFileHalflife::Save(ofstream& osOutputStream, CAvatar* pAvatar) const 
    if (pBoneChunk == NULL) iRetVal = 0;
    else {
       // Read generic bone data from external file
-      ifInputStream.open("c:\\hlmdlbonedata.bin",ios::in|ios::binary|ios::nocreate);
-      if (ifInputStream.fail()) iRetVal = 0;
-      else {
-         ifInputStream.read((char*)pBoneChunk,sizeof(SHalflifeMDLBone) * sHeader.iNumBones);
-         ifInputStream.close();
-      }
+			int iHandle = oWedgie.Open("hlmdlbonedata.bin");
+			if (iHandle > -1) {
+				unsigned int uDataSize = sizeof(SHalflifeMDLBone) * sHeader.iNumBones;
+				unsigned int uRead = oWedgie.Read(iHandle, (unsigned char*)pBoneChunk, uDataSize);
+				if (uRead != uDataSize)
+					iRetVal = 0;
+			}
+			else
+				iRetVal = 0;
+
       iCurrentPos = 0;
       // Customise bone data
       for (i=0; i<sHeader.iNumBones; i++) {
@@ -488,13 +507,8 @@ int CAvatarFileHalflife::Save(ofstream& osOutputStream, CAvatar* pAvatar) const 
    }
    sHeader.iLength += sizeof(SHalflifeMDLHitbox) * sHeader.iNumHitboxes;
 
-   g_poVAL->StepProgress("HLSave");
-   g_poVAL->SetProgressText("HLSave", "Loading animations");
-
    // Create Animation Sequence Header Chunk
    sHeader.iNumSeqs = 77;
-   ifInputStream.open("c:\\hlmdlanimdata.bin",ios::in|ios::binary|ios::nocreate);
-   if (ifInputStream.fail()) iRetVal = 0;
    sHeader.iLength += 0x30304; // Offset into anim file of look_idle seq desc.
    sHeader.iSeqChunkOffset = sHeader.iLength;
    sHeader.iLength += (sHeader.iNumSeqs * 0xB0) + 0x474; // + space for seqs descs and events (0x474 bytes);
@@ -867,7 +881,8 @@ int CAvatarFileHalflife::Save(ofstream& osOutputStream, CAvatar* pAvatar) const 
       osOutputStream.write((char*)pBoneControllerChunk,sizeof(SHalflifeMDLBoneController) * sHeader.iNumBoneControllers);
       osOutputStream.write((char*)pAttachmentChunk,sizeof(SHalflifeMDLAttachment) * sHeader.iNumAttachments);
       osOutputStream.write((char*)pHitboxChunk,sizeof(SHalflifeMDLHitbox) * sHeader.iNumHitboxes);
-      osOutputStream << ifInputStream.rdbuf();
+			if (oWedgie.Extract("hlmdlanimdata.bin", osOutputStream) != WJE_OK)
+				iRetVal = 0;
       osOutputStream.write((char*)pSeqGroupsChunk,sizeof(SHalflifeMDLSeqGroup) * sHeader.iNumSeqGroups);
       osOutputStream.write((char*)&sBodyPartHeader,sizeof(SHalflifeMDLBodyPart));
       osOutputStream.write((char*)&sModelHeader,sizeof(SHalflifeMDLModel));
@@ -878,9 +893,6 @@ int CAvatarFileHalflife::Save(ofstream& osOutputStream, CAvatar* pAvatar) const 
       osOutputStream.write(pcTextureIndexChunk,iTextureIndexChunkLength);
       osOutputStream.write(pcTextureDataChunk,iTextureDataChunkLength);
    }
-
-   // Close input files
-   ifInputStream.close();
 
    g_poVAL->StepProgress("HLSave");
    g_poVAL->SetProgressText("HLSave", "Cleaning up");
@@ -905,6 +917,10 @@ int CAvatarFileHalflife::Save(ofstream& osOutputStream, CAvatar* pAvatar) const 
    // Restore old pose
    pAvatar->ImportPose(oldPose);
    pAvatar->UpdateModel();
+
+	 // Close the wedgie and file
+	 oWedgie.Close();
+	 oDataWJE.close();
 
    // Done
    return iRetVal;
