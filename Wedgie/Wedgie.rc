@@ -43,7 +43,7 @@ IDD_WEDGIE_DIALOG DIALOGEX 0, 0, 238, 45
 STYLE DS_MODALFRAME | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
 EXSTYLE WS_EX_APPWINDOW
 CAPTION "Wedgie Compiler v1.0"
-FONT 8, "MS Sans Serif"
+FONT 8, "MS Sans Serif", 0, 0, 0x1
 BEGIN
     EDITTEXT        IDC_DIRECTORY_NAME,7,7,202,13,ES_AUTOHSCROLL | 
                     ES_READONLY
@@ -149,6 +149,44 @@ LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_UK
 #pragma code_page(1252)
 #endif //_WIN32
 
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_PROGRESS DIALOG DISCARDABLE  0, 0, 186, 63
+STYLE DS_MODALFRAME | DS_CENTER | WS_POPUP | WS_VISIBLE | WS_CAPTION | 
+    WS_SYSMENU
+CAPTION "Progress..."
+FONT 8, "MS Sans Serif"
+BEGIN
+    LTEXT           "Please wait...",IDC_FILENAME,7,7,172,12,SS_SUNKEN
+    CONTROL         "Progress1",IDC_FILE_BAR,"msctls_progress32",PBS_SMOOTH | 
+                    WS_BORDER,7,25,172,12
+    CONTROL         "Progress1",IDC_TOTAL_BAR,"msctls_progress32",PBS_SMOOTH | 
+                    WS_BORDER,7,44,172,12
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO DISCARDABLE 
+BEGIN
+    IDD_PROGRESS, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 179
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 56
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
 #ifdef APSTUDIO_INVOKED
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -195,44 +233,6 @@ END
 // Icon with lowest ID value placed first to ensure application icon
 // remains consistent on all systems.
 IDR_MAINFRAME           ICON    DISCARDABLE     "res\\Wedgie.ico"
-
-/////////////////////////////////////////////////////////////////////////////
-//
-// Dialog
-//
-
-IDD_PROGRESS DIALOG DISCARDABLE  0, 0, 186, 63
-STYLE DS_MODALFRAME | DS_CENTER | WS_POPUP | WS_VISIBLE | WS_CAPTION | 
-    WS_SYSMENU
-CAPTION "Progress..."
-FONT 8, "MS Sans Serif"
-BEGIN
-    LTEXT           "Please wait...",IDC_FILENAME,7,7,172,12,SS_SUNKEN
-    CONTROL         "Progress1",IDC_FILE_BAR,"msctls_progress32",PBS_SMOOTH | 
-                    WS_BORDER,7,25,172,12
-    CONTROL         "Progress1",IDC_TOTAL_BAR,"msctls_progress32",PBS_SMOOTH | 
-                    WS_BORDER,7,44,172,12
-END
-
-
-/////////////////////////////////////////////////////////////////////////////
-//
-// DESIGNINFO
-//
-
-#ifdef APSTUDIO_INVOKED
-GUIDELINES DESIGNINFO DISCARDABLE 
-BEGIN
-    IDD_PROGRESS, DIALOG
-    BEGIN
-        LEFTMARGIN, 7
-        RIGHTMARGIN, 179
-        TOPMARGIN, 7
-        BOTTOMMARGIN, 56
-    END
-END
-#endif    // APSTUDIO_INVOKED
-
 #endif    // English (U.K.) resources
 /////////////////////////////////////////////////////////////////////////////
 
