@@ -7,7 +7,7 @@
 // InputData.cpp
 // 19/03/2002 - James Smith
 //
-// $Id: InputData.cpp,v 1.1 2002/03/26 00:51:54 vap-james Exp $
+// $Id: InputData.cpp,v 1.2 2002/03/27 17:15:30 vap-james Exp $
 
 #include "InputData.h"
 #include <fstream>
@@ -118,6 +118,8 @@ bool CInputData::DataReady(void) {
 }
 
 void CInputData::AddToStressRange(float fStress) {
-   if (fStress < m_fMinStress) m_fMinStress = fStress;
-   else if (fStress > m_fMaxStress) m_fMaxStress = fStress;
+   if (fStress < m_fMinStress) 
+      m_fMinStress = fStress;
+   else if (fStress > m_fMaxStress) 
+      m_fMaxStress = fStress;
 }

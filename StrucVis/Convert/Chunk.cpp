@@ -7,10 +7,11 @@
 // Chunk.cpp
 // 19/03/2002 - James Smith
 //
-// $Id: Chunk.cpp,v 1.3 2002/03/27 16:38:56 vap-james Exp $
+// $Id: Chunk.cpp,v 1.4 2002/03/27 17:15:30 vap-james Exp $
 
 #include "Chunk.h"
 
+#include <math.h>
 #include <vector>
 
 #define SCALE_FACTOR 0.01;
@@ -495,14 +496,16 @@ bool CChunk::ReadBeamForces(CInputData& oInput) {
       pEntry = new float[6];
       if (pEntry == NULL) return false;
       // Load forces
-      pEntry[2] = oInput.GetFloat();
-      pEntry[1] = oInput.GetFloat();
-      pEntry[0] = oInput.GetFloat();
-      // Skip 10 numbers
-      for (int j=0; j<10; j++) oInput.GetFloat();
-      pEntry[5] = oInput.GetFloat();
-      pEntry[4] = oInput.GetFloat();
-      pEntry[3] = oInput.GetFloat();
+      pEntry[2] = fabs(oInput.GetFloat());
+      pEntry[1] = fabs(oInput.GetFloat());
+      pEntry[0] = fabs(oInput.GetFloat());
+      // Skip 9 numbers
+      for (int j=0; j<9; j++) oInput.GetFloat();
+      pEntry[5] = fabs(oInput.GetFloat());
+      pEntry[4] = fabs(oInput.GetFloat());
+      pEntry[3] = fabs(oInput.GetFloat());
+      // Skip 8 numbers
+      for (j=0; j<8; j++) oInput.GetFloat();
       // Set minimum and maximum stress values
       for (j=0; j<6; j++)
          oInput.AddToStressRange(pEntry[j]);
@@ -555,10 +558,13 @@ bool CChunk::ReadSlabForces(CInputData& oInput) {
       if (pEntry == NULL) return false;
       // Load forces
       for (int i=0; i<9; i++) {
-         pEntry[(i*3) + 2] = oInput.GetFloat();
-         pEntry[(i*3) + 1] = oInput.GetFloat();
-         pEntry[(i*3) + 0] = oInput.GetFloat();
+         pEntry[(i*3) + 2] = fabs(oInput.GetFloat());
+         pEntry[(i*3) + 1] = fabs(oInput.GetFloat());
+         pEntry[(i*3) + 0] = fabs(oInput.GetFloat());
       }
+      // Set minimum and maximum stress values
+      for (int j=0; j<27; j++)
+         oInput.AddToStressRange(pEntry[j]);
       // Load onto list
       oList.push_back(pEntry);
    }
