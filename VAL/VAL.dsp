@@ -286,10 +286,6 @@ SOURCE=.\Application\CRC32.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\Application\Defs.h
-# End Source File
-# Begin Source File
-
 SOURCE=.\DataTypes\DList.h
 # End Source File
 # Begin Source File
