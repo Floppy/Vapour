@@ -7,7 +7,7 @@
 // VAL.h - 03/07/2000 - Warren Moore
 //	VAL management object for OS independent functions
 //
-// $Id: VAL.h,v 1.4 2000/07/19 08:52:02 waz Exp $
+// $Id: VAL.h,v 1.5 2000/07/30 15:00:26 waz Exp $
 //
 
 #ifndef _VAL_
@@ -44,6 +44,13 @@ enum FRESULT {
 	F_NOFILEEXTENSION,
 	F_NODATATOSAVE,
 	F_ERROR,
+};
+
+// Generic 3D Axes
+enum AXIS {
+	X,
+	Y,
+	Z,
 };
 
 /////////
