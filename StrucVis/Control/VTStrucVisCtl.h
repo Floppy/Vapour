@@ -7,7 +7,7 @@
 // VTStructVisCtl.cpp
 // 05/03/2002 - Warren Moore
 //
-// $Id: VTStrucVisCtl.h,v 1.12 2002/03/25 02:34:55 vap-warren Exp $
+// $Id: VTStrucVisCtl.h,v 1.13 2002/03/25 13:15:58 vap-warren Exp $
 
 #ifndef __VTSTRUCTVIS_CONTROL__
 #define __VTSTRUCTVIS_CONTROL__
@@ -74,7 +74,14 @@ public:
    // Called by CSimDataPath to indicate that the data is loaded
 
    bool SceneSetup(const unsigned char *pucData, unsigned int uiLength);
-   // Passes loaded data into the Scene, when true is returned
+   // Passes loaded data into the scene, when true is returned
+
+   void ShowFrame(unsigned int uiFrame);
+   // Displays the chosen frame
+
+   void ShowFrame(const unsigned char *pucData, unsigned int uiLength);
+   // Passes the frame data to the scene manager for display
+   // Only to be called by CSimDataPath
 
 protected:
 
@@ -108,6 +115,12 @@ protected:
    // Tries to load the bitmap from the UIDataPath object, and sets
    // m_eUIResult accordingly - returns true if successful
 
+   void FrameControl();
+   // Update frame controller dependent on UI states
+
+   void UIControl();
+   // Update the UI state when UI event happens
+
 //#===--- Private Data Types
 protected:
 
@@ -136,8 +149,18 @@ protected:
    // Simulation data error states
    typedef enum TESimResult {
       SD_UNKNOWN = 0,               // Unknown
+      SD_ERROR,                     // Set when all data is loaded, yet setup not completed
       SD_OK,                        // Sim data loaded OK
    } ESimResult;
+
+   // Player run mode
+   typedef enum TERunMode {
+      RM_PAUSE = 0,                 // Not running
+      RM_PLAY,                      // Playing
+      RM_PLAYREV,                   // Reverse playing
+      RM_REWIND,                    // Rewind
+      RM_FASTFORWARD,               // Fast forward
+   } ERunMode;
 
 //#===--- Member Variables
 protected:
@@ -152,6 +175,11 @@ protected:
    bool m_bLButtonDown;                      // Left mouse button down indicator
    bool m_bMouseOver;                        // Mouse over control indicator
    int m_iUIZone;                            // Current remote button under mouse (-1 if none)
+   unsigned int m_uiFrame;                   // Current animation frame
+   bool m_bDirty;                            // Frame change indicator
+   ERunMode m_eRunMode;                      // Current run mode
+   bool m_bRunning;                          // Animation running indicator
+   bool m_bLoop;                             // Looping play indicator
 
    // Render buffers
    CBitmap m_oBackBuffer;                    // Screen back buffer

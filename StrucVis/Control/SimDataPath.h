@@ -7,7 +7,7 @@
 // SimDataPath.h
 // 19/03/2002 - Warren Moore
 //
-// $Id: SimDataPath.h,v 1.4 2002/03/25 02:34:54 vap-warren Exp $
+// $Id: SimDataPath.h,v 1.5 2002/03/25 13:15:58 vap-warren Exp $
 
 #ifndef __VTSTUCVIS_SIMDATAPATH__
 #define __VTSTUCVIS_SIMDATAPATH__
@@ -27,11 +27,15 @@ public:
 //#===--- Member Functions
 public:
 
+   void ShowFrame(unsigned int uiSeek, unsigned int uiLength);
+   // Passes the loaded data into the control, or defers until all the data is in
+
 //#===--- Member Variables
 protected:
 
-   DWORD m_uiDataRead;              // Data read so far
-   bool m_bSetup;                   // Scene setup complete indicator
+   unsigned int m_uiDataRead;                         // Data read so far
+   bool m_bSetup;                                     // Scene setup complete indicator
+   unsigned int m_uiFrameSeek, m_uiFrameLength;       // Data to be read for next frame
 
 //#===--- Windows Mappings
 

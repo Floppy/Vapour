@@ -7,7 +7,7 @@
 // SimDataPath.cpp
 // 19/03/2002 - Warren Moore
 //
-// $Id: SimDataPath.cpp,v 1.6 2002/03/25 02:34:54 vap-warren Exp $
+// $Id: SimDataPath.cpp,v 1.7 2002/03/25 13:15:58 vap-warren Exp $
 
 #include "stdafx.h"
 #include "vtstrucvis.h"
@@ -26,7 +26,9 @@ static char THIS_FILE[] = __FILE__;
 
 CSimDataPath::CSimDataPath() :
    m_uiDataRead(0),
-   m_bSetup(false) {
+   m_bSetup(false),
+   m_uiFrameSeek(0),
+   m_uiFrameLength(0) {
 }
 
 CSimDataPath::~CSimDataPath() {
@@ -46,12 +48,15 @@ void CSimDataPath::OnDataAvailable(DWORD dwSize, DWORD bscfFlag)  {
    // First call, so signal file loading
    if (bscfFlag & BSCF_FIRSTDATANOTIFICATION) {
       ((CVTStrucVisCtl*)GetControl())->SimLoading();
+      // Reset the vars
       m_uiDataRead = 0;
       m_bSetup = false;
+      m_uiFrameSeek = m_uiFrameLength = 0;
    }
 
    // How much data came this time?
-   DWORD uiArriving = dwSize - m_uiDataRead;
+   unsigned int uiArriving = dwSize - m_uiDataRead;
+
    // Only pump in new data if the scene isn't set up yet
    if (!m_bSetup && (uiArriving > 0)) {
       // Allocate the memory
@@ -67,8 +72,25 @@ void CSimDataPath::OnDataAvailable(DWORD dwSize, DWORD bscfFlag)  {
          // Delete the data
          delete [] pucData;
       }
-      // Update read so far
-      m_uiDataRead = dwSize;
+   }
+
+   // Are we waiting for a frame to load?
+   if (m_bSetup && (m_uiFrameLength > 0) && (dwSize >= m_uiFrameSeek + m_uiFrameLength)) {
+      // Allocate the memory
+      unsigned char *pucData = (unsigned char*) new unsigned char[m_uiFrameLength];
+      if (pucData) {
+         // Seek to the correct point in the file
+         Seek(m_uiFrameSeek, CFile::begin);
+         // Read in the data
+         unsigned int uiRead = Read((void*) pucData, m_uiFrameLength);
+         if (uiRead == m_uiFrameLength) {
+            ((CVTStrucVisCtl*)GetControl())->ShowFrame(pucData, m_uiFrameLength);
+         }
+         // Delete the data
+         delete [] pucData;
+         // Reset the frame info
+         m_uiFrameSeek = m_uiFrameLength = 0;
+      }
    }
 
    // Last call, so signal file loaded
@@ -76,6 +98,36 @@ void CSimDataPath::OnDataAvailable(DWORD dwSize, DWORD bscfFlag)  {
       ((CVTStrucVisCtl*)GetControl())->SimLoaded();
    }
 	
-	CDataPathProperty::OnDataAvailable(dwSize, bscfFlag);
+   // Update read so far
+   m_uiDataRead = dwSize;
+
+   CDataPathProperty::OnDataAvailable(dwSize, bscfFlag);
 }
+
+void CSimDataPath::ShowFrame(unsigned int uiSeek, unsigned int uiLength) {
+   // Do we have enough data?
+   if (m_uiDataRead > uiSeek + uiLength) {
+      // Allocate the memory
+      unsigned char *pucData = (unsigned char*) new unsigned char[uiLength];
+      if (pucData) {
+         // Seek to the correct point in the file
+         Seek(uiSeek, CFile::begin);
+         // Read in the data
+         unsigned int uiRead = Read((void*) pucData, uiLength);
+         if (uiRead == uiLength) {
+            ((CVTStrucVisCtl*)GetControl())->ShowFrame(pucData, m_uiFrameLength);
+         }
+         // Delete the data
+         delete [] pucData;
+         // Reset the frame info
+         m_uiFrameSeek = m_uiFrameLength = 0;
+      }
+   }
+   // Otherwise defer until it's arrived
+   else {
+      m_uiFrameSeek = uiSeek;
+      m_uiFrameLength = uiLength;
+   }
+}
+
 

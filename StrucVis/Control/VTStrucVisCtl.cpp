@@ -7,7 +7,7 @@
 // VTStructVisCtl.cpp
 // 05/03/2002 - Warren Moore
 //
-// $Id: VTStrucVisCtl.cpp,v 1.13 2002/03/25 02:34:54 vap-warren Exp $
+// $Id: VTStrucVisCtl.cpp,v 1.14 2002/03/25 13:15:58 vap-warren Exp $
 
 #include "stdafx.h"
 #include "VTStrucVis.h"
@@ -285,7 +285,12 @@ CVTStrucVisCtl::CVTStrucVisCtl() :
    m_bLButtonDown(false),
    m_bMouseOver(false),
    m_iUIZone(-1),
-   m_oBufferSize(0, 0) {
+   m_oBufferSize(0, 0),
+   m_uiFrame(0),
+   m_bDirty(true),
+   m_eRunMode(RM_PLAY),
+   m_bLoop(false),
+   m_bRunning(false) {
 
    InitializeIIDs(&IID_DVTStrucVis, &IID_DVTStrucVisEvents);
 
@@ -298,7 +303,6 @@ CVTStrucVisCtl::CVTStrucVisCtl() :
 
    // Set the initial window size
    SetInitialSize(180, 250);
-
 }
 
 // Destructor
@@ -317,7 +321,7 @@ bool CVTStrucVisCtl::InitCortona() {
          // Found the control, so initialise it
          m_oCortona.NavBar(false);
          m_oCortona.Trace("Turned off the nav bar\n");
-         m_oCortona.ContextMenu(false);
+         m_oCortona.ContextMenu(true);
          m_oCortona.Trace("Turned off the context menu\n");
          m_oCortona.Headlight(true);
          m_oCortona.Trace("Turned on the headlight\n");
@@ -571,6 +575,10 @@ void CVTStrucVisCtl::DrawPlaceholder(CDC *pDC, const CRect &rcBounds, bool bRun)
          else
             // Has an error condition been reached?
             switch (m_eSimResult) {
+               // Setup not found and all data in
+               case SD_ERROR:
+                  oStr += "No simulation data found\n";
+                  break;
                // Result OK or unknown yet
                case SD_UNKNOWN:
                case SD_OK:
@@ -594,6 +602,16 @@ void CVTStrucVisCtl::DrawPlaceholder(CDC *pDC, const CRect &rcBounds, bool bRun)
 }
 
 void CVTStrucVisCtl::DrawUI(CDC *pDC, const CRect &rcBounds, bool bRun) {
+   // If we haven't started it already, run the animation
+   if (!m_bRunning) {
+      // Set the animation vars
+      m_uiFrame = 0;
+      m_eRunMode = RM_PLAY;
+      SetTimer(TI_ANIMATE, 30, NULL);
+      m_bRunning = true;
+      // Show the first frame
+      ShowFrame(0);
+   }
    // Create compatible DCs for the remote and the back buffer
 	CDC oDCRemote, oDCBuffer;
 	oDCRemote.CreateCompatibleDC(pDC);
@@ -612,17 +630,59 @@ void CVTStrucVisCtl::DrawUI(CDC *pDC, const CRect &rcBounds, bool bRun) {
    // Initialise the buffers with bitmaps
    CBitmap *pRemoteBitmap = oDCRemote.SelectObject(&m_oUIBitmap);
    CBitmap *pBufferBitmap = oDCBuffer.SelectObject(&m_oBackBuffer);
+
    // Get the bitmap params
 	BITMAP sBitmap;
 	m_oUIBitmap.GetBitmap(&sBitmap);
    const int iWidth = sBitmap.bmWidth / 2;
+   // Copy the base remote
 	oDCBuffer.BitBlt(0, 0, iWidth, sBitmap.bmHeight, &oDCRemote, 0, 0, SRCCOPY);
-   // Highlight the relevant buttons
-   if (bRun && GetEnabled() && m_bLButtonDown && (m_iUIZone >= 0)) {
-      const int iX = (m_iUIZone % 3) * 60 + 1;
-      const int iY = (m_iUIZone / 3) * 30 + 51;
-   	oDCBuffer.BitBlt(iX, iY, 58, 28, &oDCRemote, iWidth + iX, iY, SRCCOPY);
+
+   //#===--- Highlight buttons
+   // Loop indicator
+   if (m_bLoop)
+      oDCBuffer.BitBlt(120, 80, 60, 30, &oDCRemote, 300, 80, SRCCOPY);
+
+   // If we're running and enabled
+   if (bRun && GetEnabled()) {
+
+      // Mouse over button
+      if (m_bLButtonDown && (m_iUIZone >= 0)) {
+         const int iX = (m_iUIZone % 3) * 60;
+         const int iY = (m_iUIZone / 3) * 30 + 50;
+      	oDCBuffer.BitBlt(iX, iY, 60, 30, &oDCRemote, iWidth + iX, iY, SRCCOPY);
+      }
+
+      // Current run mode
+      int iRunZone = -1;
+      switch (m_eRunMode) {
+         case RM_PLAY:
+            iRunZone = 1;
+            break;
+         case RM_PLAYREV:
+            iRunZone = 0;
+            break;
+         case RM_PAUSE:
+            iRunZone = 2;
+            break;
+         case RM_REWIND:
+            iRunZone = 3;
+            break;
+         case RM_FASTFORWARD:
+            iRunZone = 4;
+            break;
+         default:
+            iRunZone = -1;
+      }
+      if (iRunZone >= 0) {
+         const int iX = (iRunZone % 3) * 60;
+         const int iY = (iRunZone / 3) * 30 + 50;
+      	oDCBuffer.BitBlt(iX, iY, 60, 30, &oDCRemote, iWidth + iX, iY, SRCCOPY);
+      }
    }
+
+   //#===--- Frame count
+
    // Copy over the back buffer
    pDC->BitBlt(rcBounds.left, rcBounds.top, rcBounds.Width(), rcBounds.Height(), &oDCBuffer, 0, 0, SRCCOPY); 
    // Restore the saved objects
@@ -717,6 +777,117 @@ bool CVTStrucVisCtl::LoadBitmap() {
 	return true;
 }
 
+void CVTStrucVisCtl::FrameControl() {
+   // Check we have a scene manager present
+   if (!m_poScene)
+      return;
+   // Get the max number of frames
+   unsigned int uiFrames = m_poScene->NumFrames();
+   // Set the fast forward/ rewind step
+   const unsigned int uiStep = 5;
+   // Store the current frame
+   const unsigned int uiCurrent = m_uiFrame;
+   // Update dependent on the run mode
+   switch (m_eRunMode) {
+      // PLAY
+      case RM_PLAY:
+         if (m_uiFrame + 1 < uiFrames)
+            m_uiFrame++;
+         else
+            if (m_bLoop)
+               m_uiFrame = 0;
+            else
+               m_eRunMode = RM_PAUSE;
+         break;
+      // PLAY REVERSE
+      case RM_PLAYREV:
+         if (m_uiFrame > 0)
+            m_uiFrame--;
+         else
+            if (m_bLoop)
+               m_uiFrame = uiFrames - 1;
+            else
+               m_eRunMode = RM_PAUSE;
+         break;
+      // REWIND
+      case RM_REWIND:
+         if (m_uiFrame > uiStep)
+            m_uiFrame -= uiStep;
+         else
+            if (m_bLoop)
+               m_uiFrame = uiFrames - 1;
+            else
+               m_eRunMode = RM_PAUSE;
+         break;
+      // FAST FORWARD
+      case RM_FASTFORWARD:
+         if (m_uiFrame + uiStep < uiFrames)
+            m_uiFrame += uiStep;
+         else
+            if (m_bLoop)
+               m_uiFrame = 0;
+            else
+               m_eRunMode = RM_PAUSE;
+         break;
+      // NONE
+      default:
+         break;
+   }
+   // Check to see if the frame number is modified
+   if (uiCurrent != m_uiFrame)
+      m_bDirty = true;
+}
+
+void CVTStrucVisCtl::UIControl() {
+   // Check we have a scene manager present
+   if (!m_poScene)
+      return;
+   // Update dependent on the position of the mouse
+   switch (m_iUIZone) {
+      // PLAY
+      case 1:
+         m_eRunMode = RM_PLAY;
+         break;
+      // PLAY REVERSE
+      case 0:
+         m_eRunMode = RM_PLAYREV;
+         break;
+      // PAUSE
+      case 2:
+         m_eRunMode = RM_PAUSE;
+         break;
+      // REWIND
+      case 3:
+         m_eRunMode = RM_REWIND;
+         break;
+      // FAST FORWARD
+      case 4:
+         m_eRunMode = RM_FASTFORWARD;
+         break;
+      // LOOP
+      case 5:
+         m_bLoop = !m_bLoop;
+         break;
+      // GO TO START
+      case 6:
+         m_eRunMode = RM_PAUSE;
+         m_bLoop = false;
+         m_uiFrame = 0;
+         m_bDirty = true;
+         break;
+      // GO TO END
+      case 7:
+         m_eRunMode = RM_PAUSE;
+         m_bLoop = false;
+         m_uiFrame = m_poScene->NumFrames() - 1;
+         m_bDirty = true;
+         break;
+      // Unknown
+      default:
+         break;
+   }
+}
+
 void CVTStrucVisCtl::UILoading() {
    // Set the async data flags
    m_uiAsyncFlags &= AD_UIMASK;
@@ -752,19 +923,43 @@ void CVTStrucVisCtl::SimLoaded() {
    // Check the ready state
    if ((m_uiAsyncFlags & AD_UILOADED) > 0)
       InternalSetReadyState(READYSTATE_COMPLETE);
+   // Check to see if setup has completed
+   if (m_eSimResult != SD_OK)
+      m_eSimResult = SD_ERROR;
    // Refresh the control
    InvalidateControl();
 }
 
 bool CVTStrucVisCtl::SceneSetup(const unsigned char *pucData, unsigned int uiLength) {
-   // Check we ave a scene manager present
+   // Check we have a scene manager present
    if (!m_poScene)
       return false;
    // Can we go interactive yet?
    bool bDone = m_poScene->Setup(pucData, uiLength);
-   if (bDone)
+   if (bDone) {
+      m_eSimResult = SD_OK;
       GoInteractive();
+   }
    return bDone;
+}
+
+void CVTStrucVisCtl::ShowFrame(unsigned int uiFrame) {
+   // Check we have a scene manager present
+   if (!m_poScene)
+      return;
+   // Show the current frame
+   unsigned int uiSeek, uiLength;
+   m_poScene->FrameInfo(m_uiFrame, uiSeek, uiLength);
+   if (uiLength > 0)
+      m_oSimData.ShowFrame(uiSeek, uiLength);
+}
+
+void CVTStrucVisCtl::ShowFrame(const unsigned char *pucData, unsigned int uiLength) {
+   // Check we have a scene manager present
+   if (!m_poScene)
+      return;
+   // Pass the data through
+   m_poScene->ShowFrame(pucData, uiLength);
 }
 
 void CVTStrucVisCtl::GoInteractive() {
@@ -780,11 +975,13 @@ void CVTStrucVisCtl::GoInteractive() {
 void CVTStrucVisCtl::OnDraw(CDC* pdc, const CRect& rcBounds, const CRect& rcInvalid) {
    // Check our operating mode
    bool bRun = AmbientUserMode() && !AmbientUIDead();
+   bool bInteractive = (GetReadyState() == READYSTATE_INTERACTIVE) || (GetReadyState() == READYSTATE_COMPLETE);
    // If we're in run mode, the UI is loaded and the ready state is marked interactive
    // render the full-on interface
    if (bRun && 
-      (m_eUIResult == UI_OK) && 
-      ((GetReadyState() == READYSTATE_INTERACTIVE) || (GetReadyState() == READYSTATE_COMPLETE))) {
+      (m_eUIResult == UI_OK) &&
+      (m_eSimResult == SD_OK) && 
+      bInteractive) {
       // Draw the full-on interface
       DrawUI(pdc, rcBounds, bRun);
    }
@@ -809,13 +1006,23 @@ void CVTStrucVisCtl::DoPropExchange(CPropExchange* pPX) {
    if (pPX->IsLoading()) {
       // Indicate that the synchronous data has been loaded
       InternalSetReadyState(READYSTATE_LOADED);
+
       // Set the asynchronous data flags
       m_uiAsyncFlags = AD_EMPTY;
       m_eUIResult = UI_UNKNOWN;
       m_eSimResult = SD_UNKNOWN;
-      // If we are operating in run mode, init Cortona
-      if (AmbientUserMode() && !AmbientUIDead())
-         InitCortona();
+
+      // Init Cortona
+      InitCortona();
+
+      // Reset the animation
+      if (m_bRunning) {
+         KillTimer(TI_ANIMATE);
+         m_bRunning = false;
+      }
+      m_eRunMode = RM_PLAY;
+      m_uiFrame = 0;
+      m_bDirty = true;
    }
 
    // Mark the other persistant properties with PX_ calls
@@ -833,6 +1040,15 @@ void CVTStrucVisCtl::OnResetState() {
    m_uiAsyncFlags = AD_EMPTY;
    m_eUIResult = UI_UNKNOWN;
    m_eSimResult = SD_UNKNOWN;
+
+   // Reset the animation
+   if (m_bRunning) {
+      KillTimer(TI_ANIMATE);
+      m_bRunning = false;
+   }
+   m_eRunMode = RM_PLAY;
+   m_uiFrame = 0;
+   m_bDirty = true;
 
    // Restart Cortona
    ExitCortona();
@@ -863,8 +1079,16 @@ void CVTStrucVisCtl::OnLButtonDown(UINT nFlags, CPoint point) {
 
 void CVTStrucVisCtl::OnLButtonUp(UINT nFlags, CPoint point) {
    m_bLButtonDown = false;
-   InvalidateControl();
 	
+   // Check our operating mode
+   bool bRun = AmbientUserMode() && !AmbientUIDead();
+   bool bInteractive = (GetReadyState() == READYSTATE_INTERACTIVE) || (GetReadyState() == READYSTATE_COMPLETE);
+   // If we have a scene and we're interactive and running, process the event
+   if (bRun && bInteractive && m_poScene)
+      UIControl();
+   // Refresh the display
+   InvalidateControl();
+
 	COleControl::OnLButtonUp(nFlags, point);
 }
 
@@ -907,12 +1131,25 @@ void CVTStrucVisCtl::OnTimer(UINT nIDEvent) {
          // Forget about mouse states
          m_bLButtonDown = false;
          // Redraw the control
-         Invalidate();
+         InvalidateControl();
       }
    }
 
    // Animate event
    if (nIDEvent == TI_ANIMATE) {
+      bool bInteractive = (GetReadyState() == READYSTATE_INTERACTIVE) || (GetReadyState() == READYSTATE_COMPLETE);
+      if (m_poScene && bInteractive) {
+         // Update the frame number
+         FrameControl();
+         if (m_bDirty) {
+            // Show the frame
+            ShowFrame(m_uiFrame);
+            // Show updated
+            m_bDirty = false;
+         }
+         // Redraw the control
+         InvalidateControl();
+      }
    }
 
 	COleControl::OnTimer(nIDEvent);
