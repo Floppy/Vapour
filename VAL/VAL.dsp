@@ -406,6 +406,10 @@ SOURCE=.\DataTypes\TriFace.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\AvatarFiles\Unreal.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\Application\VAL.h
 # End Source File
 # Begin Source File
