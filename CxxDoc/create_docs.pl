@@ -5,7 +5,7 @@
 # script to check out the source modules and build docs for each supported arch
 
 # 13/09/2001 - Warren Moore
-# $Id: create_docs.pl,v 1.18 2001/09/26 10:29:40 vap-warren Exp $
+# $Id: create_docs.pl,v 1.19 2001/10/27 09:12:40 vap-warren Exp $
 # Copyright 2000-2001 Vapour Technology Ltd.
 
 # bring in the environment vars
@@ -123,7 +123,8 @@ foreach my $mod_name (@modules) {
 		`cp $find_results eht`;
 	}
 	# run CxxDoc for the default architecture
-	`CxxDoc -pn $proj_name -o $VALET_DOCROOT -p $mod_prefix -i $mod_prefix -eht eht -tc class -td docnode > /dev/null 2>&1`;
+	#`CxxDoc -pn $proj_name -o $VALET_DOCROOT -p $mod_prefix -i $mod_prefix -eht eht -tc class -td docnode > /dev/null 2>&1`;
+	`CxxDoc -pn $proj_name -o $VALET_DOCROOT -p $mod_prefix -i $mod_prefix -eht eht -tc class -td docnode`;
 }
 
 # save us from processing the eht's again
@@ -156,5 +157,6 @@ foreach my $arch_name (@arch) {
 
 	# run CxxDoc to generate the doc tree in the right place
 	my $doc_root = $VALET_DOCROOT . "arch/" . $arch_name;
-	`CxxDoc -pn $proj_name -o $doc_root -p $mod_prefix -i $mod_prefix -eht eht -tc class -td docnode > /dev/null 2>&1`;
+	#`CxxDoc -pn $proj_name -o $doc_root -p $mod_prefix -i $mod_prefix -eht eht -tc class -td docnode > /dev/null 2>&1`;
+	`CxxDoc -pn $proj_name -o $doc_root -p $mod_prefix -i $mod_prefix -eht eht -tc class -td docnode`;
 }
