@@ -1,3 +1,15 @@
+//======---
+// Saver
+//------
+// Vapour Technology Screen Saver
+// Copyright 2000 Vapour Technology Ltd.
+//
+// Saver.h - 26/11/2000 - Warren Moore
+//	  Main screen saver Windows source
+//
+// $Id: Saver.h,v 1.2 2000/11/30 11:03:21 warren Exp $
+//
+
 #ifndef _SAVER_WINMAIN_
 #define _SAVER_WINMAIN_
 

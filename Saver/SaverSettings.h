@@ -1,13 +1,13 @@
-//====---
-// VAL
-//----
-// Vapour Technology All-Purpose Library
+//======---
+// Saver
+//------
+// Vapour Technology Screen Saver
 // Copyright 2000 Vapour Technology Ltd.
 //
 // SaverSettings.h - 26/11/2000 - Warren Moore
 //	  Stores screen saver settings
 //
-// $Id: SaverSettings.h,v 1.1 2000/11/27 17:17:01 cvs Exp $
+// $Id: SaverSettings.h,v 1.2 2000/11/30 11:04:52 warren Exp $
 //
 
 #ifndef _SAVER_SETTINGS_

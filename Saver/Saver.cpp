@@ -1,3 +1,15 @@
+//======---
+// Saver
+//------
+// Vapour Technology Screen Saver
+// Copyright 2000 Vapour Technology Ltd.
+//
+// Saver.cpp - 26/11/2000 - Warren Moore
+//	  Main screen saver Windows source
+//
+// $Id: Saver.cpp,v 1.2 2000/11/30 11:04:16 warren Exp $
+//
+
 #include "Saver.h"
 
 #include <stdlib.h>
@@ -446,4 +458,3 @@ HWND CheckForScrprev() {
 	return hwnd;
 } // CheckForScrprev
 #endif // _DEBUG
-

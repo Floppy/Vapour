@@ -7,7 +7,7 @@
 // SaverSettings.cpp - 26/11/2000 - Warren Moore
 //	  Stores screen saver settings
 //
-// $Id: SaverSettings.cpp,v 1.1 2000/11/27 17:17:01 cvs Exp $
+// $Id: SaverSettings.cpp,v 1.2 2000/11/30 11:05:29 warren Exp $
 //
 
 #include "VAL.h"
