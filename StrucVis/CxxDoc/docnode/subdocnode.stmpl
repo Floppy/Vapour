@@ -1,0 +1,6 @@
+$(forall:docnode:
+	<P CLASS=HEADING>$(gap)<A HREF="user/tree/$(MakeFilename:%.html)"><B>$(subst:_: :$(ObjectName))</B></A>$(ifset:brief: - $(brief))</P>
+	$(subc:$(set:gap=$(gap)&nbsp;&nbsp;&nbsp;)
+		$(include:subdocnode.stmpl)
+	)
+)

@@ -1,0 +1,14 @@
+$(FileObject:one)$(FilePattern:doctree.html)
+
+$(//:#===--- Top )
+$(include:../class/top.stmpl)
+
+<P CLASS=SUBTITLE>
+Manual
+</P>
+
+$(set:parent=)$(set:gap=)
+$(forall:docnode:$(include:subdocnode.stmpl))
+			
+$(//:#===--- Footer)
+$(include:../class/footer.stmpl)

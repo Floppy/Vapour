@@ -1,0 +1,9 @@
+$(FileObject:docnode)$(FilePattern:user/tree/%.html)
+$(silent:
+	$(set:title=<A HREF="$(MakeFilename:../../developer/tree/%.html)">See Developer Documentation</A>)
+	$(set:viewmode=user)
+	$(set:methodtype=scope_user)
+	$(define:checkview:$(if:$access=public:%arg%))
+	$(set:refPattern=%.html)
+)
+$(include:docnode.stmpl)

@@ -1,0 +1,33 @@
+$(//:#===--- Top )
+$(include:top.stmpl)
+
+<P CLASS=SUBTITLE>
+Class List
+</P>
+
+<TABLE BORDER=0 CELLPADDING=0 CELLSPACING=0>
+<TR VALIGN=TOP><TD>
+	<TABLE BORDER=0 CELLPADDING=2 CELLSPACING=2>
+	<TR><TD COLSPAN=2 BGCOLOR="#C0C0C0"><P><B>Namespaces</B></P></TD></TR>
+	$(forall:namespace:
+		$(if:$viewmode=developer|$userlevel!=Develop&$userlevel!=Obsolete:
+			<TR><TD BGCOLOR="#C0C0F0"><P><A HREF="$(MakeFilename:class/%.html)">$(ObjectName)</A></P></TD><TD BGCOLOR="#C0C0F0"><P>$(brief)</P></TD></TR>
+		)
+	)
+	</TABLE>
+	</TD></TR>
+	<TR><TD>
+	<TABLE BORDER=0 CELLPADDING=2 CELLSPACING=2>
+	<TR><TD COLSPAN=2 BGCOLOR="#C0C0C0"><P><B>Classes</B></P></TD></TR>
+	$(forall:class:
+		$(if:$viewmode=developer|$userlevel!=Develop&$userlevel!=Obsolete:
+			<TR><TD BGCOLOR="#C0C0F0"><P><A HREF="$(MakeFilename:class/%.html)">$(ObjectName)</A></P></TD><TD BGCOLOR="#C0C0F0"><P>$(brief)</P></TD></TR>
+		)
+	)
+	</TABLE>
+	</TD></TR>
+</TABLE>
+
+
+$(//:#===--- Footer)
+$(include:footer.stmpl)

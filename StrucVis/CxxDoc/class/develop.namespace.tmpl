@@ -1,0 +1,8 @@
+$(FileObject:namespace)$(FilePattern:developer/class/%.html)
+$(silent:
+	$(set:title=<A HREF="$(MakeFilename:../../user/class/%.html)">See User Documentation</A>)
+	$(set:viewmode=developer)
+	$(set:methodtype=scope)
+	$(define:checkview:%arg%)
+)
+$(include:namespace.stmpl)

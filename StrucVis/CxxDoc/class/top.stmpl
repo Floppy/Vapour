@@ -1,0 +1,93 @@
+$(silent:
+	$(define:ident:
+		<TABLE WIDTH="100%" BORDER=0 CELLPADDING=0 CELLSACING=0>
+		<TR><TD WIDTH="2%"></TD><TD>%arg%</TD></TR>
+		</TABLE>)
+	$(define:list:$(subst:
+:<BR>:%arg%))
+)
+<HTML>
+<HEAD>
+<TITLE>Vapour Technology - Source Documentation</TITLE>
+<STYLE TYPE="text/css"><!--
+BODY {
+	BACKGROUND-COLOR: #FFFFFF;
+	COLOR: #000000;
+}
+
+P {
+	FONT-FAMILY: 'Verdana', 'Arial', helvetica, sans-serif;
+	FONT-SIZE: 10PT;
+	MARGIN-TOP: 0PT;
+	MARGIN-BOTTOM: 2PT;
+}
+
+P.MENU {
+	FONT-SIZE: 8PT;
+}
+
+P.FOOTER {
+	FONT-SIZE: 8PT;
+}
+
+P.TITLE {
+	FONT-SIZE: 20PT;
+	FONT-WEIGHT: BOLD;
+	MARGIN-BOTTOM: 6PT;
+}
+
+P.SUBTITLE {
+	FONT-SIZE: 16PT;
+	FONT-WEIGHT: BOLD;
+	MARGIN-BOTTOM: 6PT;
+}
+
+P.HEADING {
+	FONT-SIZE: 12PT;
+	FONT-WEIGHT: BOLD;
+	MARGIN-TOP: 6PT;
+}
+
+P.BUG {
+	COLOR: #FF0000;
+}
+
+P.PARAM {
+	COLOR: #606060;
+}
+
+P.TODO {
+	COLOR: #6060C0;
+}
+
+TD {
+	FONT-FAMILY: 'Verdana', 'Arial', helvetica, sans-serif;
+	FONT-SIZE: 10PT;
+	MARGIN-TOP: 0PT;
+	MARGIN-BOTTOM: 2PT;
+}
+
+A {
+	TEXT-DECORATION: NONE;
+}
+
+A:HOVER {
+	COLOR: #8385E5;
+}
+
+--></STYLE>
+</HEAD>
+<BODY BGCOLOR="#FFFFFF" LINK="#4B4FED" ALINK="#8385E5" VLINK="#171BBD">
+
+<TABLE WIDTH="100%" BORDER=0 CELLPADDING=0 CELLSPACING=0 BGCOLOR="#C0C0C0">
+<TR><TD>
+<P CLASS=TITLE>
+VT Structural Visualisation Control
+</P>
+
+<P>$(ifset:title:$(title))</P>
+
+</TD></TR>
+</TABLE>
+
+

@@ -1,0 +1,87 @@
+$(silent:
+	$(ifset:!lastFilename:$(set:lastFilename=.))
+	$(define:chk_header:
+		$(if:$filename!=$lastFilename:
+			$(set:lastFilename=$(filename))
+			<TABLE BORDER=0 CELLPADDING=0 CELLSPACING=0>
+			<TR><TD BGCOLOR="#C0C0F0"><B>#include "$(filename)"</B></TD></TR>
+			</TABLE>
+		)
+	)
+)
+
+$(ifany:namespace:<P CLASS=HEADING>Child namespaces</P>
+	$(forall:namespace:
+		$(ident:<P><A HREF="$(MakeFilename:%.html)">$(ObjectName)</A> - $(brief)</P>)
+	)
+)
+
+$(ifany:class:<P CLASS=HEADING>Child Classes</P>
+	$(set:lastFilename=.)
+	$(forall:class:
+		$(checkview:
+			$(chk_header:)$(ident:<P><A HREF="$(MakeFilename:%.html)">$(ObjectName)</A> - $(brief)</P>)
+		)
+	)
+)
+
+$(ifany:enum:<P CLASS=HEADING>Enumerated types</P>
+	$(set:lastFilename=.)
+	$(forall:enum:
+		$(checkview:
+			$(chk_header:)$(ident:<P><A NAME="$(href)">enum</A> <B>$(ObjectName)</B> { $(forall:all:$(if:$isfirst=0:, )$(ObjectName)) } ;</P>
+			$(include:comment.stmpl))
+		)
+	)
+)
+
+$(ifany:typedef:<P CLASS=HEADING>Typedefs</P>
+	$(set:lastFilename=.)
+	$(forall:typedef:
+		$(checkview:
+			$(chk_header:)$(ident:<P><A NAME="$(href)">typedef</A> $(typedef_type) <B>$(ObjectName)</B>;</P>
+			$(include:comment.stmpl))
+		)
+	)
+)
+
+$(ifany:variable:
+	$(set:lastFilename=.)
+	<P CLASS=HEADING>Variables</P>
+	$(forall:variable:
+		$(checkview:
+			$(chk_header:)$(ident:<P>$(datatype) <B>$(ObjectName)</B>;</P>
+			$(include:comment.stmpl))
+		)
+	)
+)
+
+$(ifany:$methodtype,$NodeType=method:
+	$(set:lastFilename=.)
+	<P CLASS=HEADING>Methods</P>
+	$(forall:$methodtype,$NodeType=method|$NodeType=docnode:
+		$(if:$NodeType=method:
+			$(checkview:$(chk_header:)
+			$(include:method.stmpl))
+		)
+		$(else:$(ident:
+			<P CLASS=HEADING><B>$(brief)</B></P>
+			$(ifset:detail:
+				$(if:$detail!=:
+					<P>
+					$(detail)
+					</P>
+				)
+			)
+			$(ifset:bug:
+				<P CLASS=BUG><B>BUGS</B><BR>$(ident:<P CLASS=BUG>$(list:$(bug))</P>)</P>
+			)
+			$(if:$viewmode=developer:
+				$(ifset:todo:
+					<P CLASS=TODO><B>TO DO</B><BR>$(ident:<P CLASS=TODO>$(list:$(todo))</P>)</P>
+				)
+			)
+		))
+	)
+)
+

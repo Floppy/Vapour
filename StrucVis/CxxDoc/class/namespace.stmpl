@@ -1,0 +1,25 @@
+$(//:#===--- Top )
+$(include:top.stmpl)
+
+<P CLASS=SUBTITLE>
+Namespace Info
+</P>
+
+<TABLE WIDTH="100%" BORDER=1 CELLPADDING=2 CELLSPACING=0>
+	<TR><TD>
+	
+   <P CLASS=SUBTITLE>$(FullName)</P>
+   <P>$(ifset:brief:$(brief))</P>
+
+	$(ifset:detail:
+		<P CLASS=HEADING>Description</P>
+		<P>$(list:$(detail))</P>
+   )
+
+	$(include:scope.stmpl)
+	
+	</TD></TR>
+</TABLE>
+
+$(//:#===--- Footer)
+$(include:footer.stmpl)
