@@ -11,7 +11,7 @@
 //! author 		= "James Smith"
 //! date 		= "09/10/2001"
 //! lib 		= libVALET3d
-//! rcsid 		= "$Id: materialcolour.cpp,v 1.4 2001/10/18 12:23:05 vap-james Exp $"
+//! rcsid 		= "$Id: materialcolour.cpp,v 1.5 2001/10/18 15:12:08 vap-james Exp $"
 //! userlevel 	        = Normal
 //! docentry 	        = "VALET.3D.Surface Materials"
 
@@ -38,6 +38,9 @@ namespace NValet {
     m_pComponents[3] = dA;
     return;
   }
-  
+
+  CMaterialColour::~CMaterialColour() {
+  }
+
 }
 
