@@ -132,8 +132,6 @@ IDD_PROPPAGE_VTSTRUCVIS DIALOG DISCARDABLE  0, 0, 250, 62
 STYLE WS_CHILD
 FONT 8, "MS Sans Serif"
 BEGIN
-    LTEXT           "TODO: Place controls to manipulate properties of VT Structure Vis Control on this dialog.",
-                    IDC_STATIC,7,25,229,16
 END
 
 

@@ -7,7 +7,7 @@
 // VTStructVisCtl.cpp
 // 05/03/2002 - Warren Moore
 //
-// $Id: VTStrucVisCtl.cpp,v 1.9 2002/03/24 13:37:08 vap-warren Exp $
+// $Id: VTStrucVisCtl.cpp,v 1.10 2002/03/24 16:43:26 vap-warren Exp $
 
 #include "stdafx.h"
 #include "VTStrucVis.h"
@@ -174,7 +174,9 @@ BEGIN_DISPATCH_MAP(CVTStrucVisCtl, COleControl)
 	DISP_STOCKPROP_FORECOLOR()
 	DISP_STOCKPROP_CAPTION()
 	DISP_STOCKPROP_ENABLED()
-	//}}AFX_DISPATCH_MAP
+	DISP_STOCKPROP_APPEARANCE()
+	DISP_STOCKPROP_BORDERSTYLE()
+   //}}AFX_DISPATCH_MAP
 	DISP_FUNCTION_ID(CVTStrucVisCtl, "AboutBox", DISPID_ABOUTBOX, AboutBox, VT_EMPTY, VTS_NONE)
 END_DISPATCH_MAP()
 
@@ -187,8 +189,9 @@ END_EVENT_MAP()
 
 // Property pages
 // TODO: Add more property pages as needed.  Remember to increase the count!
-BEGIN_PROPPAGEIDS(CVTStrucVisCtl, 1)
+BEGIN_PROPPAGEIDS(CVTStrucVisCtl, 2)
 	PROPPAGEID(CVTStrucVisPropPage::guid)
+   PROPPAGEID(CLSID_CColorPropPage)
 END_PROPPAGEIDS(CVTStrucVisCtl)
 
 
@@ -684,7 +687,9 @@ void CVTStrucVisCtl::SetUIData(LPCTSTR lpszNewValue) {
    m_eUIResult = UI_UNKNOWN;
    // Load the new data
    Load(lpszNewValue, m_oUIData);
-
+   // Notify a property browser
+   BoundPropertyChanged(dispidUIData);
+   // Mark the properties modified
    SetModifiedFlag();
 }
 
@@ -701,7 +706,9 @@ void CVTStrucVisCtl::SetSimData(LPCTSTR lpszNewValue) {
    m_eSimResult = SD_UNKNOWN;
    // Load the new data
    Load(lpszNewValue, m_oSimData);
-
+   // Notify a property browser
+   BoundPropertyChanged(dispidSimData);
+   // Mark the properties modified
    SetModifiedFlag();
 }
 

@@ -7,7 +7,7 @@
 // VTStructVis.odl
 // 05/03/2002 - Warren Moore
 //
-// $Id: VTStrucVis.odl,v 1.5 2002/03/24 01:55:46 vap-warren Exp $
+// $Id: VTStrucVis.odl,v 1.6 2002/03/24 16:43:26 vap-warren Exp $
 
 // Type library
 //    Processed by the Make Type Library (mktyplib) tool to generate
@@ -37,6 +37,9 @@ library VTSTRUCVISLib
  			[id(DISPID_BACKCOLOR), bindable, requestedit] OLE_COLOR BackColor;
  			[id(DISPID_FORECOLOR), bindable, requestedit] OLE_COLOR ForeColor;
  			[id(DISPID_CAPTION), bindable, requestedit] BSTR Caption;
+			[id(DISPID_ENABLED), bindable, requestedit] boolean Enabled;
+			[id(DISPID_APPEARANCE), bindable, requestedit] short Appearance;
+			[id(DISPID_BORDERSTYLE), bindable, requestedit] short BorderStyle;
  			[id(1)] BSTR SimData;
  			[id(2)] BSTR UIData;
 			//}}AFX_ODL_PROP
