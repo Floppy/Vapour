@@ -7,7 +7,7 @@
 // AvatarFileUnreal.cpp - 16/2/2000 - James Smith
 //	Unreal export filter implementation
 //
-// $Id: AvatarFileUnreal.cpp,v 1.7 2000/08/22 11:30:19 waz Exp $
+// $Id: AvatarFileUnreal.cpp,v 1.8 2000/08/24 22:20:40 waz Exp $
 //
 
 #include "stdafx.h"
@@ -25,6 +25,7 @@ extern CImageFileStore g_oImageFileStore;
 #include <direct.h>
 #include <errno.h>
 #include <time.h>
+#include <strstrea.h>
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -47,9 +48,10 @@ CAvatarFileUnreal::CAvatarFileUnreal() {
    m_pszTgtDir = NULL;
    m_pszTexPackageName = NULL;
    m_pszTexBaseName = NULL;
-   m_puImageMinima = NULL;
-   m_puImageMaxima = NULL;
+   m_puFirstPixel = NULL;
+   m_puImageHeight = NULL;
    m_uTotalHeight = 0;
+   m_iSex = UNREAL_MALE;
 } // CAvatarFileUnreal()
 
 float CAvatarFileUnreal::GetFilterVersion() const {
@@ -393,14 +395,14 @@ FRESULT CAvatarFileUnreal::Init(const char* pszFilename, const CAvatar* pAvatar)
 
    // Allocate texture coordinate minima and maxima storage
    NEWBEGIN
-   m_puImageMaxima = new unsigned int[pAvatar->NumTextures()];
+   m_puImageHeight = new unsigned int[pAvatar->NumTextures()];
    NEWEND("CAvatarFileUnreal::Init - maxima storage allocation")
-   if (m_puImageMaxima == NULL) return F_OUT_OF_MEMORY;
+   if (m_puImageHeight == NULL) return F_OUT_OF_MEMORY;
 
    NEWBEGIN
-   m_puImageMinima = new unsigned int[pAvatar->NumTextures()];
+   m_puFirstPixel = new unsigned int[pAvatar->NumTextures()];
    NEWEND("CAvatarFileUnreal::Init - minima storage allocation")
-   if (m_puImageMinima == NULL) return F_OUT_OF_MEMORY;
+   if (m_puFirstPixel == NULL) return F_OUT_OF_MEMORY;
 
    // Done!
    return F_OK;
@@ -477,8 +479,6 @@ FRESULT CAvatarFileUnreal::SaveTextureUTX(const char* pszFilename, const CAvatar
       CImage imgFace(*(pAvatar->Texture(uFaceTexIndex)));
       // Scale
       imgFace.Scale(UNREAL_TEXTURE_WIDTH,UNREAL_TEXTURE_HEIGHT);
-      // Flip up
-      imgFace.Flip();
       // and convert to palette!
       CImage* imgNewFace;
       NEWBEGIN
@@ -509,35 +509,48 @@ FRESULT CAvatarFileUnreal::SaveTextureUTX(const char* pszFilename, const CAvatar
       for (t=0; t<iNumTextures; t++) {
          pImages[t] = NULL;
       }
+      m_uTotalHeight = 0;
       const SBodyPart* pBodyParts = pAvatar->BodyParts();
       for (t=0; t<iNumTextures; t++) {
+         // If this is not an exempt texture
          if (t != uFaceTexIndex) {
+            // Variables
             int iWidth = 0;
             int iHeight = 0;
             CImage* pSmallerImage = NULL;
+            // Create temporary image by copying current image
             NEWBEGIN
             pSmallerImage = new CImage(*(pAvatar->Texture(t)));
             NEWEND("CAvatarFileUnreal::Save - small image allocation");
             if (pSmallerImage == NULL) {
+               // Dump data
                for (int i=0; i<iNumTextures; i++) {
                   if (pImages[i] != NULL) delete pImages[i];
                }
                delete [] pImages;
                return F_OUT_OF_MEMORY;
             }
+            // Get size
             pSmallerImage->GetSize(iWidth,iHeight);
+            // Modify width to be correct width
             iWidth = UNREAL_TEXTURE_WIDTH;
+            // Modify height to be a maximum of a quarter of the width.
+            // Unless it is the torso, where we want more detail
             if (t == uTorsoTexIndex) iHeight = iWidth;
             else if (iHeight > iWidth/4) iHeight = iWidth/4;
+            // Scale image to new sie
             pSmallerImage->Scale(iWidth,iHeight);
-            pSmallerImage->Flip();
-            m_puImageMinima[t] = m_uTotalHeight;
+            // Store image data
+            m_puFirstPixel[t] = m_uTotalHeight;
+            m_puImageHeight[t] = iHeight;
             m_uTotalHeight += iHeight;
-            m_puImageMaxima[t] = m_uTotalHeight - 1;
+            // Store image pointer
             pImages[t] = pSmallerImage;
          }
+         // If it is, we don't bother with it.
          else {
-            m_puImageMinima[t] = m_puImageMaxima[t] = m_uTotalHeight;
+            m_puFirstPixel[t] = m_uTotalHeight;
+            m_puImageHeight[t] = 0;
             pImages[t] = NULL;
          }
       }
@@ -557,7 +570,7 @@ FRESULT CAvatarFileUnreal::SaveTextureUTX(const char* pszFilename, const CAvatar
       else {
          for (t=0; t<iNumTextures; t++) {
             if (pImages[t] != NULL) {
-               imgBody.Paste(*(pImages[t]),0,m_puImageMinima[t]);
+               imgBody.Paste(*(pImages[t]),0,m_puFirstPixel[t]);
                delete pImages[t];
             }
          }
@@ -802,10 +815,14 @@ FRESULT CAvatarFileUnreal::SaveTextureUTX(const char* pszFilename, const CAvatar
       NEWBEGIN
       pcTextureData = new char[uTextureDataLength];
       NEWEND("CAvatarFileUnreal::Save - texture data chunk allocation");
+      // Texture data offsets
+      int pTextureOffset[2];
+      int pTextureSize[2];
       if (pcTextureData != NULL) {
          unsigned long uTextureDataOffset = 0;
          // Write texture data
          for (t=0; t<2; t++) {
+            pTextureOffset[t] = uCurrentOffset + uTextureDataOffset;
             CImage* pTexture = t ?  &imgFace : &imgBody;
             int iWidth, iHeight;
             pTexture->GetSize(iWidth,iHeight);
@@ -923,17 +940,15 @@ FRESULT CAvatarFileUnreal::SaveTextureUTX(const char* pszFilename, const CAvatar
             pcTextureData[uTextureDataOffset++] = (char)0x00;
             pcTextureData[uTextureDataOffset++] = (char)0x00;
             pcTextureData[uTextureDataOffset++] = (char)0x00;
-            pcTextureData[uTextureDataOffset++] = (char)0x09;
-            // Until we reach minimum texture size (0), output image halving size each time
-            //CImageFile* pFilter = g_oImageFileStore.CreateByExtension("bmp");
-            while (cCount > 0) {
+            // Number of images to output
+            char cNumImages = 2;
+            pcTextureData[uTextureDataOffset++] = (char)cNumImages;
+            // Until we reach the minimum texture size (0), output image halving size each time
+            for (i=0; i<cNumImages; i++) {
                // Reduce image by the correct amount and convert it.
                CImage imgMipmap(*pTexture);
                imgMipmap.Scale(iWidth,iHeight);
                imgMipmap.ForceToPalette(pPalettes[t]);
-               //char pszName[32];
-               //sprintf(pszName,"d:\\temp\\img%d_mip%03d.bmp",t,iWidth);
-               //imgMipmap.Save(pszName,pFilter);
                // Write mip image header...
                // Store address of foot offset
                unsigned long uFooterOffset = uTextureDataOffset;
@@ -941,8 +956,8 @@ FRESULT CAvatarFileUnreal::SaveTextureUTX(const char* pszFilename, const CAvatar
                // Write compact index of data length
                unsigned long uSize = iWidth * iHeight;
                CUnrealCompactIndex oCIndex((int)uSize);
-               for (int i=0; i<oCIndex.NumBytes(); i++) {
-                  pcTextureData[uTextureDataOffset++] = oCIndex.CompactIndex()[i];
+               for (int b=0; b<oCIndex.NumBytes(); b++) {
+                  pcTextureData[uTextureDataOffset++] = oCIndex.CompactIndex()[b];
                }
                // Write data
                for (unsigned long uPixel=0; uPixel<uSize; uPixel++) {
@@ -951,22 +966,23 @@ FRESULT CAvatarFileUnreal::SaveTextureUTX(const char* pszFilename, const CAvatar
                }
                // Write foot
                // Write offset of footer into header
-               *((long*)(pcTextureData+uFooterOffset)) = uTextureDataOffset + uCurrentOffset;
-               // width, height
+               *((long*)(pcTextureData+uFooterOffset)) = uCurrentOffset + uTextureDataOffset;
+               // Store width & height
                *((long*)(pcTextureData+uTextureDataOffset)) = iWidth;
                uTextureDataOffset += 4;
                *((long*)(pcTextureData+uTextureDataOffset)) = iHeight;
                uTextureDataOffset += 4;
-               // bit size (width and height) of next image
+               // Store bit size (width and height) of next image
                cCount--;
                pcTextureData[uTextureDataOffset++] = cCount;
                pcTextureData[uTextureDataOffset++] = cCount;
-               // Halve size for next image
+               // Halve sizes for next image
                iWidth = iWidth >> 1;
                iHeight = iHeight >> 1;
             }
-            //delete pFilter;
+            pTextureSize[t] = (t==0) ? uTextureDataOffset : uTextureDataOffset-pTextureSize[0];
          }
+         uTextureDataLength = uTextureDataOffset;
       }
       else {
          delete [] pcNameTable;
@@ -974,10 +990,6 @@ FRESULT CAvatarFileUnreal::SaveTextureUTX(const char* pszFilename, const CAvatar
          osOutputStream.close();
          return F_OUT_OF_MEMORY;
       }
-      // Store texture data offsets
-      int pTextureOffset[2];
-      pTextureOffset[0] = uCurrentOffset;
-      pTextureOffset[1] = uCurrentOffset + 0x1562B;
       // Update file offset
       uCurrentOffset += uTextureDataLength;
       
@@ -1064,7 +1076,7 @@ FRESULT CAvatarFileUnreal::SaveTextureUTX(const char* pszFilename, const CAvatar
          uFlags = UNREAL_RF_LOADFORCLIENT | UNREAL_RF_LOADFORSERVER |UNREAL_RF_LOADFOREDIT | UNREAL_RF_PUBLIC | UNREAL_RF_STANDALONE;
          *((long*)(pcExportTable+uExportTableOffset)) = uFlags; // Object flags
          uExportTableOffset+=4;
-         oCIndex.Set((int)0x1562B); // CI of data size (0x15622 for texture)
+         oCIndex.Set((int)pTextureSize[0]); // CI of data size
          for (i=0; i<oCIndex.NumBytes(); i++) {
             pcExportTable[uExportTableOffset++] = oCIndex.CompactIndex()[i];
          }
@@ -1079,7 +1091,7 @@ FRESULT CAvatarFileUnreal::SaveTextureUTX(const char* pszFilename, const CAvatar
          pcExportTable[uExportTableOffset++] = 0x17; // Name number
          *((long*)(pcExportTable+uExportTableOffset)) = uFlags; // Object flags
          uExportTableOffset+=4;
-         oCIndex.Set((int)0x1562B); // CI of data size (0x15622 for texture)
+         oCIndex.Set((int)pTextureSize[0]); // CI of data size
          for (i=0; i<oCIndex.NumBytes(); i++) {
             pcExportTable[uExportTableOffset++] = oCIndex.CompactIndex()[i];
          }
@@ -1128,6 +1140,7 @@ FRESULT CAvatarFileUnreal::SaveTextureUTX(const char* pszFilename, const CAvatar
 } //SaveTextureUTX(const char* pszFilename, const CAvatar* pAvatar) const
 
 FRESULT CAvatarFileUnreal::SaveMeshU(const char* pszFilename, CAvatar* pAvatar) const {
+
    FRESULT eResult = F_OK;
 
    // Open output stream
@@ -1136,8 +1149,8 @@ FRESULT CAvatarFileUnreal::SaveMeshU(const char* pszFilename, CAvatar* pAvatar) 
    // Write file if stream is OK.   
    if (!osOutputStream.fail()) {
 
-      int i; // Loop Counter
-      unsigned int uNameLength = strlen(m_pszName);
+      int i; // Generic loop counter
+      const unsigned int uNameLength = strlen(m_pszName);
       unsigned int uCurrentOffset = 0;
       const SBodyPart* pBodyParts = pAvatar->BodyParts();
 
@@ -1154,7 +1167,7 @@ FRESULT CAvatarFileUnreal::SaveMeshU(const char* pszFilename, CAvatar* pAvatar) 
       // Set flags
       sHeader.uPackageFlags = UNREAL_PKG_ALLOWDOWNLOAD;
       // Name tables stuff
-      sHeader.uNameCount = 0x6B;
+      sHeader.uNameCount = 0x6C;
       // 0 exported symbols
       sHeader.uExportCount = 0x09; // 0x09 exported names
       // 3 imported symbols
@@ -1180,9 +1193,11 @@ FRESULT CAvatarFileUnreal::SaveMeshU(const char* pszFilename, CAvatar* pAvatar) 
       // Update file offset
       uCurrentOffset = sizeof(SUnrealPackageHeader);
 
+      // Need to store a couple of things for later...
+      unsigned int uMeshName, uSelectName, uBotName;
       // Create name table
       sHeader.uNameOffset = uCurrentOffset;
-      unsigned long uNameTableLength = 0x584 + 3*uNameLength; // 0x584 for basic names and constant parts of model names, plus 2 * name length for names
+      unsigned long uNameTableLength = 0x593 + 3*uNameLength; // 0x593 for basic names and constant parts of model names, plus 2 * name length for names
       char* pcNameTable;
       NEWBEGIN
       pcNameTable = new char[uNameTableLength];
@@ -1190,34 +1205,38 @@ FRESULT CAvatarFileUnreal::SaveMeshU(const char* pszFilename, CAvatar* pAvatar) 
       if (pcNameTable != NULL) {
          unsigned long uNameTableOffset = 0;
          // Write standard names
-         const int iNumNames = 0x6B;
-         const char* m_pszNames[iNumNames] = {
-            "None","Waiting","PlayFootStep","TakeHit","LandThump","MovingFire","Jumping","Gesture","Name",
-            "Botpack","Core","Engine","All","DefaultPackage","Mesh","System","Landing","TeamSkin1",
-            "SelectionMesh","DefaultSkinName","MenuName","CarcassType","Ducking","StillFrRp","LeftHit",
-            "User","StillSmFr","GutHit","JumpSmFr","DuckWlkS","Dead9","JumpLgFr","DuckWlkL","WalkSm",
-            "Dead3","RightHit","Dead2","Walk","Breath2","Dead1","Dead4","WalkLg","RunLg","Breath1",
-            "WalkLgFr","WalkSmFr","Dead7","RunSmFr","RunLgFr","AimDnLg","HeadHit","RunSm","Wave","AimDnSm",
-            "TreadSm","AimUpLg","Chat1","TreadLg","AimUpSm","StrafeL","DeathEnd2","StrafeR","VoiceType",
-            "Fighter","SwimLg","LandLgFr","SwimSm","LandSmFr","BackRun","Dead9B","DodgeR","DodgeL",
-            "Breath1L","Breath2L","Dead8","StillLgFr","Taunt1","Victory1","DodgeF","DodgeB","NameBot",
-            "SelectName","WaveL","TurnLg","TurnSm","DeathEnd3","Thrust","Flip","CockGun","CockGunL",
-            "DeathEnd","SpecialMesh","Look","LookL","Dead11","ForceMeshToExist","Chat2","Object","Package",
-            "Class","TMale2Carcass","TournamentMale","SelectionDude","MaleBotPlus","Function","ScriptText","TextBuffer",
+         const int iNumNames = 0x6C;
+         const char* pszNames[iNumNames] = {
+            "None","Waiting","PlayFootStep","TakeHit","LandThump","Jumping","MovingFire","Gesture",
+            "*name*","Botpack","Core","Engine","All","System","DefaultPackage","Mesh","TeamSkin2",
+            "TeamSkin1","Ducking","MenuName","Landing","DefaultSkinName","CarcassType","SelectionMesh",
+            "SpecialMesh","Dead1","Fighter","User","VoiceType","Walk","GutHit","Dead2","LeftHit","RightHit",
+            "Breath2","Dead4","HeadHit","RunSm","StillSmFr","StillFrRp","WalkSm","ForceMeshToExist",
+            "DuckWlkS","JumpLgFr","RunLg","Dead7","JumpSmFr","WalkLg","WalkLgFr","WalkSmFr","DuckWlkL",
+            "RunLgFr","RunSmFr","TreadSm","Dead3","TreadLg","AimUpLg","AimDnLg","AimDnSm","CockGun",
+            "SwimLg","SwimSm","AimUpSm","LandLgFr","LandSmFr","TurnLg","DeathEnd3","StillLgFr","TurnSm",
+            "DeathEnd2","CockGunL","Breath2L","Breath1L","DeathEnd","Breath1","Taunt1","Look","Victory1",
+            "WaveL","LookL","Wave","Thrust","Flip","Chat1","*select*","Dead9","StrafeL","StrafeR",
+            "BackRun","Dead9B","DodgeR","DodgeL","Dead8","DodgeB","*bot*","Dead11","DodgeF","Chat2",
+            "TextBuffer","Object","Class",m_iSex==UNREAL_FEMALE?"TFemale2Carcass":"TMale2Carcass",
+            m_iSex==UNREAL_FEMALE?"TournamentFemale":"TournamentMale","SelectionDude",
+            m_iSex==UNREAL_FEMALE?"FemaleBotPlus":"MaleBotPlus","Function","ScriptText","Package",
          };
          const int piFlags[iNumNames] = {
-            0x04070410,0x00070010,0x00070010,0x00070010,0x00070010,0x00070010,0x00070010,0x00070010,0x00000001,
-            0x00070010,0x04070010,0x04070010,0x04070010,0x00070010,0x00070010,0x04070010,0x00070010,0x00070010,
+            0x04070410,0x00070010,0x00070010,0x00070010,0x00070010,0x00070010,0x00070010,0x00070010,
+            0x00000001,0x00070010,0x04070010,0x04070010,0x04070010,0x04070010,0x00070010,0x00070010,0x00070010,
             0x00070010,0x00070010,0x00070010,0x00070010,0x00070010,0x00070010,0x00070010,
-            0x04070010,0x00070010,0x00070010,0x00070010,0x00070010,0x00070010,0x00070010,0x00070010,0x00070010,
-            0x00070010,0x00070010,0x00070010,0x00070010,0x00070010,0x00070010,0x00070010,0x00070010,0x00070010,0x00070010,
-            0x00070010,0x00070010,0x00070010,0x00070010,0x00070010,0x00070010,0x00070010,0x00070010,0x00070010,0x00070010,
+            0x00070010,0x00070010,0x00070010,0x04070010,0x00070010,0x00070010,0x00070010,0x00070010,0x00070010,0x00070010,
+            0x00070010,0x00070010,0x00070010,0x00070010,0x00070010,0x00070010,0x00070010,0x00070010,
             0x00070010,0x00070010,0x00070010,0x00070010,0x00070010,0x00070010,0x00070010,0x00070010,0x00070010,
             0x00070010,0x00070010,0x00070010,0x00070010,0x00070010,0x00070010,0x00070010,0x00070010,0x00070010,
-            0x00070010,0x00070010,0x00070010,0x00070010,0x00070010,0x00070010,0x00070010,0x00070010,0x00000002,
-            0x00000003,0x00070010,0x00070010,0x00070010,0x00070010,0x00070010,0x00070010,0x00070010,0x00070010,
-            0x00070010,0x00070010,0x00070010,0x00070010,0x00070010,0x00070010,0x00070010,0x04070010,0x04070410,
-            0x04070410,0x00070010,0x00070010,0x00070010,0x00070010,0x04070410,0x00070010,0x04070010,
+            0x00070010,0x00070010,0x00070010,0x00070010,0x00070010,0x00070010,0x00070010,0x00070010,0x00070010,
+            0x00070010,0x00070010,0x00070010,0x00070010,0x00070010,0x00070010,0x00070010,0x00070010,0x00070010,
+            0x00070010,0x00070010,0x00070010,0x00070010,0x00070010,0x00070010,0x00000002,0x00070010,0x00070010,0x00070010,
+            0x00070010,0x00070010,0x00070010,0x00070010,0x00070010,0x00070010,0x00000003,0x00070010,0x00070010,0x00070010,
+            0x04070010,0x04070010,0x04070410,0x00070010,
+            0x00070010,0x00070010,
+            0x00070010,0x04070410,0x00070010,0x04070410,
          };
          unsigned long uFlags = UNREAL_RF_UNKNOWNFLAG | UNREAL_RF_LOADFORCLIENT | UNREAL_RF_LOADFORSERVER |UNREAL_RF_LOADFOREDIT;
          for (int i=0; i<iNumNames; i++) {
@@ -1226,35 +1245,38 @@ FRESULT CAvatarFileUnreal::SaveMeshU(const char* pszFilename, CAvatar* pAvatar) 
                // Write "Name" entry
                pcNameTable[uNameTableOffset++] = uNameLength+1;
                strcpy(pcNameTable+uNameTableOffset,m_pszName);
-               uNameTableOffset += strlen(m_pszName)+1;
+               uNameTableOffset += uNameLength+1;
                *((long*)(pcNameTable+uNameTableOffset)) = uFlags;
                uNameTableOffset += 4;
+               uMeshName = i;
                break;
             case 2:
-               // Write "NameBot" entry
-               pcNameTable[uNameTableOffset++] = uNameLength+4;
-               strcpy(pcNameTable+uNameTableOffset,m_pszName);
-               uNameTableOffset += strlen(m_pszName);
-               strcpy(pcNameTable+uNameTableOffset,"Bot");
-               uNameTableOffset += 4;
-               *((long*)(pcNameTable+uNameTableOffset)) = uFlags;
-               uNameTableOffset += 4;
-               break;
-            case 3:
                // Write "SelectName" entry
                pcNameTable[uNameTableOffset++] = uNameLength+7;
                strcpy(pcNameTable+uNameTableOffset,"Select");
                uNameTableOffset += 6;
                strcpy(pcNameTable+uNameTableOffset,m_pszName);
-               uNameTableOffset += strlen(m_pszName)+1;
+               uNameTableOffset += uNameLength+1;
                *((long*)(pcNameTable+uNameTableOffset)) = uFlags;
                uNameTableOffset += 4;
+               uSelectName = i;
+               break;
+            case 3:
+               // Write "NameBot" entry
+               pcNameTable[uNameTableOffset++] = uNameLength+4;
+               strcpy(pcNameTable+uNameTableOffset,m_pszName);
+               uNameTableOffset += uNameLength;
+               strcpy(pcNameTable+uNameTableOffset,"Bot");
+               uNameTableOffset += 4;
+               *((long*)(pcNameTable+uNameTableOffset)) = uFlags;
+               uNameTableOffset += 4;
+               uBotName = i;
                break;
             default:
-               // Write simple entry
-               pcNameTable[uNameTableOffset++] = strlen(m_pszNames[i])+1;
-               strcpy(pcNameTable+uNameTableOffset,m_pszNames[i]);
-               uNameTableOffset += strlen(m_pszNames[i])+1;
+               // Write other entry
+               pcNameTable[uNameTableOffset++] = strlen(pszNames[i])+1;
+               strcpy(pcNameTable+uNameTableOffset,pszNames[i]);
+               uNameTableOffset += strlen(pszNames[i])+1;
                *((long*)(pcNameTable+uNameTableOffset)) = piFlags[i];
                uNameTableOffset += 4;
                break;
@@ -1262,14 +1284,14 @@ FRESULT CAvatarFileUnreal::SaveMeshU(const char* pszFilename, CAvatar* pAvatar) 
          }
       }
       else {
-         osOutputStream.close();
+         // CLEANUP MEMORY ETC
          return F_OUT_OF_MEMORY;
       }
       // Update file offset
       uCurrentOffset += uNameTableLength;
 
-      // Write standard mesh properties
-      unsigned int uMeshPropertiesLength = 0xC4 + 5*strlen(m_pszName);
+      // Write Mesh Properties
+      unsigned int uMeshPropertiesLength = 0xC4 + 5*uNameLength;
       char* pcMeshProperties = NULL;
       NEWBEGIN
       pcMeshProperties = new char[uMeshPropertiesLength];
@@ -1278,8 +1300,7 @@ FRESULT CAvatarFileUnreal::SaveMeshU(const char* pszFilename, CAvatar* pAvatar) 
          // Write properties data
       }
       else {
-         delete [] pcNameTable;
-         osOutputStream.close();
+         // CLEANUP MEMORY ETC
          return F_OUT_OF_MEMORY;
       }
       // Update file offset
@@ -1295,9 +1316,7 @@ FRESULT CAvatarFileUnreal::SaveMeshU(const char* pszFilename, CAvatar* pAvatar) 
          // Write frame data header
       }
       else {
-         delete [] pcMeshProperties;
-         delete [] pcNameTable;
-         osOutputStream.close();
+         // CLEANUP MEMORY ETC
          return F_OUT_OF_MEMORY;
       }
       // Update file offset
@@ -1312,14 +1331,17 @@ FRESULT CAvatarFileUnreal::SaveMeshU(const char* pszFilename, CAvatar* pAvatar) 
       osTempStream.open(m_pszTempFilename,ios::out|ios::binary);
 	   if (!osTempStream.fail()) {
          const unsigned int uNumFrames = 700;
+         // Reset avatar pose
+         pAvatar->ResetPose();
+         pAvatar->UpdateModel();
          // Setup sizes & offsets etc
          SPoint3D pntMin, pntMax;
          pAvatar->BoundingBox(unknown,pntMax,pntMin);
-         double dHeight = (pntMax.m_dComponents[1] - pntMin.m_dComponents[1]);
-         double dScale = 110 / dHeight;
-         double dYOff = -((pntMax.m_dComponents[1] + pntMin.m_dComponents[1]) / 2 * dScale);
+         const double dHeight = (pntMax.m_dComponents[1] - pntMin.m_dComponents[1]);
+         const double dScale = 110 / dHeight;
+         const double dYOff = -((pntMax.m_dComponents[1] + pntMin.m_dComponents[1]) / 2 * dScale);
          // Get vertex info
-         int uNumVertices = pAvatar->NumVertices();
+         const int uNumVertices = pAvatar->NumVertices();
          const SPoint3D* pVertices = pAvatar->Vertices();
          // Store weapon triangle vertices
          SPoint3D pWeaponVertices[3]; // top/back, top/front, bottom/front in that order
@@ -1340,43 +1362,46 @@ FRESULT CAvatarFileUnreal::SaveMeshU(const char* pszFilename, CAvatar* pAvatar) 
          pWeaponVertices[2].m_dComponents[1] = pntMin.m_dComponents[1];
          pWeaponVertices[2].m_dComponents[2] = pntMin.m_dComponents[2];
          // Open data wedgie for frame files
-         /*char pszWJEName[STR_SIZE] = "";
+         char pszWJEName[STR_SIZE] = "";
          strcpy(pszWJEName, g_poVAL->GetAppDir());
          strcat(pszWJEName, "utdata.wje");
          fstream fsDataWJE(pszWJEName, ios::in|ios::binary|ios::nocreate);
          if (fsDataWJE.fail()) {
-            delete [] pcMeshFrameHeader;
-            delete [] pcMeshProperties;
-            delete [] pcNameTable;
-            osOutputStream.close();
+            // CLEANUP MEMORY ETC
             osTempStream.close();
             TRACE("Could not open wedgie file!\n");
             return F_FILE_ERROR;
          }
          CWedgie oWedgie;
-         oWedgie.Open(&fsDataWJE);*/
+         oWedgie.Open(&fsDataWJE);
          // Storage for filename
-         char pszPoseFilename[48];
+         char pszPoseFilename[STR_SIZE];
          // Write frames
          for (i=0; i<uNumFrames; i++) {
             // This needs to be done for each frame that is output.
             // Create filename to load: utp000.vpo to utp699.vpo
-            sprintf(pszPoseFilename,"d:\\work\\unreal\\poses\\utp%03d.vpo",i);
+            sprintf(pszPoseFilename,"poses\\utp%03d.vpo",i);
             // Load file from wedgie
             CAvatarPose oPose;
-            if (oPose.Load(pszPoseFilename) == F_OK) {
+            if (oPose.Load(pszPoseFilename, oWedgie) == F_OK) {
                cout << "Loaded pose " << i << endl;
                // Apply to avatar
                pAvatar->ImportPose(oPose);
+					// Update Pose
+					pAvatar->UpdateModel();
+					// Remove body parts as necessary
+					// Head shot
+					if ((i >= 567) && (i <= 582))
+                  pAvatar->Chop(vc7);
             }
             else {
                // Reset pose
                pAvatar->ResetPose();
-               // Point right hand somewhere at random, just to show some movement
-               pAvatar->SetJointAngle(r_elbow,CAxisRotation(1,0,0,-1.54+((i-350)*0.005)),false);
+               // Point right hand forward
+               pAvatar->SetJointAngle(r_elbow,CAxisRotation(1,0,0,-1.54),false);
+					// Update Pose
+					pAvatar->UpdateModel();
             }
-            // Update Pose
-            pAvatar->UpdateModel();
 
             // Write vertices
             for (int v=0; v<uNumVertices; v++) {
@@ -1400,14 +1425,12 @@ FRESULT CAvatarFileUnreal::SaveMeshU(const char* pszFilename, CAvatar* pAvatar) 
                uFrameDataLength += 4;
             }
          }
-         //fsDataWJE.close();
+			oWedgie.Close();
+         fsDataWJE.close();
          osTempStream.close();
       }
       else {
-         delete [] pcMeshFrameHeader;
-         delete [] pcMeshProperties;
-         delete [] pcNameTable;
-         osOutputStream.close();
+         // CLEANUP MEMORY ETC
          return F_FILE_ERROR;
       }
       // Update file offset
@@ -1420,10 +1443,10 @@ FRESULT CAvatarFileUnreal::SaveMeshU(const char* pszFilename, CAvatar* pAvatar) 
       pMeshData = new SUnrealTriangle[iNumFaces+1]; // +1 for weapon triangle
       NEWEND("CAvatarFileUnreal::Save - mesh data allocation");
       if (pMeshData != NULL) {
-         // Calc texture vertical scale factor - need it later
-         const double dTextureScale = (double)UNREAL_TEXTURE_HEIGHT / (double)m_uTotalHeight;
-         const int iWidth  = UNREAL_TEXTURE_WIDTH;
-         const int iHeight = UNREAL_TEXTURE_HEIGHT;
+         // Store texture info
+         const int iMaxU = UNREAL_TEXTURE_WIDTH-1;
+         const int iMaxV = UNREAL_TEXTURE_HEIGHT-1;
+         // other stuff we need
          const STriFace* pFaces = pAvatar->Faces();
          const unsigned int uFaceTexIndex = pAvatar->TextureIndex(skullbase);
          // Write faces
@@ -1437,47 +1460,71 @@ FRESULT CAvatarFileUnreal::SaveMeshU(const char* pszFilename, CAvatar* pAvatar) 
             // Texture coordinates
             int iTextureNumber = pFaces[f].m_iTextureNumber;
             if (pFaces[f].m_iTextureNumber==uFaceTexIndex) {
-               // Write face tex coords
+               // Write face tex coords - nice & simple
                for (int tc=3; tc--!=0; ) {
-                  char cU = pFaces[f].m_sTexCoords[tc].dU*iWidth;
-                  char cV = 1-pFaces[f].m_sTexCoords[tc].dV*iHeight;
+                  // Get tex coords
+                  double dU = pFaces[i].m_sTexCoords[tc].dU;
+                  double dV = pFaces[i].m_sTexCoords[tc].dV;
+                  // Clamp to 0..1
+                  if (dU > 1) dU = 1;
+                  else if (dU < 0) dU = 0;
+                  if (dV > 1) dV = 1;
+                  else if (dV < 0) dV = 0;
+                  // Scale and store
+                  char cU = dU*iMaxU;
+                  char cV = dV*iMaxV;
                   switch (tc) {
-                     case 2:
-                        pMeshData[f].uU0 = cU;
-                        pMeshData[f].uV0 = cV;
-                     case 1:
-                        pMeshData[f].uU1 = cU;
-                        pMeshData[f].uV1 = cV;
-                     case 0:
-                        pMeshData[f].uU2 = cU;
-                        pMeshData[f].uV2 = cV;
+                  case 2:
+                     pMeshData[f].uU0 = cU;
+                     pMeshData[f].uV0 = cV;
+                     break;
+                  case 1:
+                     pMeshData[f].uU1 = cU;
+                     pMeshData[f].uV1 = cV;
+                     break;
+                  case 0:
+                     pMeshData[f].uU2 = cU;
+                     pMeshData[f].uV2 = cV;
+                     break;
                   }
                }
                // Write Texture number
                pMeshData[f].uTexture = 0;
             }
             else {
-               // Copy texture number and work out texture base positions and sizes
-               double dBaseV = m_puImageMinima[iTextureNumber] * dTextureScale;
-               double dHeight = (m_puImageMaxima[iTextureNumber] - m_puImageMinima[iTextureNumber]+1) * dTextureScale;
+               // Other texture coordinates are more complex to recompute
                for (int tc=3; tc--!=0; ) {
-                  double dTexCoordV = (1-pFaces[f].m_sTexCoords[tc].dV);
-                  dTexCoordV *= dHeight;
-                  dTexCoordV += dBaseV;
-                  dTexCoordV /= UNREAL_TEXTURE_HEIGHT;
-                  char cU = pFaces[f].m_sTexCoords[tc].dU * iWidth;
-                  char cV = dTexCoordV * iHeight;
-                  // Write texcoords
+                  // Get tex coords
+                  double dU = pFaces[i].m_sTexCoords[tc].dU;
+                  double dV = pFaces[i].m_sTexCoords[tc].dV;
+                  // Clamp to 0..1
+                  if (dU > 1) dU = 1;
+                  else if (dU < 0) dU = 0;
+                  if (dV > 1) dV = 1;
+                  else if (dV < 0) dV = 0;
+                  // Recalculate texture V coordinates:
+                  // Multiply by height of this particular image
+                  dV *= m_puImageHeight[iTextureNumber];
+                  // Add where this image starts
+                  dV += m_puFirstPixel[iTextureNumber];
+                  // Divide by the total height of the image
+                  dV /= m_uTotalHeight;
+                  // Scale and store
+                  char cU = dU*iMaxU;
+                  char cV = dV*iMaxV;
                   switch (tc) {
-                     case 2:
-                        pMeshData[f].uU0 = cU;
-                        pMeshData[f].uV0 = cV;
-                     case 1:
-                        pMeshData[f].uU1 = cU;
-                        pMeshData[f].uV1 = cV;
-                     case 0:
-                        pMeshData[f].uU2 = cU;
-                        pMeshData[f].uV2 = cV;
+                  case 2:
+                     pMeshData[f].uU0 = cU;
+                     pMeshData[f].uV0 = cV;
+                     break;
+                  case 1:
+                     pMeshData[f].uU1 = cU;
+                     pMeshData[f].uV1 = cV;
+                     break;
+                  case 0:
+                     pMeshData[f].uU2 = cU;
+                     pMeshData[f].uV2 = cV;
+                     break;
                   }
                }
                // Write Texture number
@@ -1503,17 +1550,279 @@ FRESULT CAvatarFileUnreal::SaveMeshU(const char* pszFilename, CAvatar* pAvatar) 
          pMeshData[i].uTexture = 0;
       }
       else {
-         delete [] pcMeshFrameHeader;
-         delete [] pcMeshProperties;
-         delete [] pcNameTable;
-         osOutputStream.close();
+         // CLEANUP MEMORY ETC
          return F_OUT_OF_MEMORY;
       }
 
-      // Write other data?
+      // Write Bot Script
+      const unsigned int uBotScriptLength = 0x70 + (uNameLength * 3);
+      char* pcBotScript = NULL;
+      NEWBEGIN
+      pcBotScript = new char[uBotScriptLength];
+      NEWEND("CAvatarFileUnreal::Save - bot script allocation");
+      if (pcBotScript != NULL) {
+         // Create output string stream
+         ostrstream strScript(pcBotScript,uBotScriptLength);
+         // Zero first nine values
+         strScript << (char)0 << (char)0 << (char)0;
+         strScript << (char)0 << (char)0 << (char)0;
+         strScript << (char)0 << (char)0 << (char)0;
+         // Write script length
+         CUnrealCompactIndex oCIndex((int)(0x65+(uNameLength*3)));
+         // This should only ever write two bytes
+         ASSERT(oCIndex.NumBytes()==2);
+         for (int b=0; b<oCIndex.NumBytes(); b++) {
+            strScript << oCIndex.CompactIndex()[b];
+         }
+         // Write script itself.         
+         strScript << "// " << m_pszName << "Bot.\x0D\x0A";
+         strScript << "class " << m_pszName << "Bot extends MaleBotPlus;\x0D\x0A";
+         strScript << "\x0D\x0A";
+         strScript << "function ForceMeshToExist()\x0D\x0A";
+         strScript << "{\x0D\x0A";
+	      strScript << "   Spawn(class'" << m_pszName << "');\x0D\x0A";
+         strScript << "}\x0D\x0A";
+         strScript << "\x0D\x0A";
+         // Terminate
+         strScript << (char)0;
+      }
+      else {
+         // CLEANUP MEMORY ETC
+         return F_OUT_OF_MEMORY;
+      }
+      uCurrentOffset += uBotScriptLength;
 
-      // Write other data?
+      // Write Bot Properties
 
+      // Write Selection Mesh Script
+      const unsigned int uSelectScriptLength = 0x152 + (uNameLength * 8);
+      char* pcSelectScript = NULL;
+      NEWBEGIN
+      pcSelectScript = new char[uSelectScriptLength];
+      NEWEND("CAvatarFileUnreal::Save - selection mesh script allocation");
+      if (pcSelectScript != NULL) {
+         // Create output string stream
+         ostrstream strScript(pcSelectScript,uSelectScriptLength);
+         // Zero first nine values
+         strScript << (char)0 << (char)0 << (char)0;
+         strScript << (char)0 << (char)0 << (char)0;
+         strScript << (char)0 << (char)0 << (char)0;
+         // Write script length
+         CUnrealCompactIndex oCIndex((int)(0x147+(uNameLength*8)));
+         // This should only ever write two bytes
+         ASSERT(oCIndex.NumBytes()==2);
+         for (int b=0; b<oCIndex.NumBytes(); b++) {
+            strScript << oCIndex.CompactIndex()[b];
+         }
+         // Write script itself.         
+         strScript << "// Select" << m_pszName << ".\x0D\x0A";
+         strScript << "class Select" << m_pszName << " extends SelectionDude;\x0D\x0A";
+         strScript << "\x0D\x0A";
+         strScript << "#exec MESH IMPORT MESH=Select" << m_pszName << " ANIVFILE=MODELS\\Select" << m_pszName << "_a.3d DATAFILE=MODELS\\Select" << m_pszName << "_d.3d X=0 Y=0 Z=0 MLOD=0\x0D\x0A";
+         strScript << "#exec MESH ORIGIN MESH=Select" << m_pszName << " X=0 Y=0 Z=0\x0D\x0A";
+         strScript << "\x0D\x0A";
+         strScript << "#exec MESH SEQUENCE MESH=Select" << m_pszName << " SEQ=All STARTFRAME=0 NUMFRAMES=1\x0D\x0A";
+         strScript << "\x0D\x0A";
+         strScript << "#exec MESHMAP SCALE MESHMAP=Select" << m_pszName << " X=0.1 Y=0.1 Z=0.2\x0D\x0A";
+         strScript << "\x0D\x0A";
+         // Terminate
+         strScript << (char)0;
+      }
+      else {
+         // CLEANUP MEMORY ETC
+         return F_OUT_OF_MEMORY;
+      }
+      uCurrentOffset += uSelectScriptLength;
+
+      // Write Mesh Script
+      const unsigned int uMeshScriptLength = 0x1DA6 + (uNameLength * 98);
+      char* pcMeshScript = NULL;
+      NEWBEGIN
+      pcMeshScript = new char[uMeshScriptLength];
+      NEWEND("CAvatarFileUnreal::Save - bot script allocation");
+      if (pcSelectScript != NULL) {
+         // Create output string stream
+         ostrstream strScript(pcMeshScript,uMeshScriptLength);
+         // Zero first nine values
+         strScript << (char)0 << (char)0 << (char)0;
+         strScript << (char)0 << (char)0 << (char)0;
+         strScript << (char)0 << (char)0 << (char)0;
+         // Write script length
+         CUnrealCompactIndex oCIndex((int)(0x1D9C+(uNameLength*98)));
+         // This should only ever write two bytes
+         ASSERT(oCIndex.NumBytes()==2);
+         for (int b=0; b<oCIndex.NumBytes(); b++) {
+            strScript << oCIndex.CompactIndex()[b];
+         }
+         // Write script itself.         
+         strScript << "// " << m_pszName << ".\x0D\x0A";
+         strScript << "class " << m_pszName << " extends TournamentMale;\x0D\x0A";
+         strScript << "\x0D\x0A";
+         strScript << "#exec MESH IMPORT MESH=" << m_pszName << " ANIVFILE=MODELS\\" << m_pszName << "_a.3d DATAFILE=MODELS\\" << m_pszName << "_d.3d X=0 Y=0 Z=0 MLOD=0\x0D\x0A";
+         strScript << "#exec MESH ORIGIN MESH=" << m_pszName << " X=0 Y=0 Z=0\x0D\x0A";
+         strScript << "\x0D\x0A";
+         strScript << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=All       STARTFRAME=0   NUMFRAMES=700\x0D\x0A";
+         strScript << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=AimDnLg   STARTFRAME=1   NUMFRAMES=1 Group=Waiting\x0D\x0A";
+         strScript << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=AimDnSm   STARTFRAME=2   NUMFRAMES=1 Group=Waiting\x0D\x0A";
+         strScript << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=AimUpLg   STARTFRAME=3   NUMFRAMES=1 Group=Waiting\x0D\x0A";
+         strScript << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=AimUpSm   STARTFRAME=4   NUMFRAMES=1 Group=Waiting\x0D\x0A";
+         strScript << "\x0D\x0A";
+         strScript << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=HeadHit   STARTFRAME=90  NUMFRAMES=1 Group=TakeHit\x0D\x0A";
+         strScript << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=LeftHit   STARTFRAME=95  NUMFRAMES=1 Group=TakeHit\x0D\x0A";
+         strScript << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=GutHit    STARTFRAME=0   NUMFRAMES=1 Group=TakeHit\x0D\x0A";
+         strScript << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=RightHit  STARTFRAME=136 NUMFRAMES=1 Group=TakeHit\x0D\x0A";
+         strScript << "\x0D\x0A";
+         strScript << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=StillFrRp STARTFRAME=177 NUMFRAMES=10 RATE=15 Group=Waiting\x0D\x0A";
+         strScript << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=StillLgFr STARTFRAME=187 NUMFRAMES=10 RATE=15 Group=Waiting\x0D\x0A";
+         strScript << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=StillSmFr STARTFRAME=197 NUMFRAMES=8  RATE=15 Group=Waiting\x0D\x0A";
+         strScript << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=TreadLg   STARTFRAME=235 NUMFRAMES=15 RATE=15 Group=Waiting\x0D\x0A";
+         strScript << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=TreadSm   STARTFRAME=250 NUMFRAMES=15 RATE=15 Group=Waiting\x0D\x0A";
+         strScript << "\x0D\x0A";
+         strScript << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=Breath1L  STARTFRAME=373 NUMFRAMES=7  RATE=6	 Group=Waiting\x0D\x0A";
+         strScript << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=Breath2L  STARTFRAME=380 NUMFRAMES=20 RATE=7	 Group=Waiting\x0D\x0A";
+         strScript << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=CockGunL  STARTFRAME=400 NUMFRAMES=8  RATE=6	 Group=Waiting\x0D\x0A";
+         strScript << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=Look      STARTFRAME=96  NUMFRAMES=40 RATE=15 Group=Waiting\x0D\x0A";
+         strScript << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=LookL     STARTFRAME=408 NUMFRAMES=40 RATE=15 Group=Waiting\x0D\x0A";
+         strScript << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=Breath1   STARTFRAME=25  NUMFRAMES=7  RATE=6	 Group=Waiting\x0D\x0A";
+         strScript << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=Breath2   STARTFRAME=32  NUMFRAMES=20 RATE=7	 Group=Waiting\x0D\x0A";
+         strScript << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=CockGun   STARTFRAME=52  NUMFRAMES=8  RATE=6	 Group=Waiting\x0D\x0A";
+         strScript << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=Chat1     STARTFRAME=463 NUMFRAMES=13 RATE=6	 Group=Waiting\x0D\x0A";
+         strScript << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=Chat2     STARTFRAME=476 NUMFRAMES=10 RATE=6	 Group=Waiting\x0D\x0A";
+         strScript << "\x0D\x0A";
+         strScript << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=Victory1  STARTFRAME=265 NUMFRAMES=18 RATE=11 Group=Gesture\x0D\x0A";
+         strScript << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=WaveL     STARTFRAME=448 NUMFRAMES=15 RATE=15 Group=Gesture\x0D\x0A";
+         strScript << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=Wave      STARTFRAME=343 NUMFRAMES=15 RATE=15 Group=Gesture\x0D\x0A";
+         strScript << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=Thrust    STARTFRAME=486 NUMFRAMES=15 RATE=20 Group=Gesture\x0D\x0A";
+         strScript << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=Taunt1    STARTFRAME=5   NUMFRAMES=20 RATE=15 Group=Gesture\x0D\x0A";
+         strScript << "\x0D\x0A";
+         strScript << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=DodgeB    STARTFRAME=501 NUMFRAMES=1  Group=Jumping\x0D\x0A";
+         strScript << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=DodgeF    STARTFRAME=502 NUMFRAMES=1  Group=Jumping\x0D\x0A";
+         strScript << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=DodgeR    STARTFRAME=503 NUMFRAMES=1  Group=Jumping\x0D\x0A";
+         strScript << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=DodgeL    STARTFRAME=504 NUMFRAMES=1  Group=Jumping\x0D\x0A";
+         strScript << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=Flip      STARTFRAME=505 NUMFRAMES=20 Group=Jumping\x0D\x0A";
+         strScript << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=JumpLgFr  STARTFRAME=91  NUMFRAMES=1  Group=Jumping\x0D\x0A";
+         strScript << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=JumpSmFr  STARTFRAME=92  NUMFRAMES=1  Group=Jumping\x0D\x0A";
+         strScript << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=LandLgFr  STARTFRAME=93  NUMFRAMES=1  Group=Landing\x0D\x0A";
+         strScript << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=LandSmFr  STARTFRAME=94  NUMFRAMES=1  Group=Landing\x0D\x0A";
+         strScript << "\x0D\x0A";
+         strScript << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=DuckWlkL  STARTFRAME=60  NUMFRAMES=15 RATE=15 Group=Ducking\x0D\x0A";
+         strScript << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=DuckWlkS  STARTFRAME=75  NUMFRAMES=15 RATE=15 Group=Ducking\x0D\x0A";
+         strScript << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=SwimLg    STARTFRAME=205 NUMFRAMES=15 RATE=15\x0D\x0A";
+         strScript << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=SwimSm    STARTFRAME=220 NUMFRAMES=15 RATE=15\x0D\x0A";
+         strScript << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=WalkLg    STARTFRAME=283 NUMFRAMES=15 RATE=18\x0D\x0A";
+         strScript << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=WalkLgFr  STARTFRAME=298 NUMFRAMES=15 RATE=18 Group=MovingFire\x0D\x0A";
+         strScript << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=WalkSm    STARTFRAME=313 NUMFRAMES=15 RATE=18\x0D\x0A";
+         strScript << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=WalkSmFr  STARTFRAME=328 NUMFRAMES=15 RATE=18 Group=MovingFire\x0D\x0A";
+         strScript << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=Walk      STARTFRAME=358 NUMFRAMES=15 RATE=18\x0D\x0A";
+         strScript << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=RunLg     STARTFRAME=137 NUMFRAMES=10 RATE=17\x0D\x0A";
+         strScript << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=RunLgFr   STARTFRAME=147 NUMFRAMES=10 RATE=17 Group=MovingFire\x0D\x0A";
+         strScript << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=RunSm     STARTFRAME=157 NUMFRAMES=10 RATE=17\x0D\x0A";
+         strScript << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=RunSmFr   STARTFRAME=167 NUMFRAMES=10 RATE=17 Group=MovingFire\x0D\x0A";
+         strScript << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=BackRun   STARTFRAME=670 NUMFRAMES=10 RATE=17 Group=MovingFire\x0D\x0A";
+         strScript << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=StrafeL   STARTFRAME=680 NUMFRAMES=10 RATE=17 Group=MovingFire\x0D\x0A";
+         strScript << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=StrafeR   STARTFRAME=690 NUMFRAMES=10 RATE=17 Group=MovingFire\x0D\x0A";
+         strScript << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=TurnLg    STARTFRAME=298 NUMFRAMES=2  RATE=15\x0D\x0A";
+         strScript << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=TurnSm    STARTFRAME=328 NUMFRAMES=2  RATE=15\x0D\x0A";
+         strScript << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=Fighter   STARTFRAME=187 NUMFRAMES=1\x0D\x0A";
+         strScript << "\x0D\x0A";
+         strScript << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=Dead1     STARTFRAME=525 NUMFRAMES=13 RATE=10 Group=TakeHit\x0D\x0A";
+         strScript << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=Dead2     STARTFRAME=538 NUMFRAMES=16 RATE=10\x0D\x0A";
+         strScript << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=Dead3     STARTFRAME=554 NUMFRAMES=13 RATE=10\x0D\x0A";
+         strScript << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=Dead4     STARTFRAME=567 NUMFRAMES=16 RATE=10\x0D\x0A";
+         strScript << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=Dead7     STARTFRAME=583 NUMFRAMES=21 RATE=12 Group=TakeHit\x0D\x0A";
+         strScript << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=Dead8     STARTFRAME=604 NUMFRAMES=18 RATE=10 Group=TakeHit\x0D\x0A";
+         strScript << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=Dead9     STARTFRAME=622 NUMFRAMES=20 RATE=30 Group=TakeHit\x0D\x0A";
+         strScript << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=Dead9B    STARTFRAME=642 NUMFRAMES=10 RATE=15\x0D\x0A";
+         strScript << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=Dead11    STARTFRAME=652 NUMFRAMES=18 RATE=10\x0D\x0A";
+         strScript << "\x0D\x0A";
+         strScript << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=DeathEnd  STARTFRAME=537 NUMFRAMES=1\x0D\x0A";
+         strScript << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=DeathEnd2 STARTFRAME=553 NUMFRAMES=1\x0D\x0A";
+         strScript << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=DeathEnd3 STARTFRAME=566 NUMFRAMES=1\x0D\x0A";
+         strScript << "\x0D\x0A";
+         strScript << "#exec MESHMAP SCALE MESHMAP=" << m_pszName << " X=0.1 Y=0.1 Z=0.2\x0D\x0A";
+         strScript << "\x0D\x0A";
+         strScript << "#exec MESH NOTIFY MESH=" << m_pszName << " SEQ=RunLG   TIME=0.25 FUNCTION=PlayFootStep\x0D\x0A";
+         strScript << "#exec MESH NOTIFY MESH=" << m_pszName << " SEQ=RunLG   TIME=0.75 FUNCTION=PlayFootStep\x0D\x0A";
+         strScript << "#exec MESH NOTIFY MESH=" << m_pszName << " SEQ=RunLGFR TIME=0.25 FUNCTION=PlayFootStep\x0D\x0A";
+         strScript << "#exec MESH NOTIFY MESH=" << m_pszName << " SEQ=RunLGFR TIME=0.75 FUNCTION=PlayFootStep\x0D\x0A";
+         strScript << "#exec MESH NOTIFY MESH=" << m_pszName << " SEQ=RunSM   TIME=0.25 FUNCTION=PlayFootStep\x0D\x0A";
+         strScript << "#exec MESH NOTIFY MESH=" << m_pszName << " SEQ=RunSM   TIME=0.75 FUNCTION=PlayFootStep\x0D\x0A";
+         strScript << "#exec MESH NOTIFY MESH=" << m_pszName << " SEQ=RunSMFR TIME=0.25 FUNCTION=PlayFootStep\x0D\x0A";
+         strScript << "#exec MESH NOTIFY MESH=" << m_pszName << " SEQ=RunSMFR TIME=0.75 FUNCTION=PlayFootStep\x0D\x0A";
+         strScript << "#exec MESH NOTIFY MESH=" << m_pszName << " SEQ=StrafeL TIME=0.25 FUNCTION=PlayFootStep\x0D\x0A";
+         strScript << "#exec MESH NOTIFY MESH=" << m_pszName << " SEQ=StrafeL TIME=0.75 FUNCTION=PlayFootStep\x0D\x0A";
+         strScript << "#exec MESH NOTIFY MESH=" << m_pszName << " SEQ=StrafeR TIME=0.25 FUNCTION=PlayFootStep\x0D\x0A";
+         strScript << "#exec MESH NOTIFY MESH=" << m_pszName << " SEQ=StrafeR TIME=0.75 FUNCTION=PlayFootStep\x0D\x0A";
+         strScript << "#exec MESH NOTIFY MESH=" << m_pszName << " SEQ=BackRun TIME=0.25 FUNCTION=PlayFootStep\x0D\x0A";
+         strScript << "#exec MESH NOTIFY MESH=" << m_pszName << " SEQ=BackRun TIME=0.75 FUNCTION=PlayFootStep\x0D\x0A";
+         strScript << "#exec MESH NOTIFY MESH=" << m_pszName << " SEQ=Dead1   TIME=0.7  FUNCTION=LandThump\x0D\x0A";
+         strScript << "#exec MESH NOTIFY MESH=" << m_pszName << " SEQ=Dead2   TIME=0.9  FUNCTION=LandThump\x0D\x0A";
+         strScript << "#exec MESH NOTIFY MESH=" << m_pszName << " SEQ=Dead3   TIME=0.45 FUNCTION=LandThump\x0D\x0A";
+         strScript << "#exec MESH NOTIFY MESH=" << m_pszName << " SEQ=Dead4   TIME=0.6  FUNCTION=LandThump\x0D\x0A";
+         strScript << "#exec MESH NOTIFY MESH=" << m_pszName << " SEQ=Dead7   TIME=0.7  FUNCTION=LandThump\x0D\x0A";
+         strScript << "#exec MESH NOTIFY MESH=" << m_pszName << " SEQ=Dead8   TIME=0.7  FUNCTION=LandThump\x0D\x0A";
+         strScript << "#exec MESH NOTIFY MESH=" << m_pszName << " SEQ=Dead9B  TIME=0.8  FUNCTION=LandThump\x0D\x0A";
+         strScript << "#exec MESH NOTIFY MESH=" << m_pszName << " SEQ=Dead11  TIME=0.57 FUNCTION=LandThump\x0D\x0A";
+         strScript << "\x0D\x0A";
+         // Terminate
+         strScript << (char)0;
+      }
+      else {
+         // CLEANUP MEMORY ETC
+         return F_OUT_OF_MEMORY;
+      }
+      uCurrentOffset += uMeshScriptLength;
+
+      // Write Selection Mesh Properties - selection mesh actually has no properties as such...
+      // 8B 00 05 00 54 01 FF FF FF FF FF FF FF FF 00 00 00 00 00 00 00 00 00 00 00 00 FF FF FF FF FF FF FF FF FF FF 00 00 00 00 12 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 02 07 01 00 00 00 22 18 10 60 8B 01 00 00 00 F9 CE 3A 9E 04 08 09 0B 0A 85 0D 00
+
+      // Write ForceMeshToExist Data
+      const unsigned int uForceMeshToExistDataLength = 0x20;
+      char* pcForceMeshToExistData = NULL;
+      NEWBEGIN
+      pcForceMeshToExistData = new char[uForceMeshToExistDataLength];
+      NEWEND("CAvatarFileUnreal::Save - bot script allocation");
+      if (pcForceMeshToExistData != NULL) {
+         pcForceMeshToExistData[0x00] = 0x00;
+         pcForceMeshToExistData[0x01] = 0x00;
+         pcForceMeshToExistData[0x02] = 0x00;
+         pcForceMeshToExistData[0x03] = 0x00;
+         pcForceMeshToExistData[0x04] = 0x00;
+         pcForceMeshToExistData[0x05] = 0x29;
+         pcForceMeshToExistData[0x06] = 0x06;
+         pcForceMeshToExistData[0x07] = 0x00;
+         pcForceMeshToExistData[0x08] = 0x00;
+         pcForceMeshToExistData[0x09] = 0x00;
+         pcForceMeshToExistData[0x0A] = 0x58; // This one may well mean something - it has been known to change
+         pcForceMeshToExistData[0x0B] = 0x00;
+         pcForceMeshToExistData[0x0C] = 0x00;
+         pcForceMeshToExistData[0x0D] = 0x00;
+         pcForceMeshToExistData[0x0E] = 0x0A;
+         pcForceMeshToExistData[0x0F] = 0x00;
+         pcForceMeshToExistData[0x10] = 0x00;
+         pcForceMeshToExistData[0x11] = 0x00;
+         pcForceMeshToExistData[0x12] = 0x61;
+         pcForceMeshToExistData[0x13] = 0x16;
+         pcForceMeshToExistData[0x14] = 0x20;
+         pcForceMeshToExistData[0x15] = 0x01;
+         pcForceMeshToExistData[0x16] = 0x16;
+         pcForceMeshToExistData[0x17] = 0x04;
+         pcForceMeshToExistData[0x18] = 0x0B;
+         pcForceMeshToExistData[0x19] = 0x00;
+         pcForceMeshToExistData[0x1A] = 0x00;
+         pcForceMeshToExistData[0x1B] = 0x00;
+         pcForceMeshToExistData[0x1C] = 0x02;
+         pcForceMeshToExistData[0x1D] = 0x00;
+         pcForceMeshToExistData[0x1E] = 0x00;
+         pcForceMeshToExistData[0x1F] = 0x00;
+      }
+      else {
+         // CLEANUP MEMORY ETC
+         return F_OUT_OF_MEMORY;
+      }
+      uCurrentOffset += uForceMeshToExistDataLength;
+
+      /*// Write Selection Model
       // Write selection frame data
       const unsigned int uNumVertices = pAvatar->NumVertices();
       unsigned long* puSelectionFrameData = NULL;
@@ -1539,11 +1848,7 @@ FRESULT CAvatarFileUnreal::SaveMeshU(const char* pszFilename, CAvatar* pAvatar) 
          }   
       }
       else {
-         delete [] pMeshData;
-         delete [] pcMeshFrameHeader;
-         delete [] pcMeshProperties;
-         delete [] pcNameTable;
-         osOutputStream.close();
+         // CLEANUP MEMORY ETC
          return F_OUT_OF_MEMORY;
       }
 
@@ -1553,10 +1858,10 @@ FRESULT CAvatarFileUnreal::SaveMeshU(const char* pszFilename, CAvatar* pAvatar) 
       pSelectionMeshData = new SUnrealTriangle[iNumFaces];
       NEWEND("CAvatarFileUnreal::Save - selection mesh data allocation");
       if (pSelectionMeshData != NULL) {
-         // Calc texture vertical scale factor - need it later
-         const double dTextureScale = (double)UNREAL_TEXTURE_HEIGHT / (double)m_uTotalHeight;
-         const int iWidth  = UNREAL_TEXTURE_WIDTH;
-         const int iHeight = UNREAL_TEXTURE_HEIGHT;
+         // Store texture info
+         const int iMaxU = UNREAL_TEXTURE_WIDTH-1;
+         const int iMaxV = UNREAL_TEXTURE_HEIGHT-1;
+         // other stuff we need
          const STriFace* pFaces = pAvatar->Faces();
          const unsigned int uFaceTexIndex = pAvatar->TextureIndex(skullbase);
          // Write faces
@@ -1570,10 +1875,19 @@ FRESULT CAvatarFileUnreal::SaveMeshU(const char* pszFilename, CAvatar* pAvatar) 
             // Texture coordinates
             int iTextureNumber = pFaces[f].m_iTextureNumber;
             if (pFaces[f].m_iTextureNumber==uFaceTexIndex) {
-               // Write face tex coords
+               // Write face tex coords - nice & simple
                for (int tc=3; tc--!=0; ) {
-                  char cU = pFaces[f].m_sTexCoords[tc].dU*iWidth;
-                  char cV = 1-pFaces[f].m_sTexCoords[tc].dV*iHeight;
+                  // Get tex coords
+                  double dU = pFaces[i].m_sTexCoords[tc].dU;
+                  double dV = pFaces[i].m_sTexCoords[tc].dV;
+                  // Clamp to 0..1
+                  if (dU > 1) dU = 1;
+                  else if (dU < 0) dU = 0;
+                  if (dV > 1) dV = 1;
+                  else if (dV < 0) dV = 0;
+                  // Scale and store
+                  char cU = dU*iMaxU;
+                  char cV = dV*iMaxV;
                   switch (tc) {
                      case 2:
                         pSelectionMeshData[f].uU0 = cU;
@@ -1590,27 +1904,39 @@ FRESULT CAvatarFileUnreal::SaveMeshU(const char* pszFilename, CAvatar* pAvatar) 
                pSelectionMeshData[f].uTexture = 0;
             }
             else {
-               // Copy texture number and work out texture base positions and sizes
-               double dBaseV = m_puImageMinima[iTextureNumber] * dTextureScale;
-               double dHeight = (m_puImageMaxima[iTextureNumber] - m_puImageMinima[iTextureNumber]+1) * dTextureScale;
+               // Other texture coordinates are more complex to recompute
                for (int tc=3; tc--!=0; ) {
-                  double dTexCoordV = (1-pFaces[i].m_sTexCoords[tc].dV);
-                  dTexCoordV *= dHeight;
-                  dTexCoordV += dBaseV;
-                  dTexCoordV /= UNREAL_TEXTURE_HEIGHT;
-                  char cU = pFaces[f].m_sTexCoords[tc].dU * iWidth;
-                  char cV = dTexCoordV * iHeight;
-                  // Write texcoords
+                  // Get tex coords
+                  double dU = pFaces[i].m_sTexCoords[tc].dU;
+                  double dV = pFaces[i].m_sTexCoords[tc].dV;
+                  // Clamp to 0..1
+                  if (dU > 1) dU = 1;
+                  else if (dU < 0) dU = 0;
+                  if (dV > 1) dV = 1;
+                  else if (dV < 0) dV = 0;
+                  // Recalculate texture V coordinates:
+                  // Multiply by height of this particular image
+                  dV *= m_puImageHeight[iTextureNumber];
+                  // Add where this image starts
+                  dV += m_puFirstPixel[iTextureNumber];
+                  // Divide by the total height of the image
+                  dV /= m_uTotalHeight;
+                  // Scale and store
+                  char cU = dU*iMaxU;
+                  char cV = dV*iMaxV;
                   switch (tc) {
-                     case 2:
-                        pSelectionMeshData[f].uU0 = cU;
-                        pSelectionMeshData[f].uV0 = cV;
-                     case 1:
-                        pSelectionMeshData[f].uU1 = cU;
-                        pSelectionMeshData[f].uV1 = cV;
-                     case 0:
-                        pSelectionMeshData[f].uU2 = cU;
-                        pSelectionMeshData[f].uV2 = cV;
+                  case 2:
+                     pSelectionMeshData[f].uU0 = cU;
+                     pSelectionMeshData[f].uV0 = cV;
+                     break;
+                  case 1:
+                     pSelectionMeshData[f].uU1 = cU;
+                     pSelectionMeshData[f].uV1 = cV;
+                     break;
+                  case 0:
+                     pSelectionMeshData[f].uU2 = cU;
+                     pSelectionMeshData[f].uV2 = cV;
+                     break;
                   }
                }
                // Write Texture number
@@ -1619,19 +1945,12 @@ FRESULT CAvatarFileUnreal::SaveMeshU(const char* pszFilename, CAvatar* pAvatar) 
          }
       }
       else {
-         delete [] puSelectionFrameData;
-         delete [] pMeshData;
-         delete [] pcMeshFrameHeader;
-         delete [] pcMeshProperties;
-         delete [] pcNameTable;
-         osOutputStream.close();
+         // CLEANUP MEMORY ETC
          return F_OUT_OF_MEMORY;
-      }
+      }*/
 
-      // Write script data
-      
-      // Write import table
-      sHeader.uImportOffset = uCurrentOffset;
+      // Write Import Table
+      /*sHeader.uImportOffset = uCurrentOffset;
       SUnrealImportTableEntry* pImportTable;
       NEWBEGIN
       pImportTable = new SUnrealImportTableEntry[sHeader.uImportCount];
@@ -1684,23 +2003,17 @@ FRESULT CAvatarFileUnreal::SaveMeshU(const char* pszFilename, CAvatar* pAvatar) 
          pImportTable[10].cObjectName   = 0x02;
       }
       else {
-         delete [] pSelectionMeshData;
-         delete [] puSelectionFrameData;
-         delete [] pMeshData;
-         delete [] pcMeshFrameHeader;
-         delete [] pcMeshProperties;
-         delete [] pcNameTable;
-         osOutputStream.close();
+         // CLEANUP MEMORY ETC
          return F_OUT_OF_MEMORY;
       }
-      uCurrentOffset += sizeof(SUnrealImportTableEntry)*sHeader.uImportCount;
+      uCurrentOffset += sizeof(SUnrealImportTableEntry)*sHeader.uImportCount;*/
 
-      // Write export table
+      // Write Export Table      
 
       // Write data chunks to stream
       // Write header
       osOutputStream.write((char*)&sHeader,sizeof(SUnrealPackageHeader));
-      // Write name table
+      // Write Name Table
       osOutputStream.write(pcNameTable,uNameTableLength);
       // Write mesh properties
       // Write mesh frame data
@@ -1711,41 +2024,42 @@ FRESULT CAvatarFileUnreal::SaveMeshU(const char* pszFilename, CAvatar* pAvatar) 
          isTempStream.close();
       }
       else {
-         delete [] pSelectionMeshData;
-         delete [] puSelectionFrameData;
-         delete [] pMeshData;
-         delete [] pImportTable;
-         delete [] pcMeshFrameHeader;
-         delete [] pcMeshProperties;
-         delete [] pcNameTable;
-         osOutputStream.close();
+         // CLEANUP MEMORY ETC
          return F_FILE_ERROR;
       }
-      // Write Mesh topology
-      osOutputStream.write((char*)pMeshData,sizeof(SUnrealTriangle)*(iNumFaces+1));
-      // Write Bot script
+      // Write Mesh Topology
+      //osOutputStream.write((char*)pMeshData,sizeof(SUnrealTriangle)*(iNumFaces+1));
+      // Write Bot Script
+      osOutputStream.write(pcBotScript,uBotScriptLength);
       // Write Bot properties
       // Write SelectionMesh script
+      osOutputStream.write(pcSelectScript,uSelectScriptLength);
       // Write Mesh script
+      osOutputStream.write(pcMeshScript,uMeshScriptLength);
       // Write SelectionMesh properties
       // Write ForceMeshToExist data
+      osOutputStream.write(pcForceMeshToExistData,uForceMeshToExistDataLength);
       // Write SelectionMesh
       // Write selection frame data
-      osOutputStream.write((char*)puSelectionFrameData,sizeof(unsigned long)*uNumVertices);
+      //osOutputStream.write((char*)puSelectionFrameData,sizeof(unsigned long)*uNumVertices);
       // Write selection mesh data
-      osOutputStream.write((char*)pSelectionMeshData,sizeof(SUnrealTriangle)*iNumFaces);
+      //osOutputStream.write((char*)pSelectionMeshData,sizeof(SUnrealTriangle)*iNumFaces);
       // Write import table
-      osOutputStream.write((char*)pImportTable,sizeof(SUnrealImportTableEntry)*sHeader.uImportCount);
+      //osOutputStream.write((char*)pImportTable,sizeof(SUnrealImportTableEntry)*sHeader.uImportCount);
       // Write export table
 
       // Done - close stream
       osOutputStream.close();
 
       // Delete allocated memory
-      delete [] pSelectionMeshData;
-      delete [] puSelectionFrameData;
+      //delete [] pImportTable;
+      //delete [] pSelectionMeshData;
+      //delete [] puSelectionFrameData;
+      delete [] pcForceMeshToExistData;
+      delete [] pcMeshScript;
+      delete [] pcSelectScript;
+      delete [] pcBotScript;
       delete [] pMeshData;
-      delete [] pImportTable;
       delete [] pcMeshFrameHeader;
       delete [] pcMeshProperties;
       delete [] pcNameTable;
@@ -1767,10 +2081,9 @@ FRESULT CAvatarFileUnreal::SaveMeshD3D(const char* pszFilename, CAvatar* pAvatar
    const unsigned int uFaceTexIndex = pAvatar->TextureIndex(skullbase);
    ofstream osOutputStream(pszFilename,ios::binary|ios::out);   
 	if (!osOutputStream.fail()) {
-      // Calc texture vertical scale factor - need it later
-      const double dTextureScale = (double)UNREAL_TEXTURE_HEIGHT / (double)m_uTotalHeight;
-      const int iWidth  = UNREAL_TEXTURE_WIDTH;
-      const int iHeight = UNREAL_TEXTURE_HEIGHT;
+      // Store texture info
+      const int iMaxU = UNREAL_TEXTURE_WIDTH-1;
+      const int iMaxV = UNREAL_TEXTURE_HEIGHT-1;
       // Write header
       short iNumFaces = pAvatar->NumFaces();
       short uNumVertices = pAvatar->NumVertices();
@@ -1801,10 +2114,19 @@ FRESULT CAvatarFileUnreal::SaveMeshD3D(const char* pszFilename, CAvatar* pAvatar
          // Texture coordinates
          int iTextureNumber = pFaces[i].m_iTextureNumber;
          if (pFaces[i].m_iTextureNumber==uFaceTexIndex) {
-            // Write face tex coords
+            // Write face tex coords - nice & simple
             for (int tc=3; tc--!=0; ) {
-               char cU = pFaces[i].m_sTexCoords[tc].dU*iWidth;
-               char cV = 1-pFaces[i].m_sTexCoords[tc].dV*iHeight;
+               // Get tex coords
+               double dU = pFaces[i].m_sTexCoords[tc].dU;
+               double dV = pFaces[i].m_sTexCoords[tc].dV;
+               // Clamp to 0..1
+               if (dU > 1) dU = 1;
+               else if (dU < 0) dU = 0;
+               if (dV > 1) dV = 1;
+               else if (dV < 0) dV = 0;
+               // Scale and store
+               char cU = dU*iMaxU;
+               char cV = dV*iMaxV;
                osOutputStream.write(&cU,1);
                osOutputStream.write(&cV,1);
             }
@@ -1812,17 +2134,26 @@ FRESULT CAvatarFileUnreal::SaveMeshD3D(const char* pszFilename, CAvatar* pAvatar
             osOutputStream.write("\x00",1);
          }
          else {
-            // Copy texture number and work out texture base positions and sizes
-            double dBaseV = m_puImageMinima[iTextureNumber] * dTextureScale;
-            double dHeight = (m_puImageMaxima[iTextureNumber] - m_puImageMinima[iTextureNumber]+1) * dTextureScale;
+            // Other texture coordinates are more complex to recompute
             for (int tc=3; tc--!=0; ) {
-               double dTexCoordV = (1-pFaces[i].m_sTexCoords[tc].dV);
-               dTexCoordV *= dHeight;
-               dTexCoordV += dBaseV;
-               dTexCoordV /= UNREAL_TEXTURE_HEIGHT;
-               char cU = pFaces[i].m_sTexCoords[tc].dU * iWidth;
-               char cV = dTexCoordV * iHeight;
-               // Write texcoords
+               // Get tex coords
+               double dU = pFaces[i].m_sTexCoords[tc].dU;
+               double dV = pFaces[i].m_sTexCoords[tc].dV;
+               // Clamp to 0..1
+               if (dU > 1) dU = 1;
+               else if (dU < 0) dU = 0;
+               if (dV > 1) dV = 1;
+               else if (dV < 0) dV = 0;
+               // Recalculate texture V coordinates:
+               // Multiply by height of this particular image
+               dV *= m_puImageHeight[iTextureNumber];
+               // Add where this image starts
+               dV += m_puFirstPixel[iTextureNumber];
+               // Divide by the total height of the image
+               dV /= m_uTotalHeight;
+               // Scale and store
+               char cU = dU*iMaxU;
+               char cV = dV*iMaxV;
                osOutputStream.write(&cU,1);
                osOutputStream.write(&cV,1);
             }
@@ -1866,12 +2197,15 @@ FRESULT CAvatarFileUnreal::SaveMeshA3D(const char* pszFilename, CAvatar* pAvatar
    ofstream osOutputStream(pszFilename,ios::binary|ios::out);
 	if (!osOutputStream.fail()) {
       const SBodyPart* pBodyParts = pAvatar->BodyParts();
+      // Reset avatar pose
+      pAvatar->ResetPose();
+      pAvatar->UpdateModel();
       // Setup sizes & offsets etc
       SPoint3D pntMin, pntMax;
       pAvatar->BoundingBox(unknown,pntMax,pntMin);
-      double dHeight = (pntMax.m_dComponents[1] - pntMin.m_dComponents[1]);
-      double dScale = 110 / dHeight;
-      double dYOff = -((pntMax.m_dComponents[1] + pntMin.m_dComponents[1]) / 2 * dScale);
+      const double dHeight = (pntMax.m_dComponents[1] - pntMin.m_dComponents[1]);
+      const double dScale = 110 / dHeight;
+      const double dYOff = -((pntMax.m_dComponents[1] + pntMin.m_dComponents[1]) / 2 * dScale);
       // Get vertex info
       int uNumVertices = pAvatar->NumVertices();
       const SPoint3D* pVertices = pAvatar->Vertices();
@@ -1906,24 +2240,21 @@ FRESULT CAvatarFileUnreal::SaveSelectionMeshD3D(const char* pszFilename, CAvatar
    const unsigned int uFaceTexIndex = pAvatar->TextureIndex(skullbase);
    ofstream osOutputStream(pszFilename,ios::binary|ios::out);
 	if (!osOutputStream.fail()) {
-      // Calc texture vertical scale factor - need it later
-      const double dTextureScale = (double)UNREAL_TEXTURE_HEIGHT / (double)m_uTotalHeight;
-      const int iWidth  = UNREAL_TEXTURE_WIDTH;
-      const int iHeight = UNREAL_TEXTURE_HEIGHT;
+      // Store texture info
+      const int iMaxU = UNREAL_TEXTURE_WIDTH-1;
+      const int iMaxV = UNREAL_TEXTURE_HEIGHT-1;
       // Write header
-      short iNumFaces = pAvatar->NumFaces();
-      short uNumVertices = pAvatar->NumVertices();
-      short iTotalNumFaces = iNumFaces;
-      short iTotalNumVertices = uNumVertices;
-   	osOutputStream.write((char*)&iTotalNumFaces,2);
-   	osOutputStream.write((char*)&iTotalNumVertices,2);
+      const short uNumFaces = pAvatar->NumFaces();
+      const short uNumVertices = pAvatar->NumVertices();
+   	osOutputStream.write((char*)&uNumFaces,2);
+   	osOutputStream.write((char*)&uNumVertices,2);
       // 32 zeroes
       for (i=0; i<32; i++) osOutputStream.write("\0",1);
       // Write empty space after header
       for (i=0; i<12; i++) osOutputStream.write("\0",1);
       // Write data for body triangles
       const STriFace* pFaces = pAvatar->Faces();
-      for (i=0; i<iNumFaces; i++) {
+      for (i=0; i<uNumFaces; i++) {
          // Vertex indices
          unsigned short iVertex0 = pFaces[i].m_iVertices[0];
          unsigned short iVertex1 = pFaces[i].m_iVertices[1];
@@ -1940,10 +2271,19 @@ FRESULT CAvatarFileUnreal::SaveSelectionMeshD3D(const char* pszFilename, CAvatar
          // Texture coordinates
          int iTextureNumber = pFaces[i].m_iTextureNumber;
          if (pFaces[i].m_iTextureNumber==uFaceTexIndex) {
-            // Write face tex coords
+            // Write face tex coords - these are simple
             for (int tc=3; tc--!=0; ) {
-               char cU = pFaces[i].m_sTexCoords[tc].dU*iWidth;
-               char cV = 1-pFaces[i].m_sTexCoords[tc].dV*iHeight;
+               // Get tex coords
+               double dU = pFaces[i].m_sTexCoords[tc].dU;
+               double dV = pFaces[i].m_sTexCoords[tc].dV;
+               // Clamp to 0..1
+               if (dU > 1) dU = 1;
+               else if (dU < 0) dU = 0;
+               if (dV > 1) dV = 1;
+               else if (dV < 0) dV = 0;
+               // Scale and store
+               char cU = dU*iMaxU;
+               char cV = dV*iMaxV;
                osOutputStream.write(&cU,1);
                osOutputStream.write(&cV,1);
             }
@@ -1951,17 +2291,26 @@ FRESULT CAvatarFileUnreal::SaveSelectionMeshD3D(const char* pszFilename, CAvatar
             osOutputStream.write("\x00",1);
          }
          else {
-            // Copy texture number and work out texture base positions and sizes
-            double dBaseV = m_puImageMinima[iTextureNumber] * dTextureScale;
-            double dHeight = (m_puImageMaxima[iTextureNumber] - m_puImageMinima[iTextureNumber]+1) * dTextureScale;
+            // Other texture coordinates are more complex to recompute
             for (int tc=3; tc--!=0; ) {
-               double dTexCoordV = (1-pFaces[i].m_sTexCoords[tc].dV);
-               dTexCoordV *= dHeight;
-               dTexCoordV += dBaseV;
-               dTexCoordV /= UNREAL_TEXTURE_HEIGHT;
-               char cU = pFaces[i].m_sTexCoords[tc].dU * iWidth;
-               char cV = dTexCoordV * iHeight;
-               // Write texcoords
+               // Get tex coords
+               double dU = pFaces[i].m_sTexCoords[tc].dU;
+               double dV = pFaces[i].m_sTexCoords[tc].dV;
+               // Clamp to 0..1
+               if (dU > 1) dU = 1;
+               else if (dU < 0) dU = 0;
+               if (dV > 1) dV = 1;
+               else if (dV < 0) dV = 0;
+               // Recalculate texture V coordinates:
+               // Multiply by height of this particular image
+               dV *= m_puImageHeight[iTextureNumber];
+               // Add where this image starts
+               dV += m_puFirstPixel[iTextureNumber];
+               // Divide by the total height of the image
+               dV /= m_uTotalHeight;
+               // Scale and store
+               char cU = dU*iMaxU;
+               char cV = dV*iMaxV;
                osOutputStream.write(&cU,1);
                osOutputStream.write(&cV,1);
             }
@@ -1985,14 +2334,17 @@ FRESULT CAvatarFileUnreal::SaveSelectionMeshA3D(const char* pszFilename, CAvatar
    // This is documented on the nervedamage.com unreal page
    ofstream osOutputStream(pszFilename,ios::binary|ios::out);
 	if (!osOutputStream.fail()) {
+      // Reset avatar pose
+      pAvatar->ResetPose();
+      pAvatar->UpdateModel();
       // Setup sizes & offsets etc
       SPoint3D pntMin, pntMax;
       pAvatar->BoundingBox(unknown,pntMax,pntMin);
-      double dHeight = (pntMax.m_dComponents[1] - pntMin.m_dComponents[1]);
-      double dScale = 110 / dHeight;
-      double dYOff = -((pntMax.m_dComponents[1] + pntMin.m_dComponents[1]) / 2 * dScale);
+      const double dHeight = (pntMax.m_dComponents[1] - pntMin.m_dComponents[1]);
+      const double dScale = 110 / dHeight;
+      const double dYOff = -((pntMax.m_dComponents[1] + pntMin.m_dComponents[1]) / 2 * dScale);
       // Get vertex info
-      int uNumVertices = pAvatar->NumVertices();
+      const int uNumVertices = pAvatar->NumVertices();
       const SPoint3D* pVertices = pAvatar->Vertices();
       // Write header
       short iNumFrames = 1;
@@ -2001,9 +2353,6 @@ FRESULT CAvatarFileUnreal::SaveSelectionMeshA3D(const char* pszFilename, CAvatar
       osOutputStream.write((char*)&iFrameLength,2);
       // Write frame
       int v = 0; // loop counter
-      // Pose
-      pAvatar->ResetPose();
-      pAvatar->UpdateModel();
       // Write vertices
       for (v=0; v<uNumVertices; v++) {
          // Pack vertex into a long int 
@@ -2025,7 +2374,10 @@ FRESULT CAvatarFileUnreal::SaveMeshScript(const char* pszFilename, CAvatar* pAva
    ofstream osOutputStream(pszFilename,ios::out);
 	if (!osOutputStream.fail()) {
       osOutputStream << "// " << m_pszName << ".\n";
-      osOutputStream << "class " << m_pszName << " extends TournamentMale;\n";
+      if (m_iSex == UNREAL_FEMALE) 
+         osOutputStream << "class " << m_pszName << " extends TournamentFemale;\n";
+      else 
+         osOutputStream << "class " << m_pszName << " extends TournamentMale;\n";
       osOutputStream << "\n";
       osOutputStream << "#exec MESH IMPORT MESH=" << m_pszName << " ANIVFILE=MODELS\\" << m_pszName << "_a.3d DATAFILE=MODELS\\" << m_pszName << "_d.3d X=0 Y=0 Z=0 MLOD=0\n";
       osOutputStream << "#exec MESH ORIGIN MESH=" << m_pszName << " X=0 Y=0 Z=0\n";
@@ -2140,12 +2492,20 @@ FRESULT CAvatarFileUnreal::SaveMeshScript(const char* pszFilename, CAvatar* pAva
       osOutputStream << "   TeamSkin2=2\n";
       osOutputStream << "   DefaultSkinName=\"" << m_pszName << "Skins." << m_pszTexBaseName << "\"\n";
       osOutputStream << "   DefaultPackage=\"" << m_pszName << "Skins.\"\n";
-      osOutputStream << "   LandGrunt=Sound'MaleSounds.(All).land10'\n";
-      osOutputStream << "   CarcassType=Class'Botpack.TMale2Carcass'\n";
       osOutputStream << "   SelectionMesh=\"" << m_pszName << ".Select" << m_pszName << "\"\n";
-      osOutputStream << "   SpecialMesh=\"Botpack.TrophyMale2\"\n";
+      if (m_iSex == UNREAL_FEMALE) {
+         osOutputStream << "   LandGrunt=Sound'FemaleSounds.(All).land10'\n";
+         osOutputStream << "   CarcassType=Class'Botpack.TFemale2Carcass'\n";
+         osOutputStream << "   SpecialMesh=\"Botpack.TrophyFemale2\"\n";
+         osOutputStream << "   VoiceType=\"BotPack.VoiceFemaleTwo\"\n";
+      }
+      else {
+         osOutputStream << "   LandGrunt=Sound'MaleSounds.(All).land10'\n";
+         osOutputStream << "   CarcassType=Class'Botpack.TMale2Carcass'\n";
+         osOutputStream << "   SpecialMesh=\"Botpack.TrophyMale2\"\n";
+         osOutputStream << "   VoiceType=\"BotPack.VoiceMaleTwo\"\n";
+      }
       osOutputStream << "   MenuName=\"" << m_pszName << "\"\n";
-      osOutputStream << "   VoiceType=\"BotPack.VoiceMaleTwo\"\n";
       osOutputStream << "   Mesh=" << m_pszName << "\n";
       osOutputStream << "}\n";
       osOutputStream.close();
@@ -2186,7 +2546,10 @@ FRESULT CAvatarFileUnreal::SaveBotScript(const char* pszFilename, CAvatar* pAvat
    ofstream osOutputStream(pszFilename,ios::out);
 	if (!osOutputStream.fail()) {
       osOutputStream << "// " << m_pszName << "Bot.\n";
-      osOutputStream << "class " << m_pszName << "Bot extends MaleBotPlus;\n";
+      if (m_iSex == UNREAL_FEMALE) 
+         osOutputStream << "class " << m_pszName << "Bot extends FemaleBotPlus;\n";
+      else 
+         osOutputStream << "class " << m_pszName << "Bot extends MaleBotPlus;\n";
       osOutputStream << "\n";
       osOutputStream << "function ForceMeshToExist()\n";
       osOutputStream << "{\n";
@@ -2195,8 +2558,16 @@ FRESULT CAvatarFileUnreal::SaveBotScript(const char* pszFilename, CAvatar* pAvat
       osOutputStream << "\n";
       osOutputStream << "defaultproperties\n";
       osOutputStream << "{\n";
-      osOutputStream << "   CarcassType=Class'Botpack.TMale2Carcass'\n";
-      osOutputStream << "   LandGrunt=Sound'MaleSounds.(All).land10'\n";
+      if (m_iSex == UNREAL_FEMALE) {
+         osOutputStream << "   LandGrunt=Sound'FemaleSounds.(All).land10'\n";
+         osOutputStream << "   CarcassType=Class'Botpack.TFemale2Carcass'\n";
+         //osOutputStream << "   VoiceType=\"BotPack.VoiceFemaleTwo\"\n";
+      }
+      else {
+         osOutputStream << "   LandGrunt=Sound'MaleSounds.(All).land10'\n";
+         osOutputStream << "   CarcassType=Class'Botpack.TMale2Carcass'\n";
+         //osOutputStream << "   VoiceType=\"BotPack.VoiceMaleTwo\"\n";
+      }
       osOutputStream << "   FaceSkin=0\n";
       osOutputStream << "   TeamSkin1=1\n";
       osOutputStream << "   TeamSkin2=2\n";
@@ -2245,13 +2616,24 @@ FRESULT CAvatarFileUnreal::Cleanup(void) const {
       delete [] m_pszTexBaseName; 
       m_pszTexBaseName = NULL;
    }
-   if (m_puImageMinima != NULL) {
-      delete [] m_puImageMinima; 
-      m_puImageMinima = NULL;
+   if (m_puFirstPixel != NULL) {
+      delete [] m_puFirstPixel; 
+      m_puFirstPixel = NULL;
    }
-   if (m_puImageMaxima != NULL) {
-      delete [] m_puImageMaxima; 
-      m_puImageMaxima = NULL;
+   if (m_puImageHeight != NULL) {
+      delete [] m_puImageHeight; 
+      m_puImageHeight = NULL;
    }
    return eResult;
 } //Cleanup(void) const
+
+void CAvatarFileUnreal::SetOption(int iOption, int iData) const {
+   switch (iOption) {
+   case UNREAL_SEX:
+      m_iSex = iData;
+      break;
+   default:
+      break;
+   }
+   return;
+} //SetOption(int iOption, int iData;)

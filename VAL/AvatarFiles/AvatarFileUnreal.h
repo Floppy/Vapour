@@ -7,7 +7,7 @@
 // AvatarFileUnreal.h - 5/4/2000 - James Smith
 //	Unreal export filter header
 //
-// $Id: AvatarFileUnreal.h,v 1.5 2000/08/21 23:06:42 waz Exp $
+// $Id: AvatarFileUnreal.h,v 1.6 2000/08/24 22:20:41 waz Exp $
 //
 
 #pragma once
@@ -20,10 +20,24 @@
 
 #include <fstream.h>
 
+// Definitions of class options and arguments
+// Option IDs
+#define UNREAL_SEX			   5
+// Option values
+// UNREAL_SEX
+#define UNREAL_MALE		      1
+#define UNREAL_FEMALE			2
+
 //////////////////////
 // CAvatarFileUnreal
 
 class CAvatarFileUnreal : public CAvatarFile {
+
+/////////////////////
+// Option Variables
+private:
+
+   mutable int m_iSex;
 
 /////////////////////
 // Member Functions
@@ -42,6 +56,8 @@ public:
    bool CanFilterLoadBPStream() const;
 
    FRESULT Save(const char* pszFilename, CAvatar* pAvatar) const;
+
+   void SetOption(int iOption, int iData) const;
 
    // AvatarFileProxy Functions
    static float GetVersion() {return 1.0F;}
@@ -79,10 +95,10 @@ private:
    mutable char* m_pszTgtDir;
    mutable char* m_pszTexPackageName;
    mutable char* m_pszTexBaseName;
-   mutable char m_pszTempFilename[128];
+   mutable char  m_pszTempFilename[128];
    // Texture coordinate translation data
-   mutable unsigned int* m_puImageMinima;
-   mutable unsigned int* m_puImageMaxima;
+   mutable unsigned int* m_puFirstPixel;
+   mutable unsigned int* m_puImageHeight;
    mutable unsigned int m_uTotalHeight;
 
 };
