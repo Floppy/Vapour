@@ -13,7 +13,7 @@
 //! author     = "James Smith"
 //! date       = "10/10/2001"
 //! lib        = libVALET3d
-//! rcsid      = "$Id: trimodel.h,v 1.6 2001/10/24 22:01:43 vap-james Exp $"
+//! rcsid      = "$Id: trimodel.h,v 1.7 2001/10/24 23:30:36 vap-james Exp $"
 //! userlevel  = Normal
 //! docentry   = "VALET.3D.Surface Representations"
 
@@ -35,7 +35,7 @@ namespace NVALET {
 
   protected:
 
-    vector<CMesh> m_lMeshes;
+    vector<CMesh> m_oMeshes;
 
   public:    
     
@@ -52,16 +52,16 @@ namespace NVALET {
     //:-----------------
     //: Access functions
 
-    int NumMeshes(void) const {return m_lMeshes.size();}
+    int NumMeshes(void) const;
     //: Number of meshes
     //!param: return = how many meshes are in this model?
 
-    const CMesh& Mesh(int iMesh) const {return m_lMeshes[iMesh];}
+    const CMesh& Mesh(int iMesh) const;
     //: Access a particular mesh
     //!param: iMesh = which mesh to access?
     //!param: return = constant reference to a mesh.
 
-    CMesh& Mesh(int iMesh) {return m_lMeshes[iMesh];}
+    CMesh& Mesh(int iMesh);
     //: Non-const access to a particular mesh
     //!param: iMesh = which mesh to access?
     //!param: return = reference to the mesh.

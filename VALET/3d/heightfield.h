@@ -9,13 +9,13 @@
 #define _VALET_3D_HEIGHTFIELD_
 
 ////////////////
-//! file 		= "VALET/3d/heightfield.h"
-//! author 		= "James Smith"
-//! date 		= "10/10/2001"
-//! lib 		= libVALET3d
-//! rcsid 		= "$Id: heightfield.h,v 1.5 2001/10/24 22:01:41 vap-james Exp $"
-//! userlevel 	        = Normal
-//! docentry 	        = "VALET.3D.Surface Representations"
+//! file       = "VALET/3d/heightfield.h"
+//! author     = "James Smith"
+//! date       = "10/10/2001"
+//! lib        = libVALET3d
+//! rcsid      = "$Id: heightfield.h,v 1.6 2001/10/24 23:30:35 vap-james Exp $"
+//! userlevel  = Normal
+//! docentry   = "VALET.3D.Surface Representations"
 
 //#===--- Includes
 #include "VALET/valet.h"
@@ -42,7 +42,7 @@ namespace NVALET {
       int m_iNumCols;
       //: Number of columns (X)
       
-      CVector3D m_vecScale;
+      CVector3D m_oScale;
       //: Scale factor
       
       CMaterial m_oMaterial;
@@ -64,28 +64,28 @@ namespace NVALET {
       //:-----------------
       //: Access functions
       
-      int Rows(void) const {return m_iNumRows;}
+      int Rows(void) const;
       //: How many rows?
       //!param: return = the number of rows (in the Z direction).
       
-      int Cols(void) const {return m_iNumCols;}
+      int Cols(void) const;
       //: How many columns?
       //!param: return = the number of columns (in the X direction).
 
-      const CVector3D& Scale(void) const {return m_vecScale;}
+      const CVector3D& Scale(void) const;
       //: Access to the scale factor
       //!param: return = a vector representing the scale factor of the heightfield.
 
-      CVector3D& Scale(void) {return m_vecScale;}
+      CVector3D& Scale(void);
       //: Non-const access to the scale factor
       // This can be used to set the scale factor.
       //!param: return = a reference to a vector representing the scale factor.
 
-      const CMaterial& Material(void) const {return m_oMaterial;}
+      const CMaterial& Material(void) const;
       //: Access the surface material
       //!param: return = the surface material of the height field.
 
-      CMaterial& Material(void) {return m_oMaterial;}
+      CMaterial& Material(void);
       //: Non-const access to the surface material
       // This can be used to set the material.
       //!param: return = the surface material of the height field.

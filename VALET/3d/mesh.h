@@ -9,13 +9,13 @@
 #define _VALET_3D_MESH_
 
 ////////////////
-//! file 		= "VALET/3d/mesh.h"
-//! author 		= "James Smith"
-//! date 		= "15/10/2001"
-//! lib 		= libVALET3d
-//! rcsid 		= "$Id: mesh.h,v 1.12 2001/10/24 22:01:43 vap-james Exp $"
-//! userlevel 	        = Normal
-//! docentry 	        = "VALET.3D.Surface Representations"
+//! file       = "VALET/3d/mesh.h"
+//! author     = "James Smith"
+//! date       = "15/10/2001"
+//! lib        = libVALET3d
+//! rcsid      = "$Id: mesh.h,v 1.13 2001/10/24 23:30:35 vap-james Exp $"
+//! userlevel  = Normal
+//! docentry   = "VALET.3D.Surface Representations"
 
 //#===--- Includes
 #include "VALET/valet.h"
@@ -139,7 +139,7 @@ namespace NVALET {
       //:-----------------
       //: Access functions
       
-      const CMaterial& Material(void) const {return m_oMaterial;}
+      const CMaterial& Material(void) const;
       //: Access the surface material
       //!param: return = the surface material of the mesh.
       
