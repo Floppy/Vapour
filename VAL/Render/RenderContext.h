@@ -7,7 +7,7 @@
 // RenderContext.h - 23/07/2000 - Warren Moore
 //	Base class for render contexts
 //
-// $Id: RenderContext.h,v 1.4 2000/10/06 13:04:44 waz Exp $
+// $Id: RenderContext.h,v 1.5 2000/10/10 17:53:46 waz Exp $
 //
 
 #ifndef _VAL_RENDERCONTEXT_
@@ -31,14 +31,15 @@
 	// Common
 #define RCO_WIDTH								4
 #define RCO_HEIGHT							5
-#define RCO_DEPTH								6
+#define RCO_COL_DEPTH						6
+#define RCO_Z_BUF_SIZE						7
 	// Context
-#define RCO_NEARPLANE						7
-#define RCO_FARPLANE							8
-#define RCO_VIEWANGLE						9
-#define RCO_BACKRED						  10
-#define RCO_BACKGREEN					  11
-#define RCO_BACKBLUE						  12
+#define RCO_NEARPLANE						8
+#define RCO_FARPLANE							9
+#define RCO_VIEWANGLE					  10
+#define RCO_BACKRED						  11
+#define RCO_BACKGREEN					  12
+#define RCO_BACKBLUE						  13
 
 //#===--- Option values
 #define RCV_DONT_CARE						0
@@ -71,6 +72,8 @@ enum RCRESULT {
 	RC_UNSUPPORTED_VIEW,
 	RC_MEDIA_ERROR,
 	RC_FORMAT_NOT_AVAILABLE,
+	RC_UNSUPPORTED_COLOUR_DEPTH,
+	RC_UNSUPPORTED_Z_BUF_SIZE,
 	RC_SET_FORMAT_ERROR,
 	RC_CONTEXT_CREATE_ERROR,
 	RC_NOT_ACTIVE,
@@ -78,6 +81,7 @@ enum RCRESULT {
 	RC_INVALID_IMAGE_TYPE,
 	RC_IMAGE_ERROR,
 	RC_UNKNOWN_OPTION,
+	RC_INVALID_VALUE,
 	RC_NO_TEXTURE,
 	RC_WRONG_BUFFER,
 	RC_UNSUPPORTED_PROJECTION,
@@ -92,6 +96,8 @@ enum RCRESULT {
 	"Unsupported view", \
 	"Render media error", \
 	"Render format not available", \
+	"Renderer could not support required colour depth", \
+	"Renderer could not support required z-buffer size", \
 	"Error setting the chosen format", \
 	"Error creating the render context", \
 	"Context is not active", \
@@ -99,6 +105,7 @@ enum RCRESULT {
 	"An invalid image type has been supplied", \
 	"An image error has occured", \
 	"No matching option could be found", \
+	"Invalid value supplied for option", \
 	"Texture does not exist", \
 	"An incorrect buffer has been specified", \
 	"Specified projection method not supported", \
@@ -195,7 +202,8 @@ protected:
 //#===--- Internal Data
 	unsigned int m_uWidth, m_uHeight;						// Active context resolution
 	unsigned int m_uNewWidth, m_uNewHeight;				// Next context resolution
-	unsigned int m_uDepth;										// Colour depth (in bits per pixel)
+	unsigned int m_uColourDepth;								// Colour depth (in bits per pixel)
+	unsigned int m_uZBuffer;									// Z buffer size (in bits per pixel)
 	float m_fNearPlane, m_fFarPlane;							// View clipping planes
 	float m_fViewAngle;											// Camera view angle
 	float m_fBackRed, m_fBackGreen, m_fBackBlue;			// Context clear colour

@@ -7,7 +7,7 @@
 // RenderContext.cpp - 23/07/2000 - Warren Moore
 //	Base class for render contexts
 //
-// $Id: RenderContext.cpp,v 1.4 2000/10/06 13:04:44 waz Exp $
+// $Id: RenderContext.cpp,v 1.5 2000/10/10 17:53:47 waz Exp $
 //
 
 #include "StdAfx.h"
@@ -31,7 +31,8 @@ const char *CRenderContext::m_pcErrorString[] = {
 CRenderContext::CRenderContext() {
 	// No default values
 	m_uWidth = m_uHeight = m_uNewWidth = m_uNewHeight = 0;
-	m_uDepth = 0;
+	m_uColourDepth = 0;
+	m_uZBuffer = 0;
 	m_fNearPlane = m_fFarPlane = m_fViewAngle = 0.0F;
 	// Initial clear colour black
 	m_fBackRed = m_fBackGreen = m_fBackBlue = 0.0F;
@@ -66,10 +67,15 @@ RCRESULT CRenderContext::SetOption(int iOption, unsigned int uValue) {
 		case RCO_HEIGHT:
 			m_uHeight = uValue;
 			break;
-		case RCO_DEPTH:
+		case RCO_COL_DEPTH:
 			// Allow standard colour depths
 			if ((uValue == 8) || (uValue == 16) || (uValue == 24) || (uValue == 32))
-				m_uDepth = uValue;
+				m_uColourDepth = uValue;
+			break;
+		case RCO_Z_BUF_SIZE:
+			// Allow n^2 z buffer sizes
+			if ((uValue == 8) || (uValue == 16) || (uValue == 24) || (uValue == 32))
+				m_uZBuffer = uValue;
 			break;
 		case RCO_NEARPLANE:
 			m_fNearPlane = (float)uValue;
@@ -107,8 +113,11 @@ RCRESULT CRenderContext::GetOption(int iOption, unsigned int &uValue) {
 		case RCO_HEIGHT:
 			uValue = m_uHeight;
 			break;
-		case RCO_DEPTH:
-			uValue = m_uDepth;
+		case RCO_COL_DEPTH:
+			uValue = m_uColourDepth;
+			break;
+		case RCO_Z_BUF_SIZE:
+			uValue = m_uZBuffer;
 			break;
 		case RCO_BACKRED:
 			// Return value between 0 and 255 if int supplied
@@ -131,10 +140,15 @@ RCRESULT CRenderContext::GetOption(int iOption, unsigned int &uValue) {
 RCRESULT CRenderContext::SetOption(int iOption, float fValue) {
 	RCRESULT eResult = RC_OK;
 	switch (iOption) {
-		case RCO_DEPTH:
+		case RCO_COL_DEPTH:
 			// Allow standard colour depths
 			if ((fValue == 8.0F) || (fValue == 16.0F) || (fValue == 24.0F) || (fValue == 32.0F))
-				m_uDepth = (unsigned int)fValue;
+				m_uColourDepth = (unsigned int)fValue;
+			break;
+		case RCO_Z_BUF_SIZE:
+			// Allow n^2 z buffer sizes
+			if ((fValue == 8.0F) || (fValue == 16.0F) || (fValue == 24.0F) || (fValue == 32.0F))
+				m_uZBuffer = (unsigned int)fValue;
 			break;
 		case RCO_NEARPLANE:
 			m_fNearPlane = fValue;
