@@ -7,7 +7,7 @@
 // SFX.h - 10/07/2000 - Warren Moore
 //	Class for self-management of self-extracting wedgies
 //
-// $Id: SFX.h,v 1.1 2000/07/10 10:34:38 waz Exp $
+// $Id: SFX.h,v 1.2 2000/07/10 13:59:23 waz Exp $
 //
 
 #ifndef _VAL_SFX_
@@ -15,7 +15,12 @@
 
 #pragma once
 
+//#===--- Includes
+#include <fstream.h>
+
 //#===--- Defines
+#define SFX_START					"WJESFXSTART"
+#define SFX_START_SIZE		sizeof(SFX_START)
 
 //#===--- Data types
 
@@ -28,12 +33,24 @@ public:
 	~CSFX();
 
 //#===--- External Functions
+	// Returns true if the file has been modified with the file end position
+	bool EndSet();
+	// Inserts the file end position, if not previously set. Returns true if ok
+	bool SetEnd();
+	
+	// Returns an input file stream set to the end of the file, NULL on error
+	// The file stream must be deleted after use
+	ifstream *GetWedgie();
 
 protected:
 //#===--- Internal Functions
+	// Return the stream pos of the WJE start pos
+	unsigned int FindPos(fstream &oFile);
 
 //#===--- Internal Data
-
+	static unsigned char m_pcStartID[SFX_START_SIZE];
+	static unsigned char m_pcMagic[4];
+	static unsigned int m_uWJEPos;
 };
 
 #endif // _VAL_SFX_
