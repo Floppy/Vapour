@@ -9,7 +9,8 @@ $(if:$NodeType!=namespace:
 		$(set:parent=)
 		$(for:.:$docentry:
 			$(silent:
-				$(ifset:parent:$(set:parent=$(parent).$(subst: :_:%arg%)))$(else:$(set:parent=$(subst: :_:%arg%)))
+					$(ifset:parent:$(set:parent=$(parent).$(subst: :_:%arg%)))
+				$(else:$(set:parent=$(subst: :_:%arg%)))
 			)
 			<A HREF="../../$(if:$viewmode=developer:developer)$(else:user)/tree/$(parent).html">%arg%</A> .
 		)
