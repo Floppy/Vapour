@@ -7,7 +7,7 @@
 # HUDView.wrl
 # 19/03/2002 - James Smith
 #
-# $Id: HUDView.wrl,v 1.3 2002/03/25 12:37:18 vap-james Exp $
+# $Id: HUDView.wrl,v 1.4 2002/03/27 15:02:00 vap-james Exp $
 
 PROTO HUDView [
    eventIn      SFBool set_bind
@@ -27,7 +27,7 @@ PROTO HUDView [
             set_bind IS set_bind
          }
          DEF SENSOR ProximitySensor {
-            size 100 100 100
+            size 1e6 1e6 1e6
          }
          DEF HUDTRANS Transform {
             children [
