@@ -11,11 +11,11 @@
 //! author 		= "James Smith"
 //! date 		= "10/10/2001"
 //! lib 		= libVALET3d
-//! rcsid 		= "$Id: mesh.cpp,v 1.1 2001/10/15 16:16:50 vap-james Exp $"
+//! rcsid 		= "$Id: mesh.cpp,v 1.2 2001/10/18 12:23:05 vap-james Exp $"
 //! userlevel 	        = Normal
 //! docentry 	        = "VALET.3D.Surface Representations"
 
-#include "mesh.h"
+#include "VALET/mesh.h"
 
 // VALET includes
 

@@ -11,11 +11,11 @@
 //! author 		= "James Smith"
 //! date 		= "10/10/2001"
 //! lib 		= libVALET3d
-//! rcsid 		= "$Id: trimodel.cpp,v 1.1 2001/10/15 16:52:53 vap-james Exp $"
+//! rcsid 		= "$Id: trimodel.cpp,v 1.2 2001/10/18 12:23:05 vap-james Exp $"
 //! userlevel 	        = Normal
 //! docentry 	        = "VALET.3D.Surface Representations"
 
-#include "trimodel.h"
+#include "VALET/trimodel.h"
 
 // VALET includes
 
