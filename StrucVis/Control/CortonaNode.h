@@ -7,7 +7,7 @@
 // CortonaNode.h
 // 10/03/2002 - Warren Moore
 //
-// $Id: CortonaNode.h,v 1.1 2002/03/21 14:32:07 vap-warren Exp $
+// $Id: CortonaNode.h,v 1.2 2002/03/21 23:01:22 vap-warren Exp $
 
 #ifndef __CORTONANODE__
 #define __CORTONANODE__
@@ -15,6 +15,8 @@
 #if _MSC_VER > 1000
 #pragma once
 #endif // _MSC_VER > 1000
+
+#include "CortonaField.h"
 
 // Automation interfaces for Cortona
 #include "shelley.h"
@@ -31,6 +33,12 @@ public:
 
    void Release();
    // Release the node object
+
+   CCortonaField *GetField(const char *pcName);
+   // Creates a field object for the named field, returns NULL if failed
+
+   bool AssignEventIn(const char *pcField, const CCortonaField &oValue);
+   // Assigns the supplied field value to the named field
 
 protected:
 
