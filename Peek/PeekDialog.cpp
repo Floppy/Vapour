@@ -134,6 +134,17 @@ BOOL CPeekDialog::OnInitDialog() {
 		}
 	}
 
+   // Subclass edit boxes
+   m_cPosBox.SubclassDlgItem(IDC_POS_BOX,this);
+   m_cLookBox.SubclassDlgItem(IDC_LOOK_BOX,this);
+   m_cUpBox.SubclassDlgItem(IDC_UP_BOX,this);
+
+   // Setup edit boxes
+   m_cPosBox.setNumEntries(3);
+   m_cLookBox.setNumEntries(3);
+   m_cUpBox.setNumEntries(3);
+
+   // Set edit box fonts
 	m_fntCourier = new CFont;
 	m_fntCourier->CreateFont(8,0,0,0,400,FALSE, FALSE, 0,
 						ANSI_CHARSET, OUT_DEFAULT_PRECIS, 
@@ -148,6 +159,8 @@ BOOL CPeekDialog::OnInitDialog() {
 	CEdit* pEditResult = (CEdit*) GetDlgItem(IDC_RESULT_BOX);
 	pEditResult->SetFont(m_fntCourier);
 
+
+   // Load icon for copy button
 	VERIFY(m_CopyLogo.AutoLoad(IDC_COPY_BUTTON, this));
 	
 	return TRUE;
@@ -170,107 +183,86 @@ void CPeekDialog::OnSysCommand(UINT nID, LPARAM lParam) {
 }
 
 void CPeekDialog::RecalculateOrientation(CString & strResult) {
-	bool bValidStringP, bValidStringT, bValidStringU;
-	CVector3D vecInitialLook(0.0, 0.0, -1.0);
+
+   CVector3D vecInitialLook(0.0, 0.0, -1.0);
 	CVector3D vecInitialUp(0.0, 1.0, 0.0);
+	CVector3D vecPosition;
+	CVector3D vecTarget;
+	CVector3D vecUp;
 
-	CVector3D oPosition(m_strPosition,bValidStringP);
-	if (bValidStringP == true) {
-		oPosition.ToString(m_strPosition);
+   // Parse input
+   vecPosition.ParseString(m_strPosition);
+   vecPosition.ParseString(m_strLookAt);
+   vecUp.ParseString(m_strUpVector);
+   
+   // Check validity of up vector
+   if (vecUp == vecTarget) {
+		vecUp = vecInitialUp;
 	}
 	else {
-		m_strPosition = "";
-	}
-
-	CVector3D oTarget(m_strLookAt,bValidStringT);
-	if (bValidStringT == true) {
-		oTarget.ToString(m_strLookAt);
-	}
-	else {
-		m_strLookAt = "";
-	}
-
-	CVector3D vecUp(m_strUpVector,bValidStringU);
-	if (bValidStringU == true) {
-		vecUp.ToString(m_strUpVector);
-		if (vecUp == oTarget) {
-			vecUp = vecInitialUp;
-		}
-		else {
-			vecUp = vecUp.Normalise();
-		}
-	}
-	else {
-		m_strUpVector = "";
+		vecUp = vecUp.Normalise();
 	}
 	
-	if (bValidStringP && bValidStringT && bValidStringU) {
-
-		//Calculate Heading rotation
-		//  Calculate Heading vector
-		CVector3D vecHeading = (oTarget - oPosition);
-		vecHeading = vecHeading.Normalise();
-		//  Calculate Rotation angle
-		double dHeadingAngle = acos(vecInitialLook.Dot(vecHeading));
-		CAxisRotation rotNormalRotation;
-		//Calculate Normal vector to initial and aim vectors
-		CVector3D vecHeadingNormal = vecInitialLook.Cross(vecHeading);
-		if (vecHeadingNormal.Length() < 1e-8) {
-			if (dHeadingAngle < 1e-8) {
-				CAxisRotation rotTempNormalRotation(0.0, 1.0, 0.0, 0.0);
-				rotNormalRotation = rotTempNormalRotation;
-			}
-			else {
-				CAxisRotation rotTempNormalRotation(0.0, 1.0, 0.0, 3.14);
-				rotNormalRotation = rotTempNormalRotation;
-			}
-		}
-		else {
-			vecHeadingNormal = vecHeadingNormal.Normalise();
-			//Construct Normal Rotation
-			CAxisRotation rotTempNormalRotation(vecHeadingNormal, dHeadingAngle);
+	//Calculate Heading rotation
+	//  Calculate Heading vector
+	CVector3D vecHeading = (vecTarget - vecPosition);
+	vecHeading = vecHeading.Normalise();
+	//  Calculate Rotation angle
+	double dHeadingAngle = acos(vecInitialLook.Dot(vecHeading));
+	CAxisRotation rotNormalRotation;
+	//Calculate Normal vector to initial and aim vectors
+	CVector3D vecHeadingNormal = vecInitialLook.Cross(vecHeading);
+	if (vecHeadingNormal.Length() < 1e-8) {
+		if (dHeadingAngle < 1e-8) {
+			CAxisRotation rotTempNormalRotation(0.0, 1.0, 0.0, 0.0);
 			rotNormalRotation = rotTempNormalRotation;
 		}
-
-		//Calculate Up Rotation
-		//	Rotate inital up vector by heading rotation to get current up vector
-		CVector3D vecCurrentUp = vecInitialUp.Rotate(rotNormalRotation);
-		vecCurrentUp = vecCurrentUp.Normalise();
-		//	Transform final up vector into a vector perpendicular to the heading vector
-		CVector3D vecUpNormal = vecUp.Cross(vecHeading);
-		vecUpNormal = vecUpNormal.Normalise();
-		CAxisRotation oUpRotation(-vecUpNormal, V_PI / 2);
-		CVector3D vecRequiredUp = vecHeading.Rotate(oUpRotation);
-		vecRequiredUp = vecRequiredUp.Normalise();
-		//	Calculate angle between current and desired up vectors.
-		double dUpAngle = acos(vecCurrentUp.Dot(vecRequiredUp));
-		CAxisRotation rotUpRotation;
-		if (dUpAngle > 1e-8) {
-			CVector3D vecUpAxis = vecCurrentUp.Cross(vecRequiredUp);
-			vecUpAxis.Normalise();
-			//Rotate by angle around the correct axis
-			CAxisRotation rotTempUpRotation(vecUpAxis, dUpAngle);
-			rotUpRotation = rotTempUpRotation;
-		}
 		else {
-			CAxisRotation rotTempUpRotation(0.0, 1.0, 0.0, 0.0);
-			rotUpRotation = rotTempUpRotation;
+			CAxisRotation rotTempNormalRotation(0.0, 1.0, 0.0, 3.14);
+			rotNormalRotation = rotTempNormalRotation;
 		}
-
-		//Combine Normal Rotation and Up Rotation by multiplying quaternions
-		CQuaternion quatNormalRotation(rotNormalRotation);
-		CQuaternion quatUpRotation(rotUpRotation);
-		CQuaternion quatResult = quatNormalRotation * quatUpRotation;
-		//Transform resultant quaternion back to Axis angle.
-		CAxisRotation rotResult(quatResult);
-		//All done!
-		rotResult.ToString(strResult);
-	}		
-	else {
-		//We don't have all valid values
-		strResult = "0 1 0 0";
 	}
-	return;
+	else {
+		vecHeadingNormal = vecHeadingNormal.Normalise();
+		//Construct Normal Rotation
+		CAxisRotation rotTempNormalRotation(vecHeadingNormal, dHeadingAngle);
+		rotNormalRotation = rotTempNormalRotation;
+	}
+
+	//Calculate Up Rotation
+	//	Rotate inital up vector by heading rotation to get current up vector
+	CVector3D vecCurrentUp = vecInitialUp.Rotate(rotNormalRotation);
+	vecCurrentUp = vecCurrentUp.Normalise();
+	//	Transform final up vector into a vector perpendicular to the heading vector
+	CVector3D vecUpNormal = vecUp.Cross(vecHeading);
+	vecUpNormal = vecUpNormal.Normalise();
+	CAxisRotation oUpRotation(-vecUpNormal, V_PI / 2);
+	CVector3D vecRequiredUp = vecHeading.Rotate(oUpRotation);
+	vecRequiredUp = vecRequiredUp.Normalise();
+	//	Calculate angle between current and desired up vectors.
+	double dUpAngle = acos(vecCurrentUp.Dot(vecRequiredUp));
+	CAxisRotation rotUpRotation;
+	if (dUpAngle > 1e-8) {
+		CVector3D vecUpAxis = vecCurrentUp.Cross(vecRequiredUp);
+		vecUpAxis.Normalise();
+		//Rotate by angle around the correct axis
+		CAxisRotation rotTempUpRotation(vecUpAxis, dUpAngle);
+		rotUpRotation = rotTempUpRotation;
+	}
+	else {
+		CAxisRotation rotTempUpRotation(0.0, 1.0, 0.0, 0.0);
+		rotUpRotation = rotTempUpRotation;
+	}
+
+	//Combine Normal Rotation and Up Rotation by multiplying quaternions
+	CQuaternion quatNormalRotation(rotNormalRotation);
+	CQuaternion quatUpRotation(rotUpRotation);
+	CQuaternion quatResult = quatNormalRotation * quatUpRotation;
+	//Transform resultant quaternion back to Axis angle.
+	CAxisRotation rotResult(quatResult);
+	//All done!
+	strResult = rotResult.ToString(2);
+   return;
 }
 
 void CPeekDialog::OnUpdateButton() {

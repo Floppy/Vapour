@@ -7,6 +7,8 @@
 // PeekDialog.h : header file
 //
 
+#include "NumericEdit.h"
+
 /////////////////////////////////////////////////////////////////////////////
 // CPeekDialog dialog
 
@@ -20,6 +22,9 @@ public:
 	CFont * m_fntCourier;
 	CPeekDialog(CWnd* pParent = NULL);   // standard constructor
 	CString	m_strResult;
+   CNumericEdit m_cPosBox;
+   CNumericEdit m_cLookBox;
+   CNumericEdit m_cUpBox;
 
 // Dialog Data
 	//{{AFX_DATA(CPeekDialog)
