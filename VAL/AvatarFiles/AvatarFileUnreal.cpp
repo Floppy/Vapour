@@ -7,7 +7,7 @@
 // AvatarFileUnreal.cpp - 16/2/2000 - James Smith
 //	Unreal export filter implementation
 //
-// $Id: AvatarFileUnreal.cpp,v 1.6 2000/08/21 23:06:41 waz Exp $
+// $Id: AvatarFileUnreal.cpp,v 1.7 2000/08/22 11:30:19 waz Exp $
 //
 
 #include "stdafx.h"
@@ -18,6 +18,9 @@
 #include "AvatarFileProxy.h"
 
 #include "Unreal.h"
+
+#include "ImageFileStore.h"
+extern CImageFileStore g_oImageFileStore;
 
 #include <direct.h>
 #include <errno.h>
@@ -335,6 +338,8 @@ FRESULT CAvatarFileUnreal::Init(const char* pszFilename, const CAvatar* pAvatar)
    for ( ; i<4; i++) {
       m_pszTexBaseName[i] = 'x';
    }
+   // Terminate string!
+   m_pszTexBaseName[4] = 0;
 
    // Create package name
    NEWBEGIN
@@ -920,11 +925,15 @@ FRESULT CAvatarFileUnreal::SaveTextureUTX(const char* pszFilename, const CAvatar
             pcTextureData[uTextureDataOffset++] = (char)0x00;
             pcTextureData[uTextureDataOffset++] = (char)0x09;
             // Until we reach minimum texture size (0), output image halving size each time
+            //CImageFile* pFilter = g_oImageFileStore.CreateByExtension("bmp");
             while (cCount > 0) {
                // Reduce image by the correct amount and convert it.
                CImage imgMipmap(*pTexture);
                imgMipmap.Scale(iWidth,iHeight);
                imgMipmap.ForceToPalette(pPalettes[t]);
+               //char pszName[32];
+               //sprintf(pszName,"d:\\temp\\img%d_mip%03d.bmp",t,iWidth);
+               //imgMipmap.Save(pszName,pFilter);
                // Write mip image header...
                // Store address of foot offset
                unsigned long uFooterOffset = uTextureDataOffset;
@@ -956,6 +965,7 @@ FRESULT CAvatarFileUnreal::SaveTextureUTX(const char* pszFilename, const CAvatar
                iWidth = iWidth >> 1;
                iHeight = iHeight >> 1;
             }
+            //delete pFilter;
          }
       }
       else {
@@ -1333,7 +1343,7 @@ FRESULT CAvatarFileUnreal::SaveMeshU(const char* pszFilename, CAvatar* pAvatar) 
          /*char pszWJEName[STR_SIZE] = "";
          strcpy(pszWJEName, g_poVAL->GetAppDir());
          strcat(pszWJEName, "utdata.wje");
-         ifstream fsDataWJE.open(pszWJEName, ios::in|ios::binary|ios::nocreate);
+         fstream fsDataWJE(pszWJEName, ios::in|ios::binary|ios::nocreate);
          if (fsDataWJE.fail()) {
             delete [] pcMeshFrameHeader;
             delete [] pcMeshProperties;
@@ -1353,8 +1363,9 @@ FRESULT CAvatarFileUnreal::SaveMeshU(const char* pszFilename, CAvatar* pAvatar) 
             // Create filename to load: utp000.vpo to utp699.vpo
             sprintf(pszPoseFilename,"d:\\work\\unreal\\poses\\utp%03d.vpo",i);
             // Load file from wedgie
-            CAvatarPose oPose(95);
-            if (oPose.Load(pszPoseFilename)) {
+            CAvatarPose oPose;
+            if (oPose.Load(pszPoseFilename) == F_OK) {
+               cout << "Loaded pose " << i << endl;
                // Apply to avatar
                pAvatar->ImportPose(oPose);
             }

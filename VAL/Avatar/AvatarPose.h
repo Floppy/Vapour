@@ -7,7 +7,7 @@
 // AvatarPose.h - 21/2/2000 - James Smith
 //	Avatar pose class header
 //
-// $Id: AvatarPose.h,v 1.4 2000/08/21 17:01:02 waz Exp $
+// $Id: AvatarPose.h,v 1.5 2000/08/22 11:30:20 waz Exp $
 //
 
 #ifndef _VAL_AVATARPOSE_
@@ -46,7 +46,7 @@ class DLL_IMP_EXP CAvatarPose {
 
 public:
 
-	// Copy Constructor
+   // Copy Constructor
    CAvatarPose(const CAvatarPose& apOtherPose);
 
    // Creates a default pose
@@ -84,14 +84,14 @@ public:
 
    CAvatarPose InterpolateToZero(double dAmount, bool bAccel = false) const;
    
-   // Load functions return 1 if successful, 0 if not
-	int Load(const char* pszFilename);
-	bool Load(const char *pcFilename, CWedgie &oWedgie);
-	int Load(ifstream& isInputStream);
+   // Load functions
+	FRESULT Load(const char* pszFilename);
+	FRESULT Load(const char *pcFilename, CWedgie &oWedgie);
+	FRESULT Load(ifstream& isInputStream);
 
-   // Save functions return 1 if successful, 0 if not
-	int Save(const char* pszFilename) const;
-	int Save(ofstream& osOutputStream) const;
+   // Save functions
+	FRESULT Save(const char* pszFilename) const;
+	FRESULT Save(ofstream& osOutputStream) const;
    
    // File type information functions
    static const char* GetExtension() {return ("vpo");}

@@ -7,7 +7,7 @@
 // Avatar.cpp - 17/06/2000 - James Smith
 //	Avatar class implementation
 //
-// $Id: Avatar.cpp,v 1.5 2000/08/21 23:07:49 waz Exp $
+// $Id: Avatar.cpp,v 1.6 2000/08/22 11:30:20 waz Exp $
 //
 
 #include "stdafx.h"
@@ -498,7 +498,7 @@ void CAvatar::AlignDefaultCentres(BodyPart bpStart, CVector3D vecTarget) {
       CAxisRotation rotRotation(vecAxis,dAngle);
       CHomTransform htTransform(rotRotation,m_pBodyParts[bpParent].m_pntDefaultCentre);
       RotateDefaultCentres(bpStart,htTransform);
-      SetJointAngle(bpParent,CAxisRotation(vecAxis,-dAngle));
+      SetJointAngle(bpParent,CAxisRotation(vecAxis,-dAngle),false);
    }
    return;
 } //AlignDefaultCentres(BodyPart bpParent, BodyPart bpStart, CVector3D vecTarget)

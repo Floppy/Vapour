@@ -7,7 +7,7 @@
 // AvatarPose.cpp - 21/2/2000 - James Smith
 //	Avatar pose class implementation
 //
-// $Id: AvatarPose.cpp,v 1.3 2000/08/21 17:01:03 waz Exp $
+// $Id: AvatarPose.cpp,v 1.4 2000/08/22 11:30:20 waz Exp $
 //
 
 
@@ -48,7 +48,7 @@ CAvatarPose::CAvatarPose(int iNumJoints) {
    m_pTargetQuats = NULL;
    m_pTargetTranslation = NULL;
    return;
-} //CAvatarPose()
+} //CAvatarPose(int iNumJoints)
 
 // Loads a pose directly from a file
 CAvatarPose::CAvatarPose(const char* pszFilename) {
@@ -59,7 +59,7 @@ CAvatarPose::CAvatarPose(const char* pszFilename) {
    m_pTargetTranslation = NULL;
    Load(pszFilename);
    return;
-}
+} //CAvatarPose(const char* pszFilename)
 
 // Loads a pose directly from a wedgie
 CAvatarPose::CAvatarPose(const char* pszFilename, CWedgie &oWedgie) {
@@ -223,21 +223,23 @@ double CAvatarPose::AddAcceleration(double dAmount) const {
 
 // Load functions return 1 if successful, 0 if not
 
-int CAvatarPose::Load(const char* pszFilename) {
-	int iRetVal = 0;
-   ifstream isInputStream(pszFilename);
+FRESULT CAvatarPose::Load(const char* pszFilename) {
+	FRESULT eResult = F_OK;
+   ifstream isInputStream(pszFilename,ios::in|ios::nocreate|ios::binary);
 	if (!isInputStream.fail()) {
-		iRetVal = Load(isInputStream);
+		eResult = Load(isInputStream);
+   	isInputStream.close();
 	}
-	isInputStream.close();
-	return iRetVal;
+   else eResult = F_DOES_NOT_EXIST;
+	return eResult;
 } //Load(const char* pszFilename)
 
-bool CAvatarPose::Load(const char *pcFilename, CWedgie &oWedgie) {
+FRESULT CAvatarPose::Load(const char *pcFilename, CWedgie &oWedgie) {
+   FRESULT eResult = F_OK;
 	// Find the file in the wedgie, return if failed
 	int iHandle = oWedgie.Open(pcFilename);
 	if (iHandle == -1)
-		return false;
+		return F_FILE_ERROR;
 	// Load the pose
    unsigned char pcBuffer[3072];
 	unsigned char *pcTemp = pcBuffer + 4;
@@ -283,19 +285,22 @@ bool CAvatarPose::Load(const char *pcFilename, CWedgie &oWedgie) {
             }
             break;
 			default:
-				ASSERT(false);
+            eResult = F_BAD_VERSION;
+            break;
       }
    }
+   else eResult = F_WRONG_FILE_TYPE;
 	// Close the wedgie
 	oWedgie.Close(iHandle);
 	// Return ok
-	return true;
+	return eResult;
 } // Load (from Wedgie)
 
-int CAvatarPose::Load(ifstream& isInputStream) {
-	int iRetVal = 0;
+FRESULT CAvatarPose::Load(ifstream& isInputStream) {
+	FRESULT eResult = F_OK;
    unsigned char buffer[8];
    isInputStream.read(buffer,4);
+   if (isInputStream.fail()) return F_BAD_DATA;
    if ((buffer[0] == 'V') && (buffer[1] == 'P') && (buffer[2] == 'O')) {
       // Test version number
       long int iNewNumJoints = 0;
@@ -335,29 +340,33 @@ int CAvatarPose::Load(ifstream& isInputStream) {
                dR = *((double*)buffer);
                m_pJointRotations[i].FromDouble(dX,dY,dZ,dR);
             }
+            if (isInputStream.fail()) eResult = F_BAD_DATA;
             break;
 			default:
-				ASSERT(false);
+            eResult = F_BAD_VERSION;
+            break;
       }
    }
-	return iRetVal;
+   else eResult = F_WRONG_FILE_TYPE;
+	return eResult;
 } //Load(ifstream& isInputStream)
 	
 // Save functions return 1 if successful, 0 if not
 
-int CAvatarPose::Save(const char* pszFilename) const {
-	int iRetVal = 0;
-   ofstream osOutputStream(pszFilename);
-	if (osOutputStream.good()) {
-		iRetVal = Save(osOutputStream);
+FRESULT CAvatarPose::Save(const char* pszFilename) const {
+	FRESULT eResult = F_OK;
+   ofstream osOutputStream(pszFilename,ios::out|ios::binary);
+	if (!osOutputStream.fail()) {
+		eResult = Save(osOutputStream);
+      osOutputStream.close();
 	}
-	osOutputStream.close();
-	return iRetVal;
+   else eResult = F_FILE_ERROR;
+	return eResult;
 } //Save(const char* pszFilename)
 
-int CAvatarPose::Save(ofstream& osOutputStream) const {
-	int iRetVal = 1;
-   // Set binary stream mode
+FRESULT CAvatarPose::Save(ofstream& osOutputStream) const {
+	FRESULT eResult = F_OK;
+   // Force binary stream mode
    int iOldMode = osOutputStream.setmode(filebuf::binary);
    // Header
    osOutputStream.write("VPO",3);
@@ -379,9 +388,9 @@ int CAvatarPose::Save(ofstream& osOutputStream) const {
       osOutputStream.write((char*)(&dz),sizeof(double));
       osOutputStream.write((char*)(&dr),sizeof(double));
    }
-   if (osOutputStream.bad()) iRetVal = 0;
+   if (osOutputStream.fail()) eResult = F_FILE_ERROR;
    // Restore old stream mode
    if (iOldMode != -1) osOutputStream.setmode(iOldMode);
    // Return
-	return iRetVal;
+	return eResult;
 } //Save(ofstream& osOutputStream)
