@@ -185,7 +185,15 @@ SOURCE=.\DataTypes\Quaternion.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\Render\RenderAvatar.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\Render\RenderContext.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\Render\RenderObject.cpp
 # End Source File
 # Begin Source File
 
@@ -378,7 +386,15 @@ SOURCE=.\DataTypes\Quaternion.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\Render\RenderAvatar.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\Render\RenderContext.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\Render\RenderObject.h
 # End Source File
 # Begin Source File
 
