@@ -23,9 +23,12 @@ cp -f `find .. -name '*.eht' -printf "%h/*.eht "` eht 2> /dev/null
 rm -rf ../Doc/*
 CxxDoc -pn VTStrucVis -o ../Doc/ -p .. -i .. -eht eht -tc class -td docnode
 
-# fix the namespace problems
+# Fix the std namespace problems
 cp -f ../Doc/user/class/..html ../Doc/user/class/std.html 2> /dev/null
-cp -f ../Doc/developer/class/..html ../Doc/developer/class/std.html
+cp -f ../Doc/developer/class/..html ../Doc/developer/class/std.html 2> /dev/null
+
+# Copy any pics
+cp -f pics/* ../Doc 2> /dev/null
 
 # Remove the temp dir
 rm -rf eht
