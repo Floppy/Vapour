@@ -6,7 +6,7 @@
 // SceneManager.cpp
 // 19/03/2002 - James Smith
 //
-// $Id: SceneManager.cpp,v 1.1 2002/03/21 21:15:39 vap-james Exp $
+// $Id: SceneManager.cpp,v 1.2 2002/03/21 21:55:24 vap-james Exp $
 
 #include "stdafx.h"
 #include "SceneManager.h"
@@ -59,30 +59,30 @@ void CSceneManager::Load(void) {
    pBeam->SetID(1);
    pBeam->SetGroup(1);
    pBeam->SetSize(0.5446f, 0.2119f, 0.0213f, 0.0128f);
-   pBeam->SetNodes(1,2);
+   unsigned int piBeam1[2] = {1,2};
+   pBeam->SetNodes(piBeam1);
    pBeam->SetColourScheme(STRESS);
    pBeam->SetStressRange(0,100);
-   pBeam->SetStresses(0,50);
    m_oElements.push_back(pBeam);
 
    pBeam = new CBeamElement(m_poCortona,&m_oNodeSet);
    pBeam->SetID(2);
    pBeam->SetGroup(1);
    pBeam->SetSize(0.5446f, 0.2119f, 0.0213f, 0.0128f);
-   pBeam->SetNodes(2,3);
+   unsigned int piBeam2[2] = {2,3};
+   pBeam->SetNodes(piBeam2);
    pBeam->SetColourScheme(STRESS);
    pBeam->SetStressRange(0,100);
-   pBeam->SetStresses(50,100);
    m_oElements.push_back(pBeam);
 
    pBeam = new CBeamElement(m_poCortona,&m_oNodeSet);
    pBeam->SetID(3);
    pBeam->SetGroup(1);
    pBeam->SetSize(0.5446f, 0.2119f, 0.0213f, 0.0128f);
-   pBeam->SetNodes(7,8);
+   unsigned int piBeam3[2] = {7,8};
+   pBeam->SetNodes(piBeam3);
    pBeam->SetColourScheme(STRESS);
    pBeam->SetStressRange(0,100);
-   pBeam->SetStresses(50,100);
    m_oElements.push_back(pBeam);
    
    // Create a slab
@@ -90,10 +90,10 @@ void CSceneManager::Load(void) {
    pSlab->SetID(4);
    pSlab->SetGroup(2);
    pSlab->SetSize(0.3f);
-   pSlab->SetNodes(9,6,3,2,1,4,7,8,5);
+   unsigned int piSlab1[9] = {9,6,3,2,1,4,7,8,5};
+   pSlab->SetNodes(piSlab1);
    pSlab->SetColourScheme(STRESS);
    pSlab->SetStressRange(0,100);
-   pSlab->SetStresses(100,100,100,50,0,0,50,100,75);
    m_oElements.push_back(pSlab);
 
    Update();
@@ -130,6 +130,15 @@ void CSceneManager::FramePrev(void) {
       0, -1, 0
    };
    m_oNodeSet.Displace(pfNodes);
+   // Set stresses
+   float pfBeam1[2] = {0,50};
+   float pfBeam2[2] = {50,100};
+   float pfBeam3[2] = {50,100};
+   float pfSlab1[9] = {100,100,100,50,0,0,50,100,75};
+   (m_oElements[0])->SetStresses(pfBeam1);
+   (m_oElements[1])->SetStresses(pfBeam2);
+   (m_oElements[2])->SetStresses(pfBeam3);
+   (m_oElements[3])->SetStresses(pfSlab1);
    // Render
    Update();
 }
