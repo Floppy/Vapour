@@ -14,7 +14,7 @@
 //! author     = "James Smith"
 //! date       = "12/10/2001"
 //! lib        = libVALET3d
-//! rcsid      = "$Id: surface.h,v 1.9 2001/10/24 23:18:57 vap-james Exp $"
+//! rcsid      = "$Id: surface.h,v 1.10 2001/11/04 15:49:58 vap-warren Exp $"
 //! userlevel  = Normal
 //! docentry   = "VALET.3D.Surface Representations"
 
@@ -22,10 +22,11 @@
 #include "VALET/valet.h"
 
 #include <vector>
-using namespace std;
 
 namespace NVALET {
   
+   using namespace std;
+   
    //: A templated base class for a 3D surface
    // The class T is the type of the vertices/control points for the surface.
 

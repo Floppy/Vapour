@@ -13,7 +13,7 @@
 //! author     = "James Smith"
 //! date       = "18/10/2001"
 //! lib        = libVALET3d
-//! rcsid      = "$Id: joint.h,v 1.5 2001/10/24 23:03:48 vap-james Exp $"
+//! rcsid      = "$Id: joint.h,v 1.6 2001/11/04 15:49:58 vap-warren Exp $"
 //! userlevel  = Normal
 //! docentry   = "VALET.3D.Animation"
 
@@ -25,10 +25,11 @@
 #include "VALET/axisrotation.h"
 
 #include <vector>
-using namespace std;
 
 namespace NVALET {
 
+   using namespace std;
+   
    //: A Joint in a skeleton
    
    class CJoint {
