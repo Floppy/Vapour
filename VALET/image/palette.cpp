@@ -11,21 +11,14 @@
 //! author		= "Warren Moore"
 //! date			= "17/10/2001"
 //! lib 			= libVALETimage
-//! rcsid		= "$Id: palette.cpp,v 1.2 2001/10/18 10:42:01 vap-warren Exp $"
+//! rcsid		= "$Id: palette.cpp,v 1.3 2001/10/24 17:10:22 vap-warren Exp $"
 
 //#===--- Includes
 #include "palette.h"
 
-// These are needed for C++ linking of KOS stdlib functions
-#ifdef __cplusplus
-extern "C" {
-#endif
 #include <math.h>
 #include <string.h>
 #include <stdlib.h>
-#ifdef __cplusplus
-}
-#endif
 
 namespace NValet {
 
@@ -38,6 +31,15 @@ namespace NValet {
    #define IPL_HASH_MASK            (0x000000FF << (8 - IPL_HASH_BITS)) & 0x000000FF
 
    //#===--- CImagePalette
+
+   CImagePalette::CImagePalette() :
+      m_iSize(0),
+      m_iNextEntry(0),
+      m_puPalette(NULL),
+      m_psCache(NULL),
+      m_psHash(NULL)
+   {
+   } // CImagePalette::Constructor
 
    CImagePalette::CImagePalette(int iSize, unsigned int uColour) :
       m_iNextEntry(0),
