@@ -14,7 +14,7 @@
 //! author 		= "James Smith"
 //! date 		= "09/10/2001"
 //! lib 		= libVALET3d
-//! rcsid 		= "$Id: material.h,v 1.3 2001/10/10 09:02:31 vap-james Exp $"
+//! rcsid 		= "$Id: material.h,v 1.4 2001/10/12 15:20:05 vap-james Exp $"
 //! userlevel 	        = Normal
 //! docentry 	        = "VALET.3D.Surface Materials"
 
@@ -50,8 +50,8 @@ namespace NValet {
     
   public:    
     
-    //:------------------------
-    //: Contruction/Destruction
+    //:-------------------------
+    //: Construction/Destruction
 
     CMaterial();
     //: Default Constructor
