@@ -5,9 +5,9 @@
 // Copyright 2000 Vapour Technology Ltd.
 //
 // SurfaceMaterial.h - 17/11/2000 - James Smith
-//	Surface material class declaration
+//	  Surface material class declaration
 //
-// $Id: SurfaceMaterial.h,v 1.1 2000/11/30 09:37:41 warren Exp $
+// $Id: SurfaceMaterial.h,v 1.2 2000/12/02 07:34:32 warren Exp $
 //
 
 #ifndef _VAL_SURFACEMATERIAL_
@@ -16,6 +16,7 @@
 #pragma once
 
 // VAL includes
+#include "Colour.h"
 #include "Image.h"
 
 // DLL import/export definitions
@@ -30,43 +31,6 @@
 		#define DLL
 	#endif
 #endif
-
-///////////////////////////////////////////////////////////////////////
-// Structures /////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////
-
-// Colour components go from 0..1
-struct SColour {
-double m_dRed;
-double m_dGreen;
-double m_dBlue;
-double m_dAlpha;
-
-// Default 
-SColour() :
-	m_dRed(1.0),
-	m_dGreen(1.0),
-	m_dBlue(1.0),
-	m_dAlpha(1.0) {
-}
-
-// RGB Constructor
-SColour(double dRed, double dGreen, double dBlue) :
-	m_dRed(dRed),
-	m_dGreen(dGreen),
-	m_dBlue(dBlue),
-	m_dAlpha(1.0) {
-}
-
-// RGBA Constructor
-SColour(double dRed, double dGreen, double dBlue, double dAlpha) :
-	m_dRed(dRed),
-	m_dGreen(dGreen),
-	m_dBlue(dBlue),
-	m_dAlpha(dAlpha) {
-}
-
-};
 
 /////////////////////
 // CSurfaceMaterial
@@ -83,7 +47,7 @@ public:
    CSurfaceMaterial();
    
    // Creates a surface material with a particular texture
-   CSurfaceMaterial(CImage* pTexture);
+   CSurfaceMaterial(CImage *poTexture);
 
    // Destructor
    virtual ~CSurfaceMaterial();
@@ -93,16 +57,19 @@ public:
    ///////////////////////////////////////////////////////////////////////
 
    // Assigns the diffuse colour of the material
-   void SetDiffuse(const SColour& sDiffuse) { m_sDiffuse = sDiffuse; }
+   void SetAmbient(const CColour &oColour) { m_oAmbient = oColour; }
+
+   // Assigns the diffuse colour of the material
+   void SetDiffuse(const CColour &oColour) { m_oDiffuse = oColour; }
 
    // Assigns the specular colour of the material
-   void SetSpecular(const SColour& sSpecular) { m_sSpecular = sSpecular; }
+   void SetSpecular(const CColour &oColour) { m_oSpecular = oColour; }
 
    // Assigns the emissive colour of the material
-   void SetEmissive(const SColour& sEmissive) { m_sEmissive = sEmissive;}
+   void SetEmissive(const CColour &oColour) { m_oEmissive = oColour; }
 
    // Assigns the shininess of the material
-   void SetShininess(double dShininess) { m_dShininess = dShininess; }
+   void SetShininess(float fShininess) { m_fShininess = fShininess; }
 
    // Assigns the texture for the material - any old texture is automatically deleted
    void SetTexture(CImage* pTexture);
@@ -112,19 +79,22 @@ public:
    ///////////////////////////////////////////////////////////////////////
 
    // Returns the diffuse colour of the material
-   SColour Diffuse(void) const {return m_sDiffuse; }
+   CColour Ambient(void) const { return m_oAmbient; }
+
+   // Returns the diffuse colour of the material
+   CColour Diffuse(void) const { return m_oDiffuse; }
 
    // Returns the specular colour of the material
-   SColour Specular(void) const {return m_sSpecular; }
+   CColour Specular(void) const { return m_oSpecular; }
 
    // Returns the emissive colour of the material
-   SColour Emissive(void) const {return m_sEmissive; }
+   CColour Emissive(void) const { return m_oEmissive; }
 
    // Returns the shininess of the material
-   double Shininess(void) const {return m_dShininess; }
+   float Shininess(void) const {return m_fShininess; }
 
    // Returns the texture for the material
-   CImage* Texture(void) const {return m_pTexture;}
+   CImage *Texture(void) const {return m_poTexture;}
 
 protected:
 	
@@ -132,21 +102,24 @@ protected:
    // Data ///////////////////////////////////////////////////////////////
    ///////////////////////////////////////////////////////////////////////
 
+   // The ambient colour of the material
+   CColour m_oAmbient;
+
    // The diffuse colour of the material
-   SColour m_sDiffuse;
+   CColour m_oDiffuse;
 
    // The specular colour of the material
-   SColour m_sSpecular;
+   CColour m_oSpecular;
 
    // The emissive colour of the material
-   SColour m_sEmissive;
+   CColour m_oEmissive;
 
    // The shininess of the material
-   double m_dShininess;
+   float m_fShininess;
 
    // A texture map to be applied to the surface
-   CImage* m_pTexture;
+   CImage *m_poTexture;
 
 };
 
-#endif //_VAL_MATERIAL_
+#endif //_VAL_SURFACEMATERIAL_
