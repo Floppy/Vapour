@@ -14,12 +14,14 @@
 //! author 		= "James Smith"
 //! date 		= "12/10/2001"
 //! lib 		= libVALET3d
-//! rcsid 		= "$Id: surface.h,v 1.1 2001/10/12 15:21:27 vap-james Exp $"
+//! rcsid 		= "$Id: surface.h,v 1.2 2001/10/15 16:06:23 vap-james Exp $"
 //! userlevel 	        = Normal
 //! docentry 	        = "VALET.3D.Surface Representations"
 
 //#===--- Includes
 #include "../arch/valet.h"
+
+#include <list>
 
 namespace NValet {
   
@@ -28,6 +30,11 @@ namespace NValet {
 
   template<class T> class CSurface {
     
+  protected:
+	
+    list<T> m_lVertices;
+    //: The vertices themselves
+    
   public:
     
     //:-------------------------
@@ -35,7 +42,8 @@ namespace NValet {
 
     CSurface();
     //: Creates an empty surface
-    
+    // i.e. 0 vertices.
+   
     CSurface(int iNumVertices);
     //: Creates a surface with the specified number of vertices.
     // All the vertices will be their default value.
@@ -48,26 +56,23 @@ namespace NValet {
 
     virtual bool AddVertices(int iNumVertices);
     //: Adds the specified number of vertices
-    // Returns true if addition is successful
-    // Do not use this too much - it is very expensive.
+    // Returns true if addition is successful. The new vertices will be set to their default value.
+    //!param: iNumVertices = the number of vertices to add.
+    //!param: return = true if succesful.
     
-    // Sets information for a single vertex
-    void SetVertex(int iVertex, const T& oVertex) {if (iVertex<m_iNumVertices) m_pVertices[iVertex]=oVertex;}
+    void SetVertex(int iVertex, const T& oValue) {m_lVertices[iVertex] = oValue;}
+    //: Sets information for a single vertex
+    //!param: iVertex = the vertex to set.
+    //!param: oValue = the value to set the vertex to.
     
-    // Provides direct access to the vertex array
-    const T* Vertices(void) const {return m_pVertices;}
-    
-    // The number of vertices in the model.
-    int NumVertices(void) const {return m_iNumVertices;}
-    
-    // Access to a particular vertex
-    const T* Vertex(int iVertex) const {return (iVertex<m_iNumVertices) ? m_pVertices + iVertex : NULL;}
-    
-  protected:
-	
-   // Geometry
-    int m_iNumVertices;
-    T* m_pVertices;
+    const T* Vertex(int iVertex) const {return m_lVertices[iVertex];}
+    //: Access to a particular vertex
+    //!param: iVertex = the vertex to access.
+    //!param: return = the requested vertex.
+
+    int NumVertices(void) const {return m_lVertices.size();}
+    //: The number of vertices in the model.
+    //!param: return = the number of vertices.
     
   };
 

@@ -11,77 +11,30 @@
 //! author 		= "James Smith"
 //! date 		= "12/10/2001"
 //! lib 		= libVALET3d
-//! rcsid 		= "$Id: surface_template.cpp,v 1.1 2001/10/12 15:21:27 vap-james Exp $"
+//! rcsid 		= "$Id: surface_template.cpp,v 1.2 2001/10/15 16:06:23 vap-james Exp $"
 //! userlevel 	        = Normal
 //! docentry 	        = "VALET.3D.Surface Representations"
 
 namespace NValet {
   
-  // Creates a Model with 0 vertices
   template<class T> 
-  CSurface<T>::CSurface() :
-    m_iNumVertices(0),
-    m_pVertices(NULL)
-{
-  return;
-} //CSurface()
+  CSurface<T>::CSurface() {
+  } //CSurface()
   
-  // Creates a Model with the specified number of vertices
   template<class T>
-  CSurface<T>::CSurface(int iNumVertices) {
-    // Initialise number of vertices
-    m_iNumVertices = 0;
-    // Allocate vertex storage
-    m_pVertices = NULL;
-    m_pVertices = new T[iNumVertices];
-    // Check vertex allocation and store number of vertices if appropriate
-    if (m_pVertices != NULL) m_iNumVertices = iNumVertices;
-    // Done
-    return;
+  CSurface<T>::CSurface(int iNumVertices) :
+    m_lVertices(iNumVertices)
+  {
   } //CSurface(int iNumVertices)
   
   template<class T>
   CSurface<T>::~CSurface() {
-    if (m_pVertices != NULL) delete [] m_pVertices;
-    return;
   } //~CSurface()
   
-  // Adds the specified number of vertices
-  // Returns true if addition is successful
   template<class T>
   bool CSurface<T>::AddVertices(int iNumVertices) {
-    bool bResult = false;
-    if (m_iNumVertices == 0) {
-      // Allocate vertex storage
-      m_pVertices = new T[iNumVertices];
-      // Check vertex allocation and store number of vertices if appropriate
-      if (m_pVertices != NULL) {
-	// Store vertex count
-	m_iNumVertices = iNumVertices;
-	// Success!
-	bResult = true;
-      }
-    }
-    else {
-      iNumVertices += m_iNumVertices;
-      // Allocate new vertex storage
-      T* pVertices = NULL;
-      pVertices = new T[iNumVertices];
-      // Check vertex allocation and store info if appropriate
-      if (pVertices  != NULL) {
-	// Copy vertex data
-	memcpy(pVertices,m_pVertices,m_iNumVertices*sizeof(T));
-	// Delete old array
-	delete [] m_pVertices;
-	// Store new array
-	m_pVertices = pVertices;
-	// Store new vertex count
-	m_iNumVertices = iNumVertices;
-	// Success!
-	bResult = true;
-      }
-    }
-    return bResult;
+    m_lVertices.resize(NumVertices() + iNumVertices);
+    return true;
   } //AddVertices(int iNumVertices)
   
 }
