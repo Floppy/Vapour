@@ -7,7 +7,7 @@
 // SFXSet.cpp - 27/11/2000 - Warren Moore
 //	  Main application source for command-line parsing, and execution
 // 
-// $Id: SFXSet.cpp,v 1.1 2000/11/27 17:16:00 cvs Exp $
+// $Id: SFXSet.cpp,v 1.2 2000/11/29 15:52:26 warren Exp $
 //
 
 #include <iostream.h>
@@ -42,25 +42,26 @@ int main(int argc, char **argv) {
 	const char *pcAppName = oCmdLine.GetValue(1);
 	if (!pcAppName) {
 		cout << "Missing required filename" << endl;
-		cout << "Usage: sfxset <filename>" << endl;
+		cout << "Usage: sfxset <sfx_file> [<data_file>]" << endl;
 		return -1;
 	}
 	// Create the SFX object
 	CSFX oSFX;
 
-	bool bSet = false;
-	int iCount = 0;
-	while (iCount++ < 10) {
-		// Try to set the file
-		bSet = oSFX.SetEnd(pcAppName);
-		// Quit early if set
-		if (bSet)
-			iCount = 10;
-	}
-	if (bSet)
+	// Try to set the file
+	if (oSFX.SetEnd(pcAppName))
 		cout << "Successfully set self-extractor markers for " << pcAppName << endl;
 	else 
 		cout << "Unable to set self-extractor markers for " << pcAppName << endl;
+
+	// Check if we have a data file
+	const char *pcDataName = oCmdLine.GetValue(2);
+	if (pcDataName) {
+		if (oSFX.AttachFile(pcDataName, pcAppName))
+			cout << "Successfully attached " << pcDataName << " to " << pcAppName << endl;
+		else 
+			cout << "Unable to attach " << pcDataName << " to " << pcAppName << endl;
+	}
 
 	// Delete the VAL management object
 	delete g_poVAL;
