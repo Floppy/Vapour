@@ -14,10 +14,9 @@
 //! author 		= "Warren Moore"
 //! date 		= "17/10/2001"
 //! lib 			= libVALETimage
-//! rcsid 		= "$Id: filter.h,v 1.1 2001/10/17 22:05:33 vap-warren Exp $"
+//! rcsid 		= "$Id: filter.h,v 1.2 2001/10/17 22:14:17 vap-warren Exp $"
 //! userlevel 	= Normal
 //! docentry 	= "VALET.Image.Scaling"
-//! example 	= nonexistent
 
 namespace NValet {
 
@@ -38,13 +37,12 @@ namespace NValet {
       //: Destructor
 
       void Width(double dWidth);
-      //: Set filter width
+      // Set filter width
 
       double Width() const;
-      //: Get filter width
+      // Get filter width
 
       virtual double Filter(double dVal) = 0;
-      //: Generate filter value
       // Returns the filter weight at the specified pos
       // Must be implemented in derived class
 
@@ -69,7 +67,6 @@ namespace NValet {
       //: Destructor
 
       double Filter(double dVal);
-      //: Generate filter value
       // Returns the filter weight at the specified pos
 
    };
@@ -88,7 +85,6 @@ namespace NValet {
       //: Destructor
 
       double Filter(double dVal);
-      //: Generate filter value
       // Returns the filter weight at the specified pos
 
    };

@@ -14,10 +14,9 @@
 //! author 		= "Warren Moore"
 //! date 		= "17/10/2001"
 //! lib 			= libVALETimage
-//! rcsid 		= "$Id: palette.h,v 1.1 2001/10/17 22:05:34 vap-warren Exp $"
+//! rcsid 		= "$Id: palette.h,v 1.2 2001/10/17 22:14:17 vap-warren Exp $"
 //! userlevel 	= Advanced
 //! docentry 	= "VALET.Image.Palette"
-//! example 	= nonexistent
 
 //#===--- Includes
 #include "VALET/valet.h"
@@ -52,7 +51,7 @@ namespace NValet {
    //: Settings
 
       void SetSize(int iSize);
-      //: Set the size of palette colours
+      // Set the size of palette colours
       //!param: iSize = Number of palette colours
 
       int GetSize() const;
@@ -80,6 +79,9 @@ namespace NValet {
       // Returns a palette index closest matching the supplied colour
 
    protected:
+
+   //:------
+   //: Palette Allocation
 
       bool AllocatePalette();
       // Allocates the palette memory from m_iSize. Returns false and sets size to 0 if failed
@@ -116,7 +118,6 @@ namespace NValet {
       int FindLowest(unsigned int uColour);
       // Finds the entry with the lowest error
 
-   	//: Colour matching cache
    	typedef struct SCacheStruct {
          unsigned int m_uColour;
          int m_iIndex;
@@ -130,15 +131,15 @@ namespace NValet {
          // Inline constructor
 
       } SCache;
+   	//: Colour matching cache
 
-      //: Hash table entries
       typedef struct SHashEntryStruct {
          int m_iIndex;
          unsigned int m_uColour;
          int m_iR, m_iG, m_iB;
       } SHashEntry;
+      //: Hash table entries
 
-      //: Palette hash table
       typedef struct SHashStruct {
          unsigned int m_uEntries;            // Number of entries in this part of the hash
          SHashEntry *m_psColour;
@@ -150,6 +151,7 @@ namespace NValet {
          // Inline constructor
 
       } SHash;
+      //: Palette hash table
 
    protected:
 
