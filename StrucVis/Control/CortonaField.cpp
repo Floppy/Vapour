@@ -7,7 +7,7 @@
 // CortonaField.cpp
 // 07/03/2002 - Warren Moore
 //
-// $Id: CortonaField.cpp,v 1.5 2002/03/22 10:42:29 vap-james Exp $
+// $Id: CortonaField.cpp,v 1.6 2002/03/22 11:23:16 vap-warren Exp $
 
 #include "stdafx.h"
 #include "CortonaBase.h"
@@ -152,7 +152,7 @@ bool CCortonaField::AddMFVec3f(const float fX, const float fY, const float fZ) {
    SAFEARRAY *pSA;
 
    sSABound[0].cElements = iCount;
-   sSABound[0].lLbound = 1;
+   sSABound[0].lLbound = 0;
    pSA = SafeArrayCreate(VT_VARIANT, 1, sSABound);
 
    // Gain access to the values
@@ -177,19 +177,25 @@ bool CCortonaField::AddMFVec3f(const float fX, const float fY, const float fZ) {
    }
 
    // Initialise the variant
-   VARIANT sVariant;
-   VariantInit(&sVariant);
+   VARIANT sVarArray;
+   VariantInit(&sVarArray);
 
    // Set the type and value
-   sVariant.vt = VT_ARRAY | VT_VARIANT;
-   sVariant.parray = pSA;
+   sVarArray.vt = VT_ARRAY | VT_VARIANT;
+   sVarArray.parray = pSA;
+
+   // Set the optional before param
+   VARIANT sVarBefore;
+   VariantInit(&sVarBefore);
+   sVarBefore.vt = VT_ERROR;
+   sVarBefore.scode = DISP_E_PARAMNOTFOUND;
 
    // Get the IMFVec3f interface
    IMFVec3fObject *pMFVec3f = NULL;
    hResult = m_pField->QueryInterface(IID_IMFVec3fObject, (void**)&pMFVec3f);
    if (SUCCEEDED(hResult)) {
       // Add the value
-      hResult = pMFVec3f->Add(&sVariant, NULL);
+      hResult = pMFVec3f->Add(&sVarArray, &sVarBefore);
       // Release the MFVec3f interface
       pMFVec3f->Release();
    }
