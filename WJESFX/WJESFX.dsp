@@ -57,7 +57,7 @@ BSC32=bscmake.exe
 LINK32=link.exe
 # ADD BASE LINK32 zlib.lib /nologo /subsystem:windows /machine:I386 /nodefaultlib:"libc.lib" /nodefaultlib:"msvcrt.lib" /nodefaultlib:"libcd.lib" /nodefaultlib:"libcmtd.lib" /nodefaultlib:"msvcrtd.lib"
 # SUBTRACT BASE LINK32 /pdb:none
-# ADD LINK32 zlib.lib /nologo /subsystem:windows /machine:I386 /nodefaultlib:"libc.lib" /nodefaultlib:"msvcrt.lib" /nodefaultlib:"libcd.lib" /nodefaultlib:"libcmtd.lib" /nodefaultlib:"msvcrtd.lib" /out:"Sims/simssfx.exe" /libpath:"..\VAL\Release" /libpath:"..\VALWin32\Release"
+# ADD LINK32 zlib.lib val.lib valwin32.lib /nologo /subsystem:windows /machine:I386 /nodefaultlib:"libc.lib" /nodefaultlib:"msvcrt.lib" /nodefaultlib:"libcd.lib" /nodefaultlib:"libcmtd.lib" /nodefaultlib:"msvcrtd.lib" /out:"Sims/simssfx.exe" /libpath:"..\VAL\Release" /libpath:"..\VALWin32\Release"
 # SUBTRACT LINK32 /pdb:none
 
 !ELSEIF  "$(CFG)" == "WJESFX - Win32 Half Life Release"
@@ -133,7 +133,7 @@ LINK32=link.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /MT /W3 /GX /O2 /I "..\VAL\Application" /I "..\VAL\Avatar" /I "..\VAL\AvatarFiles" /I "..\VAL\DataTypes" /I "..\VAL\Image" /I "..\VAL\ImageFiles" /I "..\VALWin32\Application" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "GAME_HALFLIFE" /Yu"stdafx.h" /FD /c
-# ADD CPP /nologo /MDd /W3 /Gm /GX /ZI /Od /I "..\VAL\Application" /I "..\VAL\Avatar" /I "..\VAL\AvatarFiles" /I "..\VAL\DataTypes" /I "..\VAL\Image" /I "..\VAL\ImageFiles" /I "..\VALWin32\Application" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "GAME_HALFLIFE" /D "_AFXDLL" /Yu"stdafx.h" /FD /c
+# ADD CPP /nologo /MDd /W3 /Gm /GX /ZI /Od /I "..\VAL\Application" /I "..\VAL\Avatar" /I "..\VAL\AvatarFiles" /I "..\VAL\DataTypes" /I "..\VAL\Image" /I "..\VAL\ImageFiles" /I "..\VALWin32\Application" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "_AFXDLL" /D "GAME_UNREALTOURNAMENT" /Yu"stdafx.h" /FD /c
 # ADD BASE MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD BASE RSC /l 0x809 /d "NDEBUG"
@@ -144,7 +144,7 @@ BSC32=bscmake.exe
 LINK32=link.exe
 # ADD BASE LINK32 zlib.lib val.lib valwin32.lib /nologo /subsystem:windows /machine:I386 /nodefaultlib:"libc.lib" /nodefaultlib:"msvcrt.lib" /nodefaultlib:"libcd.lib" /nodefaultlib:"libcmtd.lib" /nodefaultlib:"msvcrtd.lib" /out:"Halflife/hlsfx.exe" /libpath:"..\VAL\Release" /libpath:"..\VALWin32\Release"
 # SUBTRACT BASE LINK32 /pdb:none
-# ADD LINK32 zlibd.lib /nologo /subsystem:windows /incremental:yes /debug /machine:I386 /nodefaultlib:"libcd.lib" /nodefaultlib:"nafxcwd.lib" /pdbtype:sept /libpath:"..\VAL\Debug" /libpath:"..\VALWin32\Debug"
+# ADD LINK32 zlibd.lib val.lib valwin32.lib /nologo /subsystem:windows /incremental:yes /debug /machine:I386 /nodefaultlib:"libcd.lib" /nodefaultlib:"nafxcwd.lib" /pdbtype:sept /libpath:"..\VAL\Debug" /libpath:"..\VALWin32\Debug"
 # SUBTRACT LINK32 /pdb:none
 
 !ENDIF 
