@@ -65,14 +65,14 @@ $(ifany:$methodtype,$NodeType=method:
 			$(include:method.stmpl))
 		)
 		$(else:$(ident:
-			<P CLASS="CLASSBUG">Haven't seen this used before!</P>
-			<P><B>$(brief)</B><BR>
+			<P CLASS="CLASSHEADING"><B>$(brief)</B></P>
 			$(ifset:detail:
 				$(if:$detail!=:
+					<P>
 					$(detail)
+					</P>
 				)
 			)
-			</P>
 			$(ifset:bug:
 				<P CLASS="CLASSBUG"><B>BUGS</B><BR>$(ident:<P CLASS="CLASSBUG">$(list:$(bug))</P>)</P>
 			)
