@@ -11,7 +11,7 @@
 //! author 		= "Warren Moore"
 //! date 		= "23/09/2001"
 //! lib 			= libVALETcore
-//! rcsid 		= "$Id: loghandle.noarch.cpp,v 1.7 2001/10/27 00:02:17 vap-warren Exp $"
+//! rcsid 		= "$Id: loghandle.noarch.cpp,v 1.8 2001/10/27 00:12:10 vap-warren Exp $"
 
 //#===--- Includes
 #include "loghandle.h"
@@ -27,6 +27,9 @@ namespace NVALET {
    unsigned int CLogHandle::m_uiFileCount = 0;
    
    CLogHandle::CLogHandle(const char *pcType) {
+      // std namespace required for gcc 3.0.x
+      using namespace std;
+      
       ASSERT(pcType);
 		// Store the log type
 		strcpy(m_pcType, pcType);
@@ -43,6 +46,9 @@ namespace NVALET {
    } // CLogHandle::CLogHandle
    
    CLogHandle::~CLogHandle() {
+      // std namespace required for gcc 3.0.x
+      using namespace std;
+      
       // Decrement the count
       m_uiFileCount--;
       // Delete the log file
@@ -53,6 +59,9 @@ namespace NVALET {
    } // CLogHandle::~CLogHandle
    
    void CLogHandle::Trace(int iLevel, const char *pcFunction, const char *pcMessage) {
+      // std namespace required for gcc 3.0.x
+      using namespace std;
+      
       ASSERT(iLevel >= 0);
       ASSERT(pcMessage);
       if (!m_poLogFile)
