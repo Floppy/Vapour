@@ -9,16 +9,15 @@
 //! file      = "Convert/OChunk.h"
 //! author    = "James Smith"
 //! date      = "19/3/2002"
-//! rcsid     = "$Id: OChunk.h,v 1.4 2002/04/04 11:28:08 vap-warren Exp $"
+//! rcsid     = "$Id: OChunk.h,v 1.5 2002/04/04 11:53:43 vap-warren Exp $"
 
 #ifndef __VTSTRUCVIS_OCHUNK__
 #define __VTSTRUCVIS_OCHUNK__
 
 #include "InputData.h"
-#include <fstream>
+#include <iostream.h>
+#include <fstream.h>
 #include <vector>
-
-using namespace std;
 
 //: Chunk Types
 enum TOChunkType {
@@ -175,7 +174,7 @@ private:
 
 protected:
 
-   vector<const COChunk*> m_oSubChunks;
+   std::vector<const COChunk*> m_oSubChunks;
    //: A list of subchunks
 
    TOChunkType m_oType;

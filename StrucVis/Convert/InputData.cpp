@@ -9,10 +9,12 @@
 //! file      = "Convert/InputData.cpp"
 //! author    = "James Smith"
 //! date      = "19/3/2002"
-//! rcsid     = "$Id: InputData.cpp,v 1.4 2002/04/04 11:18:18 vap-warren Exp $"
+//! rcsid     = "$Id: InputData.cpp,v 1.5 2002/04/04 11:53:43 vap-warren Exp $"
 
 #include "InputData.h"
-#include <fstream>
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
 
 CInputData::CInputData(const char* pcFilename) :
    m_oInput(pcFilename),
@@ -30,8 +32,6 @@ CInputData::CInputData(const char* pcFilename) :
 CInputData::~CInputData() {
    m_oInput.close();
 }
-
-using namespace std;
 
 bool CInputData::NextSection(void) {
    // Clear old header data

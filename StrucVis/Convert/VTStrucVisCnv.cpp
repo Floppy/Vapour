@@ -9,15 +9,13 @@
 //! file      = "Convert/VTStrucVisCnv.cpp"
 //! author    = "James Smith"
 //! date      = "19/3/2002"
-//! rcsid     = "$Id: VTStrucVisCnv.cpp,v 1.10 2002/04/04 11:18:19 vap-warren Exp $"
+//! rcsid     = "$Id: VTStrucVisCnv.cpp,v 1.11 2002/04/04 11:53:43 vap-warren Exp $"
 
-#include <iostream>
+#include <iostream.h>
 #include <vector>
 
 #include "InputData.h"
 #include "OChunk.h"
-
-using namespace std;
 
 int main(int argc, char* argv[]) {
 
@@ -32,7 +30,7 @@ int main(int argc, char* argv[]) {
    // Open input data file
    CInputData oInput(argv[1]);
 
-   vector<COChunk*> oChunkList;
+   std::vector<COChunk*> oChunkList;
 
    // While there is data to read, create chunks and add them to the list
    while (oInput.NextSection()) {
@@ -68,7 +66,7 @@ int main(int argc, char* argv[]) {
    cout << "Read " << oInput.GetNumBeams() << " Beams and "<< oInput.GetNumSlabs() << " Slabs." << endl;
 
    // Create frame chunks
-   vector<COChunk*> oFrames;
+   std::vector<COChunk*> oFrames;
    bool bOK;
    int iFrame = 0;
    int iNumChunks = 0;

@@ -9,12 +9,11 @@
 //! file      = "Convert/OChunk.cpp"
 //! author    = "James Smith"
 //! date      = "19/3/2002"
-//! rcsid     = "$Id: OChunk.cpp,v 1.3 2002/04/04 11:18:18 vap-warren Exp $"
+//! rcsid     = "$Id: OChunk.cpp,v 1.4 2002/04/04 11:53:43 vap-warren Exp $"
 
 #include "OChunk.h"
 
 #include <math.h>
-#include <vector>
 
 #define SCALE_FACTOR 0.01;
 
@@ -81,7 +80,7 @@ bool COChunk::Read(CInputData& oInput) {
 
 }
 
-TChunkType COChunk::TranslateType(const char* pcType) {
+TOChunkType COChunk::TranslateType(const char* pcType) {
    if (strcmp(pcType,"HEADER")                            == 0) return CHUNK_NONE;
    if (strcmp(pcType,"NODAL GEOMETRY")                    == 0) return CHUNK_NODES;
    if (strcmp(pcType,"SECTION SIZES")                     == 0) return CHUNK_BEAMSIZE;

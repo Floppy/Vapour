@@ -9,12 +9,12 @@
 //! file      = "Convert/InputData.h"
 //! author    = "James Smith"
 //! date      = "19/3/2002"
-//! rcsid     = "$Id: InputData.h,v 1.4 2002/04/04 11:18:18 vap-warren Exp $"
+//! rcsid     = "$Id: InputData.h,v 1.5 2002/04/04 11:53:43 vap-warren Exp $"
 
 #ifndef __VTSTRUCVIS_INPUTDATA__
 #define __VTSTRUCVIS_INPUTDATA__
 
-#include <fstream>
+#include <fstream.h>
 
 //: Input Data Parsing 
 // Reads data from a simulation output file
@@ -99,7 +99,7 @@ public:
 
 protected:
 
-   std::ifstream m_oInput;
+   ifstream m_oInput;
    //: Incoming file stream
 
    char m_pcHeader[128];
