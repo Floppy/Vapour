@@ -14,14 +14,17 @@
 //! author 		= "Warren Moore"
 //! date 		= "23/09/2001"
 //! lib 			= libVALET
-//! rcsid 		= "$Id: valet.noarch.h,v 1.4 2001/10/21 14:34:21 vap-warren Exp $"
+//! rcsid 		= "$Id: valet.noarch.h,v 1.5 2001/10/27 15:41:19 vap-warren Exp $"
 //! userlevel 	= Normal
 //! docentry 	= "VALET.Arch"
 
-//#===--- Includes
+/*#===--- Supports C++ style casts */
+#define VALET_CXX_CASTS_SUPPORTED
+
+/*#===--- Includes */
 #include "VALET/valet_common.h"
 
-//#===--- Assert
+/*#===--- Assert */
 
 #ifdef ASSERT
 #undef ASSERT
@@ -31,4 +34,4 @@
 
 #include <assert.h>
 
-#endif // _VALET_NOARCH_
+#endif /* _VALET_NOARCH_ */

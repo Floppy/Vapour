@@ -11,9 +11,13 @@
 //! author 		= "Warren Moore"
 //! date 		= "15/10/2001"
 //! lib 			= libVALETarch
-//! rcsid 		= "$Id: memory.dc.cpp,v 1.1 2001/10/16 22:31:17 vap-warren Exp $"
+//! rcsid 		= "$Id: memory.dc.cpp,v 1.2 2001/10/27 15:41:18 vap-warren Exp $"
 
 //#===--- Includes
+#include "VALET/valet.h"
+
+using namespace NVALET;
+
 #include <stdlib.h>
 
 #ifdef __cplusplus
@@ -41,11 +45,19 @@ void __builtin_vec_delete(void *ptr) {
 }
 
 //: Abort required by sh-elf gcc-lib
-// Ok, ok, this is a horrendous hack which will barf warnings
-// about a noreturn function returning, but it links ok
-// Will need to be implemented properly once asserts are implemented
-
+// Calls arch_exit and does not return
 void abort(void) {
+   dbglog(DBG_CRITICAL, "Program aborted...\n");
+   arch_exit();
+}
+
+//: Assert failed output function
+// Actual macros declared in assert.h, this simply formats output then aborts
+void __assert(const char *pcFile, int iLine, const char *pcData) {
+   char pcStr[g_uiStrLength] = "";
+   sprintf(pcStr, "ASSERTION FAILED: in '%s' line (%d) : %s\n", pcFile, iLine, pcData);
+   dbglog(DBG_CRITICAL, pcStr);
+   abort();
 }
 
 #ifdef __cplusplus
