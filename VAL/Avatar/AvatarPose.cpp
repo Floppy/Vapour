@@ -7,7 +7,7 @@
 // AvatarPose.cpp - 21/2/2000 - James Smith
 //	Avatar pose class implementation
 //
-// $Id: AvatarPose.cpp,v 1.6 2000/11/22 00:44:11 waz Exp $
+// $Id: AvatarPose.cpp,v 1.7 2000/11/27 20:34:43 waz Exp $
 //
 
 
@@ -37,10 +37,10 @@ CAvatarPose::CAvatarPose(const CAvatarPose& apOtherPose) :
    m_pTargetTranslation(NULL)
 {
    NEWBEGIN
-   m_pJointRotations = new CAxisRotation[m_iNumJoints];
+   m_pJointRotations = new CAxisRotation[apOtherPose.m_iNumJoints];
    NEWEND("CAvatarPose::CAvatarPose - copy constructor joint allocation");
    if (m_pJointRotations != NULL) {
-      for (int i=0; i<m_iNumJoints; i++) {
+      for (int i=0; i<apOtherPose.m_iNumJoints; i++) {
          m_pJointRotations[i] = apOtherPose.m_pJointRotations[i];
       }
       m_iNumJoints = apOtherPose.m_iNumJoints;
