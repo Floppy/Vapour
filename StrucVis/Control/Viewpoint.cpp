@@ -7,7 +7,7 @@
 // Viewpoint.cpp
 // 19/03/2002 - James Smith
 //
-// $Id: Viewpoint.cpp,v 1.8 2002/03/27 17:51:07 vap-james Exp $
+// $Id: Viewpoint.cpp,v 1.9 2002/03/27 17:54:59 vap-james Exp $
 
 #include "stdafx.h"
 #include "Viewpoint.h"
@@ -162,7 +162,6 @@ const char* CViewpoint::GetCurrentPosition(void) {
 }
 
 bool CViewpoint::GetCurrentOrientation(float& fX, float& fY, float& fZ, float& fA) {
-   float pfData[4];
    CCortonaField* poField = m_poNodePtr->GetField("currentOrientation");
    if (poField == NULL) return false;
    if (!poField->GetSFRotation(fX,fY,fZ,fA)) return false;
