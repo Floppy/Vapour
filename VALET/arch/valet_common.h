@@ -13,7 +13,7 @@
 //! file 		= "VALET/arch/valet_common.h""
 //! author 		= "Warren Moore"
 //! date 		= "23/09/2001"
-//! rcsid 		= "$Id: valet_common.h,v 1.12 2001/10/26 12:53:05 vap-warren Exp $"
+//! rcsid 		= "$Id: valet_common.h,v 1.13 2001/10/27 15:40:01 vap-warren Exp $"
 //! userlevel 	= Normal
 //! docentry 	= "VALET.Arch"
 //! maindoc		= 1
@@ -53,12 +53,6 @@ namespace NVALET {
    
 }
 
-/*#===--- Debug settings */
-
-#ifdef VDEBUG
-#define NDEBUG
-#endif
-
 /*#===--- Inlines */
 
 #ifdef VDEBUG
@@ -66,16 +60,33 @@ namespace NVALET {
 #else
 #define VALET_INLINE
 #define INLINE inline
-#endif // VDEBUG
+#endif /* VDEBUG */
 
-//#===--- Common Defines
+/*#===--- C++ Style casts */
+#ifdef VALET_CXX_CASTS_SUPPORTED
+
+#define const_cast(x, y)            const_cast<x>(y)
+#define static_cast(x, y)           static_cast<x>(y)
+#define dynamic_cast(x, y)          dynamic_cast<x>(y)
+#define reinterpret_cast(x, y)      reinterpret_cast<x>(y)
+
+#else
+
+#define const_cast(x, y)            ((x)y)
+#define static_cast(x, y)           ((x)y)
+#define dynamic_cast(x, y)          ((x)y)
+#define reinterpret_cast(x, y)      ((x)y)
+
+#endif /* VALET_CXX_CASTS_SUPPORTED */
+
+/*#===--- Common Defines */
 
 #ifndef NULL
 #define NULL 0
-#endif // NULL
+#endif /* NULL */
 
 #ifndef ASSERT
 #define ASSERT(x) ((void)0)
-#endif // ASSERT
+#endif /* ASSERT */
 
-#endif // _VALET_
+#endif /* _VALET_ */
