@@ -6,7 +6,7 @@
 // BeamElement.h
 // 19/03/2002 - James Smith
 //
-// $Id: BeamElement.h,v 1.4 2002/03/20 14:52:11 vap-james Exp $
+// $Id: BeamElement.h,v 1.5 2002/03/21 14:32:07 vap-warren Exp $
 
 #ifndef __BEAM_ELEMENT__
 #define __BEAM_ELEMENT__
@@ -20,7 +20,7 @@
 class CBeamElement : public CElement {
 //#===--- Construction/Destruction
 public:
-   CBeamElement(CCortonaUtil *pCortona, CNodeSet* pNodeSet);
+   CBeamElement(CCortonaUtil *poCortona, CNodeSet* poNodeSet);
    // Constructor
 
 //#===--- Member Functions

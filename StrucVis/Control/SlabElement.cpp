@@ -6,7 +6,7 @@
 // SlabElement.cpp
 // 19/03/2002 - James Smith
 //
-// $Id: SlabElement.cpp,v 1.6 2002/03/21 11:25:23 vap-warren Exp $
+// $Id: SlabElement.cpp,v 1.7 2002/03/21 14:32:08 vap-warren Exp $
 
 #include "stdafx.h"
 #include "SlabElement.h"
@@ -22,11 +22,10 @@ static char THIS_FILE[] = __FILE__;
 /////////////////
 // CBeamElement
 
-CSlabElement::CSlabElement(CCortonaUtil *pCortona, CNodeSet* pNodeSet) : 
-   CElement(pCortona,pNodeSet),
+CSlabElement::CSlabElement(CCortonaUtil *poCortona, CNodeSet* poNodeSet) : 
+   CElement(poCortona, poNodeSet),
    m_fThickness(1)
 {
-   return;
 }
 
 // Beginning of SlabElement node
@@ -53,12 +52,12 @@ bool CSlabElement::Display(void) const {
    float pfNodes[27];
    CalculateNodePositions(pfNodes);
    // If the slab isn't there yet
-   if (m_pNodePtr == NULL) {
+   if (m_poNodePtr == NULL) {
       // Create a slab and add it to the scene
       // Create string buffer for VRML text
       char pcBuffer[2048];
-      memset(pcBuffer,0,2048);
-      ostrstream strSlab(pcBuffer,2048);
+      memset(pcBuffer,0, 2048);
+      ostrstream strSlab(pcBuffer, 2048);
       // Add the basic SlabElement syntax
       strSlab << pcSlabStart;
       // Set the size
@@ -74,20 +73,21 @@ bool CSlabElement::Display(void) const {
       // Close the SlabElement
       strSlab << "}";
       // Create VRML nodes from the buffer
-      if (m_pCortona->CreateVrmlFromString(pcBuffer, &m_pNodePtr)) {
-         m_pCortona->AddToScene(m_pNodePtr);
+      if (m_poNodePtr = m_poCortona->CreateVrmlFromString(pcBuffer)) {
+         m_poCortona->AddToScene(*m_poNodePtr);
          return true;
       }
       else return false;
    }
    else {
-      CCortonaField* pTranslation;
-      if (m_pCortona->GetField(m_pNodePtr,"translation",&pTranslation)) {
+      CCortonaField* poTranslation;
+      if (poTranslation = m_poCortona->GetField(*m_poNodePtr,"translation")) {
          float fX, fY, fZ;
-         pTranslation->GetSFVec3f(fX, fY, fZ);
+         poTranslation->GetSFVec3f(fX, fY, fZ);
          fX += 0.1f;
-         pTranslation->SetSFVec3f(fX, fY, fZ);
-         pTranslation->Release();
+         poTranslation->SetSFVec3f(fX, fY, fZ);
+         poTranslation->Release();
+         delete poTranslation;
          return true;
       }      
       return false;
@@ -155,7 +155,7 @@ void CSlabElement::CalculateColours(float* pfColours) const {
 
 void CSlabElement::CalculateNodePositions(float* pfNodes) const {
    for (int i=0; i<9; i++) {
-      const float* pNode = m_pNodeSet->Node(m_piNodes[i]);
+      const float* pNode = m_poNodeSet->Node(m_piNodes[i]);
       pfNodes[(i*3) + 0] = pNode[0];
       pfNodes[(i*3) + 1] = pNode[1];
       pfNodes[(i*3) + 2] = pNode[2];

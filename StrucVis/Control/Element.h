@@ -6,7 +6,7 @@
 // Element.h
 // 19/03/2002 - James Smith
 //
-// $Id: Element.h,v 1.4 2002/03/20 14:52:11 vap-james Exp $
+// $Id: Element.h,v 1.5 2002/03/21 14:32:08 vap-warren Exp $
 
 #ifndef __ELEMENT__
 #define __ELEMENT__
@@ -33,9 +33,9 @@ class CElement {
 public:
 
    CElement(CCortonaUtil *pCortona, CNodeSet* pNodeSet) :
-      m_pCortona(pCortona),
-      m_pNodeSet(pNodeSet),
-      m_pNodePtr(NULL),
+      m_poCortona(pCortona),
+      m_poNodeSet(pNodeSet),
+      m_poNodePtr(NULL),
       m_iElement(0),
       m_iGroup(0),
       m_fMinStress(0.0f),
@@ -47,7 +47,7 @@ public:
    // Constructor
    
    virtual ~CElement() {
-      if (m_pNodePtr) m_pNodePtr->Release();
+      if (m_poNodePtr) m_poNodePtr->Release();
    }
    // Destructor
 
@@ -99,13 +99,13 @@ public:
 //#===--- Member Variables
 protected:
 
-   CCortonaUtil* m_pCortona;
+   CCortonaUtil* m_poCortona;
    // Cortona Utility interface
 
-   CNodeSet* m_pNodeSet;
+   CNodeSet* m_poNodeSet;
    // Node Set
 
-   mutable INodeObject* m_pNodePtr;
+   mutable CCortonaNode *m_poNodePtr;
    // Pointer to the node in the VRML world;
 
    unsigned int m_iElement;

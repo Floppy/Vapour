@@ -5,12 +5,12 @@
 // Copyright 2000 Vapour Technology Ltd.
 //
 // CortonaField.h
-// 07/03/2002 - Warren Moore
+// 12/03/2002 - Warren Moore
 //
-// $Id: CortonaField.h,v 1.4 2002/03/21 11:25:22 vap-warren Exp $
+// $Id: CortonaField.h,v 1.5 2002/03/21 14:32:07 vap-warren Exp $
 
-#ifndef __CORTONA_FIELD__
-#define __CORTONA_FIELD__
+#ifndef __CORTONAFIELD__
+#define __CORTONAFIELD__
 
 #if _MSC_VER > 1000
 #pragma once
@@ -31,9 +31,6 @@ public:
 
    FTYPE Type() const;
    // Returns the field type
-
-   IFieldObject *Interface() const;
-   // Returns the field object interface
 
    void Release();
    // Release the field object
@@ -75,6 +72,14 @@ public:
    bool SetSFBool(const bool bVal);
    // Sets the bool value
 
+protected:
+
+   IFieldObject *Interface() const;
+   // Returns the field object interface
+
+   // Friend class for protected functions
+   friend class CCortonaUtil;
+
 //#===--- Member Variables
 protected:
    IFieldObject *m_pField;       // The field interface
@@ -92,4 +97,4 @@ inline IFieldObject *CCortonaField::Interface() const {
    return m_pField;
 }
 
-#endif // __CORTONA_UTIL__
+#endif // __CORTONAFIELD__

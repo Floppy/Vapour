@@ -7,16 +7,18 @@
 // CortonaUtil.h
 // 07/03/2002 - Warren Moore
 //
-// $Id: CortonaUtil.h,v 1.4 2002/03/21 11:25:23 vap-warren Exp $
+// $Id: CortonaUtil.h,v 1.5 2002/03/21 14:32:08 vap-warren Exp $
 
-#ifndef __CORTONA_UTIL__
-#define __CORTONA_UTIL__
+#ifndef __CORTONAUTIL__
+#define __CORTONAUTIL__
 
 #if _MSC_VER > 1000
 #pragma once
 #endif // _MSC_VER > 1000
 
+#include "CortonaNode.h"
 #include "CortonaField.h"
+
 // Automation interfaces for Cortona
 #include "shelley.h"
 
@@ -29,29 +31,27 @@ public:
 
 //#===--- Member Functions
 
-   bool CreateVrmlFromString(const char *pcVrml, INodeObject **ppNode);
-   // Create a VRML node from a string
-   // Address of node left in *ppNode
+   CCortonaNode *CreateVrmlFromString(const char *pcVrml);
+   // Create a VRML node from a string, returns NULL if failed
 
-   bool AddToScene(INodeObject* pNode);
+   bool AddToScene(const CCortonaNode &oNode);
    // Add a node to the list of root nodes
 
-   bool GetNode(const char *pcName, INodeObject **ppNodeCol);
-   // Get a node by it's DEF'd name
-   // Address of node left in ppNode
+   CCortonaNode *GetNode(const char *pcName);
+   // Get a node by it's DEF'd name, returns NULL if failed
 
-   bool AddRoute(INodeObject *pSrcNode, const char *pcSrcField,
-                 INodeObject *pDstNode, const char *pcDstField);
+   bool AddRoute(const CCortonaNode &oSrcNode, const char *pcSrcField,
+                 const CCortonaNode &oDstNode, const char *pcDstField);
    // Add a route from the src node's field to the destination node's field
 
-   bool GetField(INodeObject *pNode, const char *pcName, CCortonaField **ppoField);
+   CCortonaField *GetField(const CCortonaNode &oNode, const char *pcName);
    // Creates a CCortonaField object for the specified field of the supplied node
-   // Address of field object left in *ppoField
+   // returns NULL if failed
 
-   bool CreateField(const char *pcType, CCortonaField **ppoField);
-   // Create an empty field
+   CCortonaField *CreateField(const char *pcType);
+   // Create an empty field, returns NULL if failed
 
-   bool AssignEventIn(INodeObject *pNode, const char *pcField, const CCortonaField &oFIeld);
+   bool AssignEventIn(const CCortonaNode &oNode, const char *pcField, const CCortonaField &oField);
    // Assigns the supplied field value to the named EventIn field
 
 //#===--- Member Variables
@@ -61,4 +61,4 @@ protected:
 
 };
 
-#endif // __CORTONA_UTIL__
+#endif // __CORTONAUTIL__

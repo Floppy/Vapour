@@ -6,7 +6,7 @@
 // BeamElement.cpp
 // 19/03/2002 - James Smith
 //
-// $Id: BeamElement.cpp,v 1.6 2002/03/20 22:14:18 vap-james Exp $
+// $Id: BeamElement.cpp,v 1.7 2002/03/21 14:32:07 vap-warren Exp $
 
 #include "stdafx.h"
 #include "BeamElement.h"
@@ -22,8 +22,8 @@ static char THIS_FILE[] = __FILE__;
 /////////////////
 // CBeamElement
 
-CBeamElement::CBeamElement(CCortonaUtil *pCortona, CNodeSet* pNodeSet) : 
-   CElement(pCortona,pNodeSet),
+CBeamElement::CBeamElement(CCortonaUtil *poCortona, CNodeSet* poNodeSet) : 
+   CElement(poCortona, poNodeSet),
    m_fHeight(1.0f),
    m_fWidth(1.0f),
    m_fFlange(0.1f),
@@ -31,7 +31,6 @@ CBeamElement::CBeamElement(CCortonaUtil *pCortona, CNodeSet* pNodeSet) :
 {
    m_piNodes[0] = m_piNodes[1] = 0;
    m_pfStresses[0] = m_pfStresses[1] = 0.0f;
-   return;
 }
 
 // Beginning of BeamElement node
@@ -61,7 +60,7 @@ bool CBeamElement::Display(void) const {
    float pfNodes[6];
    CalculateNodePositions(pfNodes);
    // If the beam isn't there yet
-   if (m_pNodePtr == NULL) {
+   if (m_poNodePtr == NULL) {
       // Create a beam and add it to the scene
       // Create string buffer for VRML text
       char pcBuffer[2048];
@@ -85,21 +84,22 @@ bool CBeamElement::Display(void) const {
       // Close the BeamElement
       strBeam << "}";
       // Create VRML nodes from the buffer
-      if (m_pCortona->CreateVrmlFromString(pcBuffer, &m_pNodePtr)) {
-         m_pCortona->AddToScene(m_pNodePtr);
+      if (m_poNodePtr = m_poCortona->CreateVrmlFromString(pcBuffer)) {
+         m_poCortona->AddToScene(*m_poNodePtr);
          return true;
       }
       else return false;
    }
    else {
-      CCortonaField* pField;
-      if (m_pCortona->GetField(m_pNodePtr,"nodes",&pField)) {
-         pField->GetMFVec3f();
+      CCortonaField* poField;
+      if (poField = m_poCortona->GetField(*m_poNodePtr,"nodes")) {
+         poField->GetMFVec3f();
          float fX, fY, fZ;
-         pField->GetMFVec3f(0, fX, fY, fZ);
+         poField->GetMFVec3f(0, fX, fY, fZ);
          fY -= 0.1f;
-         pField->SetMFVec3f(0, fX, fY, fZ);
-         pField->Release();
+         poField->SetMFVec3f(0, fX, fY, fZ);
+         poField->Release();
+         delete poField;
          return true;
       }      
       return false;
@@ -152,7 +152,7 @@ void CBeamElement::CalculateColours(float* pfColours) const {
 
 void CBeamElement::CalculateNodePositions(float* pfNodes) const {
    for (int i=0; i<2; i++) {
-      const float* pNode = m_pNodeSet->Node(m_piNodes[i]);
+      const float* pNode = m_poNodeSet->Node(m_piNodes[i]);
       pfNodes[(i*3) + 0] = pNode[0];
       pfNodes[(i*3) + 1] = pNode[1];
       pfNodes[(i*3) + 2] = pNode[2];
