@@ -9,7 +9,7 @@
 //! file      = "Control/Element.h"
 //! author    = "James Smith"
 //! date      = "19/3/2002"
-//! rcsid     = "$Id: Element.h,v 1.20 2002/04/04 13:59:15 vap-warren Exp $"
+//! rcsid     = "$Id: Element.h,v 1.21 2002/04/04 21:03:37 vap-warren Exp $"
 
 #ifndef __VTSTRUCVIS_ELEMENT__
 #define __VTSTRUCVIS_ELEMENT__
@@ -21,18 +21,18 @@
 #include "CortonaUtil.h"
 #include "NodeSet.h"
 
-//: Element types
 enum TElementType {
    ELEMENT_NONE = 0xFF,
    ELEMENT_BEAM = 0x00,
    ELEMENT_SLAB = 0x01
 };
+//: Element types
 
-//: Colouring schemes
 enum TColourScheme {
    COLOUR_GROUP,
    COLOUR_STRESS
 };
+//: Colouring schemes
 
 //: An interface to an element in a VRML scene
 // This class provides an base class for other specialised elements.

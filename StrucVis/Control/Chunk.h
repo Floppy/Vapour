@@ -9,7 +9,7 @@
 //! file      = "Control/IChunk.h"
 //! author    = "James Smith"
 //! date      = "19/3/2002"
-//! rcsid     = "$Id: Chunk.h,v 1.17 2002/04/04 13:59:15 vap-warren Exp $"
+//! rcsid     = "$Id: Chunk.h,v 1.18 2002/04/04 21:03:37 vap-warren Exp $"
 
 #ifndef __VTSTRUCVIS_ICHUNK__
 #define __VTSTRUCVIS_ICHUNK__
@@ -45,6 +45,7 @@ enum TIChunkType {
    CHUNK_SLABFORC = 0x25,
    CHUNK_CRACKS   = 0x26
 };
+//: Input data chunk type
 
 //: An input data chunk
 // This class provides an interface to a VSV file data chunk, specifically for file loading.

@@ -9,7 +9,7 @@
 //! file      = "Control/SimDataPath.h"
 //! author    = "Warren Moore"
 //! date      = "27/3/2002"
-//! rcsid     = "$Id: SimDataPath.h,v 1.10 2002/04/04 11:01:37 vap-warren Exp $"
+//! rcsid     = "$Id: SimDataPath.h,v 1.11 2002/04/04 21:03:37 vap-warren Exp $"
 
 #ifndef __VTSTUCVIS_SIMDATAPATH__
 #define __VTSTUCVIS_SIMDATAPATH__
@@ -18,37 +18,50 @@
 #pragma once
 #endif // _MSC_VER > 1000
 
-/////////////////
-// CSimDataPath
+//: Simulation data path property
+// Management class for asynchronous loading of simulation data
 
 class CSimDataPath : public CDataPathProperty {
 public:
-	CSimDataPath();
-	virtual ~CSimDataPath();
 
-//#===--- Member Functions
-public:
+	CSimDataPath();
+   //: Constructor
+
+	virtual ~CSimDataPath();
+   //: Destructor
 
    bool ShowFrame(const unsigned int uiFrame,
                   const unsigned int uiSeek,
                   const unsigned int uiLength);
-   // Passes the loaded data into the control, or defers until all the data is in
-   // Returns false if it has to defer
+   //: Show a frame
+   // Called by the control to indicate that it wishes to display a frame.
+   // The control supplies the file offset and length of the chunk required for the frame.
+   // If the data is present, it reads the data into a block of memory and passes to the scene manager.
+   // If not, the values are stored and the scene manager is called once the data has downloaded.
+   //!param: uiFrame - Frame number
+   //!param: uiSeek - Offset from start of simulation data file
+   //!param: uiLength - Length of data required
+   //!return: true if the scene manager is called immediately, false if the call is deferred
 
    bool Available(const unsigned int uiSeek, const unsigned int uiLength) const;
-   // Returns true if the data is available immediately
+   //: Queries if frame data is available
+   // Checks if the specified length of data at the specified offset has downloaded
+   //!param: uiSeek - Offset from start of simulation data file
+   //!param: uiLength - Length of data required
+   //!return: true if the data has downloaded
 
    bool Waiting() const;
-   // Returns true if not setup or waiting on a deferred frame
+   //: Queries if a frame has been deferred
+   //!return: true if a frame has been deferred
 
-//#===--- Member Variables
 protected:
 
-   unsigned int m_uiDataRead;                                     // Data read so far
-   bool m_bSetup;                                                 // Scene setup complete indicator
-   unsigned int m_uiFrame, m_uiFrameSeek, m_uiFrameLength;        // Data to be read for next frame
+   unsigned int m_uiDataRead;                                     //: Data downloaded so far
+   bool m_bSetup;                                                 //: Scene setup complete indicator
+   unsigned int m_uiFrame, m_uiFrameSeek, m_uiFrameLength;        //: Data to be read for next frame
 
-//#===--- Windows Mappings
+//:-----
+//: Windows Mappings
 
 public:
 	//{{AFX_VIRTUAL(CSimDataPath)

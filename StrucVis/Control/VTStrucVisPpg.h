@@ -9,7 +9,7 @@
 //! file      = "Control/VTStrucPpg.h"
 //! author    = "Warren Moore"
 //! date      = "5/3/2002"
-//! rcsid     = "$Id: VTStrucVisPpg.h,v 1.4 2002/04/04 11:01:39 vap-warren Exp $"
+//! rcsid     = "$Id: VTStrucVisPpg.h,v 1.5 2002/04/04 21:03:38 vap-warren Exp $"
 
 #ifndef __VTSTRUCTVIS_PROPPAGE__
 #define __VTSTRUCTVIS_PROPPAGE__
@@ -18,28 +18,29 @@
 #pragma once
 #endif // _MSC_VER > 1000
 
-////////////////////////
-// CVTStrucVisPropPage
+//: Property page dialog
 
 class CVTStrucVisPropPage : public COlePropertyPage {
-// Dynamic construction
+//:-----
+//: Construction/Destruction
+
 	DECLARE_DYNCREATE(CVTStrucVisPropPage)
 	DECLARE_OLECREATE_EX(CVTStrucVisPropPage)
 public:
+
 	CVTStrucVisPropPage();
+   //: Dynamic construction
 
-//#===--- Windows Mappings
+//:-----
+//: Windows Mappings
 
-// Dialog Data
 	//{{AFX_DATA(CVTStrucVisPropPage)
 	enum { IDD = IDD_PROPPAGE_VTSTRUCVIS };
 	//}}AFX_DATA
 
-// Implementation
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
 
-// Message maps
 protected:
 	//{{AFX_MSG(CVTStrucVisPropPage)
 	//}}AFX_MSG
