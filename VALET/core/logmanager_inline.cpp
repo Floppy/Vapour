@@ -14,11 +14,11 @@
 //! author 		= "Warren Moore"
 //! date 		= "23/09/2001"
 //! lib 			= libVALETcore
-//! rcsid 		= "$Id: logmanager_inline.cpp,v 1.2 2001/10/09 20:44:30 vap-james Exp $"
+//! rcsid 		= "$Id: logmanager_inline.cpp,v 1.3 2001/10/24 21:31:39 vap-james Exp $"
 
 //#===--- CLogManager Inline Functions
 
-namespace NValet {
+namespace NVALET {
 
 	INLINE bool CLogManager::Active() {
 		return m_bActive;

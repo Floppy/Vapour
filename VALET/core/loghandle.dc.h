@@ -14,7 +14,7 @@
 //! author 		= "Warren Moore"
 //! date 		= "26/09/2001"
 //! lib 			= libVALETcore
-//! rcsid 		= "$Id: loghandle.dc.h,v 1.7 2001/10/21 14:38:33 vap-warren Exp $"
+//! rcsid 		= "$Id: loghandle.dc.h,v 1.8 2001/10/24 21:31:39 vap-james Exp $"
 //! userlevel 	= Develop
 //! docentry 	= "VALET.Core.Log"
 //! example 	= VALET/core/log.test.cpp
@@ -22,7 +22,7 @@
 //#===--- Includes
 #include "VALET/valet.h"
 
-namespace NValet {
+namespace NVALET {
 
 	//#===--- CLogHandle
 	//: Debug log handle for files

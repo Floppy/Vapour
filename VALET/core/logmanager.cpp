@@ -11,7 +11,7 @@
 //! author		= "Warren Moore"
 //! date			= "23/09/2001"
 //! lib 			= libVALETcore
-//! rcsid		= "$Id: logmanager.cpp,v 1.4 2001/10/21 14:38:33 vap-warren Exp $"
+//! rcsid		= "$Id: logmanager.cpp,v 1.5 2001/10/24 21:31:39 vap-james Exp $"
 
 //#===--- Includes
 #include "logmanager.h"
@@ -22,7 +22,7 @@
 
 //#===--- CLogManager
 
-namespace NValet {
+namespace NVALET {
 	
 	CLogManager::CLogManager(bool bLog) :
 		m_bActive(bLog) {

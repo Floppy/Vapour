@@ -11,13 +11,13 @@
 //! author 		= "Warren Moore"
 //! date 		= "20/10/2001"
 //! lib 			= libVALETarch
-//! rcsid 		= "$Id: global.cpp,v 1.2 2001/10/24 14:19:43 vap-warren Exp $"
+//! rcsid 		= "$Id: global.cpp,v 1.3 2001/10/24 21:30:55 vap-james Exp $"
 
 //#===--- Includes
 #include "VALET/valet.h"
 #include "VALET/logmanager.h"
 
-namespace NValet {
+namespace NVALET {
    
    //#===--- Global variables
 

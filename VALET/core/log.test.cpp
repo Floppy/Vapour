@@ -10,7 +10,7 @@
 //! file 		= "VALET/core/log.test.cpp"
 //! author 		= "Warren Moore"
 //! date 		= "23/09/2001"
-//! rcsid 		= "$Id: log.test.cpp,v 1.4 2001/10/21 14:38:32 vap-warren Exp $"
+//! rcsid 		= "$Id: log.test.cpp,v 1.5 2001/10/24 21:31:38 vap-james Exp $"
 
 //#===--- Includes
 #include "log_test.h"
@@ -20,7 +20,7 @@
 #include <stdio.h>
 
 //#===--- Namespaces
-using namespace NValet;
+using namespace NVALET;
 	
 //#===--- Defines
 #define LOOP_MAX 5
@@ -46,7 +46,7 @@ int main(int argc, char *argv[]) {
 	}
 	
 	// Set the log attributes
-	NValet::g_oLogManager.SetLog("test", true, 0);
+	NVALET::g_oLogManager.SetLog("test", true, 0);
 
 	// Start the loop test
 	int x = 0;

@@ -14,7 +14,7 @@
 //! author 		= "Warren Moore"
 //! date 		= "23/09/2001"
 //! lib 			= libVALETcore
-//! rcsid 		= "$Id: logmanager.h,v 1.10 2001/10/24 14:23:33 vap-warren Exp $"
+//! rcsid 		= "$Id: logmanager.h,v 1.11 2001/10/24 21:31:39 vap-james Exp $"
 //! userlevel 	= Develop
 //! docentry 	= "VALET.Core.Log"
 //! example 	= VALET/core/log.test.cpp
@@ -22,7 +22,7 @@
 //#===--- Includes
 #include "VALET/valet.h"
 
-namespace NValet {
+namespace NVALET {
 
    enum LOG_LEVEL {
       LL_ALL = 0,

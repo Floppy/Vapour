@@ -10,7 +10,7 @@
 //! file 		= "VALET/core/log_test.noarch.cpp"
 //! author 		= "Warren Moore"
 //! date 		= "15/10/2001"
-//! rcsid 		= "$Id: log_test.noarch.cpp,v 1.1 2001/10/17 00:22:48 vap-warren Exp $"
+//! rcsid 		= "$Id: log_test.noarch.cpp,v 1.2 2001/10/24 21:31:38 vap-james Exp $"
 
 //#===--- Includes
 #include "log_test.h"
@@ -18,7 +18,7 @@
 #include <stdio.h>
 
 //#===--- Namespaces
-using namespace NValet;
+using namespace NVALET;
 	
 bool test_init() {
 	// Don't need to set anything up

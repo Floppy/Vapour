@@ -13,16 +13,16 @@
 //! file 		= "VALET/arch/valet_common.h""
 //! author 		= "Warren Moore"
 //! date 		= "23/09/2001"
-//! rcsid 		= "$Id: valet_common.h,v 1.9 2001/10/24 14:21:09 vap-warren Exp $"
+//! rcsid 		= "$Id: valet_common.h,v 1.10 2001/10/24 21:30:55 vap-james Exp $"
 //! userlevel 	= Normal
 //! docentry 	= "VALET.Arch"
 //! maindoc		= 1
 
-//#===--- NValet Namespace
+//#===--- NVALET Namespace
 //: Library Namespace
 // Contains VALET global definitions
 
-namespace NValet {
+namespace NVALET {
 
    /*#===--- Constants */
    const unsigned int m_uiStrLength = 1024;	    // Default fixed string length

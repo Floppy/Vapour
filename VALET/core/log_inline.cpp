@@ -14,11 +14,11 @@
 //! author 		= "Warren Moore"
 //! date 		= "23/09/2001"
 //! lib 			= libVALETcore
-//! rcsid 		= "$Id: log_inline.cpp,v 1.4 2001/10/24 14:26:26 vap-warren Exp $"
+//! rcsid 		= "$Id: log_inline.cpp,v 1.5 2001/10/24 21:31:38 vap-james Exp $"
 
 //#===--- CLog Inline Functions
 
-namespace NValet {
+namespace NVALET {
 
 #ifdef VDEBUG
 

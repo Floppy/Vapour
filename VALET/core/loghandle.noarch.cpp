@@ -11,7 +11,7 @@
 //! author 		= "Warren Moore"
 //! date 		= "23/09/2001"
 //! lib 			= libVALETcore
-//! rcsid 		= "$Id: loghandle.noarch.cpp,v 1.4 2001/10/23 22:42:14 vap-james Exp $"
+//! rcsid 		= "$Id: loghandle.noarch.cpp,v 1.5 2001/10/24 21:31:39 vap-james Exp $"
 
 //#===--- Includes
 #include "loghandle.h"
@@ -21,7 +21,7 @@
 
 //#===--- CLogHandle
 
-namespace NValet {
+namespace NVALET {
    
    CLogHandle::CLogHandle(const char *pcType) : 
       m_poLogFile(NULL) {

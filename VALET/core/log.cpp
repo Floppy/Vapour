@@ -11,12 +11,12 @@
 //! author		= "Warren Moore"
 //! date			= "23/09/2001"
 //! lib 			= libVALETcore
-//! rcsid		= "$Id: log.cpp,v 1.5 2001/10/24 14:26:26 vap-warren Exp $"
+//! rcsid		= "$Id: log.cpp,v 1.6 2001/10/24 21:31:38 vap-james Exp $"
 
 //#===--- Includes
 #include "log.h"
 
-namespace NValet {
+namespace NVALET {
 	
    //#===--- CLog
    
