@@ -1,3 +1,15 @@
+//=======---
+// WJESFX
+//-------
+// Avatar Self-Extractor for Games
+// Copyright 2000 Vapour Technology Ltd.
+//
+// AboutDlg.h - 11/07/2000 - Warren Moore
+//	About dialog box
+//
+// $Id: AboutDlg.h,v 1.2 2000/07/11 19:20:26 waz Exp $
+//
+
 #ifndef _ABOUTDIALOG_
 #define _ABOUTDIALOG_
 

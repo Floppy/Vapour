@@ -1,10 +1,22 @@
+//=======---
+// WJESFX
+//-------
+// Avatar Self-Extractor for Games
+// Copyright 2000 Vapour Technology Ltd.
+//
+// WJESFXDlg.cpp - 11/07/2000 - Warren Moore
+//	Main dialog box
+//
+// $Id: WJESFXDlg.cpp,v 1.3 2000/07/11 19:20:25 waz Exp $
+//
+
 #include "stdafx.h"
 #include "WJESFX.h"
 
 #include "WJESFXDlg.h"
 #include "AboutDlg.h"
 
-#include "Progress.h"
+#include "ProgressDlg.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -60,6 +72,12 @@ BOOL CWJESFXDlg::OnInitDialog() {
 	SetIcon(m_hIcon, TRUE);			// Set big icon
 	SetIcon(m_hIcon, FALSE);		// Set small icon
 	
+	// Set the correct game text
+	CString strTemp;
+	strTemp.Format("'%s' Avatar Installer", GAME_NAME);
+	SetDlgItemText(IDC_MAIN_BOX, strTemp);
+	strTemp.Format("Click Install to install your avatar into '%s'", GAME_NAME);
+	SetDlgItemText(IDC_MAIN_TEXT, strTemp);
 	
 	return TRUE;  // return TRUE  unless you set the focus to a control
 } // OnInitDialog
@@ -111,9 +129,9 @@ HCURSOR CWJESFXDlg::OnQueryDragIcon() {
 
 
 void CWJESFXDlg::OnOK() {
-	CProgress oProgressDlg;
+	CProgressDlg oProgressDlg;
 
-	((CWJESFXApp*)AfxGetApp())->Install(oProgressDlg.Create() ? &oProgressDlg : NULL);
+	((CWJESFXApp*)AfxGetApp())->GAME_INSTALL(oProgressDlg.Create() ? &oProgressDlg : NULL);
 	
 	CDialog::OnOK();
 }

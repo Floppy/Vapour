@@ -101,7 +101,7 @@ SOURCE=.\CreditsDlg.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\Progress.cpp
+SOURCE=.\ProgressDlg.cpp
 # End Source File
 # Begin Source File
 
@@ -134,7 +134,7 @@ SOURCE=.\CreditsDlg.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\Progress.h
+SOURCE=.\ProgressDlg.h
 # End Source File
 # Begin Source File
 

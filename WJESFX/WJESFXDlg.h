@@ -1,5 +1,17 @@
-#ifndef _WJESFX_DLG_
-#define _WJESFX_DLG_
+//=======---
+// WJESFX
+//-------
+// Avatar Self-Extractor for Games
+// Copyright 2000 Vapour Technology Ltd.
+//
+// WJESFXDlg.h - 11/07/2000 - Warren Moore
+//	Main dialog box
+//
+// $Id: WJESFXDlg.h,v 1.2 2000/07/11 19:20:25 waz Exp $
+//
+
+#ifndef _WJESFXDIALOG_
+#define _WJESFXDIALOG_
 
 #pragma once
 
@@ -35,4 +47,4 @@ protected:
 
 //{{AFX_INSERT_LOCATION}}
 
-#endif // _WJESFX_DLG_
+#endif // _WJESFXDIALOG_

@@ -26,35 +26,35 @@ LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 // Dialog
 //
 
-IDD_ABOUT_DIALOG DIALOG DISCARDABLE  0, 0, 191, 106
+IDD_ABOUT_DIALOG DIALOG DISCARDABLE  0, 0, 204, 106
 STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "About..."
 FONT 8, "MS Sans Serif"
 BEGIN
     DEFPUSHBUTTON   "OK",IDOK,70,90,50,14,WS_GROUP
-    ICON            IDR_MAINFRAME,IDC_STATIC,19,47,21,20
-    LTEXT           "The Sims Avatar Converter and Installer",IDC_STATIC,45,
-                    42,126,8
-    LTEXT           "Exclusively licensed to AvatarMe Ltd.",IDC_STATIC,45,74,
+    ICON            IDR_MAINFRAME,IDC_STATIC,8,47,21,20
+    LTEXT           "A Game Avatar Converter and Installer",IDC_ABOUT_TITLE,
+                    32,41,169,8
+    LTEXT           "Exclusively licensed to AvatarMe Ltd.",IDC_STATIC,32,76,
                     118,8
-    LTEXT           "(C) 2000 Vapour Technology Ltd.",IDC_STATIC,45,51,106,8
+    LTEXT           "(C) 2000 Vapour Technology Ltd.",IDC_STATIC,32,51,169,8
     CONTROL         "Logo",IDC_CREDIT_BUTTON,"Button",BS_OWNERDRAW | 
                     BS_BITMAP | WS_TABSTOP,2,5,56,14
-    LTEXT           "http://www.vapourtech.com/",IDC_VAPOUR_URL,45,60,94,8
+    LTEXT           "http://www.vapourtech.com/",IDC_VAPOUR_URL,32,61,169,8
 END
 
 IDD_WJESFX_DIALOG DIALOGEX 0, 0, 203, 62
 STYLE DS_MODALFRAME | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
 EXSTYLE WS_EX_APPWINDOW
 CAPTION "Vapour Technology Installer"
-FONT 8, "MS Sans Serif", 0, 0, 0x1
+FONT 8, "MS Sans Serif"
 BEGIN
     DEFPUSHBUTTON   "&Install",IDOK,76,41,50,14
     PUSHBUTTON      "&Quit",IDCANCEL,145,41,50,14
     PUSHBUTTON      "&About",IDC_ABOUT,7,41,50,14
-    CTEXT           "Click Install to install your avatar into 'The Sims'",
-                    IDC_STATIC,24,18,156,10
-    GROUPBOX        "The Sims Avatar Installer",IDC_STATIC,7,6,189,27
+    CTEXT           "Click Install to install your avatar into a game",
+                    IDC_MAIN_TEXT,24,18,156,10
+    GROUPBOX        "A Game Avatar Installer",IDC_MAIN_BOX,7,6,189,27
 END
 
 
@@ -111,7 +111,7 @@ BEGIN
     IDD_ABOUT_DIALOG, DIALOG
     BEGIN
         LEFTMARGIN, 2
-        RIGHTMARGIN, 189
+        RIGHTMARGIN, 202
         TOPMARGIN, 5
         BOTTOMMARGIN, 104
     END
@@ -160,18 +160,20 @@ LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_UK
 // Dialog
 //
 
-IDD_CREDITS_DIALOG DIALOG DISCARDABLE  0, 0, 147, 103
+IDD_CREDITS_DIALOG DIALOG DISCARDABLE  0, 0, 170, 103
 STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Credits..."
 FONT 8, "MS Sans Serif"
 BEGIN
-    DEFPUSHBUTTON   "OK",IDOK2,49,87,50,14
-    CTEXT           "James Smith and Warren Moore",IDC_STATIC,9,26,130,8
-    CTEXT           "AvatarMe to The Sims Convertor",IDC_STATIC,9,16,130,8
-    CTEXT           "Installer uses zlib compression",IDC_STATIC,9,65,130,8
-    CTEXT           "Warren Moore",IDC_STATIC,9,50,130,8
-    CTEXT           "The Sims Avatar Installer",IDC_STATIC,9,40,130,8
-    GROUPBOX        "Vapour Technology Ltd.",IDC_STATIC,2,2,143,80
+    DEFPUSHBUTTON   "OK",IDOK2,59,87,50,14
+    CTEXT           "James Smith and Warren Moore",IDC_STATIC,19,26,130,8
+    CTEXT           "AvatarMe to A Game Convertor",IDC_CREDITS_EXPORT,19,16,
+                    130,8
+    CTEXT           "Installer uses zlib compression",IDC_STATIC,19,65,130,8
+    CTEXT           "Warren Moore",IDC_STATIC,19,50,130,8
+    CTEXT           "A Game Avatar Installer",IDC_CREDITS_INSTALL,19,40,130,
+                    8
+    GROUPBOX        "Vapour Technology Ltd.",IDC_STATIC,2,2,166,80
 END
 
 IDD_PROGRESS DIALOG DISCARDABLE  0, 0, 186, 39
@@ -179,8 +181,8 @@ STYLE DS_MODALFRAME | DS_CENTER | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Installing..."
 FONT 8, "MS Sans Serif"
 BEGIN
-    GROUPBOX        "Installing 'The Sims' Avatar Files",IDC_STATIC,2,2,182,
-                    36
+    GROUPBOX        "Installing A Game Avatar Files",IDC_PROGRESS_TEXT,2,2,
+                    182,36
     CONTROL         "Progress1",IDC_PROGRESS,"msctls_progress32",PBS_SMOOTH | 
                     WS_BORDER,11,17,158,10
 END
@@ -197,7 +199,7 @@ BEGIN
     IDD_CREDITS_DIALOG, DIALOG
     BEGIN
         LEFTMARGIN, 2
-        RIGHTMARGIN, 145
+        RIGHTMARGIN, 168
         TOPMARGIN, 2
         BOTTOMMARGIN, 101
     END

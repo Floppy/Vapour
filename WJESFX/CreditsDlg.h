@@ -1,3 +1,15 @@
+//=======---
+// WJESFX
+//-------
+// Avatar Self-Extractor for Games
+// Copyright 2000 Vapour Technology Ltd.
+//
+// CreditsDlg.h - 11/07/2000 - Warren Moore
+//	Credits dialog box
+//
+// $Id: CreditsDlg.h,v 1.2 2000/07/11 19:20:26 waz Exp $
+//
+
 #ifndef _CREDITSDIALOG_
 #define _CREDITSDIALOG_
 

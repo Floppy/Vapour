@@ -14,7 +14,13 @@
 #define IDD_PROGRESS                    130
 #define IDC_PROGRESS                    1002
 #define IDC_VAPOUR_URL                  1003
+#define IDC_MAIN_BOX                    1003
+#define IDC_MAIN_TEXT                   1004
+#define IDC_ABOUT_TITLE                 1005
 #define IDC_VALVE_URL                   1006
+#define IDC_CREDITS_EXPORT              1006
+#define IDC_CREDITS_INSTALL             1007
+#define IDC_PROGRESS_TEXT               1008
 #define IDC_CREDIT_BUTTON               1017
 
 // Next default values for new objects
@@ -23,7 +29,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        131
 #define _APS_NEXT_COMMAND_VALUE         32771
-#define _APS_NEXT_CONTROL_VALUE         1003
+#define _APS_NEXT_CONTROL_VALUE         1009
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

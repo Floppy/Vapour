@@ -1,8 +1,19 @@
+//=======---
+// WJESFX
+//-------
+// Avatar Self-Extractor for Games
+// Copyright 2000 Vapour Technology Ltd.
+//
+// WJESFX.cpp - 11/07/2000 - Warren Moore
+//	Application and installation
+//
+// $Id: WJESFX.cpp,v 1.3 2000/07/11 19:20:24 waz Exp $
+//
+
 #include "stdafx.h"
 #include "WJESFX.h"
 
 #include "WJESFXDlg.h"
-#include <fstream.h>
 #include "Registry.h"
 #include "FolderDialog.h"
 #include <direct.h>
@@ -11,7 +22,7 @@
 #include "VALWin32.h"
 #include "SFX.h"
 #include "Wedgie.h"
-#include "Progress.h"
+#include "ProgressDlg.h"
 
 //#===--- VALWin32 management object
 CVAL *g_poVAL = NULL;
@@ -61,7 +72,7 @@ BOOL CWJESFXApp::InitInstance() {
 	return FALSE;
 } // InitInstance
 
-void CWJESFXApp::Install(CProgress *poDlg) {
+void CWJESFXApp::InstallSims(CProgressDlg *poDlg) {
 // Find the game directory
 	CRegistry oReg;
 	CString strSimPath = oReg.ReadString(LOCAL_MACHINE, "Software\\Maxis\\The Sims", "SIMS_DATA", "");
@@ -140,4 +151,11 @@ void CWJESFXApp::Install(CProgress *poDlg) {
 	}
 	if (poDlg)
 		poDlg->DestroyWindow();
-} // Install
+} // InstallSims
+
+void CWJESFXApp::InstallHL(CProgressDlg *poDlg) {
+} // InstallHL
+
+void CWJESFXApp::InstallUT(CProgressDlg *poDlg) {
+} // InstallHL
+
