@@ -6,7 +6,7 @@
 // Element.h
 // 19/03/2002 - James Smith
 //
-// $Id: Element.h,v 1.2 2002/03/20 12:46:30 vap-james Exp $
+// $Id: Element.h,v 1.3 2002/03/20 13:29:50 vap-james Exp $
 
 #ifndef __ELEMENT__
 #define __ELEMENT__
@@ -16,6 +16,7 @@
 #endif // _MSC_VER > 1000
 
 #include "CortonaUtil.h"
+#include "NodeSet.h"
 
 enum TElementType {
    BEAM,
@@ -31,8 +32,9 @@ class CElement {
 //#===--- Construction/Destruction
 public:
 
-   CElement(CCortonaUtil *pCortona) :
+   CElement(CCortonaUtil *pCortona, CNodeSet* pNodeSet) :
       m_pCortona(pCortona),
+      m_pNodeSet(pNodeSet),
       m_pNodePtr(NULL),
       m_iElement(0),
       m_iGroup(0),
@@ -97,6 +99,9 @@ protected:
    CCortonaUtil* m_pCortona;
    // Cortona Utility interface
 
+   CNodeSet* m_pNodeSet;
+   // Node Set
+
    mutable INodeObject* m_pNodePtr;
    // Pointer to the node in the VRML world;
 
@@ -117,4 +122,4 @@ protected:
 
 };
 
-#endif // __BEAM_ELEMENT__
+#endif // __ELEMENT__

@@ -6,7 +6,7 @@
 // SlabElement.h
 // 19/03/2002 - James Smith
 //
-// $Id: SlabElement.h,v 1.1 2002/03/20 02:06:25 vap-james Exp $
+// $Id: SlabElement.h,v 1.2 2002/03/20 13:29:51 vap-james Exp $
 
 #ifndef __SLAB_ELEMENT__
 #define __SLAB_ELEMENT__
@@ -20,7 +20,7 @@
 class CSlabElement : public CElement {
 //#===--- Construction/Destruction
 public:
-   CSlabElement(CCortonaUtil *pCortona);
+   CSlabElement(CCortonaUtil *pCortona, CNodeSet* pNodeSet);
    // Constructor
 
 //#===--- Member Functions

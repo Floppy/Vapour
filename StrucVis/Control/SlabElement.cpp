@@ -6,7 +6,7 @@
 // SlabElement.cpp
 // 19/03/2002 - James Smith
 //
-// $Id: SlabElement.cpp,v 1.1 2002/03/20 02:06:25 vap-james Exp $
+// $Id: SlabElement.cpp,v 1.2 2002/03/20 13:29:50 vap-james Exp $
 
 #include "stdafx.h"
 #include "SlabElement.h"
@@ -20,7 +20,7 @@ static char THIS_FILE[] = __FILE__;
 /////////////////
 // CBeamElement
 
-CSlabElement::CSlabElement(CCortonaUtil* pCortona) : CElement(pCortona)
+CSlabElement::CSlabElement(CCortonaUtil *pCortona, CNodeSet* pNodeSet) : CElement(pCortona,pNodeSet)
 {
    return;
 }

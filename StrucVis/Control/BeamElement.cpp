@@ -6,7 +6,7 @@
 // BeamElement.cpp
 // 19/03/2002 - James Smith
 //
-// $Id: BeamElement.cpp,v 1.2 2002/03/20 12:46:30 vap-james Exp $
+// $Id: BeamElement.cpp,v 1.3 2002/03/20 13:29:49 vap-james Exp $
 
 #include "stdafx.h"
 #include "BeamElement.h"
@@ -22,8 +22,8 @@ static char THIS_FILE[] = __FILE__;
 /////////////////
 // CBeamElement
 
-CBeamElement::CBeamElement(CCortonaUtil* pCortona) : 
-   CElement(pCortona),
+CBeamElement::CBeamElement(CCortonaUtil *pCortona, CNodeSet* pNodeSet) : 
+   CElement(pCortona,pNodeSet),
    m_fHeight(1.0f),
    m_fWidth(1.0f),
    m_fFlange(0.1f),
@@ -149,5 +149,11 @@ void CBeamElement::CalculateColours(float* pfColours) const {
 }
 
 void CBeamElement::CalculateNodePositions(float* pfNodes) const {
+   for (int i=0; i<2; i++) {
+      const float* pNode = m_pNodeSet->Node(m_piNodes[i]);
+      pfNodes[(i*3) + 0] = pNode[0];
+      pfNodes[(i*3) + 1] = pNode[1];
+      pfNodes[(i*3) + 2] = pNode[2];
+   }
    return;
 }
