@@ -41,7 +41,7 @@ RSC=rc.exe
 # PROP Intermediate_Dir "Release"
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_MBCS" /D "_LIB" /Yu"stdafx.h" /FD /c
-# ADD CPP /nologo /MT /W3 /GX /O2 /I "Application" /I "Avatar" /I "AvatarFiles" /I "DataTypes" /I "Image" /I "ImageFiles" /I "Wrapper" /I "Render" /D "WIN32" /D "NDEBUG" /D "_MBCS" /D "_LIB" /D "VAL_BUILD" /Yu"stdafx.h" /FD /c
+# ADD CPP /nologo /MT /W3 /GX /O2 /I "Application" /I "Avatar" /I "AvatarFiles" /I "DataTypes" /I "Image" /I "ImageFiles" /I "Wrapper" /I "Render" /I "Model" /D "WIN32" /D "NDEBUG" /D "_MBCS" /D "_LIB" /D "VAL_BUILD" /Yu"stdafx.h" /FD /c
 # ADD BASE RSC /l 0x809 /d "NDEBUG"
 # ADD RSC /l 0x809 /d "NDEBUG"
 BSC32=bscmake.exe
@@ -64,7 +64,7 @@ LIB32=link.exe -lib
 # PROP Intermediate_Dir "Debug"
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_MBCS" /D "_LIB" /Yu"stdafx.h" /FD /GZ /c
-# ADD CPP /nologo /MDd /W3 /Gm /GX /ZI /Od /I "Application" /I "Avatar" /I "AvatarFiles" /I "DataTypes" /I "Image" /I "ImageFiles" /I "Wrapper" /I "Render" /I "..\VALWin32\Render" /D "WIN32" /D "_DEBUG" /D "_MBCS" /D "_LIB" /D "VAL_BUILD" /Yu"stdafx.h" /FD /GZ /c
+# ADD CPP /nologo /MDd /W3 /Gm /GX /ZI /Od /I "..\VALWin32\Render" /I "Application" /I "Avatar" /I "AvatarFiles" /I "DataTypes" /I "Image" /I "ImageFiles" /I "Wrapper" /I "Render" /I "Model" /D "WIN32" /D "_DEBUG" /D "_MBCS" /D "_LIB" /D "VAL_BUILD" /Yu"stdafx.h" /FD /GZ /c
 # ADD BASE RSC /l 0x809 /d "_DEBUG"
 # ADD RSC /l 0x809 /d "_DEBUG" /d "_AFXDLL"
 BSC32=bscmake.exe
@@ -169,6 +169,10 @@ SOURCE=.\DataTypes\EulerRotation.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\Model\HeightField.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\DataTypes\HomTransform.cpp
 # End Source File
 # Begin Source File
@@ -262,7 +266,15 @@ SOURCE=.\Application\Stores.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\Model\SurfaceMaterial.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\Application\TimeLimit.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\Model\TriMesh.cpp
 # End Source File
 # Begin Source File
 
@@ -406,6 +418,10 @@ SOURCE=.\AvatarFiles\HalflifeMDL.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\Model\HeightField.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\DataTypes\HomTransform.h
 # End Source File
 # Begin Source File
@@ -439,6 +455,10 @@ SOURCE=.\Image\ImageFileStore.h
 # Begin Source File
 
 SOURCE=.\DataTypes\MathConstants.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\Model\Model.h
 # End Source File
 # Begin Source File
 
@@ -514,6 +534,10 @@ SOURCE=.\StdAfx.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\Model\SurfaceMaterial.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\DataTypes\TexCoord.h
 # End Source File
 # Begin Source File
@@ -523,6 +547,10 @@ SOURCE=.\Application\TimeLimit.h
 # Begin Source File
 
 SOURCE=.\DataTypes\TriFace.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\Model\TriMesh.h
 # End Source File
 # Begin Source File
 
