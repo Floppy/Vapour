@@ -7,7 +7,7 @@
 // AvatarFileHalflife.h - 16/2/2000 - James Smith
 //	Halflife MDL export filter header
 //
-// $Id: AvatarFileHalflife.h,v 1.6 2000/10/06 13:16:59 waz Exp $
+// $Id: AvatarFileHalflife.h,v 1.7 2000/11/01 13:26:19 waz Exp $
 //
 
 #pragma once
@@ -44,6 +44,7 @@ private:
    mutable SHalflifeMesh* m_pMeshHeaderChunk;
    mutable char* m_pcModelDataChunk;
    mutable SHalflifeSeqGroup* m_pSeqGroupsChunk;
+   mutable SHalflifeEvent* m_pEventChunk;
    mutable SHalflifeHitbox* m_pHitboxChunk;
    mutable SHalflifeAttachment* m_pAttachmentChunk;
    mutable SHalflifeBoneController* m_pBoneControllerChunk;
