@@ -7,7 +7,7 @@
 // ImageFile.h - 21/12/1999 - Warren Moore
 //	Abstract image file format header
 //
-// $Id: ImageFile.h,v 1.3 2000/07/10 09:15:38 waz Exp $
+// $Id: ImageFile.h,v 1.4 2000/07/10 22:17:00 waz Exp $
 //
 
 #ifndef _VAL_IMAGEFILE_
@@ -17,6 +17,7 @@
 
 //#===--- Includes
 #include "VAL.h"
+#include "Image.h"
 #include "Palette.h"
 
 ///////////////

@@ -7,16 +7,16 @@
 // Image.h - 21/12/1999 - Warren Moore
 //	Image implementation
 //
-// $Id: Image.cpp,v 1.4 2000/07/10 09:09:40 waz Exp $
+// $Id: Image.cpp,v 1.5 2000/07/10 22:16:59 waz Exp $
 //
 
 #include "stdafx.h"
 
 #include "Image.h"
 
+#include "ImageFile.h"
 #include <fstream.h>
 #include "ColourQuant.h"
-
 #include "BaseFilter.h"
 #include "BoxFilter.h"
 #include "BilinearFilter.h"

@@ -7,7 +7,7 @@
 // Image.h - 21/12/1999 - Warren Moore
 //	Image header
 //
-// $Id: Image.h,v 1.3 2000/07/10 09:15:38 waz Exp $
+// $Id: Image.h,v 1.4 2000/07/10 22:17:00 waz Exp $
 //
 
 #ifndef _VAL_IMAGE_
@@ -17,10 +17,42 @@
 
 //#===--- Includes
 #include "VAL.h"
-#include "ImageFile.h"
+//#include "ImageFile.h"
 #include "CAvatar.h"
 #include "Palette.h"
 #include "BaseFilter.h"
+
+//#===--- Pre-declared classes
+class CImageFile;
+
+//#===--- Defines
+#define IMG_MAXWIDTH		1600
+#define IMG_MAXHEIGHT		1200
+
+//#===--- Data Types
+enum IMAGETYPE {
+	IT_UNKNOWN,
+	IT_MONO,
+	IT_GREY,
+	IT_PALETTE,
+	IT_RGB,
+};
+
+enum IMAGEFILTERTYPE {
+	IF_BOX,
+	IF_BILINEAR,
+};
+
+enum IRESULT {
+	I_OK,
+	I_OUTOFRANGE,
+	I_INVALIDPARAM,
+	I_INCORRECTTYPE,
+	I_UNSUPPORTEDTYPE,
+	I_NOIMAGE,
+	I_OUTOFMEMORY,
+	I_ERROR,
+};
 
 ///////////
 // CImage

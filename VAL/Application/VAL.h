@@ -7,7 +7,7 @@
 // VAL.h - 03/07/2000 - Warren Moore
 //	VAL management object for OS independent functions
 //
-// $Id: VAL.h,v 1.2 2000/07/10 09:11:51 waz Exp $
+// $Id: VAL.h,v 1.3 2000/07/10 22:16:59 waz Exp $
 //
 
 #ifndef _VAL_
@@ -15,12 +15,33 @@
 
 #pragma once
 
-// TODO : Merge Defs.h into VAL.h
-#include "Defs.h"
+//#===--- Macros
+
+#define NEWBEGIN	try { 
+#define NEWEND(x)	} catch (CMemoryException *pException) { TRACE("Out of memory : %s\n", x); pException->Delete(); } 
 
 //#===--- Defines
 
+// String length
+#define STR_SIZE				1024
+
 //#===--- Data types
+
+// Generic File Return Codes
+enum FRESULT {
+	F_OK,
+	F_DOESNOTEXIST,
+	F_FILEERROR,
+	F_WRONGFILETYPE,
+	F_WRONGIMAGETYPE,
+	F_OUTOFMEMORY,
+	F_WRONGCONTEXT,
+	F_HASNTCHANGED,
+	F_NOFILENAME,
+	F_NOFILEEXTENSION,
+	F_NODATATOSAVE,
+	F_ERROR,
+};
 
 /////////
 // CVAL
