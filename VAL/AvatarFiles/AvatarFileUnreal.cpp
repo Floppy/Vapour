@@ -7,7 +7,7 @@
 // AvatarFileUnreal.cpp - 16/2/2000 - James Smith
 //	Unreal export filter implementation
 //
-// $Id: AvatarFileUnreal.cpp,v 1.10 2000/08/30 14:08:50 waz Exp $
+// $Id: AvatarFileUnreal.cpp,v 1.11 2000/08/31 01:07:07 waz Exp $
 //
 
 #include "stdafx.h"
@@ -52,7 +52,7 @@ CAvatarFileUnreal::CAvatarFileUnreal() {
    m_puFirstPixel = NULL;
    m_puImageHeight = NULL;
    m_uTotalHeight = 0;
-   m_iSex = UNREAL_MALE;
+   m_iSex = UNREAL_FEMALE;
    m_dYOffset = 0;
    m_dScale = 1;
    return;
@@ -180,7 +180,7 @@ FRESULT CAvatarFileUnreal::Save(const char* pszFilename, CAvatar* pAvatar) const
       return eResult;
    }
 
-   /*//////////////////////////////////////////////////////////////////////
+   //////////////////////////////////////////////////////////////////////
 
    // Save mesh description .3d file
    // Notify of progress
@@ -280,7 +280,7 @@ FRESULT CAvatarFileUnreal::Save(const char* pszFilename, CAvatar* pAvatar) const
       return eResult;
    }
 
-   //////////////////////////////////////////////////////////////////////*/
+   //////////////////////////////////////////////////////////////////////
 
    // Tidy up allocated memory
    eResult = Cleanup();
@@ -1169,8 +1169,54 @@ FRESULT CAvatarFileUnreal::SaveMeshU(const char* pszFilename, CAvatar* pAvatar) 
    if (!osOutputStream.fail()) {
 
       int i; // Generic loop counter
-      const unsigned int uNumFrames = 700;
-      const unsigned int uNumSeqs = 69;
+
+      // Build reordered face maps
+      unsigned int* pUTToAvatarFaces = NULL;
+      NEWBEGIN
+      pUTToAvatarFaces = new unsigned int[pAvatar->NumFaces()+1];
+      NEWEND("CAvatarFileUnreal::Save - pUTToAvatarFaces allocation");
+      if (pUTToAvatarFaces == NULL) {
+         osOutputStream.close();
+         return F_OUT_OF_MEMORY;
+      }
+      unsigned int* pAvatarToUTFaces = NULL;
+      NEWBEGIN
+      pAvatarToUTFaces = new unsigned int[pAvatar->NumFaces()+1];
+      NEWEND("CAvatarFileUnreal::Save - pAvatarToUTFaces allocation");
+      if (pAvatarToUTFaces == NULL) {
+         delete [] pUTToAvatarFaces;
+         osOutputStream.close();
+         return F_OUT_OF_MEMORY;
+      }
+      // Reorder faces
+      int iFaceCount = 0;
+      // Add head triangles first
+      for (i=0; i<pAvatar->NumFaces(); i++) {
+         const STriFace* pFace = &(pAvatar->Faces()[i]);
+         // Check texture number
+         if (pFace->m_iTextureNumber == pAvatar->TextureIndex(skullbase)) {
+            pUTToAvatarFaces[iFaceCount] = i;
+            pAvatarToUTFaces[i] = iFaceCount;
+            iFaceCount++;
+         }
+      }
+      // Add body triangles
+      for (i=0; i<pAvatar->NumFaces(); i++) {
+         const STriFace* pFace = &(pAvatar->Faces()[i]);
+         // Check texture number
+         if (pFace->m_iTextureNumber != pAvatar->TextureIndex(skullbase)) {
+            pUTToAvatarFaces[iFaceCount] = i;
+            pAvatarToUTFaces[i] = iFaceCount;
+            iFaceCount++;
+         }
+      }
+      // Add weapon triangle
+      pUTToAvatarFaces[iFaceCount] = i;
+      pAvatarToUTFaces[i] = iFaceCount;
+      
+      // Stuff
+      const unsigned int uNumFrames = 724;
+      const unsigned int uNumSeqs = 71;
       const unsigned int uNameLength = strlen(m_pszName);
       unsigned int uCurrentOffset = 0;
       const SBodyPart* pBodyParts = pAvatar->BodyParts();
@@ -1193,7 +1239,7 @@ FRESULT CAvatarFileUnreal::SaveMeshU(const char* pszFilename, CAvatar* pAvatar) 
       // Set flags
       sHeader.uPackageFlags = UNREAL_PKG_ALLOWDOWNLOAD;
       // Name tables stuff
-      sHeader.uNameCount = 0x6C;
+      sHeader.uNameCount = 0x6E;
       // 9 exported symbols
       sHeader.uExportCount = 0x09; // 0x09 exported names
       // 12 imported symbols
@@ -1223,7 +1269,7 @@ FRESULT CAvatarFileUnreal::SaveMeshU(const char* pszFilename, CAvatar* pAvatar) 
       unsigned int uMeshName, uSelectName, uBotName;
       // Create name table
       sHeader.uNameOffset = uCurrentOffset;
-      unsigned long uNameTableLength = ( m_iSex==UNREAL_FEMALE ? 0x599 : 0x593 )+ 3*uNameLength; // 0x593 for basic names and constant parts of model names, plus 2 * name length for names
+      unsigned long uNameTableLength = ( m_iSex==UNREAL_FEMALE ? 0x5AF : 0x5A9 )+ 3*uNameLength; // 0x593 for basic names and constant parts of model names, plus 2 * name length for names
       char* pcNameTable;
       NEWBEGIN
       pcNameTable = new char[uNameTableLength];
@@ -1231,7 +1277,7 @@ FRESULT CAvatarFileUnreal::SaveMeshU(const char* pszFilename, CAvatar* pAvatar) 
       if (pcNameTable != NULL) {
          unsigned long uNameTableOffset = 0;
          // Write standard names
-         const int iNumNames = 0x6C;
+         const int iNumNames = 0x6E;
          const char* pszNames[iNumNames] = {
             "None","Waiting","PlayFootStep","TakeHit","LandThump","Jumping","MovingFire","Gesture",
             "*name*","Botpack","Core","Engine","All","System","DefaultPackage","Mesh","TeamSkin2",
@@ -1246,7 +1292,7 @@ FRESULT CAvatarFileUnreal::SaveMeshU(const char* pszFilename, CAvatar* pAvatar) 
             "BackRun","Dead9B","DodgeR","DodgeL","Dead8","DodgeB","*bot*","Dead11","DodgeF","Chat2",
             "TextBuffer","Object","Class",m_iSex==UNREAL_FEMALE?"TFemale2Carcass":"TMale2Carcass",
             m_iSex==UNREAL_FEMALE?"TournamentFemale":"TournamentMale","SelectionDude",
-            m_iSex==UNREAL_FEMALE?"FemaleBotPlus":"MaleBotPlus","Function","ScriptText","Package",
+            m_iSex==UNREAL_FEMALE?"FemaleBotPlus":"MaleBotPlus","Function","ScriptText","Package","Dead5","Dead6"
          };
          const int piFlags[iNumNames] = {
             0x04070410,0x00070010,0x00070010,0x00070010,0x00070010,0x00070010,0x00070010,0x00070010,
@@ -1262,7 +1308,7 @@ FRESULT CAvatarFileUnreal::SaveMeshU(const char* pszFilename, CAvatar* pAvatar) 
             0x00070010,0x00070010,0x00070010,0x00070010,0x00070010,0x00070010,0x00000003,0x00070010,0x00070010,0x00070010,
             0x04070010,0x04070010,0x04070410,0x00070010,
             0x00070010,0x00070010,
-            0x00070010,0x04070410,0x00070010,0x04070410,
+            0x00070010,0x04070410,0x00070010,0x04070410,0x00070010,0x00070010
          };
          unsigned long uFlags = UNREAL_RF_UNKNOWNFLAG | UNREAL_RF_LOADFORCLIENT | UNREAL_RF_LOADFORSERVER |UNREAL_RF_LOADFOREDIT;
          for (int i=0; i<iNumNames; i++) {
@@ -1310,6 +1356,9 @@ FRESULT CAvatarFileUnreal::SaveMeshU(const char* pszFilename, CAvatar* pAvatar) 
          }
       }
       else {
+         delete [] pAvatarToUTFaces;
+         delete [] pUTToAvatarFaces;
+         osOutputStream.close();
          return F_OUT_OF_MEMORY;
       }
       // Update file offset
@@ -1459,6 +1508,9 @@ FRESULT CAvatarFileUnreal::SaveMeshU(const char* pszFilename, CAvatar* pAvatar) 
       }
       else {
          delete [] pcNameTable;
+         delete [] pAvatarToUTFaces;
+         delete [] pUTToAvatarFaces;
+         osOutputStream.close();
          return F_OUT_OF_MEMORY;
       }
       // Update file offset
@@ -1533,6 +1585,9 @@ FRESULT CAvatarFileUnreal::SaveMeshU(const char* pszFilename, CAvatar* pAvatar) 
       else {
          delete [] pcMeshProperties;
          delete [] pcNameTable;
+         delete [] pAvatarToUTFaces;
+         delete [] pUTToAvatarFaces;
+         osOutputStream.close();
          return F_OUT_OF_MEMORY;
       }
       // Update file offset
@@ -1580,6 +1635,9 @@ FRESULT CAvatarFileUnreal::SaveMeshU(const char* pszFilename, CAvatar* pAvatar) 
             delete [] pcMeshHeader;
             delete [] pcMeshProperties;
             delete [] pcNameTable;
+            delete [] pAvatarToUTFaces;
+            delete [] pUTToAvatarFaces;
+            osOutputStream.close();
             osTempStream.close();
             TRACE("Could not open wedgie file!\n");
             return F_FILE_ERROR;
@@ -1610,6 +1668,9 @@ FRESULT CAvatarFileUnreal::SaveMeshU(const char* pszFilename, CAvatar* pAvatar) 
                delete [] pcMeshHeader;
                delete [] pcMeshProperties;
                delete [] pcNameTable;
+               delete [] pAvatarToUTFaces;
+               delete [] pUTToAvatarFaces;
+               osOutputStream.close();
 			      oWedgie.Close();
                fsDataWJE.close();
                osTempStream.close();
@@ -1647,6 +1708,9 @@ FRESULT CAvatarFileUnreal::SaveMeshU(const char* pszFilename, CAvatar* pAvatar) 
          delete [] pcMeshHeader;
          delete [] pcMeshProperties;
          delete [] pcNameTable;
+         delete [] pAvatarToUTFaces;
+         delete [] pUTToAvatarFaces;
+         osOutputStream.close();
          return F_FILE_ERROR;
       }
       // Update file offset
@@ -1699,18 +1763,20 @@ FRESULT CAvatarFileUnreal::SaveMeshU(const char* pszFilename, CAvatar* pAvatar) 
          SUnrealTriangle* pFaceData = (SUnrealTriangle*)(pcMeshData + uMeshOffset);
          // Write faces
          for (f=0; f<uNumFaces; f++) {
+            //const STriFace* pFace = &(pFaces[pUTToAvatarFaces[f]]);
+            const STriFace* pFace = &(pFaces[f]);
             // Vertex indices
-            pFaceData[f].uVertex0 = pFaces[f].m_iVertices[2];
-            pFaceData[f].uVertex1 = pFaces[f].m_iVertices[1];
-            pFaceData[f].uVertex2 = pFaces[f].m_iVertices[0];
+            pFaceData[f].uVertex0 = pFace->m_iVertices[2];
+            pFaceData[f].uVertex1 = pFace->m_iVertices[1];
+            pFaceData[f].uVertex2 = pFace->m_iVertices[0];
             // Write Flags
             pFaceData[f].uFlags = UNREAL_U_TRI_NORMAL1SIDE;
             // Texture coordinates
-            int iTextureNumber = pFaces[f].m_iTextureNumber;
+            int iTextureNumber = pFace->m_iTextureNumber;
             for (int tc=3; tc--!=0; ) {
                // Get tex coords
-               double dU = pFaces[f].m_sTexCoords[tc].dU;
-               double dV = pFaces[f].m_sTexCoords[tc].dV;
+               double dU = pFace->m_sTexCoords[tc].dU;
+               double dV = pFace->m_sTexCoords[tc].dV;
                // Clamp to 0..1
                if (dU > 1) dU = 1;
                else if (dU < 0) dU = 0;
@@ -1762,7 +1828,7 @@ FRESULT CAvatarFileUnreal::SaveMeshU(const char* pszFilename, CAvatar* pAvatar) 
          pFaceData[f].uU2 = 0;
          pFaceData[f].uV2 = 0;
          // Texture number
-         pFaceData[f].uTexture = 0;
+         pFaceData[f].uTexture = 1;
          // Update offset
          uMeshOffset += (uNumFaces+1) * sizeof(SUnrealTriangle);
          // Store current offset in temp pointer
@@ -1789,44 +1855,44 @@ FRESULT CAvatarFileUnreal::SaveMeshU(const char* pszFilename, CAvatar* pAvatar) 
             0x4D, 0x4E, 0x50, 0x51, 0x4B, 0x5D, 0x60, 0x5A, 0x5B, 0x52, 0x2B, 0x2E,
             0x3F, 0x40, 0x32, 0x2A, 0x3C, 0x3D, 0x2F, 0x30, 0x28, 0x31, 0x1D, 0x2C,
             0x33, 0x25, 0x34, 0x58, 0x56, 0x57, 0x41, 0x44, 0x1A, 0x19, 0x1F, 0x36,
-            0x23, 0x2D, 0x5C, 0x55, 0x59, 0x5F, 0x49, 0x45, 0x42
+            0x23, 0x6C, 0x6D, 0x2D, 0x5C, 0x55, 0x59, 0x5F, 0x49, 0x45, 0x42
          };
          const char piGroup[uNumSeqs] = {
             0, 1, 1, 1, 1, 3, 3, 3, 3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
             1, 7, 7, 7, 7, 7, 5, 5, 5, 5, 5, 5, 5, 20, 20, 18, 18, 0, 0, 0, 6, 0,
-            6, 0, 0, 6, 0, 6, 6, 6, 6, 0, 0, 0, 3, 0, 0, 0, 3, 3, 3, 0, 0, 0, 0, 0
+            6, 0, 0, 6, 0, 6, 6, 6, 6, 0, 0, 0, 3, 0, 0, 0, 0, 0, 3, 3, 3, 0, 0, 0, 0, 0
          };
          const int piStartFrame[uNumSeqs] = {
             0, 1, 2, 3, 4, 90, 95, 0, 136, 177, 187, 197, 235, 250, 373, 380, 400,
             96, 408, 25, 32, 52, 463, 476, 265, 448, 343, 486, 5, 501, 502, 503, 504,
             505, 91, 92, 93, 94, 60, 75, 205, 220, 283, 298, 313, 328, 358, 137, 147,
-            157, 167, 670, 680, 690, 298, 328, 187, 525, 538, 554, 567, 583, 604, 622,
-            642, 652, 537, 553, 566
+            157, 167, 670, 680, 690, 298, 328, 187, 525, 538, 554, 567, 700, 713, 583, 
+            604, 622, 642, 652, 537, 553, 566
          };
          const int piNumFrames[uNumSeqs] = {
             700, 1, 1, 1, 1, 1, 1, 1, 1, 10, 10, 8, 15, 15, 7, 20, 8, 40, 40, 7, 20, 8,
             13, 10, 18, 15, 15, 15, 20, 1, 1, 1, 1, 20, 1, 1, 1, 1, 15, 15, 15, 15, 15,
-            15, 15, 15, 15, 10, 10, 10, 10, 10, 10, 10, 2, 2, 1, 13, 16, 13, 16, 21, 18,
-            20, 10, 18, 1, 1, 1
+            15, 15, 15, 15, 10, 10, 10, 10, 10, 10, 10, 2, 2, 1, 13, 16, 13, 16, 13, 11,
+            21, 18, 20, 10, 18, 1, 1, 1
          };
          const float pfRate[uNumSeqs] = {
             30, 30, 30, 30, 30, 30, 30, 30, 30, 15, 15, 15, 15, 15, 6, 7, 6, 15, 15, 6, 7, 6, 6,
             6, 11, 15, 15, 20, 15, 30, 30, 30, 30, 30, 30, 30, 30, 30, 15, 15, 15, 15, 18, 18, 18,
-            18, 18, 17, 17, 17, 17, 17, 17, 17, 15, 15, 30, 10, 10, 10, 10, 12, 10, 30, 15,
+            18, 18, 17, 17, 17, 17, 17, 17, 17, 15, 15, 30, 10, 10, 10, 10, 12, 11, 12, 10, 30, 15,
             10, 30, 30, 30
          };
          const char piNumNotifies[uNumSeqs] = {
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 2, 2, 2,
-            2, 2, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 0, 0,
+            2, 2, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 0, 0,
          };
-         const float pfNotifyData[22] = {
+         const float pfNotifyData[24] = {
             0.25F, 0.75F, 0.25F, 0.75F, 0.25F, 0.75F, 0.25F, 0.75F, 0.25F, 0.75F, 0.25F,
-            0.75F, 0.25F, 0.75F, 0.7F, 0.9F, 0.45F, 0.6F, 0.7F, 0.7F, 0.8F, 0.57F
+            0.75F, 0.25F, 0.75F, 0.7F, 0.9F, 0.45F, 0.6F, 0.61F, 0.54F, 0.7F, 0.7F, 0.8F, 0.57F
          };
-         const char piNotifyType[22] = {
+         const char piNotifyType[24] = {
             2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
-            4, 4, 4, 4, 4, 4, 4, 4
+            4, 4, 4, 4, 4, 4, 4, 4, 4, 4
          };
          int iNotifyCounter = 0;
          // Write information to memory
@@ -1975,25 +2041,25 @@ FRESULT CAvatarFileUnreal::SaveMeshU(const char* pszFilename, CAvatar* pAvatar) 
             for (int a=0; a<3; a++) {
                iAdjacentFaces[a] = -1;
                int b = (a+1) % 3;
+               //const CDList<int>* pFaceList = pAvatar->FacesPerVertex(pFaces[pUTToAvatarFaces[f]].m_iVertices[a]);
                const CDList<int>* pFaceList = pAvatar->FacesPerVertex(pFaces[f].m_iVertices[a]);
                for (int i=0; (i<pFaceList->Length()) && (iAdjacentFaces[a]<0); i++) {
                   int iFace = (*pFaceList)[i];
-                  if (iFace != f) { 
+                  if (iFace != pUTToAvatarFaces[f]) { 
                      if ((pFaces[iFace].m_iVertices[0] == pFaces[f].m_iVertices[b]) ||
                          (pFaces[iFace].m_iVertices[1] == pFaces[f].m_iVertices[b]) ||
                          (pFaces[iFace].m_iVertices[2] == pFaces[f].m_iVertices[b])) 
                          iAdjacentFaces[a] = iFace;
                   }
                }
-               // Make sure we're been successful
-               ASSERT(iAdjacentFaces[a] != -1);
             }
             // Write adjacent face numbers
+            //puTempPtr[uTempOffset++] = pAvatarToUTFaces[iAdjacentFaces[2]];
+            //puTempPtr[uTempOffset++] = pAvatarToUTFaces[iAdjacentFaces[1]];
+            //puTempPtr[uTempOffset++] = pAvatarToUTFaces[iAdjacentFaces[0]];
             puTempPtr[uTempOffset++] = iAdjacentFaces[2];
-            puTempPtr[uTempOffset++] = iAdjacentFaces[0];
             puTempPtr[uTempOffset++] = iAdjacentFaces[1];
-            // Make sure all three are different
-            ASSERT((iAdjacentFaces[1] != iAdjacentFaces[2]) && (iAdjacentFaces[2] != iAdjacentFaces[0]) && (iAdjacentFaces[0] != iAdjacentFaces[1]));
+            puTempPtr[uTempOffset++] = iAdjacentFaces[0];
          }
          // Write weapon triangle data
          puTempPtr[uTempOffset++] = f;
@@ -2166,6 +2232,9 @@ FRESULT CAvatarFileUnreal::SaveMeshU(const char* pszFilename, CAvatar* pAvatar) 
          delete [] pcMeshHeader;
          delete [] pcMeshProperties;
          delete [] pcNameTable;
+         delete [] pAvatarToUTFaces;
+         delete [] pUTToAvatarFaces;
+         osOutputStream.close();
          return F_OUT_OF_MEMORY;
       }
       uCurrentOffset += uBotScriptLength;
@@ -2303,6 +2372,9 @@ FRESULT CAvatarFileUnreal::SaveMeshU(const char* pszFilename, CAvatar* pAvatar) 
          delete [] pcMeshHeader;
          delete [] pcMeshProperties;
          delete [] pcNameTable;
+         delete [] pAvatarToUTFaces;
+         delete [] pUTToAvatarFaces;
+         osOutputStream.close();
          return F_OUT_OF_MEMORY;
       }
       // Update file offset
@@ -2351,6 +2423,9 @@ FRESULT CAvatarFileUnreal::SaveMeshU(const char* pszFilename, CAvatar* pAvatar) 
          delete [] pcMeshHeader;
          delete [] pcMeshProperties;
          delete [] pcNameTable;
+         delete [] pAvatarToUTFaces;
+         delete [] pUTToAvatarFaces;
+         osOutputStream.close();
          return F_OUT_OF_MEMORY;
       }
       uCurrentOffset += uSelectScriptLength;
@@ -2358,7 +2433,7 @@ FRESULT CAvatarFileUnreal::SaveMeshU(const char* pszFilename, CAvatar* pAvatar) 
       // Update export offset
       uExportOffset[5] = uCurrentOffset;
       // Write Mesh Script
-      const unsigned int uMeshScriptLength = (m_iSex==UNREAL_FEMALE ? 0x1DA8 : 0x1DA6) + (uNameLength * 98);
+      const unsigned int uMeshScriptLength = (m_iSex==UNREAL_FEMALE?0x1EC9:0x1EC7) + (uNameLength*102);
       char* pcMeshScript = NULL;
       NEWBEGIN
       pcMeshScript = new char[uMeshScriptLength];
@@ -2371,7 +2446,7 @@ FRESULT CAvatarFileUnreal::SaveMeshU(const char* pszFilename, CAvatar* pAvatar) 
          strScript << (char)0 << (char)0 << (char)0;
          strScript << (char)0 << (char)0 << (char)0;
          // Write script length
-         CUnrealCompactIndex oCIndex((int)((m_iSex==UNREAL_FEMALE?0x1D9E:0x1D9C)+(uNameLength*98)));
+         CUnrealCompactIndex oCIndex((int)(uMeshScriptLength-11));
          // This should only ever write two bytes
          ASSERT(oCIndex.NumBytes()==2);
          for (int b=0; b<oCIndex.NumBytes(); b++) {
@@ -2387,7 +2462,7 @@ FRESULT CAvatarFileUnreal::SaveMeshU(const char* pszFilename, CAvatar* pAvatar) 
          strScript << "#exec MESH IMPORT MESH=" << m_pszName << " ANIVFILE=MODELS\\" << m_pszName << "_a.3d DATAFILE=MODELS\\" << m_pszName << "_d.3d X=0 Y=0 Z=0 MLOD=0\x0D\x0A";
          strScript << "#exec MESH ORIGIN MESH=" << m_pszName << " X=0 Y=0 Z=0\x0D\x0A";
          strScript << "\x0D\x0A";
-         strScript << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=All       STARTFRAME=0   NUMFRAMES=700\x0D\x0A";
+         strScript << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=All       STARTFRAME=0   NUMFRAMES=724\x0D\x0A";
          strScript << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=AimDnLg   STARTFRAME=1   NUMFRAMES=1 Group=Waiting\x0D\x0A";
          strScript << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=AimDnSm   STARTFRAME=2   NUMFRAMES=1 Group=Waiting\x0D\x0A";
          strScript << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=AimUpLg   STARTFRAME=3   NUMFRAMES=1 Group=Waiting\x0D\x0A";
@@ -2455,6 +2530,8 @@ FRESULT CAvatarFileUnreal::SaveMeshU(const char* pszFilename, CAvatar* pAvatar) 
          strScript << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=Dead2     STARTFRAME=538 NUMFRAMES=16 RATE=10\x0D\x0A";
          strScript << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=Dead3     STARTFRAME=554 NUMFRAMES=13 RATE=10\x0D\x0A";
          strScript << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=Dead4     STARTFRAME=567 NUMFRAMES=16 RATE=10\x0D\x0A";
+         strScript << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=Dead5     STARTFRAME=700 NUMFRAMES=13 RATE=12\x0D\x0A";
+         strScript << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=Dead6     STARTFRAME=713 NUMFRAMES=11 RATE=11\x0D\x0A";
          strScript << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=Dead7     STARTFRAME=583 NUMFRAMES=21 RATE=12 Group=TakeHit\x0D\x0A";
          strScript << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=Dead8     STARTFRAME=604 NUMFRAMES=18 RATE=10 Group=TakeHit\x0D\x0A";
          strScript << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=Dead9     STARTFRAME=622 NUMFRAMES=20 RATE=30 Group=TakeHit\x0D\x0A";
@@ -2485,6 +2562,8 @@ FRESULT CAvatarFileUnreal::SaveMeshU(const char* pszFilename, CAvatar* pAvatar) 
          strScript << "#exec MESH NOTIFY MESH=" << m_pszName << " SEQ=Dead2   TIME=0.9  FUNCTION=LandThump\x0D\x0A";
          strScript << "#exec MESH NOTIFY MESH=" << m_pszName << " SEQ=Dead3   TIME=0.45 FUNCTION=LandThump\x0D\x0A";
          strScript << "#exec MESH NOTIFY MESH=" << m_pszName << " SEQ=Dead4   TIME=0.6  FUNCTION=LandThump\x0D\x0A";
+         strScript << "#exec MESH NOTIFY MESH=" << m_pszName << " SEQ=Dead5   TIME=0.61 FUNCTION=LandThump\x0D\x0A";
+         strScript << "#exec MESH NOTIFY MESH=" << m_pszName << " SEQ=Dead6   TIME=0.54 FUNCTION=LandThump\x0D\x0A";
          strScript << "#exec MESH NOTIFY MESH=" << m_pszName << " SEQ=Dead7   TIME=0.7  FUNCTION=LandThump\x0D\x0A";
          strScript << "#exec MESH NOTIFY MESH=" << m_pszName << " SEQ=Dead8   TIME=0.7  FUNCTION=LandThump\x0D\x0A";
          strScript << "#exec MESH NOTIFY MESH=" << m_pszName << " SEQ=Dead9B  TIME=0.8  FUNCTION=LandThump\x0D\x0A";
@@ -2501,6 +2580,9 @@ FRESULT CAvatarFileUnreal::SaveMeshU(const char* pszFilename, CAvatar* pAvatar) 
          delete [] pcMeshHeader;
          delete [] pcMeshProperties;
          delete [] pcNameTable;
+         delete [] pAvatarToUTFaces;
+         delete [] pUTToAvatarFaces;
+         osOutputStream.close();
          return F_OUT_OF_MEMORY;
       }
       uCurrentOffset += uMeshScriptLength;
@@ -2589,6 +2671,9 @@ FRESULT CAvatarFileUnreal::SaveMeshU(const char* pszFilename, CAvatar* pAvatar) 
          delete [] pcMeshHeader;
          delete [] pcMeshProperties;
          delete [] pcNameTable;
+         delete [] pAvatarToUTFaces;
+         delete [] pUTToAvatarFaces;
+         osOutputStream.close();
          return F_OUT_OF_MEMORY;
       }
       // Update file offset
@@ -2646,6 +2731,9 @@ FRESULT CAvatarFileUnreal::SaveMeshU(const char* pszFilename, CAvatar* pAvatar) 
          delete [] pcMeshHeader;
          delete [] pcMeshProperties;
          delete [] pcNameTable;
+         delete [] pAvatarToUTFaces;
+         delete [] pUTToAvatarFaces;
+         osOutputStream.close();
          return F_OUT_OF_MEMORY;
       }
       uCurrentOffset += uForceMeshToExistDataLength;
@@ -2975,15 +3063,11 @@ FRESULT CAvatarFileUnreal::SaveMeshU(const char* pszFilename, CAvatar* pAvatar) 
                          iAdjacentFaces[a] = iFace;
                   }
                }
-               // Make sure we're been successful
-               ASSERT(iAdjacentFaces[a] != -1);
             }
             // Write adjacent face numbers
             puTempPtr[uTempOffset++] = iAdjacentFaces[2];
             puTempPtr[uTempOffset++] = iAdjacentFaces[0];
             puTempPtr[uTempOffset++] = iAdjacentFaces[1];
-            // Make sure all three are different
-            ASSERT((iAdjacentFaces[1] != iAdjacentFaces[2]) && (iAdjacentFaces[2] != iAdjacentFaces[0]) && (iAdjacentFaces[0] != iAdjacentFaces[1]));
          }
          uSelectOffset += 12 * uNumFaces;
          // Store current offset in temp pointer
@@ -3117,6 +3201,9 @@ FRESULT CAvatarFileUnreal::SaveMeshU(const char* pszFilename, CAvatar* pAvatar) 
          delete [] pcMeshHeader;
          delete [] pcMeshProperties;
          delete [] pcNameTable;
+         delete [] pAvatarToUTFaces;
+         delete [] pUTToAvatarFaces;
+         osOutputStream.close();
          return F_OUT_OF_MEMORY;
       }
       uCurrentOffset += uSelectMeshLength;
@@ -3206,6 +3293,9 @@ FRESULT CAvatarFileUnreal::SaveMeshU(const char* pszFilename, CAvatar* pAvatar) 
          delete [] pcMeshHeader;
          delete [] pcMeshProperties;
          delete [] pcNameTable;
+         delete [] pAvatarToUTFaces;
+         delete [] pUTToAvatarFaces;
+         osOutputStream.close();
          return F_OUT_OF_MEMORY;
       }
       uCurrentOffset += uExportTableLength;
@@ -3238,6 +3328,9 @@ FRESULT CAvatarFileUnreal::SaveMeshU(const char* pszFilename, CAvatar* pAvatar) 
          delete [] pcMeshHeader;
          delete [] pcMeshProperties;
          delete [] pcNameTable;
+         delete [] pAvatarToUTFaces;
+         delete [] pUTToAvatarFaces;
+         osOutputStream.close();
          return F_FILE_ERROR;
       }
       // Write mesh bottom data
@@ -3277,6 +3370,8 @@ FRESULT CAvatarFileUnreal::SaveMeshU(const char* pszFilename, CAvatar* pAvatar) 
       delete [] pcMeshHeader;
       delete [] pcMeshProperties;
       delete [] pcNameTable;
+      delete [] pAvatarToUTFaces;
+      delete [] pUTToAvatarFaces;
 
       // Restore old pose
       pAvatar->ImportPose(poOldPose);      
@@ -3368,13 +3463,13 @@ FRESULT CAvatarFileUnreal::SaveMeshD3D(const char* pszFilename, CAvatar* pAvatar
       char cTriangleType = UNREAL_3D_TRI_WEAPONTRI;
       osOutputStream.write(&cTriangleType,1);
       // Colour
-      osOutputStream.write("\0",1);
+      osOutputStream.write("\x00",1);
       // Texture coordinates
       osOutputStream.write("\0\0\0\0\0\0",6);
       // Texture number
-      osOutputStream.write("\0",1);
+      osOutputStream.write("\x01",1);
       // Write Flags
-      osOutputStream.write("\0",1);
+      osOutputStream.write("\x00",1);
       // All done!
       osOutputStream.close();
 	}
@@ -3394,7 +3489,7 @@ FRESULT CAvatarFileUnreal::SaveMeshA3D(const char* pszFilename, CAvatar* pAvatar
       int uNumVertices = pAvatar->NumVertices();
       const SPoint3D* pVertices = pAvatar->Vertices();
       // Write header
-      short iNumFrames = 700;
+      short iNumFrames = 724;
       osOutputStream.write((char*)&iNumFrames,2);
       short iFrameLength = (uNumVertices + 3) * 4; // 4 bytes per vertex, plus three weapon triangle vertices
       osOutputStream.write((char*)&iFrameLength,2);
@@ -3539,7 +3634,7 @@ FRESULT CAvatarFileUnreal::SaveMeshScript(const char* pszFilename, CAvatar* pAva
       osOutputStream << "#exec MESH IMPORT MESH=" << m_pszName << " ANIVFILE=MODELS\\" << m_pszName << "_a.3d DATAFILE=MODELS\\" << m_pszName << "_d.3d X=0 Y=0 Z=0 MLOD=0\n";
       osOutputStream << "#exec MESH ORIGIN MESH=" << m_pszName << " X=0 Y=0 Z=0\n";
       osOutputStream << "\n";
-      osOutputStream << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=All       STARTFRAME=0   NUMFRAMES=700\n";
+      osOutputStream << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=All       STARTFRAME=0   NUMFRAMES=724\n";
       osOutputStream << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=AimDnLg   STARTFRAME=1   NUMFRAMES=1 Group=Waiting\n";
       osOutputStream << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=AimDnSm   STARTFRAME=2   NUMFRAMES=1 Group=Waiting\n";
       osOutputStream << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=AimUpLg   STARTFRAME=3   NUMFRAMES=1 Group=Waiting\n";
@@ -3607,6 +3702,8 @@ FRESULT CAvatarFileUnreal::SaveMeshScript(const char* pszFilename, CAvatar* pAva
       osOutputStream << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=Dead2     STARTFRAME=538 NUMFRAMES=16 RATE=10\n";
       osOutputStream << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=Dead3     STARTFRAME=554 NUMFRAMES=13 RATE=10\n";
       osOutputStream << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=Dead4     STARTFRAME=567 NUMFRAMES=16 RATE=10\n";
+      osOutputStream << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=Dead5     STARTFRAME=700 NUMFRAMES=13 RATE=12\n";
+      osOutputStream << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=Dead6     STARTFRAME=713 NUMFRAMES=11 RATE=11\n";
       osOutputStream << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=Dead7     STARTFRAME=583 NUMFRAMES=21 RATE=12	Group=TakeHit\n";
       osOutputStream << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=Dead8     STARTFRAME=604 NUMFRAMES=18 RATE=10	Group=TakeHit\n";
       osOutputStream << "#exec MESH SEQUENCE MESH=" << m_pszName << " SEQ=Dead9     STARTFRAME=622 NUMFRAMES=20 RATE=30	Group=TakeHit\n";
@@ -3637,6 +3734,8 @@ FRESULT CAvatarFileUnreal::SaveMeshScript(const char* pszFilename, CAvatar* pAva
       osOutputStream << "#exec MESH NOTIFY MESH=" << m_pszName << " SEQ=Dead2   TIME=0.9  FUNCTION=LandThump\n";
       osOutputStream << "#exec MESH NOTIFY MESH=" << m_pszName << " SEQ=Dead3   TIME=0.45 FUNCTION=LandThump\n";
       osOutputStream << "#exec MESH NOTIFY MESH=" << m_pszName << " SEQ=Dead4   TIME=0.6  FUNCTION=LandThump\n";
+      osOutputStream << "#exec MESH NOTIFY MESH=" << m_pszName << " SEQ=Dead5   TIME=0.61 FUNCTION=LandThump\n";
+      osOutputStream << "#exec MESH NOTIFY MESH=" << m_pszName << " SEQ=Dead6   TIME=0.54 FUNCTION=LandThump\n";
       osOutputStream << "#exec MESH NOTIFY MESH=" << m_pszName << " SEQ=Dead7   TIME=0.7  FUNCTION=LandThump\n";
       osOutputStream << "#exec MESH NOTIFY MESH=" << m_pszName << " SEQ=Dead8   TIME=0.7  FUNCTION=LandThump\n";
       osOutputStream << "#exec MESH NOTIFY MESH=" << m_pszName << " SEQ=Dead9B  TIME=0.8  FUNCTION=LandThump\n";
