@@ -7,7 +7,7 @@
 // CortonaUtil.cpp
 // 07/03/2002 - Warren Moore
 //
-// $Id: CortonaUtil.cpp,v 1.9 2002/03/25 01:38:52 vap-warren Exp $
+// $Id: CortonaUtil.cpp,v 1.10 2002/04/02 22:35:52 vap-warren Exp $
 
 #include "stdafx.h"
 
@@ -26,6 +26,14 @@ CCortonaUtil::CCortonaUtil(IEngine *pEngine) : m_pEngine(pEngine) {
 }
 
 CCortonaUtil::~CCortonaUtil() {
+   Release();
+}
+
+void CCortonaUtil::Release() {
+   if (m_pEngine) {
+      m_pEngine->Release();
+      m_pEngine = NULL;
+   }
 }
 
 CCortonaNode *CCortonaUtil::CreateVrmlFromString(const char *pcVRML) {

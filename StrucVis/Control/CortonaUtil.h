@@ -7,7 +7,7 @@
 // CortonaUtil.h
 // 07/03/2002 - Warren Moore
 //
-// $Id: CortonaUtil.h,v 1.8 2002/03/24 23:00:08 vap-james Exp $
+// $Id: CortonaUtil.h,v 1.9 2002/04/02 22:35:52 vap-warren Exp $
 
 #ifndef __VTSTRUCVIS_CORTONAUTIL__
 #define __VTSTRUCVIS_CORTONAUTIL__
@@ -30,6 +30,9 @@ public:
    ~CCortonaUtil();
 
 //#===--- Member Functions
+
+   void Release();
+   // Release the engine interface
 
    CCortonaNode *CreateVrmlFromString(const char *pcVrml);
    // Create a VRML node from a string, returns NULL if failed
