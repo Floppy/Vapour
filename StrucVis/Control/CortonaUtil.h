@@ -7,14 +7,18 @@
 // CortonaUtil.h
 // 07/03/2002 - Warren Moore
 //
-// $Id: CortonaUtil.h,v 1.1 2002/03/18 23:01:09 vap-warren Exp $
+// $Id: CortonaUtil.h,v 1.2 2002/03/19 01:49:00 vap-warren Exp $
 
-#ifndef __CORTONABASE_UTIL__
-#define __CORTONABASE_UTIL__
+#ifndef __CORTONA_UTIL__
+#define __CORTONA_UTIL__
 
 #if _MSC_VER > 1000
 #pragma once
 #endif // _MSC_VER > 1000
+
+#include "CortonaField.h"
+// Automation interfaces for Cortona
+#include "shelley.h"
 
 class CCortonaUtil {
 //#===--- Construction/Destruction
@@ -32,13 +36,17 @@ public:
    bool AddToScene(INodeObject* pNode);
    // Add a node to the list of root nodes
 
-   bool GetNodeByName(const char *pcName, INodeObject **ppNodeCol);
+   bool GetNode(const char *pcName, INodeObject **ppNodeCol);
    // Get a node by it's DEF'd name
    // Address of node left in ppNode
 
    bool AddRoute(INodeObject *pSrcNode, const char *pcSrcField,
                  INodeObject *pDstNode, const char *pcDstField);
    // Add a route from the src node's field to the destination node's field
+
+   bool GetField(INodeObject *pNode, const char *pcName, CCortonaField **ppoField);
+   // Creates a CCortonaField object for the specified field of the supplied node
+   // Address of field object left in *ppoField
 
 //#===--- Member Variables
 protected:
@@ -47,4 +55,4 @@ protected:
 
 };
 
-#endif // __CORTONABASE_UTIL__
+#endif // __CORTONA_UTIL__

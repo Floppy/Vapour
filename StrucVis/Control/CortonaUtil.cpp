@@ -7,7 +7,7 @@
 // CortonaUtil.cpp
 // 07/03/2002 - Warren Moore
 //
-// $Id: CortonaUtil.cpp,v 1.1 2002/03/18 23:01:08 vap-warren Exp $
+// $Id: CortonaUtil.cpp,v 1.2 2002/03/19 01:49:00 vap-warren Exp $
 
 #include "stdafx.h"
 #include "CortonaBase.h"
@@ -19,6 +19,9 @@
 #undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
 #endif
+
+// To link in all the GUIDs
+#include "shelley_i.c"
 
 /////////////////
 // CCortonaUtil
@@ -63,9 +66,9 @@ bool CCortonaUtil::AddToScene(INodeObject *pNode) {
    return SUCCEEDED(hResult);
 }
 
-bool CCortonaUtil::GetNodeByName(const char *pcName, INodeObject **ppNode) {
+bool CCortonaUtil::GetNode(const char *pcName, INodeObject **ppNode) {
    // Check the pointers
-   if (!m_pEngine || !pcName || !ppNode)
+   if (!m_pEngine || !pcName)
       return false;
 
    // Recipients for the 
@@ -95,6 +98,31 @@ bool CCortonaUtil::AddRoute(INodeObject *pSrcNode, const char *pcSrcField,
 
    HRESULT hResult = m_pEngine->AddRoute(pSrcNode, oSrcField.bstrVal, pDstNode, oDstField.bstrVal);
 
+   return SUCCEEDED(hResult);
+}
+
+bool CCortonaUtil::GetField(INodeObject *pNode, const char *pcName, CCortonaField **ppoField) {
+   // Check for pointers
+   if (!m_pEngine || !pNode || !pcName)
+      return false;
+
+   // Get the node fields
+   IFieldsCollection *pFields = NULL;
+   HRESULT hResult = pNode->get_Fields(&pFields);
+   if (FAILED(hResult))
+      return false;
+
+   // Get the specified field
+   IFieldObject *pFieldObject = NULL;
+   COleVariant oFieldName(pcName);
+   hResult = pFields->get_Item(oFieldName, &pFieldObject);
+   if (SUCCEEDED(hResult)) {
+      // Create the field object
+      *ppoField = (CCortonaField*) new CCortonaField(pFieldObject);
+   }
+
+   // Release the field collection
+   pFields->Release();
    return SUCCEEDED(hResult);
 }
 
