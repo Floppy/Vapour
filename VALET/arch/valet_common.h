@@ -13,7 +13,7 @@
 //! file 		= "VALET/arch/valet_common.h""
 //! author 		= "Warren Moore"
 //! date 		= "23/09/2001"
-//! rcsid 		= "$Id: valet_common.h,v 1.4 2001/10/10 13:30:33 vap-james Exp $"
+//! rcsid 		= "$Id: valet_common.h,v 1.5 2001/10/17 22:02:49 vap-warren Exp $"
 //! userlevel 	= Normal
 //! docentry 	= "VALET.Arch"
 //! maindoc		= 1
@@ -28,9 +28,15 @@ namespace NValet {
 	// Default fixed string length
 }
 
-//#===--- Inline defines
+//#===--- Debug settings
 
 #define VDEBUG
+
+#ifdef VDEBUG
+#define NDEBUG
+#endif
+
+//#===--- Inlines
 
 #ifdef VDEBUG
 #define INLINE
