@@ -197,6 +197,10 @@ SOURCE=.\Render\RenderObject.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\DataTypes\Scalar.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\Application\SFX.cpp
 # End Source File
 # Begin Source File
@@ -395,6 +399,10 @@ SOURCE=.\Render\RenderContext.h
 # Begin Source File
 
 SOURCE=.\Render\RenderObject.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\DataTypes\Scalar.h
 # End Source File
 # Begin Source File
 
