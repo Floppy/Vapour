@@ -8,7 +8,7 @@
 //	Main application source for command-line parsing, 
 //  export and progress bar updates
 //
-// $Id: SGAToSim.cpp,v 1.5 2000/07/19 08:52:29 waz Exp $
+// $Id: SGAToSim.cpp,v 1.6 2000/07/23 16:28:42 waz Exp $
 //
 
 // Pre-compiled header include
@@ -153,7 +153,7 @@ VARESULT SetOptions(CCommandLine &oCmdLine, VEM_CLASS &oExport) {
 
 	// Model name
 	if (bOk) {
-		pcTemp = oCmdLine.GetValue("sim");
+		pcTemp = oCmdLine.GetValue("name");
 		if (pcTemp)
 			oExport.SetOption(VEM_MODELNAME, pcTemp);
 		else {
