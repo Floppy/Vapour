@@ -7,7 +7,7 @@
 // AvatarFileHalflife.h - 16/2/2000 - James Smith
 //	Halflife MDL export filter header
 //
-// $Id: AvatarFileHalflife.h,v 1.2 2000/07/11 17:41:37 waz Exp $
+// $Id: AvatarFileHalflife.h,v 1.3 2000/07/15 10:39:23 waz Exp $
 //
 
 #pragma once
@@ -35,7 +35,8 @@ private:
    mutable char* m_pszModelname;
    mutable std::vector<int> m_vCompressedSkeletonMap;
    mutable int m_pReverseCompressedSkeletonMap[TOTAL_NUMBER_BODYPARTS];
-   const int m_iScaleFactor;
+
+   static const char* m_pszJointNames[];
 
 /////////////////////
 // Member Functions

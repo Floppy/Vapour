@@ -7,97 +7,223 @@
 // HalflifeMDL.h - 16/02/2000 - James Smith
 //	Structures and definitions for halflife MDL export
 //
-// $Id: HalflifeMDL.h,v 1.3 2000/07/11 17:30:21 waz Exp $
+// $Id: HalflifeMDL.h,v 1.4 2000/07/15 10:39:24 waz Exp $
 //
 
 #ifndef _VAL_HALFLIFEMDL_
 #define _VAL_HALFLIFEMDL_
 
-#include "MathConstants.h"
-
 #define HLMDLMAGIC        (('T'<<24)+('S'<<16)+('D'<<8)+'I')
-#define HLMDLVERSION      0xA0
-#define HLMDLHEADERLENGTH sizeof(HlMDLHeader)
+#define HLMDLVERSION      0xA
 
-#define HLSIZEOFVECTOR   0xC
+typedef float HalflifeMDLVector[3];
 
-struct HlMDLHeader {
-   
+struct SHalflifeMDLHeader {
    // The magic number for the file type. This is MDLMAGIC
-   long int liID;
-   // The version number. This is MDLVERSION
-   long int liVersion;
-
+   unsigned long iID;
+   // The version number. This is HLMDLVERSION
+   unsigned long iVersion;
    // The real name of the MDL file
-   char psName[64];
-
+   char pszName[64];
    // The total length of the file
-   long int liLength;
-
-   // Various vectors and flags, all of which are set to 0
-   char cVectorsAndFlags[64];
-
+   unsigned long iLength;
+   // Ideal eye position
+   HalflifeMDLVector vEyePosition;
+   // Movement hull
+   HalflifeMDLVector vMin;
+   HalflifeMDLVector vMax;
+   // Bounding box
+   HalflifeMDLVector vBBMin;
+   HalflifeMDLVector vBBMax;
+     // Flags
+   unsigned long iFlags;
    // Number of bones
-   long int liNumBones;
+   unsigned long iNumBones;
    // Bone chunk offset
-   long int liBoneChunkOffset;
-
+   unsigned long iBoneChunkOffset;
    // Number of bone controllers
-   long int liNumBoneControllers;
+   unsigned long iNumBoneControllers;
    // Bone controller chunk offset
-   long int liBoneControllerChunkOffset;
-
+   unsigned long iBoneControllerChunkOffset;
    // Number of hit boxes
-   long int liNumHitboxes;
+   unsigned long iNumHitboxes;
    // Hitbox chunk offset
-   long int liHitboxChunkOffset;
-
+   unsigned long iHitboxChunkOffset;
    // Number of animation sequences
-   long int liNumSeqs;
+   unsigned long iNumSeqs;
    // Sequence chunk offset
-   long int liSeqChunkOffset;
-
+   unsigned long iSeqChunkOffset;
    // Number of animation sequence groups
-   long int liNumSeqGroups;
+   unsigned long iNumSeqGroups;
    // Sequence group chunk offset
-   long int liSeqGroupChunkOffset;
-
+   unsigned long iSeqGroupChunkOffset;
    // Number of textures
-   long int liNumTextures;
+   unsigned long iNumTextures;
    // Texture header chunk offset
-   long int liTextureHeaderChunkOffset;
+   unsigned long iTextureHeaderChunkOffset;
    // Texture data chunk offset
-   long int liTextureDataChunkOffset;
-
+   unsigned long iTextureDataChunkOffset;
    // Number of replaceable textures
-   long int liNumReplaceableTextures;
+   unsigned long iNumReplaceableTextures;
    // Number of texture families
-   long int liNumTextureFamilies;
+   unsigned long iNumTextureFamilies;
    // Texture index offset
-   long int liTextureIndexOffset;
-
+   unsigned long iTextureIndexOffset;
    // Number of body parts
-   long int liNumBodyParts;
+   unsigned long iNumBodyParts;
    // Body part chunk offset
-   long int liBodyPartChunkOffset;
-
+   unsigned long iBodyPartChunkOffset;
    // Number of attachments
-   long int liNumAttachments;
+   unsigned long iNumAttachments;
    // Attachment chunk offset
-   long int liAttachmentChunkOffset;
-
+   unsigned long iAttachmentChunkOffset;
    // Sound stuff - all set to 0
-   long int liSoundTable;
-   long int liSoundOffset;
-   long int liSoundGroups;
-   long int liSoundGroupOffset;
-
+   unsigned long iSoundTable;
+   unsigned long iSoundOffset;
+   unsigned long iSoundGroups;
+   unsigned long iSoundGroupOffset;
    // Number of transitions - this is 0;
-   long int liNumTransitions;
+   unsigned long iNumTransitions;
    // Transition chunk offset
    // As there are no transitions, this is the same as liBodyPartChunkOffset
-   long int liTransitionChunkOffset;
+   unsigned long iTransitionChunkOffset;
+};
 
+struct SHalflifeMDLBone {
+   // Name
+   char pszName[32];
+   // Parent
+   unsigned long iParent;
+   // Bone flags
+   unsigned long iFlags;
+   // Bonecontroller link
+   long iBoneController[6];
+   // Joint centre
+   HalflifeMDLVector vCentre;
+   // Joint Rotation
+   HalflifeMDLVector vRotation;
+   // Joint centre scale
+   HalflifeMDLVector vCentreScale;
+   // Joint Rotation scale
+   HalflifeMDLVector vRotationScale;
+};    
+
+struct SHalflifeMDLBoneController {
+   // Which bone this is attached to
+   unsigned long iBone;
+   // Type
+   unsigned long iType;
+   // Start
+   float fStart;
+   // End
+   float fEnd;
+   // Rest value
+   unsigned int iRest;
+   // Index - 0-3 user, 4 mouth
+   unsigned int iIndex;
+};
+
+struct SHalflifeMDLAttachment {
+   // Name
+   char pszName[32];
+   // Type
+   unsigned long iType;
+   // Which bone this attachment is attached to
+   unsigned long iBone;
+   // Position
+   HalflifeMDLVector vPosition;
+   // Vectors??
+   HalflifeMDLVector vVector0;
+   HalflifeMDLVector vVector1;
+   HalflifeMDLVector vVector2;
+};
+
+struct SHalflifeMDLHitbox {
+   // Bone
+   unsigned long iBone;
+   // Group
+   unsigned long iGroup;
+   // Minimum
+   HalflifeMDLVector vMinimum;
+   // Maximum
+   HalflifeMDLVector vMaximum;
+};
+
+struct SHalflifeMDLSeqGroup {
+   // Name
+   char pszName[32];
+   // Filename
+   char pszFilename[64];
+   // Cache index pointer
+   unsigned long iCachePtr;
+   // Some sort of hack, apparently
+   unsigned long iData;
+};
+
+struct SHalflifeMDLBodyPart {
+   // Name
+   char pszName[64];
+   // Number of models
+   unsigned long iNumModels;
+   // Base
+   unsigned long iBase;
+   // Model index
+   unsigned long iModelIndex;
+};
+
+struct SHalflifeMDLModel {
+   // Name
+   char pszName[64];
+   // Type
+   unsigned long iType;
+   // Bounding radius
+   float fRadius;
+   // Number of meshes
+   unsigned long iNumMeshes;
+   // Mesh index
+   unsigned long iMeshIndex;
+   // Number of vertices
+   unsigned long iNumVertices;
+   // Vertex info index
+   unsigned long iVertexInfoIndex;
+   // Vertex data index
+   unsigned long iVertexDataIndex;
+   // Number of normals
+   unsigned long iNumNormals;
+   // Normal info index
+   unsigned long iNormalInfoIndex;
+   // Normal data index
+   unsigned long iNormalDataIndex;
+   // Number of deformation groups
+   unsigned long iNumDeformGroups;
+   // Deformation group index
+   unsigned long iDeformGroupIndex;
+};
+
+struct SHalflifeMDLMesh {
+   // Number of triangles
+   unsigned long iNumTriangles;
+   // Triangle data index
+   unsigned long iTriangleDataIndex;
+   // Skin reference
+   unsigned long iSkinRef;
+   // Number of per-mesh normals
+   unsigned long iNumNormals;
+   // Normal index
+   unsigned long iNormalIndex;
+};
+
+struct SHalflifeMDLTexture {
+   // Name
+   char pszName[64];
+   // Flags
+   unsigned long iFlags;
+   // Width
+   unsigned long iWidth;
+   // Height
+   unsigned long iHeight;
+   // Data index
+   unsigned long iIndex;
 };
 
 #endif //_VAL_HALFLIFEMDL_

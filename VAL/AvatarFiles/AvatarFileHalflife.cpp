@@ -7,7 +7,7 @@
 // AvatarFileHalflife.cpp - 16/2/2000 - James Smith
 //	Halflife export filter implementation
 //
-// $Id: AvatarFileHalflife.cpp,v 1.2 2000/07/11 17:41:37 waz Exp $
+// $Id: AvatarFileHalflife.cpp,v 1.3 2000/07/15 10:39:23 waz Exp $
 //
 
 
@@ -15,9 +15,10 @@
 
 #include "AvatarFileHalflife.h"
 #include "AvatarFileProxy.h"
-#include "HalflifeMdl.h"
+#include "HalflifeMDL.h"
 #include "Image.h"
 #include "ImageFileStore.h"
+#include "MathConstants.h"
 
 #include <float.h>
 #include <direct.h>
@@ -47,7 +48,7 @@ CAvatarFileProxy<CAvatarFileHalflife> g_oAvatarProxyHalflife;
 ////////////////////
 // Store Functions
 
-CAvatarFileHalflife::CAvatarFileHalflife() : m_iScaleFactor(43) {
+CAvatarFileHalflife::CAvatarFileHalflife() {
 } // CAvatarFileHalflife()
 
 float CAvatarFileHalflife::GetFilterVersion() const {
@@ -95,47 +96,55 @@ int CAvatarFileHalflife::Save(const char* pszFilename, CAvatar* pAvatar) const {
 	int iRetVal = 1;
 
    // Work out filenames
-   char* pszLocalFilename = strdup(pszFilename);
-   char* pszTemp = pszLocalFilename;
+   char pszTgtDir[256];
+   strcpy(pszTgtDir,pszFilename);
+   char* pszTemp = pszTgtDir;
    // Find model name
    while (strchr(pszTemp,'\\') != NULL) {
       pszTemp = strchr(pszTemp,'\\') + 1;
    }
-   int iLength = (strchr(pszTemp,'.') - pszTemp);
-   m_pszModelname = new char[iLength+1];
-   memset(m_pszModelname,0,iLength+1);
-   for (int i=0; i<iLength; i++) m_pszModelname[i] = pszTemp[i];
-   // Chop off file extension to create direcory name
-   pszTemp = pszLocalFilename;
-   while (strchr(pszTemp,'.') != NULL) {
-      pszTemp = strchr(pszTemp,'.') + 1;
+   // Copy name
+   m_pszModelname = strdup(pszTemp);
+   // Remove extension if there is one
+   pszTemp = strchr(m_pszModelname,'.');
+   if (pszTemp != NULL) *pszTemp = '\0';
+   // Find target directory name
+   pszTemp = pszTgtDir;
+   // Find last dir separator and terminate string
+   while (strchr(pszTemp,'\\') != NULL) {
+      pszTemp = strchr(pszTemp,'\\') + 1;
    }
-   *(pszTemp-1) = (char)'\\';
    *pszTemp = (char)'\0';
-   // pszLocalFilename is now the output directory!
+   // Stick model name on the end of target dir
+   strcat(pszTgtDir,m_pszModelname);
+   strcat(pszTgtDir,"\\");
+   // pszTgtDir is now the output directory!
    // Create a filename string (with space for an extension)
-   char* pszBaseFilename = new char[strlen(pszLocalFilename) + strlen(m_pszModelname) + 5];
-   strcpy(pszBaseFilename,pszLocalFilename);
-   strcpy(pszBaseFilename + strlen(pszLocalFilename), m_pszModelname);
+   char* pszBaseFilename;
+   NEWBEGIN
+   pszBaseFilename = new char[strlen(pszTgtDir) + strlen(m_pszModelname) + 5];
+	NEWEND("CAvatarFileHalflife::Save - Base Filename Allocation")
+   strcpy(pszBaseFilename,pszTgtDir);
+   strcat(pszBaseFilename,m_pszModelname);
    int iBaseFilenameLength = strlen(pszBaseFilename);
 
    // Create output subdirectory
-   int iResult = _mkdir(pszLocalFilename);
+   int iResult = _mkdir(pszTgtDir);
    if ((iResult == -1) && (errno != EEXIST)) {
       TRACE("Couldn't create output directory!\n");
       return 0;
    }
    
    // Setup the export progress dialog
-	 g_oProgressControl.SetMaxProgress("HLSave", 17 + 2*pAvatar->NumTextures());
+	g_oProgressControl.SetMaxProgress("HLSave", 17 + 2*pAvatar->NumTextures());
    g_oProgressControl.Step("HLSave");
    g_oProgressControl.SetText("HLSave", "Saving MDL file");
    
    // Create filename
    strcpy(pszBaseFilename+iBaseFilenameLength,".mdl");
    // Save to output stream
-   ofstream osOutputStream(pszBaseFilename);
-	if (osOutputStream.good()) {
+   ofstream osOutputStream(pszBaseFilename,ios::out|ios::binary);
+	if (!osOutputStream.fail()) {
    	iRetVal = Save(osOutputStream,pAvatar);
 	}
 
@@ -158,25 +167,42 @@ int CAvatarFileHalflife::Save(const char* pszFilename, CAvatar* pAvatar) const {
    // Finish up
    g_oProgressControl.Step("HLSave");
    // Delete strings
-   free(pszLocalFilename);
    delete [] pszBaseFilename;
-   delete [] m_pszModelname;
+   free(m_pszModelname);
    m_pszModelname = NULL;
    // DOne
    return iRetVal;
 } // Save(const char* pszFilename, CAvatar* pAvatar)
 
 int CAvatarFileHalflife::Save(ofstream& osOutputStream, CAvatar* pAvatar) const {
-   int iRetVal = 1;
-   int iOffset = 0;     // File offset counter
-   int i=0;             // loop variable
-   int iCurrentPos = 0; // Temporary counter
+
+   // Force binary stream mode
+   int iOldMode = osOutputStream.setmode(filebuf::binary);
+   
+   int iRetVal = 1;        // Return value
+   int iCurrentPos = 0;    // Temporary counter
+   int i=0;                // predeclared loop variable
+   ifstream ifInputStream; // Input data stream
+
+   // Set model scale factor
+   const double dScaleFactor = 43.0;
+
+   // Get avatar data pointers
+   const SBodyPart* pBodyParts = pAvatar->BodyParts();
+   const SPoint3D*  pVertices  = pAvatar->Vertices();
+   const SPoint3D*  pNormals   = pAvatar->VertexNormals();
+   const STriFace*  pFaces     = pAvatar->Faces();
+   
+   // Get avatar data
+   const int iNumVertices = pAvatar->NumVertices();
+   const int iNumFaces    = pAvatar->NumFaces();
 
    // Store old pose
    CAvatarPose oldPose = pAvatar->ExportPose();
    pAvatar->ResetPose();
    pAvatar->UpdateModel();
 
+   // Re-pose avatar
    CVector3D vecTarget(0,1,0);
    // Align hips with pelvis joint
    //pAvatar->AlignBodyPart(l_hip,CVector3D(1,0,0),false);
@@ -192,6 +218,19 @@ int CAvatarFileHalflife::Save(ofstream& osOutputStream, CAvatar* pAvatar) const 
    pAvatar->UpdateModel();
    pAvatar->AlignBodyPart(l_ankle,vecTarget,false);
    pAvatar->AlignBodyPart(r_ankle,vecTarget,false);
+   /*// Line up spine exactly on Y axis
+   pAvatar->AlignBodyPart(vl5,vecTarget,false);
+   pAvatar->UpdateModel();
+   pAvatar->AlignBodyPart(vt12,vecTarget,false);
+   pAvatar->UpdateModel();
+   pAvatar->AlignBodyPart(vt8,vecTarget,false);
+   pAvatar->UpdateModel();
+   pAvatar->AlignBodyPart(vt4,vecTarget,false);
+   pAvatar->UpdateModel();
+   pAvatar->AlignBodyPart(vc7,vecTarget,false);
+   pAvatar->UpdateModel();
+   pAvatar->AlignBodyPart(skullbase,vecTarget,false);
+   pAvatar->UpdateModel();*/
    // Point arms in vaguely the right directions, right from the clavicles
    pAvatar->SetJointAngle(l_acromioclavicular,CAxisRotation(1,0,0,V_PI),false);
    pAvatar->SetJointAngle(r_acromioclavicular,CAxisRotation(1,0,0,-V_PI),false);
@@ -215,155 +254,200 @@ int CAvatarFileHalflife::Save(ofstream& osOutputStream, CAvatar* pAvatar) const 
    pAvatar->SetJointAngle(sacroiliac,CAxisRotation(0,0,1,-V_PI/2),false);
    pAvatar->UpdateModel();
    // Translate model down...
-   pAvatar->SetRootTranslation(CVector3D(0,-(pAvatar->Height()/2.0),0));
-   pAvatar->UpdateModel();
+   //pAvatar->SetRootTranslation(CVector3D(0,-(pAvatar->Height()/2.0),0));
+   //pAvatar->UpdateModel();
+
+   //pAvatar->ResetPose();
+   //pAvatar->UpdateModel();
    
-   pAvatar->CalculateNormals(true);
-
-
-   // Force binary stream mode
-   int iOldMode = osOutputStream.setmode(filebuf::binary);
-
    g_oProgressControl.Step("HLSave");
    g_oProgressControl.SetText("HLSave", "Creating header");
 
-   // Create Header & fill in a few fields
-   HlMDLHeader sHeader;
-   sHeader.liID = HLMDLMAGIC;
-   sHeader.liVersion = HLMDLVERSION;
-   memset(sHeader.psName,0,64);
-   strcpy(sHeader.psName,m_pszModelname);
-   memset(sHeader.cVectorsAndFlags,0,64);
-
-   // Deal with sound chunk stuff
-   sHeader.liSoundTable = 0;
-   sHeader.liSoundOffset = 0;
-   sHeader.liSoundGroups = 0;
-   sHeader.liSoundGroupOffset = 0;
+   // Create Header & fill in some fields
+   SHalflifeMDLHeader sHeader;
+   // Set ID and version
+   sHeader.iID = HLMDLMAGIC;
+   sHeader.iVersion = HLMDLVERSION;
+   // Model name
+   strncpy(sHeader.pszName,m_pszModelname,64);
+   // Initialise length counter
+   sHeader.iLength = 0;
+   // Set the vectors and flags to 0.
+   sHeader.vEyePosition[0]   = 0.0;
+   sHeader.vEyePosition[1]   = 0.0;
+   sHeader.vEyePosition[2]   = 0.0;
+   sHeader.vMin[0]           = 0.0;
+   sHeader.vMin[1]           = 0.0;
+   sHeader.vMin[2]           = 0.0;
+   sHeader.vMax[0]           = 0.0;
+   sHeader.vMax[1]           = 0.0;
+   sHeader.vMax[2]           = 0.0;
+   sHeader.vBBMin[0]         = 0.0;
+   sHeader.vBBMin[1]         = 0.0;
+   sHeader.vBBMin[2]         = 0.0;
+   sHeader.vBBMax[0]         = 0.0;
+   sHeader.vBBMax[1]         = 0.0;
+   sHeader.vBBMax[2]         = 0.0;
+   sHeader.iFlags            = 0;   
+   // Set sound stuff to 0
+   sHeader.iSoundTable       = 0;
+   sHeader.iSoundOffset      = 0;
+   sHeader.iSoundGroups      = 0;
+   sHeader.iSoundGroupOffset = 0;
 
    // Add header to file offset counter
-   iOffset += sizeof(HlMDLHeader);
+   sHeader.iLength += sizeof(SHalflifeMDLHeader);
 
    g_oProgressControl.Step("HLSave");
    g_oProgressControl.SetText("HLSave", "Creating bones");
 
-   // Create Bone Chunk
-   m_vCompressedSkeletonMap.clear();
+   // Prepare Skeleton
    CompressSkeleton(root,pAvatar);
-   sHeader.liNumBones = m_vCompressedSkeletonMap.size();
-   sHeader.liBoneChunkOffset = iOffset;
-   int iBoneChunkLength = 0x70 * sHeader.liNumBones;
-   char* pcBoneChunk = new char[iBoneChunkLength];
-   ifstream ifBoneStream("hlmdlbonedata.bin",ios::in|ios::binary);
-   ifBoneStream.read(pcBoneChunk,iBoneChunkLength);
-   ifBoneStream.close();
+
+   // Create Bone Chunk
+   sHeader.iNumBones = m_vCompressedSkeletonMap.size();
+   sHeader.iBoneChunkOffset = sHeader.iLength;
+   SHalflifeMDLBone* pBoneChunk;
+   NEWBEGIN
+   pBoneChunk = new SHalflifeMDLBone[sHeader.iNumBones];
+	NEWEND("CAvatarFileHalflife::Save - Bone Chunk Allocation")
+   // Read generic bone data from external file
+   ifInputStream.open("c:\\hlmdlbonedata.bin",ios::in|ios::binary|ios::nocreate);
+   ifInputStream.read((char*)pBoneChunk,sizeof(SHalflifeMDLBone) * sHeader.iNumBones);
+   ifInputStream.close();
    iCurrentPos = 0;
-   const SBodyPart* pBodyParts = pAvatar->BodyParts();
-   // Pose model
-   UEulerType etType;
-   etType.m_eIdentifier = XYZs;
-   //for (i=0; i<sHeader.liNumBones; i++) {
-   //   float* pfBonePtr = (float*)(pcBoneChunk + i*0x70);
-   //   CEulerRotation erRotation(pfBonePtr[19],pfBonePtr[21],pfBonePtr[20],etType);
-   //   CAxisRotation arRotation(erRotation);
-   //   pAvatar->SetJointAngle((BodyPart)m_vCompressedSkeletonMap[i],arRotation,false);
-   //   pAvatar->UpdateModel();
-   //}
-   for (i=0; i<sHeader.liNumBones; i++) {
-      BodyPart bpCurrentBodyPart = (BodyPart)m_vCompressedSkeletonMap[i];
-      char* pcTempBoneChunkPtr = pcBoneChunk + i*0x70;
-      // Parent
-      BodyPart bpParent = pBodyParts[bpCurrentBodyPart].m_bpParent;
-      // Position
-      float diffx, diffy, diffz;
-      if (bpParent == unknown) {
-         diffx = pBodyParts[bpCurrentBodyPart].m_pntCurrentCentre.m_dComponents[0];
-         diffy = pBodyParts[bpCurrentBodyPart].m_pntCurrentCentre.m_dComponents[1];
-         diffz = pBodyParts[bpCurrentBodyPart].m_pntCurrentCentre.m_dComponents[2];
+   // Customise bone data
+   for (i=0; i<sHeader.iNumBones; i++) {
+      // Set name
+      BodyPart bpPart = (BodyPart)m_vCompressedSkeletonMap[i];
+      strncpy(pBoneChunk[i].pszName,m_pszJointNames[bpPart],32);
+      // Set parent reference
+      BodyPart bpParent = (bpPart==l_acromioclavicular)||(bpPart==r_acromioclavicular) ? vc7 : pBodyParts[bpPart].m_bpParent;
+      pBoneChunk[i].iParent = bpParent==unknown ? -1 : m_pReverseCompressedSkeletonMap[bpParent];
+      // Get this joint centre
+      CVector3D vecJoint(pBodyParts[bpPart].m_pntCurrentCentre);
+      // Get dist from parent
+      if (bpParent != unknown) {
+         vecJoint -= CVector3D(pBodyParts[bpParent].m_pntCurrentCentre);
       }
-      else {
-         diffx = pBodyParts[bpCurrentBodyPart].m_pntCurrentCentre.m_dComponents[0] - pBodyParts[bpParent].m_pntCurrentCentre.m_dComponents[0];
-         diffy = pBodyParts[bpCurrentBodyPart].m_pntCurrentCentre.m_dComponents[1] - pBodyParts[bpParent].m_pntCurrentCentre.m_dComponents[1];
-         diffz = pBodyParts[bpCurrentBodyPart].m_pntCurrentCentre.m_dComponents[2] - pBodyParts[bpParent].m_pntCurrentCentre.m_dComponents[2];
-      }
-      ((float*)pcTempBoneChunkPtr)[16] =  (diffx * m_iScaleFactor);
-      ((float*)pcTempBoneChunkPtr)[17] = -(diffz * m_iScaleFactor);
-      ((float*)pcTempBoneChunkPtr)[18] =  (diffy * m_iScaleFactor);
+      // Scale vector
+      vecJoint *= dScaleFactor;
+      // Write centre
+      pBoneChunk[i].vCentre[0] =  vecJoint.X();
+      pBoneChunk[i].vCentre[1] =  vecJoint.Z();
+      pBoneChunk[i].vCentre[2] = -vecJoint.Y();
+      /*// Set rotation and scales
+      pBoneChunk[i].vRotation[0]      = 0.0;
+      pBoneChunk[i].vRotation[1]      = 0.0;
+      pBoneChunk[i].vRotation[2]      = 0.0;
+      pBoneChunk[i].vCentreScale[0]   = 1.0;
+      pBoneChunk[i].vCentreScale[1]   = 1.0;
+      pBoneChunk[i].vCentreScale[2]   = 1.0;
+      pBoneChunk[i].vRotationScale[0] = 1.0;
+      pBoneChunk[i].vRotationScale[1] = 1.0;
+      pBoneChunk[i].vRotationScale[2] = 1.0;*/
+      // Set Flags
+      pBoneChunk[i].iFlags = 0x7;
    }
-   iOffset += iBoneChunkLength;
+   sHeader.iLength += sizeof(SHalflifeMDLBone) * sHeader.iNumBones;
 
    g_oProgressControl.Step("HLSave");
    g_oProgressControl.SetText("HLSave", "Creating bonecontrollers");
 
    // Create BoneController Chunk
-   sHeader.liNumBoneControllers = 4;
-   sHeader.liBoneControllerChunkOffset = iOffset;
-   int iBoneControllerChunkLength = 0x18 * sHeader.liNumBoneControllers;
-   char* pcBoneControllerChunk = new char[iBoneControllerChunkLength];
-   memset(pcBoneControllerChunk,0,iBoneControllerChunkLength);
-   for (i=0; i<sHeader.liNumBoneControllers; i++) {
-      char* pcTempBoneControllerPtr = pcBoneControllerChunk + i*0x18;
-      ((int*)pcTempBoneControllerPtr)[0] = m_pReverseCompressedSkeletonMap[vl5] + i;
-      *((int*)(pcBoneChunk + (m_pReverseCompressedSkeletonMap[vl5]+i)*0x70 + 0x34)) = i;
-      ((int*)pcTempBoneControllerPtr)[1] = 0x08;
-      ((float*)pcTempBoneControllerPtr)[2] = -30;
-      ((float*)pcTempBoneControllerPtr)[3] = 30;
-      ((int*)pcTempBoneControllerPtr)[5] = i;
+   sHeader.iNumBoneControllers = 4;
+   sHeader.iBoneControllerChunkOffset = sHeader.iLength;
+   SHalflifeMDLBoneController* pBoneControllerChunk;
+   NEWBEGIN
+   pBoneControllerChunk = new SHalflifeMDLBoneController[sHeader.iNumBoneControllers];
+	NEWEND("CAvatarFileHalflife::Save - Bone Controller Chunk Allocation")
+   for (i=0; i<sHeader.iNumBoneControllers; i++) {
+      // Set bone link
+      pBoneControllerChunk[i].iBone  = m_pReverseCompressedSkeletonMap[vl5] + i;
+      // Set bone's link to this controller
+      pBoneChunk[m_pReverseCompressedSkeletonMap[vl5]+i].iBoneController[0] = i;
+      // Set type = XR
+      pBoneControllerChunk[i].iType  = 0x08;
+      // Set range
+      pBoneControllerChunk[i].fStart = -30;
+      pBoneControllerChunk[i].fEnd   = 30;
+      // Set rest value
+      pBoneControllerChunk[i].iRest  = 0;
+      // Set index
+      pBoneControllerChunk[i].iIndex = i;
    }
-   iOffset += iBoneControllerChunkLength;
+   sHeader.iLength += sizeof(SHalflifeMDLBoneController) * sHeader.iNumBoneControllers;
 
    g_oProgressControl.Step("HLSave");
    g_oProgressControl.SetText("HLSave", "Creating attachments");
 
    // Create Attachments Chunk
-   sHeader.liNumAttachments = 3;
-   sHeader.liAttachmentChunkOffset = iOffset;
-   int iAttachmentChunkLength = 0x58 * sHeader.liNumAttachments;
-   char* pcAttachmentChunk = new char[iAttachmentChunkLength];
-   memset(pcAttachmentChunk,0,iAttachmentChunkLength);
-   for (i=0; i<sHeader.liNumAttachments; i++) {
-      char* pcTempAttachmentChunkPtr = pcAttachmentChunk + i*0x58;
-      ((int*)pcTempAttachmentChunkPtr)[9] = m_pReverseCompressedSkeletonMap[r_wrist];
+   sHeader.iNumAttachments = 3;
+   sHeader.iAttachmentChunkOffset = sHeader.iLength;
+   SHalflifeMDLAttachment* pAttachmentChunk;
+   NEWBEGIN
+   pAttachmentChunk = new SHalflifeMDLAttachment[sHeader.iNumAttachments];
+	NEWEND("CAvatarFileHalflife::Save - Attachment Chunk Allocation")
+   for (i=0; i<sHeader.iNumAttachments; i++) {
+      // Set bone
+      pAttachmentChunk[i].iBone = m_pReverseCompressedSkeletonMap[r_wrist];
+      // Set type
+      pAttachmentChunk[i].iType = 0;
+      // Set name amd position
       switch (i) {
       case 0:
-         strcpy(pcTempAttachmentChunkPtr,"Attachment 0");
-         ((float*)pcTempAttachmentChunkPtr)[10] = 20;
-         ((float*)pcTempAttachmentChunkPtr)[11] = 2;
-         ((float*)pcTempAttachmentChunkPtr)[12] = 5;
+         strncpy(pAttachmentChunk[i].pszName,"Attachment 0",32);
+         pAttachmentChunk[i].vPosition[0] = 20.0;
+         pAttachmentChunk[i].vPosition[1] = 2.0;
+         pAttachmentChunk[i].vPosition[2] = 5.0;
          break;
       case 1:
-         strcpy(pcTempAttachmentChunkPtr,"Attachment 1");
-         ((float*)pcTempAttachmentChunkPtr)[10] = 15;
-         ((float*)pcTempAttachmentChunkPtr)[11] = 1.5;
-         ((float*)pcTempAttachmentChunkPtr)[12] = 3.75;
+         strncpy(pAttachmentChunk[i].pszName,"Attachment 1",32);
+         pAttachmentChunk[i].vPosition[0] = 15.0;
+         pAttachmentChunk[i].vPosition[1] = 1.5;
+         pAttachmentChunk[i].vPosition[2] = 3.75;
          break;
       case 2:
-         strcpy(pcTempAttachmentChunkPtr,"Attachment 2");
-         ((float*)pcTempAttachmentChunkPtr)[10] = 30;
-         ((float*)pcTempAttachmentChunkPtr)[11] = 3;
-         ((float*)pcTempAttachmentChunkPtr)[12] = 7.5;
+         strncpy(pAttachmentChunk[i].pszName,"Attachment 2",32);
+         pAttachmentChunk[i].vPosition[0] = 30.0;
+         pAttachmentChunk[i].vPosition[1] = 3.0;
+         pAttachmentChunk[i].vPosition[2] = 7.5;
          break;
       default:
+         strncpy(pAttachmentChunk[i].pszName,"",32);
+         pAttachmentChunk[i].vPosition[0] = 0.0;
+         pAttachmentChunk[i].vPosition[1] = 0.0;
+         pAttachmentChunk[i].vPosition[2] = 0.0;
          break;
       }
+      // Zero other vectors
+      pAttachmentChunk[i].vVector0[0] = 0.0;
+      pAttachmentChunk[i].vVector0[1] = 0.0;
+      pAttachmentChunk[i].vVector0[2] = 0.0;
+      pAttachmentChunk[i].vVector1[0] = 0.0;
+      pAttachmentChunk[i].vVector1[1] = 0.0;
+      pAttachmentChunk[i].vVector1[2] = 0.0;
+      pAttachmentChunk[i].vVector2[0] = 0.0;
+      pAttachmentChunk[i].vVector2[1] = 0.0;
+      pAttachmentChunk[i].vVector2[2] = 0.0;
    }
-   iOffset += iAttachmentChunkLength;
+   sHeader.iLength += sizeof(SHalflifeMDLAttachment) * sHeader.iNumAttachments;
 
    g_oProgressControl.Step("HLSave");
    g_oProgressControl.SetText("HLSave", "Creating hitboxes");
 
    // Create Hitbox Chunk
-   sHeader.liNumHitboxes = sHeader.liNumBones;
-   sHeader.liHitboxChunkOffset = iOffset;
    const int piHitGroups[] = {3,3,6,6,6,7,7,7,3,2,2,2,2,1,4,4,4,4,5,5,5,5};
-   int iHitboxChunkLength = 0x20 * sHeader.liNumHitboxes;
-   char* pcHitboxChunk = new char[iHitboxChunkLength];
-   memset(pcHitboxChunk,0,iHitboxChunkLength);
-   for (i=0; i<sHeader.liNumHitboxes; i++) {
+   sHeader.iNumHitboxes = sHeader.iNumBones;
+   sHeader.iHitboxChunkOffset = sHeader.iLength;
+   SHalflifeMDLHitbox* pHitboxChunk;
+   NEWBEGIN
+   pHitboxChunk = new SHalflifeMDLHitbox[sHeader.iNumHitboxes];
+	NEWEND("CAvatarFileHalflife::Save - Hitbox Chunk Allocation")
+   for (i=0; i<sHeader.iNumHitboxes; i++) {
       // Write hitbox info
-      char* pcTempHitboxChunkPtr = pcHitboxChunk + i*0x20;
-      ((int*)pcTempHitboxChunkPtr)[0] = i;
-      ((int*)pcTempHitboxChunkPtr)[1] = piHitGroups[i];
+      pHitboxChunk[i].iBone  = i;
+      pHitboxChunk[i].iGroup = piHitGroups[i];
       // Calc bounding box
       SPoint3D min, max;
       pAvatar->BoundingBox((BodyPart)m_vCompressedSkeletonMap[i],max,min);
@@ -373,47 +457,52 @@ int CAvatarFileHalflife::Save(ofstream& osOutputStream, CAvatar* pAvatar) const 
       CVector3D vecCentre(pBodyParts[m_vCompressedSkeletonMap[i]].m_pntCurrentCentre);
       vecMin -= vecCentre;
       vecMax -= vecCentre;
-      // Rotate vectors
-      CAxisRotation arRotation(1,0,0,V_PI);
-      vecMin = vecMin.Rotate(arRotation);
-      vecMax = vecMax.Rotate(arRotation);
-      // Convert to doubles for output
-      double dMinX,dMinY,dMinZ,dMaxX,dMaxY,dMaxZ;
-      vecMin.ToDouble(dMinX, dMinY, dMinZ);
-      vecMax.ToDouble(dMaxX, dMaxY, dMaxZ);
+      // Scale
+      vecMin *= dScaleFactor;
+      vecMax *= dScaleFactor;
       // Write minimum
-      ((float*)pcTempHitboxChunkPtr)[2] =  dMinX * m_iScaleFactor;
-      ((float*)pcTempHitboxChunkPtr)[3] = -dMinZ * m_iScaleFactor;
-      ((float*)pcTempHitboxChunkPtr)[4] =  dMinY * m_iScaleFactor;
+      pHitboxChunk[i].vMinimum[0] =  vecMin.X();
+      pHitboxChunk[i].vMinimum[1] =  vecMin.Z();
+      pHitboxChunk[i].vMinimum[2] = -vecMin.Y();
       // Write maximum
-      ((float*)pcTempHitboxChunkPtr)[5] =  dMaxX * m_iScaleFactor;
-      ((float*)pcTempHitboxChunkPtr)[6] = -dMaxZ * m_iScaleFactor;
-      ((float*)pcTempHitboxChunkPtr)[7] =  dMaxY * m_iScaleFactor;
+      pHitboxChunk[i].vMaximum[0] =  vecMax.X();
+      pHitboxChunk[i].vMaximum[1] =  vecMax.Z();
+      pHitboxChunk[i].vMaximum[2] = -vecMax.Y();
    }
-   iOffset += iHitboxChunkLength;
+   sHeader.iLength += sizeof(SHalflifeMDLHitbox) * sHeader.iNumHitboxes;
 
    g_oProgressControl.Step("HLSave");
    g_oProgressControl.SetText("HLSave", "Loading animations");
 
    // Create Animation Sequence Header Chunk
-   sHeader.liNumSeqs = 77;
-   ifstream ifAnimStream("hlmdlanimdata.bin",ios::in|ios::binary);
-   iOffset += 0x2DB84;//0x2DFB8;
-   sHeader.liSeqChunkOffset = iOffset;
-   iOffset += (sHeader.liNumSeqs * 0xB0) + 0x474;
+   sHeader.iNumSeqs = 77;
+   ifInputStream.open("c:\\hlmdlanimdata.bin",ios::in|ios::binary|ios::nocreate);
+   sHeader.iLength += 0x2DDB8;//0x2DFB8;
+   sHeader.iSeqChunkOffset = sHeader.iLength;
+   sHeader.iLength += (sHeader.iNumSeqs * 0xB0) + 0x474;
 
    // Create Sequence Groups Chunk
-   sHeader.liNumSeqGroups = 1;
-   sHeader.liSeqGroupChunkOffset = iOffset;
-   int iSequenceGroupsChunkLength = 0x68 * sHeader.liNumSeqGroups;
-   char* pcSequenceGroupsChunk = new char[iSequenceGroupsChunkLength];
-   memset(pcSequenceGroupsChunk,0,0x68);
-   strcpy(pcSequenceGroupsChunk,"default");
-   iOffset += iSequenceGroupsChunkLength;
+   sHeader.iNumSeqGroups = 1;
+   sHeader.iSeqGroupChunkOffset = sHeader.iLength;
+   SHalflifeMDLSeqGroup* pSeqGroupsChunk;
+   NEWBEGIN
+   pSeqGroupsChunk = new SHalflifeMDLSeqGroup[sHeader.iNumSeqGroups];
+	NEWEND("CAvatarFileHalflife::Save - Sequence Groups Chunk Allocation")
+   for (i=0; i<sHeader.iNumSeqGroups; i++) {
+      // Name
+      strncpy(pSeqGroupsChunk[i].pszName,"default",32);
+      // Filename
+      strncpy(pSeqGroupsChunk[i].pszFilename,"",64);
+      // Cache Pointer
+      pSeqGroupsChunk[i].iCachePtr = 0;
+      // Data
+      pSeqGroupsChunk[i].iData = 0;
+   }
+   sHeader.iLength += sizeof(SHalflifeMDLSeqGroup) * sHeader.iNumSeqGroups;
 
    // Deal with Transition Chunk (but don't create anything)
-   sHeader.liNumTransitions = 0;
-   sHeader.liTransitionChunkOffset = iOffset;
+   sHeader.iNumTransitions = 0;
+   sHeader.iTransitionChunkOffset = sHeader.iLength;
    
    // Process textures, cos we'll need them in a minute
    std::vector<CImage*> vpSmallTextures;
@@ -425,19 +514,26 @@ int CAvatarFileHalflife::Save(ofstream& osOutputStream, CAvatar* pAvatar) const 
       g_oProgressControl.SetText("HLSave", pszDisplay);
       // Downsize images
       CImage* pTexture;
+      NEWBEGIN
       pTexture = new CImage(*(pAvatar->Texture(i)));
+   	NEWEND("CAvatarFileHalflife::Save - Small Image Allocation")
       int iWidth = 0;
       int  iHeight = 0;
       pTexture->GetSize(iWidth,iHeight);
-      if (i == pAvatar->TextureIndex(skullbase) || i == pAvatar->TextureIndex(vl5)) {
-         // Set size of face and torso textures to 128x128
+      if (i == pAvatar->TextureIndex(skullbase)) {
+      // Set size of face texture to 256x256
+         iWidth  = 256;
+         iHeight = 256;
+      }
+      else if (i == pAvatar->TextureIndex(vl5)) {
+         // Set size of torso texture to 128x128
          iWidth  = 128;
          iHeight = 128;
       }
       else {
-         // Quarter size of other textures
-         iWidth  = iWidth  >> 2;
-         iHeight = iHeight >> 2;
+         // Halve size of other textures
+         iWidth  = iWidth  >> 1;
+         iHeight = iHeight >> 1;
          // Max 64x64
          if (iWidth > 64) iWidth = 64;
          if (iHeight > 64) iHeight = 64;
@@ -455,151 +551,157 @@ int CAvatarFileHalflife::Save(ofstream& osOutputStream, CAvatar* pAvatar) const 
    g_oProgressControl.Step("HLSave");
    g_oProgressControl.SetText("HLSave", "Creating body parts");
 
-   // Create Body Parts Header Chunk
-   sHeader.liNumBodyParts = 1;
-   sHeader.liBodyPartChunkOffset = iOffset;
-   int iBodyPartsHeaderChunkLength = 0x4C;
-   char* pcBodyPartsHeaderChunk = new char[iBodyPartsHeaderChunkLength];
-   memset(pcBodyPartsHeaderChunk,0,iBodyPartsHeaderChunkLength);
-   strcpy(pcBodyPartsHeaderChunk,"body");
-   ((int*)pcBodyPartsHeaderChunk)[16] = 1;
-   ((int*)pcBodyPartsHeaderChunk)[17] = 1;
-   iOffset += iBodyPartsHeaderChunkLength;
-   ((int*)pcBodyPartsHeaderChunk)[18] = iOffset;
+   // Create Body Part Header
+   sHeader.iNumBodyParts = 1;
+   sHeader.iBodyPartChunkOffset = sHeader.iLength;
+   SHalflifeMDLBodyPart sBodyPartHeader;
+   strncpy(sBodyPartHeader.pszName,"body",64);
+   sBodyPartHeader.iNumModels  = 1;
+   sBodyPartHeader.iBase       = 1;
+   sHeader.iLength += sizeof(SHalflifeMDLBodyPart);
+   sBodyPartHeader.iModelIndex = sHeader.iLength;
 
    g_oProgressControl.Step("HLSave");
    g_oProgressControl.SetText("HLSave", "Creating model");
 
    // Create Model Header Chunk
-   int iModelHeaderChunkLength = 0x70;
-   char* pcModelHeaderChunk = new char[iModelHeaderChunkLength];
-   memset(pcModelHeaderChunk,0,iModelHeaderChunkLength);
-   iOffset += iModelHeaderChunkLength;
-   strcpy(pcModelHeaderChunk,m_pszModelname);
-   int iNumMeshes = pAvatar->NumTextures();
-   ((int*)pcModelHeaderChunk)[18] = iNumMeshes;
-   int iNumVertices = pAvatar->NumVertices();
-   ((int*)pcModelHeaderChunk)[20] = iNumVertices;
-   ((int*)pcModelHeaderChunk)[23] = iNumVertices;
-   // We fill more in later
+   SHalflifeMDLModel sModelHeader;
+   // Copy name
+   strncpy(sModelHeader.pszName,m_pszModelname,64);
+   // Type
+   sModelHeader.iType = 0;
+   // Bounding radius
+   sModelHeader.fRadius = 0.0;
+   // Number of submeshes (one for each texture)
+   sModelHeader.iNumMeshes   = pAvatar->NumTextures();
+   // Vertex info
+   sModelHeader.iNumVertices = iNumVertices;
+   // Normal info
+   sModelHeader.iNumNormals  = iNumVertices;
+   // Calculate data segment lengths
+   unsigned long iVertexInfoLength = iNumVertices;
+   unsigned long iNormalInfoLength = iNumVertices;
+   unsigned long iVertexDataLength = iNumVertices * sizeof(HalflifeMDLVector);
+   unsigned long iNormalDataLength = iNumVertices * sizeof(HalflifeMDLVector);
+   // Word align lengths
+   WORDALIGN(iVertexInfoLength);
+   WORDALIGN(iNormalInfoLength);
+   WORDALIGN(iVertexDataLength);
+   WORDALIGN(iNormalDataLength);
+   // Fill in vertex and normal indices
+   sModelHeader.iVertexInfoIndex = sHeader.iLength + sizeof(SHalflifeMDLModel);
+   sModelHeader.iNormalInfoIndex = sModelHeader.iVertexInfoIndex + iVertexInfoLength;
+   sModelHeader.iVertexDataIndex = sModelHeader.iNormalInfoIndex + iNormalInfoLength;
+   sModelHeader.iNormalDataIndex = sModelHeader.iVertexDataIndex + iVertexDataLength;
+   // Groups information
+   sModelHeader.iNumDeformGroups = 0;
+   sModelHeader.iDeformGroupIndex = 0;
+   // We fill more in later on...
+   sHeader.iLength += sizeof(SHalflifeMDLModel);
 
    // Create Model Data Chunk
-   int iVertexInfoLength = iNumVertices;
-   WORDALIGN(iVertexInfoLength);
-   int iNormalInfoLength = iNumVertices;
-   WORDALIGN(iNormalInfoLength);
-   int iVertexDataLength = iNumVertices * HLSIZEOFVECTOR;
-   WORDALIGN(iVertexDataLength);
-   int iNormalDataLength = iNumVertices * HLSIZEOFVECTOR;
-   WORDALIGN(iNormalDataLength);
-   ((int*)pcModelHeaderChunk)[21] = iOffset;
-   ((int*)pcModelHeaderChunk)[24] = iOffset + iVertexInfoLength;
-   ((int*)pcModelHeaderChunk)[22] = iOffset + iVertexInfoLength + iNormalInfoLength;
-   ((int*)pcModelHeaderChunk)[25] = iOffset + iVertexInfoLength + iNormalInfoLength + iVertexDataLength;
    int iModelDataChunkLength = iVertexInfoLength + iNormalInfoLength + iVertexDataLength + iNormalDataLength;
-   char* pcModelDataChunk = new char[iModelDataChunkLength];
+   char* pcModelDataChunk;
+   NEWBEGIN
+   pcModelDataChunk = new char[iModelDataChunkLength];
+	NEWEND("CAvatarFileHalflife::Save - Model Data Chunk Allocation")
    memset(pcModelDataChunk,0,iModelDataChunkLength);
    iCurrentPos = 0;
-   // Build vertex->segment map
-   int* piVertexToSegmentMap = new int[iNumVertices];
-   for (i=0; i<TOTAL_NUMBER_BODYPARTS; i++) {
-      int iNumBodyPartVertices = pBodyParts[i].m_iNumVertices;
-      if (iNumBodyPartVertices != 0) {
-         for (int j=0; j<iNumBodyPartVertices; j++) {
-            piVertexToSegmentMap[pBodyParts[i].m_piVertices[j]] = m_pReverseCompressedSkeletonMap[i];
-         }
-      }
-   }
    // Write vertex info
    for (i=0; i<iNumVertices; i++) {
-      pcModelDataChunk[iCurrentPos + i] = piVertexToSegmentMap[i];
+      pcModelDataChunk[iCurrentPos+i] = m_pReverseCompressedSkeletonMap[pAvatar->GetVertexPart(i)];
    }
    iCurrentPos += iVertexInfoLength;
    // Write normal info
    for (i=0; i<iNumVertices; i++) {
-      pcModelDataChunk[iCurrentPos + i] = piVertexToSegmentMap[i];
+      pcModelDataChunk[iCurrentPos+i] = m_pReverseCompressedSkeletonMap[pAvatar->GetVertexPart(i)];
    }
    iCurrentPos += iNormalInfoLength;
-   char* pcTempModelDataPtr = pcModelDataChunk + iCurrentPos;
    // Write vertex data
-   const SPoint3D* pVertices = pAvatar->Vertices();
+   float* pfDataPtr = (float*)(pcModelDataChunk+iCurrentPos);
    for (i=0; i<iNumVertices; i++) {
-      CAxisRotation arRotation(1,0,0,V_PI);
-      BodyPart bpPart = (BodyPart)m_vCompressedSkeletonMap[piVertexToSegmentMap[i]];      
-      double dX = pBodyParts[bpPart].m_pntCurrentCentre.m_dComponents[0];
-      double dY = pBodyParts[bpPart].m_pntCurrentCentre.m_dComponents[1];
-      double dZ = pBodyParts[bpPart].m_pntCurrentCentre.m_dComponents[2];
-      CVector3D vecVertex(pVertices[i].m_dComponents[0]-dX,pVertices[i].m_dComponents[1]-dY,pVertices[i].m_dComponents[2]-dZ);
-      vecVertex = vecVertex.Rotate(arRotation);
-      vecVertex.ToDouble(dX,dY,dZ);
-      ((float*)pcTempModelDataPtr)[i*3]     =  dX * m_iScaleFactor;
-      ((float*)pcTempModelDataPtr)[i*3 + 1] = -dZ * m_iScaleFactor;
-      ((float*)pcTempModelDataPtr)[i*3 + 2] =  dY * m_iScaleFactor;
+      BodyPart bpPart = (BodyPart)pAvatar->GetVertexPart(i);
+      // Get vertex position
+      CVector3D vecVertex(pVertices[i]);
+      // Work out offset from bone centre
+      vecVertex -= CVector3D(pBodyParts[bpPart].m_pntCurrentCentre);
+      // Scale
+      vecVertex *= dScaleFactor;
+      // Write
+      *(pfDataPtr++) =  vecVertex.X();
+      *(pfDataPtr++) =  vecVertex.Z();
+      *(pfDataPtr++) = -vecVertex.Y();
    }
    iCurrentPos += iVertexDataLength;
-   // Delete vertex->segment map
-   delete [] piVertexToSegmentMap;
    // Write normal data
-   pcTempModelDataPtr = pcModelDataChunk + iCurrentPos;
-   const SPoint3D* pNormals = pAvatar->VertexNormals();
+   pfDataPtr = (float *)(pcModelDataChunk+iCurrentPos);
    for (i=0; i<iNumVertices; i++) {
-      CAxisRotation arRotation(1,0,0,V_PI);
-      CVector3D vecVertex(pNormals[i]);
-      //vecVertex = vecVertex.Rotate(arRotation);
-      double dX, dY, dZ;
-      vecVertex.ToDouble(dX,dY,dZ);
-      ((float*)pcTempModelDataPtr)[i*3]     = -dX;
-      ((float*)pcTempModelDataPtr)[i*3 + 1] =  dZ;
-      ((float*)pcTempModelDataPtr)[i*3 + 2] = -dY;
+      // Get normal
+      CVector3D vecNormal(pNormals[i]);
+      // Write
+      *(pfDataPtr++) =  vecNormal.X();
+      *(pfDataPtr++) =  vecNormal.Z();
+      *(pfDataPtr++) = -vecNormal.Y();
    }
    // Update offset
-   iOffset += iModelDataChunkLength;
+   sHeader.iLength += iModelDataChunkLength;
    
    g_oProgressControl.Step("HLSave");
    g_oProgressControl.SetText("HLSave", "Creating meshes");
-   // Create Mesh Header Chunk
-   ((int*)pcModelHeaderChunk)[19] = iOffset;
-   int iMeshHeaderChunkLength = 0x14 * iNumMeshes;
-   char* pcMeshHeaderChunk = new char[iMeshHeaderChunkLength];
-   memset(pcMeshHeaderChunk,0,iMeshHeaderChunkLength);
+
    // Split main mesh into submeshes based on texture
-   std::vector<STriFace>* vSubMeshes = new std::vector<STriFace>[iNumMeshes];
-   int iNumFaces = pAvatar->NumFaces();
-   const STriFace* pFaces = pAvatar->Faces();
+   std::vector<STriFace>* vSubMeshes;
+   NEWBEGIN
+   vSubMeshes = new std::vector<STriFace>[sModelHeader.iNumMeshes];
+	NEWEND("CAvatarFileHalflife::Save - Submesh Allocation")
    for (i=0; i<iNumFaces; i++) {
       (vSubMeshes + pFaces[i].m_iTextureNumber)->push_back(pFaces[i]);
    }
    // Compress submeshes into triangle strips
    // ********IMPLEMENT THIS*********
+
+   // Create Mesh Header Chunk
+   sModelHeader.iMeshIndex = sHeader.iLength;
+   SHalflifeMDLMesh* pMeshHeaderChunk;
+   NEWBEGIN
+   pMeshHeaderChunk = new SHalflifeMDLMesh[sModelHeader.iNumMeshes];
+	NEWEND("CAvatarFileHalflife::Save - Mesh Header Chunk Allocation")
    // Write info into header
-   for (i=0; i<iNumMeshes; i++) {
-      char* pcTempPtr = pcMeshHeaderChunk + i*0x14;
+   for (i=0; i<sModelHeader.iNumMeshes; i++) {
       // Number of triangles
-      ((int*)pcTempPtr)[0] = vSubMeshes[i].size();
+      pMeshHeaderChunk[i].iNumTriangles = vSubMeshes[i].size();
+      // We fill in the triangle index in a minute
       // Texture reference
-      ((int*)pcTempPtr)[2] = i;
+      pMeshHeaderChunk[i].iSkinRef = i;
       // Number of normals
-      ((int*)pcTempPtr)[3] = vSubMeshes[i].size();
+      pMeshHeaderChunk[i].iNumNormals = vSubMeshes[i].size();
+      // Normal index
+      pMeshHeaderChunk[i].iNormalIndex = 0;
    }
-   iOffset += iMeshHeaderChunkLength;
+   sHeader.iLength += sizeof(SHalflifeMDLMesh) * sModelHeader.iNumMeshes;
    
    g_oProgressControl.Step("HLSave");
    g_oProgressControl.SetText("HLSave", "Creating mesh data");
 
    // Create Mesh Data Chunk
-   int iMeshStartOffset = iOffset;
    int iMeshDataChunkLength = 0;
-   for (i=0; i<iNumMeshes; i++) {
-      *((int*)(pcMeshHeaderChunk + i*0x14 + 4)) = iOffset;
-      int iMeshLength = (vSubMeshes[i].size() * 26) + 1;
+   int iMeshDataChunkStart = sHeader.iLength;
+   for (i=0; i<sModelHeader.iNumMeshes; i++) {
+      // Fill in index in header
+      pMeshHeaderChunk[i].iTriangleDataIndex = sHeader.iLength;
+      // Work our mesh length
+      int iMeshLength = (vSubMeshes[i].size() * 26) + 2;
       WORDALIGN(iMeshLength);
       iMeshDataChunkLength += iMeshLength;
-      iOffset += iMeshLength;
+      sHeader.iLength += iMeshLength;
    }
-   char* pcMeshDataChunk = new char[iMeshDataChunkLength];
+   char* pcMeshDataChunk;
+   NEWBEGIN
+   pcMeshDataChunk = new char[iMeshDataChunkLength];
+	NEWEND("CAvatarFileHalflife::Save - Mesh Data Chunk Allocation")
    memset(pcMeshDataChunk,0,iMeshDataChunkLength);
-   for (i=0; i<iNumMeshes; i++) {
-      int iCurrentOffset = *((int*)(pcMeshHeaderChunk + i*0x14 + 4)) - iMeshStartOffset;
+   for (i=0; i<sModelHeader.iNumMeshes; i++) {
+      int iCurrentOffset = pMeshHeaderChunk[i].iTriangleDataIndex - iMeshDataChunkStart;
       short* pcTempMeshDataPtr = (short*)(pcMeshDataChunk + iCurrentOffset);
       for (int j=0; j<vSubMeshes[i].size(); j++) {
          *pcTempMeshDataPtr++ = 3;
@@ -613,6 +715,7 @@ int CAvatarFileHalflife::Save(ofstream& osOutputStream, CAvatar* pAvatar) const 
             *pcTempMeshDataPtr++ = (1-iCurrentFace->m_sTexCoords[k].dV) * iHeight;
          }
       }
+      // Write terminating zero
       *pcTempMeshDataPtr = 0;
    }
    // Bin submesh and tristrip information
@@ -622,72 +725,66 @@ int CAvatarFileHalflife::Save(ofstream& osOutputStream, CAvatar* pAvatar) const 
    g_oProgressControl.SetText("HLSave", "Creating texture info");
 
    // Create Texture Header Chunk
-   sHeader.liNumTextures = pAvatar->NumTextures();
-   sHeader.liTextureHeaderChunkOffset = iOffset;
-   int iTextureHeaderChunkLength = 0x50 * sHeader.liNumTextures;
-   char* pcTextureHeaderChunk = new char[iTextureHeaderChunkLength];
-   memset(pcTextureHeaderChunk,0,iTextureHeaderChunkLength);
-   for (i=0; i<sHeader.liNumTextures; i++) {
-      // Write filename
-      iCurrentPos = i * 0x50;
-      strcpy(pcTextureHeaderChunk + iCurrentPos,m_pszModelname);
-      iCurrentPos += strlen(m_pszModelname);
-      pcTextureHeaderChunk[iCurrentPos++]  = '_';
-      pcTextureHeaderChunk[iCurrentPos++]  = 'a' + i;
-      strcpy(pcTextureHeaderChunk + iCurrentPos,".bmp");
-   }
-   iOffset += iTextureHeaderChunkLength;
-
-   // Create Texture Index Chunk
-   sHeader.liNumReplaceableTextures = sHeader.liNumTextures;
-   sHeader.liNumTextureFamilies = 1;
-   sHeader.liTextureIndexOffset = iOffset;
-   int iTextureIndexChunkLength = sHeader.liNumReplaceableTextures * 2;
-   WORDALIGN(iTextureIndexChunkLength);
-   char* pcTextureIndexChunk = new char[iTextureIndexChunkLength];
-   memset(pcTextureIndexChunk,0,iTextureIndexChunkLength);
-   for (i=0; i<sHeader.liNumReplaceableTextures; i++) {
-      ((short*)pcTextureIndexChunk)[i] = i;
-   }
-   iOffset += iTextureIndexChunkLength;
-
-   // Create Texture Data Chunk
-   sHeader.liTextureDataChunkOffset = iOffset;
+   sHeader.iNumTextures = pAvatar->NumTextures();
+   sHeader.iTextureHeaderChunkOffset = sHeader.iLength;
+   SHalflifeMDLTexture* pTextureHeaderChunk;
+   NEWBEGIN
+   pTextureHeaderChunk = new SHalflifeMDLTexture[sHeader.iNumTextures];
+	NEWEND("CAvatarFileHalflife::Save - Texture Header Chunk Allocation")
    int iTextureDataChunkLength = 0;
-   // Calculate data chunk size
-   for (i=0; i<sHeader.liNumTextures; i++) {
+   for (i=0; i<sHeader.iNumTextures; i++) {
+      // Set flags
+      pTextureHeaderChunk[i].iFlags = 0;
+      // Write name
+      memset(pTextureHeaderChunk[i].pszName,0,64);
+      strcpy(pTextureHeaderChunk[i].pszName,m_pszModelname);
+      int iLength = strlen(pTextureHeaderChunk[i].pszName);
+      strcpy(pTextureHeaderChunk[i].pszName + iLength, "_a.bmp");
+      pTextureHeaderChunk[i].pszName[iLength + 1] += i;
+      // Get image size
       int iWidth, iHeight;
       vpSmallTextures[i]->GetSize(iWidth,iHeight);
-      // Add space for image @ 8bpp
-      iTextureDataChunkLength += iWidth * iHeight;
-      // Add space for palette
-      iTextureDataChunkLength += 0x300;
+      // Store data
+      pTextureHeaderChunk[i].iWidth = iWidth;
+      pTextureHeaderChunk[i].iHeight = iHeight;
+      // Increase data chunk size to allow space for image @ 8bpp
+      iTextureDataChunkLength += (iWidth * iHeight) + 0x300;
    }
-   char* pcTextureDataChunk = new char[iTextureDataChunkLength];
-   memset(pcTextureDataChunk,0,iTextureDataChunkLength);
+   sHeader.iLength += sizeof(SHalflifeMDLTexture) * sHeader.iNumTextures;
+
+   // Create Texture Index Chunk
+   sHeader.iNumReplaceableTextures = sHeader.iNumTextures;
+   sHeader.iNumTextureFamilies = 1;
+   sHeader.iTextureIndexOffset = sHeader.iLength;
+   int iTextureIndexChunkLength = sHeader.iNumReplaceableTextures * 2;
+   WORDALIGN(iTextureIndexChunkLength);
+   char* pcTextureIndexChunk;
+   NEWBEGIN
+   pcTextureIndexChunk = new char[iTextureIndexChunkLength];
+	NEWEND("CAvatarFileHalflife::Save - Texture Index Chunk Allocation")
+   memset(pcTextureIndexChunk,0,iTextureIndexChunkLength);
+   for (i=0; i<sHeader.iNumReplaceableTextures; i++) {
+      ((short*)pcTextureIndexChunk)[i] = i;
+   }
+   sHeader.iLength += iTextureIndexChunkLength;
+
+   g_oProgressControl.Step("HLSave");
+   g_oProgressControl.SetText("HLSave", "Storing textures");
+
+   // Create Texture Data Chunk
+   sHeader.iTextureDataChunkOffset = sHeader.iLength;
+   char* pcTextureDataChunk;
+   NEWBEGIN
+   pcTextureDataChunk = new char[iTextureDataChunkLength];
+	NEWEND("CAvatarFileHalflife::Save - Texture Data Chunk Allocation")
    iCurrentPos = 0;
-   for (i=0; i<sHeader.liNumTextures; i++) {
-      char pszDisplay[32];
-      sprintf(pszDisplay,"Storing texture %d", i);
-      g_oProgressControl.Step("HLSave");
-      g_oProgressControl.SetText("HLSave", pszDisplay);
-      // Write header information
-      CImage* pTexture = vpSmallTextures[i];
-      int iWidth, iHeight;
-      pTexture->GetSize(iWidth,iHeight);
-      int iTextureSize = iWidth * iHeight;
-      // Set offset and write width
-      char* pcTempTexHdrPtr = pcTextureHeaderChunk + i*0x50 + 0x44;
-      *((int*)pcTempTexHdrPtr) = iWidth;
-      // Write height
-      pcTempTexHdrPtr += 0x04;
-      *((int*)pcTempTexHdrPtr) = iHeight;
-      // Write data pointer
-      pcTempTexHdrPtr += 0x04;
-      *((int*)pcTempTexHdrPtr) = iCurrentPos + iOffset;
+   for (i=0; i<sHeader.iNumTextures; i++) {
+      const CImage* pTexture = vpSmallTextures[i];
+      // Store index in header
+      pTextureHeaderChunk[i].iIndex = sHeader.iLength + iCurrentPos;
       // Write texture data
+      int iTextureSize = pTextureHeaderChunk[i].iWidth * pTextureHeaderChunk[i].iHeight;
       for (int iPixel=0; iPixel<iTextureSize; iPixel++) {
-         //memset(pcTextureDataChunk+(iCurrentPos++),(char)i,0x01);
          *(pcTextureDataChunk+(iCurrentPos++)) = (char)pTexture->GetPixel(iPixel);
       }            
       // Write palette
@@ -702,65 +799,63 @@ int CAvatarFileHalflife::Save(ofstream& osOutputStream, CAvatar* pAvatar) const 
          *(pcTextureDataChunk+(iCurrentPos++)) = uColour & 0xFF;*/
       }
    }
-   iOffset += iTextureDataChunkLength;
+   sHeader.iLength += iTextureDataChunkLength;
 
-   // Bin resized textures
+   // Dispose of resized textures
    for (i=0; i<pAvatar->NumTextures(); i++) {
       CImage* pTexture = vpSmallTextures.back();
       vpSmallTextures.pop_back();
       delete pTexture;
    }
 
-   // Calculate and fill in file size information
-   sHeader.liLength = iOffset;
-
-   
    g_oProgressControl.Step("HLSave");
    g_oProgressControl.SetText("HLSave", "Writing to file");
 
    // Write chunks to stream in correct order
-   osOutputStream.write((char*)&sHeader,sizeof(HlMDLHeader));
-   osOutputStream.write(pcBoneChunk,iBoneChunkLength);
-   osOutputStream.write(pcBoneControllerChunk,iBoneControllerChunkLength);
-   osOutputStream.write(pcAttachmentChunk,iAttachmentChunkLength);
-   osOutputStream.write(pcHitboxChunk,iHitboxChunkLength);
-   osOutputStream << ifAnimStream.rdbuf();
-   osOutputStream.write(pcSequenceGroupsChunk,iSequenceGroupsChunkLength);
-   osOutputStream.write(pcBodyPartsHeaderChunk,iBodyPartsHeaderChunkLength);
-   osOutputStream.write(pcModelHeaderChunk,iModelHeaderChunkLength);
+   osOutputStream.write((char*)&sHeader,sizeof(SHalflifeMDLHeader));
+   osOutputStream.write((char*)pBoneChunk,sizeof(SHalflifeMDLBone) * sHeader.iNumBones);
+   osOutputStream.write((char*)pBoneControllerChunk,sizeof(SHalflifeMDLBoneController) * sHeader.iNumBoneControllers);
+   osOutputStream.write((char*)pAttachmentChunk,sizeof(SHalflifeMDLAttachment) * sHeader.iNumAttachments);
+   osOutputStream.write((char*)pHitboxChunk,sizeof(SHalflifeMDLHitbox) * sHeader.iNumHitboxes);
+   osOutputStream << ifInputStream.rdbuf();
+   osOutputStream.write((char*)pSeqGroupsChunk,sizeof(SHalflifeMDLSeqGroup) * sHeader.iNumSeqGroups);
+   osOutputStream.write((char*)&sBodyPartHeader,sizeof(SHalflifeMDLBodyPart));
+   osOutputStream.write((char*)&sModelHeader,sizeof(SHalflifeMDLModel));
    osOutputStream.write(pcModelDataChunk,iModelDataChunkLength);
-   osOutputStream.write(pcMeshHeaderChunk,iMeshHeaderChunkLength);
+   osOutputStream.write((char*)pMeshHeaderChunk,sizeof(SHalflifeMDLMesh) * sModelHeader.iNumMeshes);
    osOutputStream.write(pcMeshDataChunk,iMeshDataChunkLength);
-   osOutputStream.write(pcTextureHeaderChunk,iTextureHeaderChunkLength);
+   osOutputStream.write((char*)pTextureHeaderChunk,sizeof(SHalflifeMDLTexture) * sHeader.iNumTextures);
    osOutputStream.write(pcTextureIndexChunk,iTextureIndexChunkLength);
    osOutputStream.write(pcTextureDataChunk,iTextureDataChunkLength);
 
-   // Close files
-   ifAnimStream.close();
+   // Close input files
+   ifInputStream.close();
 
-   // Clean up memory
    g_oProgressControl.Step("HLSave");
    g_oProgressControl.SetText("HLSave", "Cleaning up");
 
-   if (pcTextureDataChunk != NULL) delete [] pcTextureDataChunk;
-   if (pcTextureIndexChunk != NULL) delete [] pcTextureIndexChunk;
-   if (pcTextureHeaderChunk != NULL) delete [] pcTextureHeaderChunk;
-   if (pcMeshDataChunk != NULL) delete [] pcMeshDataChunk;
-   if (pcMeshHeaderChunk != NULL) delete [] pcMeshHeaderChunk;
-   if (pcModelDataChunk != NULL) delete [] pcModelDataChunk;
-   if (pcModelHeaderChunk != NULL) delete [] pcModelHeaderChunk;
-   if (pcBodyPartsHeaderChunk != NULL) delete [] pcBodyPartsHeaderChunk;
-   if (pcSequenceGroupsChunk != NULL) delete [] pcSequenceGroupsChunk;
-   if (pcHitboxChunk != NULL) delete [] pcHitboxChunk;
-   if (pcAttachmentChunk != NULL) delete [] pcAttachmentChunk;
-   if (pcBoneControllerChunk != NULL) delete [] pcBoneControllerChunk;
-   if (pcBoneChunk != NULL) delete [] pcBoneChunk;
+   // Clean up memory
+   m_vCompressedSkeletonMap.clear();
+   if (pcTextureDataChunk != NULL)   delete [] pcTextureDataChunk;
+   if (pcTextureIndexChunk != NULL)  delete [] pcTextureIndexChunk;
+   if (pTextureHeaderChunk != NULL)  delete [] pTextureHeaderChunk;
+   if (pcMeshDataChunk != NULL)      delete [] pcMeshDataChunk;
+   if (pMeshHeaderChunk != NULL)     delete [] pMeshHeaderChunk;
+   if (pcModelDataChunk != NULL)     delete [] pcModelDataChunk;
+   if (pSeqGroupsChunk != NULL)      delete [] pSeqGroupsChunk;
+   if (pHitboxChunk != NULL)         delete [] pHitboxChunk;
+   if (pAttachmentChunk != NULL)     delete [] pAttachmentChunk;
+   if (pBoneControllerChunk != NULL) delete [] pBoneControllerChunk;
+   if (pBoneChunk != NULL)           delete [] pBoneChunk;
 
    // Restore old stream mode
    if (iOldMode != -1) osOutputStream.setmode(iOldMode);
 
-   //pAvatar->ImportPose(oldPose);
-   
+   // Restore old pose
+   pAvatar->ImportPose(oldPose);
+   pAvatar->UpdateModel();
+
+   // Done
    return iRetVal;
 } // Save(ofstream& osOutputStream, CAvatar* pAvatar)
 
@@ -786,3 +881,101 @@ std::vector<vTriStrip> CAvatarFileHalflife::CompressSubMesh(std::vector<STriFace
    delete [] pbUsedFaces;
    return vvTriStrips;
 } //CompressSubMesh(std::vector<STriFace> vSubMesh)
+
+const char* CAvatarFileHalflife::m_pszJointNames[] =
+{
+	"root",
+	"sacroiliac",
+	"l_hip",
+	"l_knee",
+	"l_ankle",
+	"l_subtalar",
+	"l_midtarsal",
+	"l_metatarsal",
+	"r_hip",
+	"r_knee",
+	"r_ankle",
+	"r_subtalar",
+	"r_midtarsal",
+	"r_metatarsal",
+	"vl5",
+	"vl4",
+	"vl3",
+	"vl2",
+	"vl1",
+	"vt12",
+	"vt11",
+	"vt10",
+	"vt9",
+	"vt8",
+	"vt7",
+	"vt6",
+	"vt5",
+	"vt4",
+	"vt3",
+	"vt2",
+	"vt1",
+	"vc7",
+	"vc6",
+	"vc5",
+	"vc4",
+	"vc3",
+	"vc2",
+	"vc1",
+	"skullbase",
+	"l_eyeball_joint",
+	"r_eyeball_joint",
+	"l_sternoclavicular",
+	"l_acromioclavicular",
+	"l_shoulder",
+	"l_elbow",
+	"l_wrist",
+	"l_thumb1",
+	"l_thumb2",
+	"l_thumb3",
+	"l_index0",
+	"l_index1",
+	"l_index2",
+	"l_index3",
+	"l_middle0",
+	"l_middle1",
+	"l_middle2",
+	"l_middle3",
+	"l_ring0",
+	"l_ring1",
+	"l_ring2",
+	"l_ring3",
+	"l_pinky0",
+	"l_pinky1",
+	"l_pinky2",
+	"l_pinky3",
+	"r_sternoclavicular",
+	"r_acromioclavicular",
+	"r_shoulder",
+	"r_elbow",
+	"r_wrist",
+	"r_thumb1",
+	"r_thumb2",
+	"r_thumb3",
+	"r_index0",
+	"r_index1",
+	"r_index2",
+	"r_index3",
+	"r_middle0",
+	"r_middle1",
+	"r_middle2",
+	"r_middle3",
+	"r_ring0",
+	"r_ring1",
+	"r_ring2",
+	"r_ring3",
+	"r_pinky0",
+	"r_pinky1",
+	"r_pinky2",
+	"r_pinky3",
+   "l_foot_tip",
+   "r_foot_tip",
+   "skull_tip",
+   "l_hand_tip",
+   "r_hand_tip",
+};
