@@ -9,7 +9,7 @@
 //! file      = "Control/VTStrucVisCtl.cpp"
 //! author    = "Warren Moore"
 //! date      = "5/3/2002"
-//! rcsid     = "$Id: VTStrucVisCtl.cpp,v 1.28 2002/04/05 08:56:22 vap-warren Exp $"
+//! rcsid     = "$Id: VTStrucVisCtl.cpp,v 1.29 2002/04/05 14:23:44 vap-warren Exp $"
 
 #include "stdafx.h"
 #include "VTStrucVis.h"
@@ -1469,11 +1469,11 @@ void CVTStrucVisCtl::DoPropExchange(CPropExchange* pPX) {
    PX_String(pPX, _T("WRLPath"), m_oWRLPath, "");
 
    // Get the initial position and orientation
-   PX_String(pPX, _T("Position"), m_oPosition, "");
-   PX_String(pPX, _T("Orientation"), m_oOrientation, "");
+   PX_String(pPX, _T("Position"), m_oPosition, "0.0, 0.0, 10.0");
+   PX_String(pPX, _T("Orientation"), m_oOrientation, "0.0, 1.0, 0.0, 0.0");
 
    // Get the scale factor
-   PX_String(pPX, _T("Scale"), m_oScale, "");
+   PX_String(pPX, _T("Scale"), m_oScale, "1.0, 1.0, 1.0");
 
    // Reset the async data flags if loading
    if (pPX->IsLoading()) {
