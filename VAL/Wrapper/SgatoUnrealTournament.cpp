@@ -7,7 +7,7 @@
 // SGAToUnrealTournament.cpp - 12/06/2000 - Warren Moore
 //	SGA Avatar to Unreal Tournament converter wrapper 
 //
-// $Id: SgatoUnrealTournament.cpp,v 1.3 2000/07/19 08:49:40 waz Exp $
+// $Id: SgatoUnrealTournament.cpp,v 1.4 2000/07/21 16:30:47 waz Exp $
 //
 
 #include "StdAfx.h"
@@ -245,7 +245,7 @@ VARESULT CSGAToUnrealTournament::Compress(const char *pcDir, const char *pcSFXNa
 	ASSERT(g_poVAL);
 	// Check we have complete string names
 	if ((!pcDir) || (!pcSFXName))
-		return VA_SFX_ERROR;
+		return (m_eResult = VA_SFX_ERROR);
 	// Get the sfx wedgie name
 	const char *pcAppDir = g_poVAL->GetAppDir();
 	char pcWJEName[STR_SIZE] = "";
@@ -256,16 +256,16 @@ VARESULT CSGAToUnrealTournament::Compress(const char *pcDir, const char *pcSFXNa
 	fstream oWJEFile;
 	oWJEFile.open(pcWJEName, ios::in|ios::binary|ios::nocreate);
 	if (oWJEFile.fail())
-		return VA_WJE_MISSING;
+		return (m_eResult = VA_WJE_MISSING);
 	// Decompress the sfx
 	CWedgie oWJE;
 	if (oWJE.Open(&oWJEFile, "") != WJE_OK) {
 		oWJEFile.close();
-		return VA_WJE_ERROR;
+		return (m_eResult = VA_WJE_ERROR);
 	}
 	if (oWJE.Extract(VEM_SFXNAME, pcSFXName) != WJE_OK) {
 		oWJEFile.close();
-		return VA_WJE_ERROR;
+		return (m_eResult = VA_WJE_ERROR);
 	}
 	oWJE.Close();
 	oWJEFile.close();
@@ -274,17 +274,17 @@ VARESULT CSGAToUnrealTournament::Compress(const char *pcDir, const char *pcSFXNa
 	oSFXFile.open(pcSFXName, ios::out|ios::binary|ios::nocreate|ios::ate);
 	if (oSFXFile.fail()) {
 		oSFXFile.close();
-		return VA_SFX_ERROR;
+		return (m_eResult = VA_SFX_ERROR);
 	}
 	// Create the sfx from the model directory
 	if (oWJE.Open(&oSFXFile, pcDir, true, true) != WJE_OK) {
 		oWJEFile.close();
-		return VA_COMPRESS_ERROR;
+		return (m_eResult = VA_COMPRESS_ERROR);
 	}
 	oWJE.Close();
 	oSFXFile.close();
 
-	return VA_OK;
+	return (m_eResult = VA_OK);
 } // Compress
 
 const char *CSGAToUnrealTournament::GetErrorString() {
