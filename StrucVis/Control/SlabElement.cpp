@@ -7,7 +7,7 @@
 // SlabElement.cpp
 // 19/03/2002 - James Smith
 //
-// $Id: SlabElement.cpp,v 1.22 2002/03/24 13:52:01 vap-warren Exp $
+// $Id: SlabElement.cpp,v 1.23 2002/03/24 22:34:55 vap-james Exp $
 
 #include "stdafx.h"
 #include "SlabElement.h"
@@ -170,8 +170,8 @@ void CSlabElement::SetTemp(float fTemp) const {
    if (m_poNodePtr) {
       CCortonaField* poString = m_poNodePtr->GetField("description");
       char pcBuffer[32];
-      sprintf(pcBuffer,"%.2f",m_fTemp);
-      poString->SetMFString(3,pcBuffer);
+      sprintf(pcBuffer,"Temp: %.2f",m_fTemp);
+      poString->SetMFString(2,pcBuffer);
       poString->Release();
       delete poString;
    }
