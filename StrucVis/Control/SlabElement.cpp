@@ -6,7 +6,7 @@
 // SlabElement.cpp
 // 19/03/2002 - James Smith
 //
-// $Id: SlabElement.cpp,v 1.9 2002/03/21 15:47:35 vap-james Exp $
+// $Id: SlabElement.cpp,v 1.10 2002/03/21 21:54:59 vap-james Exp $
 
 #include "stdafx.h"
 #include "SlabElement.h"
@@ -26,6 +26,8 @@ CSlabElement::CSlabElement(CCortonaUtil *poCortona, CNodeSet* poNodeSet) :
    CElement(poCortona, poNodeSet),
    m_fThickness(1)
 {
+   memset(m_pfStresses,0,9*sizeof(float));
+   memset(m_piNodes,0,9*sizeof(unsigned int));
 }
 
 // Beginning of SlabElement node
@@ -113,38 +115,18 @@ bool CSlabElement::Display(void) const {
    }
 }
 
-void CSlabElement::SetNodes(int iFirstNode, int iSecondNode, int iThirdNode, 
-                            int iFourthNode, int iFifthNode, int iSixthNode, 
-                            int iSeventhNode, int iEighthNode, int iNinthNode) {
-   m_piNodes[0] = iFirstNode;
-   m_piNodes[1] = iSecondNode;
-   m_piNodes[2] = iThirdNode;
-   m_piNodes[3] = iFourthNode;
-   m_piNodes[4] = iFifthNode;
-   m_piNodes[5] = iSixthNode;
-   m_piNodes[6] = iSeventhNode;
-   m_piNodes[7] = iEighthNode;
-   m_piNodes[8] = iNinthNode;
+void CSlabElement::SetNodes(unsigned int* piNodes) {
+   memcpy(m_piNodes,piNodes,9*sizeof(int));
+   return;
+}
+
+void CSlabElement::SetStresses (float* pfStresses) const {
+   memcpy(m_pfStresses,pfStresses,9*sizeof(float));
    return;
 }
 
 void CSlabElement::SetSize(float fThickness) {
    m_fThickness = fThickness;
-}
-
-void CSlabElement::SetStresses(float fFirstNode, float fSecondNode, float fThirdNode, 
-                               float fFourthNode, float fFifthNode, float fSixthNode, 
-                               float fSeventhNode, float fEighthNode, float fNinthNode) {
-   m_pfStresses[0] = fFirstNode;
-   m_pfStresses[1] = fSecondNode;
-   m_pfStresses[2] = fThirdNode;
-   m_pfStresses[3] = fFourthNode;
-   m_pfStresses[4] = fFifthNode;
-   m_pfStresses[5] = fSixthNode;
-   m_pfStresses[6] = fSeventhNode;
-   m_pfStresses[7] = fEighthNode;
-   m_pfStresses[8] = fNinthNode;
-   return;
 }
 
 void CSlabElement::CalculateColours(float* pfColours) const {

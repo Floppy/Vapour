@@ -6,7 +6,7 @@
 // Element.h
 // 19/03/2002 - James Smith
 //
-// $Id: Element.h,v 1.7 2002/03/21 14:49:07 vap-james Exp $
+// $Id: Element.h,v 1.8 2002/03/21 21:54:59 vap-james Exp $
 
 #ifndef __ELEMENT__
 #define __ELEMENT__
@@ -65,6 +65,11 @@ public:
    // Returns true if successful, false otherwise.
    // If the object is not already displayed, it is created.
 
+   virtual void SetNodes(unsigned int* piNodes) = 0;
+   // Sets which nodes govern this element
+   // This will be overridden and each child will 
+   // expect a certain number of floats in the array.
+
    void SetStressRange(float fMin, float fMax) const {
       m_fMinStress = fMin;
       m_fMaxStress = fMax;
@@ -73,6 +78,11 @@ public:
    // Sets the range of possible stress values.
    // This will affect colouring of objects
    
+   virtual void SetStresses(float* pfStresses) const = 0;
+   // Sets the stress values for the nodes
+   // This will be overridden and each child will 
+   // expect a certain number of floats in the array.
+
    unsigned int ID(void) {return m_iElement;}
    // Get the element's ID number
 

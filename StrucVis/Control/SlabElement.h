@@ -6,7 +6,7 @@
 // SlabElement.h
 // 19/03/2002 - James Smith
 //
-// $Id: SlabElement.h,v 1.6 2002/03/21 14:43:23 vap-james Exp $
+// $Id: SlabElement.h,v 1.7 2002/03/21 21:54:59 vap-james Exp $
 
 #ifndef __SLAB_ELEMENT__
 #define __SLAB_ELEMENT__
@@ -37,15 +37,13 @@ public:
    // Set whether the beam is visible or not.
    // Returns true if successful
 
-   void SetNodes(int iFirstNode, int iSecondNode, int iThirdNode, 
-                 int iFourthNode, int iFifthNode, int iSixthNode, 
-                 int iSeventhNode, int iEighthNode, int iNinthNode);
-   // Sets which nodes define the slab
+   void SetNodes(unsigned int* piNodes);
+   // Sets which nodes the slab is controlled by
+   // This function expects a pointer to a 9-uint array
 
-   void SetStresses(float fFirstNode, float fSecondNode, float fThirdNode, 
-                    float fFourthNode, float fFifthNode, float fSixthNode, 
-                    float fSeventhNode, float fEighthNode, float fNinthNode);
+   void SetStresses(float* pfStresses) const;
    // Sets stresses for individual nodes
+   // This function expects a pointer to a 9-float array
 
    void SetSize(float fThickness);
    // Sets the sizes of the slab
@@ -66,7 +64,7 @@ protected:
    unsigned int m_piNodes[9];
    // The node indices that define the slab
 
-   float m_pfStresses[9];
+   mutable float m_pfStresses[9];
    // Per-node stress values
    
    float m_fThickness;

@@ -6,7 +6,7 @@
 // BeamElement.cpp
 // 19/03/2002 - James Smith
 //
-// $Id: BeamElement.cpp,v 1.9 2002/03/21 15:47:35 vap-james Exp $
+// $Id: BeamElement.cpp,v 1.10 2002/03/21 21:55:00 vap-james Exp $
 
 #include "stdafx.h"
 #include "BeamElement.h"
@@ -131,15 +131,13 @@ void CBeamElement::SetSize(float fHeight, float fWidth, float fFlangeThickness, 
    m_fWeb = fWebThickness;
 }
 
-void CBeamElement::SetNodes(int iFirstNode, int iSecondNode) {
-   m_piNodes[0] = iFirstNode;
-   m_piNodes[1] = iSecondNode;
+void CBeamElement::SetNodes(unsigned int* piNodes) {
+   memcpy(m_piNodes,piNodes,2*sizeof(int));
    return;
 }
 
-void CBeamElement::SetStresses(float fFirstNode, float fSecondNode) {
-   m_pfStresses[0] = fFirstNode;
-   m_pfStresses[1] = fSecondNode;
+void CBeamElement::SetStresses (float* pfStresses) const {
+   memcpy(m_pfStresses,pfStresses,2*sizeof(float));
    return;
 }
 

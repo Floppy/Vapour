@@ -6,7 +6,7 @@
 // BeamElement.h
 // 19/03/2002 - James Smith
 //
-// $Id: BeamElement.h,v 1.6 2002/03/21 14:43:24 vap-james Exp $
+// $Id: BeamElement.h,v 1.7 2002/03/21 21:54:59 vap-james Exp $
 
 #ifndef __BEAM_ELEMENT__
 #define __BEAM_ELEMENT__
@@ -40,11 +40,13 @@ public:
    void SetSize(float fHeight, float fWidth, float fFlangeThickness, float fWebThickness);
    // Sets the sizes of the I-beam
 
-   void SetNodes(int iFirstNode, int iSecondNode);
-   // Sets which nodes the beam is between
+   void SetNodes(unsigned int* piNodes);
+   // Sets which nodes the beam is controlled by
+   // This function expects a pointer to a 9-uint array
 
-   void SetStresses(float fFirstNode, float fSecondNode);
+   void SetStresses(float* pfStresses) const;
    // Sets stresses for individual nodes
+   // This function expects a pointer to a 9-float array
 
 private:
 
@@ -62,7 +64,7 @@ protected:
    unsigned int m_piNodes[2];
    // The node indices that define the beam.
 
-   float m_pfStresses[2];
+   mutable float m_pfStresses[2];
    // Per-node stress values
    
    float m_fHeight;
