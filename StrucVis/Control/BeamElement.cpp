@@ -1,12 +1,13 @@
-//=============---
-// Arup Simulation Visualisation System
-//-------------
-// Copyright 2002 Vapour Technology Ltd.
+//===================================---
+// VT Structure Visualisation Control
+//-----------------------------------
+// ActiveX Control for structure visualisation
+// Copyright 2000 Vapour Technology Ltd.
 //
 // BeamElement.cpp
 // 19/03/2002 - James Smith
 //
-// $Id: BeamElement.cpp,v 1.19 2002/03/23 11:02:30 vap-james Exp $
+// $Id: BeamElement.cpp,v 1.20 2002/03/24 13:51:58 vap-warren Exp $
 
 #include "stdafx.h"
 #include "BeamElement.h"

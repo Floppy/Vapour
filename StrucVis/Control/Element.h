@@ -1,15 +1,16 @@
-//=============---
-// Arup Simulation Visualisation System
-//-------------
-// Copyright 2002 Vapour Technology Ltd.
+//===================================---
+// VT Structure Visualisation Control
+//-----------------------------------
+// ActiveX Control for structure visualisation
+// Copyright 2000 Vapour Technology Ltd.
 //
 // Element.h
 // 19/03/2002 - James Smith
 //
-// $Id: Element.h,v 1.12 2002/03/23 11:22:00 vap-james Exp $
+// $Id: Element.h,v 1.13 2002/03/24 13:52:00 vap-warren Exp $
 
-#ifndef __ELEMENT__
-#define __ELEMENT__
+#ifndef __VTSTRUCVIS_ELEMENT__
+#define __VTSTRUCVIS_ELEMENT__
 
 #if _MSC_VER > 1000
 #pragma once
@@ -150,4 +151,4 @@ protected:
 
 };
 
-#endif // __ELEMENT__
+#endif // __VTSTRUCVIS_ELEMENT__

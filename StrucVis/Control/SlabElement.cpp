@@ -1,12 +1,13 @@
-//=============---
-// Arup Simulation Visualisation System
-//-------------
-// Copyright 2002 Vapour Technology Ltd.
+//===================================---
+// VT Structure Visualisation Control
+//-----------------------------------
+// ActiveX Control for structure visualisation
+// Copyright 2000 Vapour Technology Ltd.
 //
 // SlabElement.cpp
 // 19/03/2002 - James Smith
 //
-// $Id: SlabElement.cpp,v 1.21 2002/03/23 11:04:11 vap-james Exp $
+// $Id: SlabElement.cpp,v 1.22 2002/03/24 13:52:01 vap-warren Exp $
 
 #include "stdafx.h"
 #include "SlabElement.h"
@@ -98,7 +99,6 @@ bool CSlabElement::Display(void) const {
    }
    else {
       bool bOK = true;
-
       // Update node positions
       CCortonaField* pField = m_poCortona->CreateField("MFVec3f");
       if (pField==NULL) return false;

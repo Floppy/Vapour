@@ -1,16 +1,16 @@
-//=============---
-// Cortona Base
-//-------------
-// Base application in which to develop specific Cortona functionality
+//===================================---
+// VT Structure Visualisation Control
+//-----------------------------------
+// ActiveX Control for structure visualisation
 // Copyright 2000 Vapour Technology Ltd.
 //
 // CortonaUtil.h
 // 07/03/2002 - Warren Moore
 //
-// $Id: CortonaUtil.h,v 1.6 2002/03/21 23:03:14 vap-warren Exp $
+// $Id: CortonaUtil.h,v 1.7 2002/03/24 13:52:00 vap-warren Exp $
 
-#ifndef __CORTONAUTIL__
-#define __CORTONAUTIL__
+#ifndef __VTSTRUCVIS_CORTONAUTIL__
+#define __VTSTRUCVIS_CORTONAUTIL__
 
 #if _MSC_VER > 1000
 #pragma once
@@ -54,4 +54,4 @@ protected:
 
 };
 
-#endif // __CORTONAUTIL__
+#endif // __VTSTRUCVIS_CORTONAUTIL__

@@ -1,15 +1,16 @@
-//=============---
-// Arup Simulation Visualisation System
-//-------------
-// Copyright 2002 Vapour Technology Ltd.
+//===================================---
+// VT Structure Visualisation Control
+//-----------------------------------
+// ActiveX Control for structure visualisation
+// Copyright 2000 Vapour Technology Ltd.
 //
 // NodeSet.h
 // 19/03/2002 - James Smith
 //
-// $Id: NodeSet.h,v 1.5 2002/03/21 23:36:17 vap-james Exp $
+// $Id: NodeSet.h,v 1.6 2002/03/24 13:52:01 vap-warren Exp $
 
-#ifndef __NODESET__
-#define __NODESET__
+#ifndef __VTSTRUCVIS_NODESET__
+#define __VTSTRUCVIS_NODESET__
 
 #if _MSC_VER > 1000
 #pragma once
@@ -68,4 +69,4 @@ protected:
 
 };
 
-#endif // __NODESET__
+#endif // __VTSTRUCVIS_NODESET__

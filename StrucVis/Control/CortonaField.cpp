@@ -1,13 +1,13 @@
-//=============---
-// Cortona Base
-//-------------
-// Base application in which to develop specific Cortona functionality
+//===================================---
+// VT Structure Visualisation Control
+//-----------------------------------
+// ActiveX Control for structure visualisation
 // Copyright 2000 Vapour Technology Ltd.
 //
 // CortonaField.cpp
 // 07/03/2002 - Warren Moore
 //
-// $Id: CortonaField.cpp,v 1.9 2002/03/24 13:43:49 vap-warren Exp $
+// $Id: CortonaField.cpp,v 1.10 2002/03/24 13:51:59 vap-warren Exp $
 
 #include "stdafx.h"
 #include "CortonaBase.h"

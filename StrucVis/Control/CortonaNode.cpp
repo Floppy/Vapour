@@ -1,13 +1,13 @@
-//=============---
-// Cortona Base
-//-------------
-// Base application in which to develop specific Cortona functionality
+//===================================---
+// VT Structure Visualisation Control
+//-----------------------------------
+// ActiveX Control for structure visualisation
 // Copyright 2000 Vapour Technology Ltd.
 //
 // CortonaNode.cpp
 // 10/03/2002 - Warren Moore
 //
-// $Id: CortonaNode.cpp,v 1.2 2002/03/21 23:01:21 vap-warren Exp $
+// $Id: CortonaNode.cpp,v 1.3 2002/03/24 13:51:59 vap-warren Exp $
 
 #include "stdafx.h"
 #include "CortonaBase.h"

@@ -1,12 +1,13 @@
-//=============---
-// Arup Simulation Visualisation System
-//-------------
-// Copyright 2002 Vapour Technology Ltd.
+//===================================---
+// VT Structure Visualisation Control
+//-----------------------------------
+// ActiveX Control for structure visualisation
+// Copyright 2000 Vapour Technology Ltd.
 //
 // DataManager.cpp
 // 19/03/2002 - James Smith
 //
-// $Id: DataManager.cpp,v 1.6 2002/03/23 11:53:21 vap-james Exp $
+// $Id: DataManager.cpp,v 1.7 2002/03/24 13:52:00 vap-warren Exp $
 
 #include "stdafx.h"
 #include "DataManager.h"
@@ -18,7 +19,7 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-////////////
+//////////////
 // Test Data
 
 const int g_iNumNodes = 9;

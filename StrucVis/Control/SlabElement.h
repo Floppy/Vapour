@@ -1,15 +1,16 @@
-//=============---
-// Arup Simulation Visualisation System
-//-------------
-// Copyright 2002 Vapour Technology Ltd.
+//===================================---
+// VT Structure Visualisation Control
+//-----------------------------------
+// ActiveX Control for structure visualisation
+// Copyright 2000 Vapour Technology Ltd.
 //
 // SlabElement.h
 // 19/03/2002 - James Smith
 //
-// $Id: SlabElement.h,v 1.10 2002/03/22 19:06:30 vap-james Exp $
+// $Id: SlabElement.h,v 1.11 2002/03/24 13:52:01 vap-warren Exp $
 
-#ifndef __SLAB_ELEMENT__
-#define __SLAB_ELEMENT__
+#ifndef __VTSTRUCVIS_SLABELEMENT__
+#define __VTSTRUCVIS_SLABELEMENT__
 
 #if _MSC_VER > 1000
 #pragma once
@@ -84,4 +85,4 @@ protected:
    // Slab dimensions
 };
 
-#endif // __SLAB_ELEMENT__
+#endif // __VTSTRUCVIS_SLABELEMENT__

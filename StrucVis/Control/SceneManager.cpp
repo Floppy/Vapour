@@ -1,12 +1,13 @@
-//=============---
-// Arup Simulation Visualisation System
-//-------------
-// Copyright 2002 Vapour Technology Ltd.
+//===================================---
+// VT Structure Visualisation Control
+//-----------------------------------
+// ActiveX Control for structure visualisation
+// Copyright 2000 Vapour Technology Ltd.
 //
 // SceneManager.cpp
 // 19/03/2002 - James Smith
 //
-// $Id: SceneManager.cpp,v 1.19 2002/03/23 11:21:30 vap-james Exp $
+// $Id: SceneManager.cpp,v 1.20 2002/03/24 13:52:01 vap-warren Exp $
 
 #include "stdafx.h"
 #include "SceneManager.h"

@@ -1,16 +1,16 @@
-//=============---
-// Cortona Base
-//-------------
-// Base application in which to develop specific Cortona functionality
+//===================================---
+// VT Structure Visualisation Control
+//-----------------------------------
+// ActiveX Control for structure visualisation
 // Copyright 2000 Vapour Technology Ltd.
 //
 // CortonaField.h
 // 12/03/2002 - Warren Moore
 //
-// $Id: CortonaField.h,v 1.9 2002/03/22 19:52:02 vap-james Exp $
+// $Id: CortonaField.h,v 1.10 2002/03/24 13:51:59 vap-warren Exp $
 
-#ifndef __CORTONAFIELD__
-#define __CORTONAFIELD__
+#ifndef __VTSTRUCVIS_CORTONAFIELD__
+#define __VTSTRUCVIS_CORTONAFIELD__
 
 #if _MSC_VER > 1000
 #pragma once
@@ -124,4 +124,4 @@ inline IFieldObject *CCortonaField::Interface() const {
    return m_pField;
 }
 
-#endif // __CORTONAFIELD__
+#endif // __VTSTRUCVIS_CORTONAFIELD__

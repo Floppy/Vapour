@@ -1,12 +1,13 @@
-//=============---
-// Arup Simulation Visualisation System
-//-------------
-// Copyright 2002 Vapour Technology Ltd.
+//===================================---
+// VT Structure Visualisation Control
+//-----------------------------------
+// ActiveX Control for structure visualisation
+// Copyright 2000 Vapour Technology Ltd.
 //
 // Viewpoint.cpp
 // 19/03/2002 - James Smith
 //
-// $Id: Viewpoint.cpp,v 1.4 2002/03/22 19:05:51 vap-james Exp $
+// $Id: Viewpoint.cpp,v 1.5 2002/03/24 13:52:01 vap-warren Exp $
 
 #include "stdafx.h"
 #include "Viewpoint.h"
