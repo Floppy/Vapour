@@ -119,6 +119,48 @@ LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_UK
 // Icon with lowest ID value placed first to ensure application icon
 // remains consistent on all systems.
 IDI_VAPOUR              ICON    DISCARDABLE     "res\\Vapour.ico"
+
+#ifndef _MAC
+/////////////////////////////////////////////////////////////////////////////
+//
+// Version
+//
+
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION 1,0,0,1
+ PRODUCTVERSION 1,0,0,1
+ FILEFLAGSMASK 0x3fL
+#ifdef _DEBUG
+ FILEFLAGS 0x1L
+#else
+ FILEFLAGS 0x0L
+#endif
+ FILEOS 0x40004L
+ FILETYPE 0x1L
+ FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "080904b0"
+        BEGIN
+            VALUE "ProductName", "Vapour Technology Screen Saver\0"
+            VALUE "LegalCopyright", "© 2000 Vapour Technology Ltd.\0"
+            VALUE "CompanyName", "Vapour Technology Ltd.\0"
+            VALUE "FileDescription", "Vapour Technology Screen Saver\0"
+            VALUE "FileVersion", "1, 0, 0, 1\0"
+            VALUE "InternalName", "Saver\0"
+            VALUE "OriginalFilename", "Saver.scr\0"
+            VALUE "ProductVersion", "1, 0, 0, 1\0"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x809, 1200
+    END
+END
+
+#endif    // !_MAC
+
 #endif    // English (U.K.) resources
 /////////////////////////////////////////////////////////////////////////////
 
