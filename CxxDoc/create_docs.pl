@@ -5,7 +5,7 @@
 # script to check out the source modules and build docs for each supported arch
 
 # 13/09/2001 - Warren Moore
-# $Id: create_docs.pl,v 1.13 2001/09/19 12:28:15 vap-warren Exp $
+# $Id: create_docs.pl,v 1.14 2001/09/20 23:25:12 vap-warren Exp $
 # Copyright 2000-2001 Vapour Technology Ltd.
 
 # bring in the environment vars
@@ -122,6 +122,9 @@ foreach my $mod_name (@modules) {
 	# run CxxDoc for the default architecture
 	`CxxDoc -pn $proj_name -o $VALET_DOCROOT -p $mod_prefix -i $mod_prefix -eht eht -tc class -td docnode > /dev/null 2>&1`;
 }
+
+# save us from processing the eht's again
+unlink <eht/*>;
 
 # build source trees for each arch and generate doc trees
 foreach my $arch_name (@arch) {
