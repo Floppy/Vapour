@@ -15,6 +15,6 @@
 echo "VTStrucVis Documentation"
 echo "Copyright 2002 Vapour Technology Ltd."
 mkdir eht 2> /dev/null
-cp `find ../Control -name '*.eht'` eht
-CxxDoc -pn VTStrucVis -o ../Doc/ -p ../Control -i ../Control -eht eht -tc class -td docnode
+cp -f `find .. -name '*.eht' -printf "%h/*.eht "` eht
+CxxDoc -pn VTStrucVis -o ../Doc/ -p .. -i .. -eht eht -tc class -td docnode
 rm -rf eht
