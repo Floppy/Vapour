@@ -6,7 +6,7 @@
 // SceneManager.h
 // 19/03/2002 - James Smith
 //
-// $Id: SceneManager.h,v 1.1 2002/03/21 21:15:39 vap-james Exp $
+// $Id: SceneManager.h,v 1.2 2002/03/21 23:36:45 vap-james Exp $
 
 #ifndef __SCENEMANAGER__
 #define __SCENEMANAGER__
@@ -81,6 +81,9 @@ private:
    };
    // Group information type
 
+   void ShowFrame(void);
+   // Show current frame
+
    void Update(void);
    // Updates the display of all elements
 
@@ -104,6 +107,9 @@ protected:
 
    unsigned int m_iNumFrames;
    // The number of frames in the sequence
+
+   unsigned int m_iCurrentFrame;
+   // The frame we're currently on
 
 };
 
