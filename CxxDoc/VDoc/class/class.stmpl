@@ -13,7 +13,7 @@ $(include:menu.stmpl)
 		</P>
 		</TD></TR>
 		<TR><TD>
-		<TABLE WIDTH="100%" BORDER=0 CELLPADDING=2 CELLSPACING=0 BGCOLOR="#C0C0C0">
+		<TABLE WIDTH="100%" BORDER=0 CELLPADDING=0 CELLSPACING=0 BGCOLOR="#C0C0C0">
 		<TR><TD>
 		$(if:$NodeType!=namespace:
 			$(ifset:docentry:

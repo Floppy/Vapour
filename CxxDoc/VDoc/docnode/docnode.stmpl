@@ -16,7 +16,7 @@ $(include:../class/menu.stmpl)
 		</P>
 		</TD></TR>
 		<TR><TD>
-		<TABLE WIDTH="100%" BORDER=0 CELLPADDING=2 CELLSPACING=0 BGCOLOR="#C0C0C0">
+		<TABLE WIDTH="100%" BORDER=0 CELLPADDING=0 CELLSPACING=0 BGCOLOR="#C0C0C0">
 		<TR><TD>
 		$(ifset:docentry:
 			$(set:parent=)
@@ -39,7 +39,7 @@ $(include:../class/menu.stmpl)
 				<TABLE BORDER=0 CELLPADDING=2 CELLSPACING=0 BGCOLOR="#C0C0C0" ALIGN=RIGHT>
 					<TR><TD>
 					$(forall:docnode:
-						<A HREF="$(MakeFilename:%.html)"><B>$(subst:_: :$(ObjectName))</B></A>$(ifset:brief: - $(brief))
+						<P><A HREF="$(MakeFilename:%.html)"><B>$(subst:_: :$(ObjectName))</B></A>$(ifset:brief: - $(brief))</P>
 					)
 					</TD></TR>
 				</TABLE>
