@@ -7,7 +7,7 @@
 // VTStructVisCtl.cpp
 // 05/03/2002 - Warren Moore
 //
-// $Id: VTStrucVisCtl.h,v 1.6 2002/03/23 21:41:19 vap-warren Exp $
+// $Id: VTStrucVisCtl.h,v 1.7 2002/03/24 01:55:46 vap-warren Exp $
 
 #ifndef __VTSTRUCTVIS_CONTROL__
 #define __VTSTRUCTVIS_CONTROL__
@@ -33,6 +33,7 @@ HRESULT UnregisterCLSIDInReqCategory(REFCLSID clsid, CATID catid);
 ///////////////////
 // CVTStrucVisCtl
 
+// Asynchronous data flag defines
 #define AD_EMPTY              0x00000000
 #define AD_UILOADING          0x00000001
 #define AD_UILOADED           0x00000002
@@ -50,6 +51,20 @@ public:
 	CVTStrucVisCtl();
 
 //#===--- Member Functions
+public:
+
+   void UILoading();
+   // Called by CUIDataPath to indicate that the data is loading
+
+   void UILoaded();
+   // Called by CUIDataPath to indicate that the data is loaded
+
+   void SimLoading();
+   // Called by CSimDataPath to indicate that the data is loading
+
+   void SimLoaded();
+   // Called by CSimDataPath to indicate that the data is loaded
+
 protected:
 
    bool InitCortona();
@@ -64,18 +79,6 @@ protected:
    void DrawPlaceholder(CDC* pDC, const CRect& rcBounds, bool bRun);
    // Draws the control placeholder
    // bRun indicates that the control is in run mode, not dev mode
-
-   void UILoading();
-   // Called by CUIDataPath to indicate that the data is loading
-
-   void UILoaded();
-   // Called by CUIDataPath to indicate that the data is loaded
-
-   void SimLoading();
-   // Called by CSimDataPath to indicate that the data is loading
-
-   void SimLoaded();
-   // Called by CSimDataPath to indicate that the data is loaded
 
 //#===--- Private Data Types
 protected:

@@ -7,7 +7,7 @@
 // VTStructVisCtl.cpp
 // 05/03/2002 - Warren Moore
 //
-// $Id: VTStrucVisCtl.cpp,v 1.6 2002/03/23 21:41:19 vap-warren Exp $
+// $Id: VTStrucVisCtl.cpp,v 1.7 2002/03/24 01:55:46 vap-warren Exp $
 
 #include "stdafx.h"
 #include "VTStrucVis.h"
@@ -280,6 +280,7 @@ CVTStrucVisCtl::CVTStrucVisCtl() :
 
    // Set the data path controls
    m_oSimData.SetControl(this);
+   m_oUIData.SetControl(this);
 
    // Set the initial window size
    SetInitialSize(200, 200);
@@ -400,29 +401,60 @@ void CVTStrucVisCtl::DrawPlaceholder(CDC* pDC, const CRect& rcBounds, bool bRun)
    CBrush oBrush;
    oBrush.CreateSolidBrush(TranslateColor(RGB(0xFF, 0xFF, 0xFF)));
    pDC->FillRect(rcBounds, &oBrush);
+
    // Set the draw height
    CRect oTextRect(rcBounds);
+
    // Draw the icon
    HICON hIcon = AfxGetApp()->LoadIcon(IDI_ABOUTDLL);
    if (hIcon) {
       pDC->DrawIcon(CPoint((rcBounds.Width() / 2) - 16, 0), hIcon);
       oTextRect.SetRect(oTextRect.left, oTextRect.top + 32, oTextRect.right, oTextRect.bottom);
    }
+
    // Store the old font and select the stock font
    pDC->SetBkMode(TRANSPARENT);
    CFont *pOldFont = SelectStockFont(pDC);
    // Set the text colour on the enabled state
    pDC->SetTextColor(TranslateColor(GetEnabled() ? RGB(0x00, 0x00, 0x00): RGB(0xC0, 0xC0, 0xC0)));
+
    // Display the title text
    const char pcTitle[] = "Vapour Technology\nArup Visualisation Control\n";
    pDC->DrawText(pcTitle, oTextRect, DT_CENTER | DT_WORDBREAK);
+
    // Calculate the remaining text room
-   const int iTextHeight = pDC->DrawText(pcTitle, oTextRect, DT_CENTER | DT_WORDBREAK);
+   int iTextHeight = pDC->DrawText(pcTitle, oTextRect, DT_CENTER | DT_WORDBREAK);
    oTextRect.SetRect(oTextRect.left, oTextRect.top + iTextHeight, oTextRect.right, oTextRect.bottom);
-   // If we're in run mode, write errors along with the text
+
    if (bRun) {
-      // Check the Cortona result
+      //#===--- Asynchronous data status
       CString oStr = "";
+      // Is the UI loading?
+      if ((m_uiAsyncFlags & AD_UILOADING) > 0)
+         oStr += "UI data loading\n";
+      else
+         // Is the UI loaded?
+         if ((m_uiAsyncFlags & AD_UILOADED) > 0)
+            oStr += "UI data loaded\n";
+
+      // Is the simulation data loading?
+      if ((m_uiAsyncFlags & AD_SIMLOADING) > 0)
+         oStr += "Simulation data loading\n";
+      else
+         // Is the simulation data loaded?
+         if ((m_uiAsyncFlags & AD_SIMLOADED) > 0)
+            oStr += "Simulation data loaded\n";
+
+      // Display the status text
+      pDC->DrawText(oStr, oTextRect, DT_CENTER | DT_WORDBREAK);
+
+      // Calculate the remaining text room
+      iTextHeight = pDC->DrawText(oStr, oTextRect, DT_CENTER | DT_WORDBREAK);
+      oTextRect.SetRect(oTextRect.left, oTextRect.top + iTextHeight, oTextRect.right, oTextRect.bottom);
+
+      //#===--- Errors
+      // Check the Cortona result
+      oStr = "";
       switch (m_eCortonaResult) {
          case CR_NOCONTAINER:
             oStr = "Unable to query container\n";
@@ -469,23 +501,38 @@ void CVTStrucVisCtl::DrawPlaceholder(CDC* pDC, const CRect& rcBounds, bool bRun)
 }
 
 void CVTStrucVisCtl::UILoading() {
+   // Set the async data flags
    m_uiAsyncFlags &= AD_UIMASK;
    m_uiAsyncFlags |= AD_UILOADING;
+   // Refresh the control
+   InvalidateControl();
 }
 
 void CVTStrucVisCtl::UILoaded() {
+   // Set the async data flags
    m_uiAsyncFlags &= AD_UIMASK;
    m_uiAsyncFlags |= AD_UILOADED;
+   // Refresh the control
+   InvalidateControl();
 }
 
 void CVTStrucVisCtl::SimLoading() {
+   // Set the async data flags
    m_uiAsyncFlags &= AD_SIMMASK;
    m_uiAsyncFlags |= AD_SIMLOADING;
+   // Refresh the control
+   InvalidateControl();
 }
 
 void CVTStrucVisCtl::SimLoaded() {
+   // Set the async data flags
    m_uiAsyncFlags &= AD_SIMMASK;
    m_uiAsyncFlags |= AD_SIMLOADED;
+   // Check the ready state
+   if ((m_uiAsyncFlags & AD_UILOADED) > 0)
+      InternalSetReadyState(READYSTATE_COMPLETE);
+   // Refresh the control
+   InvalidateControl();
 }
 
 /////////////////////
@@ -495,7 +542,7 @@ void CVTStrucVisCtl::SimLoaded() {
 void CVTStrucVisCtl::OnDraw(CDC* pdc, const CRect& rcBounds, const CRect& rcInvalid) {
    // Check our operating mode
    bool bRun = AmbientUserMode() && !AmbientUIDead();
-   if (bRun && (m_uiAsyncFlags & AD_UILOADED > 0)) {
+   if (bRun && (m_uiAsyncFlags & AD_UILOADED > 0) && (m_uiAsyncFlags & AD_SIMLOADING > 0)) {
       // Draw the full-on interface
    }
    else {
@@ -532,6 +579,7 @@ void CVTStrucVisCtl::DoPropExchange(CPropExchange* pPX) {
 void CVTStrucVisCtl::OnResetState() {
 	COleControl::OnResetState();  // Resets defaults found in DoPropExchange
 
+   InternalSetReadyState(READYSTATE_LOADED);
 }
 
 // Display an "About" box to the user

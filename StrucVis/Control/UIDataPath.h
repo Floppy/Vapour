@@ -7,7 +7,7 @@
 // UIDataPath.h
 // 19/03/2002 - Warren Moore
 //
-// $Id: UIDataPath.h,v 1.1 2002/03/23 21:18:35 vap-warren Exp $
+// $Id: UIDataPath.h,v 1.2 2002/03/24 01:55:46 vap-warren Exp $
 
 #ifndef __VTSTUCVIS_UIDATAPATH__
 #define __VTSTUCVIS_UIDATAPATH__
@@ -30,10 +30,13 @@ public:
 //#===--- Member Variables
 protected:
 
+   DWORD m_uiDataRead;              // Data read so far
+
 //#===--- Windows Mappings
 
 public:
 	//{{AFX_VIRTUAL(CUIDataPath)
+   public:
 	protected:
 	virtual void OnDataAvailable(DWORD dwSize, DWORD bscfFlag);
 	//}}AFX_VIRTUAL

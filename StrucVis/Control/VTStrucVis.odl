@@ -7,7 +7,7 @@
 // VTStructVis.odl
 // 05/03/2002 - Warren Moore
 //
-// $Id: VTStrucVis.odl,v 1.4 2002/03/23 21:41:18 vap-warren Exp $
+// $Id: VTStrucVis.odl,v 1.5 2002/03/24 01:55:46 vap-warren Exp $
 
 // Type library
 //    Processed by the Make Type Library (mktyplib) tool to generate
@@ -32,8 +32,6 @@ library VTSTRUCVISLib
 	dispinterface _DVTStrucVis
 	{
 		properties:
-			// NOTE - ClassWizard will maintain property information here.
-			//    Use extreme caution when editing this section.
 			//{{AFX_ODL_PROP(CVTStrucVisCtrl)
  			[id(DISPID_READYSTATE), readonly] long ReadyState;
  			[id(DISPID_BACKCOLOR), bindable, requestedit] OLE_COLOR BackColor;
@@ -44,8 +42,6 @@ library VTSTRUCVISLib
 			//}}AFX_ODL_PROP
 
 		methods:
-			// NOTE - ClassWizard will maintain method information here.
-			//    Use extreme caution when editing this section.
 			//{{AFX_ODL_METHOD(CVTStrucVisCtrl)
 			[id(DISPID_REFRESH)] void Refresh();
 			//}}AFX_ODL_METHOD
@@ -63,8 +59,6 @@ library VTSTRUCVISLib
 			//  Event interface has no properties
 
 		methods:
-			// NOTE - ClassWizard will maintain event information here.
-			//    Use extreme caution when editing this section.
 			//{{AFX_ODL_EVENT(CVTStrucVisCtrl)
 			//}}AFX_ODL_EVENT
 	};

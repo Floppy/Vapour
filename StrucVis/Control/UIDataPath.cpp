@@ -7,11 +7,13 @@
 // UIDataPath.cpp
 // 19/03/2002 - Warren Moore
 //
-// $Id: UIDataPath.cpp,v 1.1 2002/03/23 21:18:35 vap-warren Exp $
+// $Id: UIDataPath.cpp,v 1.2 2002/03/24 01:55:46 vap-warren Exp $
 
 #include "stdafx.h"
 #include "vtstrucvis.h"
 #include "UIDataPath.h"
+
+#include "VTStrucVisCtl.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -22,7 +24,8 @@ static char THIS_FILE[] = __FILE__;
 ////////////////
 // CUIDataPath
 
-CUIDataPath::CUIDataPath() {
+CUIDataPath::CUIDataPath() :
+   m_uiDataRead(0) {
 }
 
 CUIDataPath::~CUIDataPath() {
@@ -39,7 +42,23 @@ END_MESSAGE_MAP()
 // Message Handlers
 
 void CUIDataPath::OnDataAvailable(DWORD dwSize, DWORD bscfFlag) {
-   // ... insert here ...
+   // First call, so signal file loading
+   if (bscfFlag & BSCF_FIRSTDATANOTIFICATION) {
+      ((CVTStrucVisCtl*)GetControl())->UILoading();
+      m_uiDataRead = 0;
+   }
+
+   // Sort out streaming data
+   DWORD uiArriving = dwSize - m_uiDataRead;
+   if (uiArriving > 0) {
+      // Update read so far
+      m_uiDataRead = dwSize;
+   }
+
+   // Last call, so signal file loaded
+   if (bscfFlag & BSCF_LASTDATANOTIFICATION) {
+      ((CVTStrucVisCtl*)GetControl())->UILoaded();
+   }
 	
 	CDataPathProperty::OnDataAvailable(dwSize, bscfFlag);
 }

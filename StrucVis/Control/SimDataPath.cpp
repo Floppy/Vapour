@@ -7,7 +7,7 @@
 // SimDataPath.cpp
 // 19/03/2002 - Warren Moore
 //
-// $Id: SimDataPath.cpp,v 1.2 2002/03/23 21:18:35 vap-warren Exp $
+// $Id: SimDataPath.cpp,v 1.3 2002/03/24 01:55:45 vap-warren Exp $
 
 #include "stdafx.h"
 #include "vtstrucvis.h"
@@ -24,7 +24,8 @@ static char THIS_FILE[] = __FILE__;
 /////////////////
 // CSimDataPath
 
-CSimDataPath::CSimDataPath() {
+CSimDataPath::CSimDataPath() :
+   m_uiDataRead(0) {
 }
 
 CSimDataPath::~CSimDataPath() {
@@ -41,9 +42,22 @@ END_MESSAGE_MAP()
 // Message Handlers
 
 void CSimDataPath::OnDataAvailable(DWORD dwSize, DWORD bscfFlag)  {
-   // First call
-   if (bscfFlag & BSCF_FIRSTDATANOTIFICATION > 0) {
-//      ((CVTStrucVisCtl*)GetControl())->InitCortona();
+   // First call, so signal file loading
+   if (bscfFlag & BSCF_FIRSTDATANOTIFICATION) {
+      ((CVTStrucVisCtl*)GetControl())->SimLoading();
+      m_uiDataRead = 0;
+   }
+
+   // Sort out streaming data
+   DWORD uiArriving = dwSize - m_uiDataRead;
+   if (uiArriving > 0) {
+      // Update read so far
+      m_uiDataRead = dwSize;
+   }
+
+   // Last call, so signal file loaded
+   if (bscfFlag & BSCF_LASTDATANOTIFICATION) {
+      ((CVTStrucVisCtl*)GetControl())->SimLoaded();
    }
 	
 	CDataPathProperty::OnDataAvailable(dwSize, bscfFlag);

@@ -7,7 +7,7 @@
 // SimDataPath.h
 // 19/03/2002 - Warren Moore
 //
-// $Id: SimDataPath.h,v 1.2 2002/03/23 21:18:35 vap-warren Exp $
+// $Id: SimDataPath.h,v 1.3 2002/03/24 01:55:46 vap-warren Exp $
 
 #ifndef __VTSTUCVIS_SIMDATAPATH__
 #define __VTSTUCVIS_SIMDATAPATH__
@@ -29,6 +29,8 @@ public:
 
 //#===--- Member Variables
 protected:
+
+   DWORD m_uiDataRead;              // Data read so far
 
 //#===--- Windows Mappings
 

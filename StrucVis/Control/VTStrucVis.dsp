@@ -205,6 +205,8 @@ SOURCE=.\Shelley.idl
 
 !IF  "$(CFG)" == "VTStrucVis - Win32 Release"
 
+# SUBTRACT MTL /mktyplib203
+
 !ELSEIF  "$(CFG)" == "VTStrucVis - Win32 Debug"
 
 # SUBTRACT MTL /mktyplib203
