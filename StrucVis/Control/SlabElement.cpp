@@ -6,7 +6,7 @@
 // SlabElement.cpp
 // 19/03/2002 - James Smith
 //
-// $Id: SlabElement.cpp,v 1.20 2002/03/23 11:02:30 vap-james Exp $
+// $Id: SlabElement.cpp,v 1.21 2002/03/23 11:04:11 vap-james Exp $
 
 #include "stdafx.h"
 #include "SlabElement.h"
@@ -114,21 +114,6 @@ bool CSlabElement::Display(void) const {
       pField->Release();
       delete pField;
 
-      // Update colours
-      /*pField = m_poCortona->CreateField("MFColor");
-      if (pField==NULL) return false;
-      // Set values
-      for (i=0; i<9 && bOK; i++) {
-         if (bOK && !pField->AddMFColor(pfColours[(i*3)], pfColours[(i*3)+1], pfColours[(i*3)+2]))
-            bOK = false;
-      }      
-      // Send event
-      if (bOK && !m_poNodePtr->AssignEventIn("set_colours",*pField))
-         bOK = false;
-      // Delete field
-      pField->Release();
-      delete pField;*/
-
       // Update cracks
       pField = m_poCortona->CreateField("MFInt32");
       if (pField == NULL) return false;
@@ -139,6 +124,21 @@ bool CSlabElement::Display(void) const {
       }      
       // Send event
       if (bOK && !m_poNodePtr->AssignEventIn("set_cracks",*pField))
+         bOK = false;
+      // Delete field
+      pField->Release();
+      delete pField;
+
+      // Update colours
+      pField = m_poCortona->CreateField("MFColor");
+      if (pField==NULL) return false;
+      // Set values
+      for (i=0; i<9 && bOK; i++) {
+         if (bOK && !pField->AddMFColor(pfColours[(i*3)], pfColours[(i*3)+1], pfColours[(i*3)+2]))
+            bOK = false;
+      }      
+      // Send event
+      if (bOK && !m_poNodePtr->AssignEventIn("set_colours",*pField))
          bOK = false;
       // Delete field
       pField->Release();
