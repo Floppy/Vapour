@@ -41,7 +41,7 @@ RSC=rc.exe
 # PROP Intermediate_Dir "Release"
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_MBCS" /D "_LIB" /Yu"stdafx.h" /FD /c
-# ADD CPP /nologo /MT /W3 /GX /O2 /I "Application" /I "Avatar" /I "AvatarFiles" /I "DataTypes" /I "Image" /I "ImageFiles" /D "WIN32" /D "NDEBUG" /D "_MBCS" /D "_LIB" /Yu"stdafx.h" /FD /c
+# ADD CPP /nologo /MT /W3 /GX /O2 /I "Application" /I "Avatar" /I "AvatarFiles" /I "DataTypes" /I "Image" /I "ImageFiles" /D "WIN32" /D "NDEBUG" /D "_MBCS" /D "_LIB" /D "VAL_BUILD" /Yu"stdafx.h" /FD /c
 # ADD BASE RSC /l 0x809 /d "NDEBUG"
 # ADD RSC /l 0x809 /d "NDEBUG"
 BSC32=bscmake.exe
@@ -50,11 +50,6 @@ BSC32=bscmake.exe
 LIB32=link.exe -lib
 # ADD BASE LIB32 /nologo
 # ADD LIB32 /nologo
-# Begin Special Build Tool
-SOURCE="$(InputPath)"
-PostBuild_Desc=Copy out release VAL library
-PostBuild_Cmds=copy Release\VAL.lib ..\..\Lib	copy Application\SGAToSims.h ..\..\Include	copy Application\CommandLine.h ..\..\Include	copy Application\ProgressControl.h ..\..\Include
-# End Special Build Tool
 
 !ELSEIF  "$(CFG)" == "VAL - Win32 Debug"
 
@@ -69,7 +64,7 @@ PostBuild_Cmds=copy Release\VAL.lib ..\..\Lib	copy Application\SGAToSims.h ..\..
 # PROP Intermediate_Dir "Debug"
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_MBCS" /D "_LIB" /Yu"stdafx.h" /FD /GZ /c
-# ADD CPP /nologo /MDd /W3 /Gm /GX /ZI /Od /I "Application" /I "Avatar" /I "AvatarFiles" /I "DataTypes" /I "Image" /I "ImageFiles" /D "WIN32" /D "_DEBUG" /D "_MBCS" /D "_LIB" /D "_AFXDLL" /D "VAL_BUILD" /Yu"stdafx.h" /FD /GZ /c
+# ADD CPP /nologo /MDd /W3 /Gm /GX /ZI /Od /I "Application" /I "Avatar" /I "AvatarFiles" /I "DataTypes" /I "Image" /I "ImageFiles" /D "WIN32" /D "_DEBUG" /D "_MBCS" /D "_LIB" /D "VAL_BUILD" /Yu"stdafx.h" /FD /GZ /c
 # ADD BASE RSC /l 0x809 /d "_DEBUG"
 # ADD RSC /l 0x809 /d "_DEBUG" /d "_AFXDLL"
 BSC32=bscmake.exe
@@ -179,6 +174,10 @@ SOURCE=.\Application\ProgressControl.cpp
 # Begin Source File
 
 SOURCE=.\DataTypes\Quaternion.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\Application\SFX.cpp
 # End Source File
 # Begin Source File
 
@@ -352,6 +351,10 @@ SOURCE=.\Application\ProgressControl.h
 # Begin Source File
 
 SOURCE=.\DataTypes\Quaternion.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\Application\SFX.h
 # End Source File
 # Begin Source File
 
