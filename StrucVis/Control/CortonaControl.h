@@ -7,7 +7,7 @@
 // CortonaControl.h
 // 17/03/2002 - Warren Moore
 //
-// $Id: CortonaControl.h,v 1.3 2002/03/23 21:18:35 vap-warren Exp $
+// $Id: CortonaControl.h,v 1.4 2002/03/25 02:34:54 vap-warren Exp $
 
 #ifndef __VTSTRUCVIS_CORTONACONTROL__
 #define __VTSTRUCVIS_CORTONACONTROL__
@@ -40,8 +40,11 @@ public:
    IEngine *GetEngine();
    // Returns a pointer to the controls IEngine interface
 
-   void NavBar(short sVal);
-   // Turns the nvaigation bar on(1) or off(0)
+   void NavBar(bool bVal);
+   // Turns the navigation bar on(1) or off(0)
+
+   void ContextMenu(bool bVal);
+   // Turns the context menu on(1) or off(0)
 
    void Headlight(bool bVal);
    // Sets the headlight 

@@ -7,7 +7,7 @@
 // VTStructVisCtl.cpp
 // 05/03/2002 - Warren Moore
 //
-// $Id: VTStrucVisCtl.h,v 1.11 2002/03/24 21:55:52 vap-warren Exp $
+// $Id: VTStrucVisCtl.h,v 1.12 2002/03/25 02:34:55 vap-warren Exp $
 
 #ifndef __VTSTRUCTVIS_CONTROL__
 #define __VTSTRUCTVIS_CONTROL__
@@ -22,6 +22,8 @@
 #include "CortonaControl.h"
 #include "UIDataPath.h"
 #include "SimDataPath.h"
+#include "CortonaUtil.h"
+#include "SceneManager.h"
 
 // Category support functions
 HRESULT CreateComponentCategory(CATID catid, WCHAR *catDescription);
@@ -43,6 +45,10 @@ HRESULT UnregisterCLSIDInReqCategory(REFCLSID clsid, CATID catid);
 #define AD_SIMLOADED          0x00000008
 #define AD_SIMACTIVE          0x0000000C
 #define AD_SIMMASK            0xFFFFFFF3
+
+// Timer IDs
+#define TI_MOUSEOVER          100
+#define TI_ANIMATE            101
 
 class CVTStrucVisCtl : public COleControl {
 // Dynamic construction
@@ -67,9 +73,8 @@ public:
    void SimLoaded();
    // Called by CSimDataPath to indicate that the data is loaded
 
-   void GoInteractive();
-   // Called by CSimDataPath to indicate that enough data is present
-   // to go into interactive mode
+   bool SceneSetup(const unsigned char *pucData, unsigned int uiLength);
+   // Passes loaded data into the Scene, when true is returned
 
 protected:
 
@@ -90,10 +95,14 @@ protected:
    // Draws the control placeholder
    // bRun indicates that the control is in run mode, not dev mode
 
-   void DrawUI(CDC *pDC, const CRect &rcBounds);
+   void DrawUI(CDC *pDC, const CRect &rcBounds, bool bRun);
    // Render the VCR-style interface
 
    //--- UI Functions
+
+   void GoInteractive();
+   // Called by SceneSetup to indicate that enough data is present
+   // to go into interactive mode
 
    bool LoadBitmap();
    // Tries to load the bitmap from the UIDataPath object, and sets
@@ -139,11 +148,22 @@ protected:
    ESimResult m_eSimResult;                  // SimDataPath result
    DWORD m_uiAsyncFlags;                     // Asynchronous data flags
 
+   // UI vars
+   bool m_bLButtonDown;                      // Left mouse button down indicator
+   bool m_bMouseOver;                        // Mouse over control indicator
+   int m_iUIZone;                            // Current remote button under mouse (-1 if none)
+
+   // Render buffers
+   CBitmap m_oBackBuffer;                    // Screen back buffer
+   CSize m_oBufferSize;                      // Current back buffer size
+   CBitmap m_oUIBitmap;                      // UI bitmap object
+   
    // Control objects
    CCortonaControl m_oCortona;               // Cortona control manager
    CUIDataPath m_oUIData;                    // Asynchronous UI data file
    CSimDataPath m_oSimData;                  // Asynchronous simulation data file
-   CBitmap m_oUIBitmap;                      // UI bitmap object
+   CCortonaUtil *m_poCortonaUtil;            // Cortona Utility class
+   CSceneManager *m_poScene;                 // Scene manager
 
 //#===--- Windows Mappings
 
@@ -170,6 +190,9 @@ protected:
 // Message maps
 	//{{AFX_MSG(CVTStrucVisCtl)
 	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
+	afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
+	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
+	afx_msg void OnTimer(UINT nIDEvent);
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 

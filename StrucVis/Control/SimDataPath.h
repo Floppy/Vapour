@@ -7,7 +7,7 @@
 // SimDataPath.h
 // 19/03/2002 - Warren Moore
 //
-// $Id: SimDataPath.h,v 1.3 2002/03/24 01:55:46 vap-warren Exp $
+// $Id: SimDataPath.h,v 1.4 2002/03/25 02:34:54 vap-warren Exp $
 
 #ifndef __VTSTUCVIS_SIMDATAPATH__
 #define __VTSTUCVIS_SIMDATAPATH__
@@ -31,6 +31,7 @@ public:
 protected:
 
    DWORD m_uiDataRead;              // Data read so far
+   bool m_bSetup;                   // Scene setup complete indicator
 
 //#===--- Windows Mappings
 

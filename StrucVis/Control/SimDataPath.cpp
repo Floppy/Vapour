@@ -7,7 +7,7 @@
 // SimDataPath.cpp
 // 19/03/2002 - Warren Moore
 //
-// $Id: SimDataPath.cpp,v 1.5 2002/03/24 21:55:51 vap-warren Exp $
+// $Id: SimDataPath.cpp,v 1.6 2002/03/25 02:34:54 vap-warren Exp $
 
 #include "stdafx.h"
 #include "vtstrucvis.h"
@@ -25,7 +25,8 @@ static char THIS_FILE[] = __FILE__;
 // CSimDataPath
 
 CSimDataPath::CSimDataPath() :
-   m_uiDataRead(0) {
+   m_uiDataRead(0),
+   m_bSetup(false) {
 }
 
 CSimDataPath::~CSimDataPath() {
@@ -46,13 +47,26 @@ void CSimDataPath::OnDataAvailable(DWORD dwSize, DWORD bscfFlag)  {
    if (bscfFlag & BSCF_FIRSTDATANOTIFICATION) {
       ((CVTStrucVisCtl*)GetControl())->SimLoading();
       m_uiDataRead = 0;
+      m_bSetup = false;
    }
 
-   // Sort out streaming data
+   // How much data came this time?
    DWORD uiArriving = dwSize - m_uiDataRead;
-   if (uiArriving > 0) {
-      // Set it immediately so we can test the interactive UI
-      ((CVTStrucVisCtl*)GetControl())->GoInteractive();
+   // Only pump in new data if the scene isn't set up yet
+   if (!m_bSetup && (uiArriving > 0)) {
+      // Allocate the memory
+      unsigned char *pucData = (unsigned char*) new unsigned char[uiArriving];
+      if (pucData) {
+         // Seek to the correct point in the file
+         Seek(m_uiDataRead, CFile::begin);
+         // Read in the data
+         unsigned int uiRead = Read((void*) pucData, uiArriving);
+         if (uiRead == uiArriving) {
+            m_bSetup = ((CVTStrucVisCtl*)GetControl())->SceneSetup(pucData, uiArriving);
+         }
+         // Delete the data
+         delete [] pucData;
+      }
       // Update read so far
       m_uiDataRead = dwSize;
    }

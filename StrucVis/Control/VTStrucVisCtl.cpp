@@ -7,7 +7,7 @@
 // VTStructVisCtl.cpp
 // 05/03/2002 - Warren Moore
 //
-// $Id: VTStrucVisCtl.cpp,v 1.12 2002/03/24 21:55:51 vap-warren Exp $
+// $Id: VTStrucVisCtl.cpp,v 1.13 2002/03/25 02:34:54 vap-warren Exp $
 
 #include "stdafx.h"
 #include "VTStrucVis.h"
@@ -159,6 +159,9 @@ IMPLEMENT_DYNCREATE(CVTStrucVisCtl, COleControl)
 BEGIN_MESSAGE_MAP(CVTStrucVisCtl, COleControl)
 	//{{AFX_MSG_MAP(CVTStrucVisCtl)
 	ON_WM_LBUTTONDOWN()
+	ON_WM_LBUTTONUP()
+	ON_WM_MOUSEMOVE()
+	ON_WM_TIMER()
 	//}}AFX_MSG_MAP
 	ON_OLEVERB(AFX_IDS_VERB_PROPERTIES, OnProperties)
 END_MESSAGE_MAP()
@@ -273,10 +276,16 @@ BOOL CVTStrucVisCtl::CVTStrucVisCtlFactory::UpdateRegistry(BOOL bRegister) {
 
 // Constructor
 CVTStrucVisCtl::CVTStrucVisCtl() :
+   m_poCortonaUtil(NULL),
+   m_poScene(NULL),
    m_eCortonaResult(CR_UNKNOWN),
    m_eUIResult(UI_UNKNOWN),
    m_eSimResult(SD_UNKNOWN),
-   m_uiAsyncFlags(AD_EMPTY) {
+   m_uiAsyncFlags(AD_EMPTY),
+   m_bLButtonDown(false),
+   m_bMouseOver(false),
+   m_iUIZone(-1),
+   m_oBufferSize(0, 0) {
 
    InitializeIIDs(&IID_DVTStrucVis, &IID_DVTStrucVisEvents);
 
@@ -288,7 +297,8 @@ CVTStrucVisCtl::CVTStrucVisCtl() :
    m_oUIData.SetControl(this);
 
    // Set the initial window size
-   SetInitialSize(200, 200);
+   SetInitialSize(180, 250);
+
 }
 
 // Destructor
@@ -305,13 +315,32 @@ bool CVTStrucVisCtl::InitCortona() {
       m_eCortonaResult = CR_UNKNOWN;
       if (GetCortona()) {
          // Found the control, so initialise it
-         m_oCortona.NavBar(1);
-         m_oCortona.Trace("Turned on the nav bar\n");
+         m_oCortona.NavBar(false);
+         m_oCortona.Trace("Turned off the nav bar\n");
+         m_oCortona.ContextMenu(false);
+         m_oCortona.Trace("Turned off the context menu\n");
          m_oCortona.Headlight(true);
          m_oCortona.Trace("Turned on the headlight\n");
          m_oCortona.Edit();
          m_oCortona.Trace("Prepared the engine for direct editing\n");
          m_oCortona.Refresh();
+
+         // Create the utility class
+         m_poCortonaUtil = (CCortonaUtil*) new CCortonaUtil(m_oCortona.GetEngine());
+
+         // Create the scene manager
+         m_poScene = (CSceneManager*) new CSceneManager(m_poCortonaUtil);
+
+         // Setup viewpoint location
+         float pfPosition[3] = {5.0f, 5.0f, 5.0f};
+         float pfRotation[4] = {-0.59f, 0.77f, 0.24f, 0.99f};
+         m_poScene->SetViewpoint(pfPosition, pfRotation);
+
+         // Set scale factor
+         m_poScene->SetScaleFactor(1, 1, 1);
+
+         // Set colour scheme
+         m_poScene->SetColourScheme(GROUP);
       }
    }
 
@@ -322,6 +351,16 @@ bool CVTStrucVisCtl::InitCortona() {
 }
 
 void CVTStrucVisCtl::ExitCortona() {
+   // Delete the scene manager
+   if (m_poScene) {
+      delete m_poScene;
+      m_poScene = NULL;
+   }
+   // Delete the Cortona utility class
+   if (m_poCortonaUtil) {
+      delete m_poCortonaUtil;
+      m_poCortonaUtil = NULL;
+   }
    // Release Cortona
    m_eCortonaResult = CR_UNKNOWN;
    if (m_oCortona.Attached())
@@ -554,21 +593,41 @@ void CVTStrucVisCtl::DrawPlaceholder(CDC *pDC, const CRect &rcBounds, bool bRun)
    pDC->SelectObject(pOldFont);
 }
 
-void CVTStrucVisCtl::DrawUI(CDC *pDC, const CRect &rcBounds) {
+void CVTStrucVisCtl::DrawUI(CDC *pDC, const CRect &rcBounds, bool bRun) {
+   // Create compatible DCs for the remote and the back buffer
+	CDC oDCRemote, oDCBuffer;
+	oDCRemote.CreateCompatibleDC(pDC);
+   oDCBuffer.CreateCompatibleDC(pDC);
+   // Check if the render size has changed
+   if (m_oBufferSize != rcBounds.Size()) {
+      m_oBufferSize = rcBounds.Size();
+      // Create the new back buffer
+      m_oBackBuffer.DeleteObject();
+      m_oBackBuffer.CreateCompatibleBitmap(pDC, rcBounds.Width(), rcBounds.Height());
+   }
    // Set the background to the background colour
    CBrush oBrush;
    oBrush.CreateSolidBrush(TranslateColor(GetBackColor()));
-   pDC->FillRect(rcBounds, &oBrush);
-
-   //#===------ Render the UI image
+   oDCBuffer.FillRect(rcBounds, &oBrush);
+   // Initialise the buffers with bitmaps
+   CBitmap *pRemoteBitmap = oDCRemote.SelectObject(&m_oUIBitmap);
+   CBitmap *pBufferBitmap = oDCBuffer.SelectObject(&m_oBackBuffer);
    // Get the bitmap params
 	BITMAP sBitmap;
 	m_oUIBitmap.GetBitmap(&sBitmap);
-   // Load and display
-	CDC oDCMem;
-	oDCMem.CreateCompatibleDC(pDC);
-	oDCMem.SelectObject(&m_oUIBitmap);
-	pDC->BitBlt(0, 0, sBitmap.bmWidth, sBitmap.bmHeight, &oDCMem, 0, 0, SRCCOPY);
+   const int iWidth = sBitmap.bmWidth / 2;
+	oDCBuffer.BitBlt(0, 0, iWidth, sBitmap.bmHeight, &oDCRemote, 0, 0, SRCCOPY);
+   // Highlight the relevant buttons
+   if (bRun && GetEnabled() && m_bLButtonDown && (m_iUIZone >= 0)) {
+      const int iX = (m_iUIZone % 3) * 60 + 1;
+      const int iY = (m_iUIZone / 3) * 30 + 51;
+   	oDCBuffer.BitBlt(iX, iY, 58, 28, &oDCRemote, iWidth + iX, iY, SRCCOPY);
+   }
+   // Copy over the back buffer
+   pDC->BitBlt(rcBounds.left, rcBounds.top, rcBounds.Width(), rcBounds.Height(), &oDCBuffer, 0, 0, SRCCOPY); 
+   // Restore the saved objects
+   oDCRemote.SelectObject(pRemoteBitmap);
+   oDCBuffer.SelectObject(pBufferBitmap);
 }
 
 bool CVTStrucVisCtl::LoadBitmap() {
@@ -697,10 +756,20 @@ void CVTStrucVisCtl::SimLoaded() {
    InvalidateControl();
 }
 
+bool CVTStrucVisCtl::SceneSetup(const unsigned char *pucData, unsigned int uiLength) {
+   // Check we ave a scene manager present
+   if (!m_poScene)
+      return false;
+   // Can we go interactive yet?
+   bool bDone = m_poScene->Setup(pucData, uiLength);
+   if (bDone)
+      GoInteractive();
+   return bDone;
+}
+
 void CVTStrucVisCtl::GoInteractive() {
    // Set the control interactive if we have all the properties available
-   if (GetReadyState() == READYSTATE_LOADED)
-      InternalSetReadyState(READYSTATE_INTERACTIVE);
+   InternalSetReadyState(READYSTATE_INTERACTIVE);
    // Refresh the control
    InvalidateControl();
 }
@@ -708,7 +777,6 @@ void CVTStrucVisCtl::GoInteractive() {
 /////////////////////
 // Message handlers
 
-// Drawing function
 void CVTStrucVisCtl::OnDraw(CDC* pdc, const CRect& rcBounds, const CRect& rcInvalid) {
    // Check our operating mode
    bool bRun = AmbientUserMode() && !AmbientUIDead();
@@ -718,7 +786,7 @@ void CVTStrucVisCtl::OnDraw(CDC* pdc, const CRect& rcBounds, const CRect& rcInva
       (m_eUIResult == UI_OK) && 
       ((GetReadyState() == READYSTATE_INTERACTIVE) || (GetReadyState() == READYSTATE_COMPLETE))) {
       // Draw the full-on interface
-      DrawUI(pdc, rcBounds);
+      DrawUI(pdc, rcBounds, bRun);
    }
    else {
       // Draw the placeholder
@@ -726,7 +794,6 @@ void CVTStrucVisCtl::OnDraw(CDC* pdc, const CRect& rcBounds, const CRect& rcInva
    }
 }
 
-// Detached DC drawing (for printing, etc)
 void CVTStrucVisCtl::OnDrawMetafile(CDC* pDC, const CRect& rcBounds) {
    // Just do something simple
    DrawPlaceholder(pDC, rcBounds, false);
@@ -734,7 +801,6 @@ void CVTStrucVisCtl::OnDrawMetafile(CDC* pDC, const CRect& rcBounds) {
 	COleControl::OnDrawMetafile(pDC, rcBounds);
 }
 
-// Persistence support
 void CVTStrucVisCtl::DoPropExchange(CPropExchange* pPX) {
 	ExchangeVersion(pPX, MAKELONG(_wVerMinor, _wVerMajor));
 	COleControl::DoPropExchange(pPX);
@@ -757,7 +823,6 @@ void CVTStrucVisCtl::DoPropExchange(CPropExchange* pPX) {
    PX_DataPath(pPX, _T("SimData"), m_oSimData);
 }
 
-// Reset control to default state
 void CVTStrucVisCtl::OnResetState() {
 	COleControl::OnResetState();  // Resets defaults found in DoPropExchange
 
@@ -768,33 +833,91 @@ void CVTStrucVisCtl::OnResetState() {
    m_uiAsyncFlags = AD_EMPTY;
    m_eUIResult = UI_UNKNOWN;
    m_eSimResult = SD_UNKNOWN;
+
+   // Restart Cortona
+   ExitCortona();
+   InitCortona();
 }
 
-// Display an "About" box to the user
 void CVTStrucVisCtl::AboutBox() {
 	CDialog dlgAbout(IDD_ABOUTBOX_VTSTRUCVIS);
 	dlgAbout.DoModal();
 }
 
-// Enable flicker free activation
 DWORD CVTStrucVisCtl::GetControlFlags() {
 	return COleControl::GetControlFlags() | noFlickerActivate;
 }
 
-// Check for changes in ambient properties
 void CVTStrucVisCtl::OnAmbientPropertyChange(DISPID dispid) {
    // Check here to see if we've changed operating mode
 	
 	COleControl::OnAmbientPropertyChange(dispid);
 }
 
-// Check for mouse clicks
 void CVTStrucVisCtl::OnLButtonDown(UINT nFlags, CPoint point) {
+   m_bLButtonDown = true;
+   InvalidateControl();
 
    COleControl::OnLButtonDown(nFlags, point);
 }
 
-// UIData property
+void CVTStrucVisCtl::OnLButtonUp(UINT nFlags, CPoint point) {
+   m_bLButtonDown = false;
+   InvalidateControl();
+	
+	COleControl::OnLButtonUp(nFlags, point);
+}
+
+void CVTStrucVisCtl::OnMouseMove(UINT nFlags, CPoint point) {
+   // Work out where the mouse is
+   const int iCol = point.x / 60;
+   const int iRow = (point.y - 50) / 30;
+   int iUIZone = iRow * 3 + iCol;
+   iUIZone = (iUIZone < 0 ? -1 : (iUIZone > 7 ? -1 : iUIZone));
+   // Update if the value has changed
+   if (iUIZone != m_iUIZone)
+      InvalidateControl();
+   // Check if the mouse is over the control
+   if (!m_bMouseOver) {
+      m_bMouseOver = true;
+      // Set a timer to check for the mouse every 1/10 of a second
+      SetTimer(TI_MOUSEOVER, 100, NULL);
+   }
+   m_iUIZone = iUIZone;
+
+	COleControl::OnMouseMove(nFlags, point);
+}
+
+void CVTStrucVisCtl::OnTimer(UINT nIDEvent) {
+   // Mouse over timer
+   if (nIDEvent == TI_MOUSEOVER) {
+      // Where is the mouse?
+      CPoint oPos(GetMessagePos());
+      ScreenToClient(&oPos);
+
+      // Get the bounds of the control (just the client area)
+      CRect oRect;
+      GetClientRect(oRect);
+
+      // Check the mouse is inside the control
+      if (!oRect.PtInRect(oPos)) {
+         // Stop looking if out of control
+         m_bMouseOver = FALSE;
+         KillTimer(TI_MOUSEOVER);
+         // Forget about mouse states
+         m_bLButtonDown = false;
+         // Redraw the control
+         Invalidate();
+      }
+   }
+
+   // Animate event
+   if (nIDEvent == TI_ANIMATE) {
+   }
+
+	COleControl::OnTimer(nIDEvent);
+}
+
 BSTR CVTStrucVisCtl::GetUIData() {
 	CString strResult = m_oUIData.GetPath();
 
@@ -813,7 +936,6 @@ void CVTStrucVisCtl::SetUIData(LPCTSTR lpszNewValue) {
    SetModifiedFlag();
 }
 
-// SimData property
 BSTR CVTStrucVisCtl::GetSimData() {
 	CString strResult = m_oSimData.GetPath();
 
@@ -831,4 +953,6 @@ void CVTStrucVisCtl::SetSimData(LPCTSTR lpszNewValue) {
    // Mark the properties modified
    SetModifiedFlag();
 }
+
+
 

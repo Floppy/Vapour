@@ -207,7 +207,35 @@ SOURCE="$(InputPath)"
 # PROP Default_Filter "cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 # Begin Source File
 
+SOURCE=.\BeamElement.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\CortonaControl.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\CortonaField.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\CortonaNode.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\CortonaUtil.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\DataManager.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\NodeSet.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\SceneManager.cpp
 # End Source File
 # Begin Source File
 
@@ -234,12 +262,20 @@ SOURCE=.\SimDataPath.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\SlabElement.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\StdAfx.cpp
 # ADD CPP /Yc"stdafx.h"
 # End Source File
 # Begin Source File
 
 SOURCE=.\UIDataPath.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\Viewpoint.cpp
 # End Source File
 # Begin Source File
 
@@ -271,7 +307,35 @@ SOURCE=.\VTStrucVisPpg.cpp
 # PROP Default_Filter "h;hpp;hxx;hm;inl"
 # Begin Source File
 
+SOURCE=.\BeamElement.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\CortonaControl.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\CortonaField.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\CortonaNode.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\CortonaUtil.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\DataManager.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\Element.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\NodeSet.h
 # End Source File
 # Begin Source File
 
@@ -279,7 +343,15 @@ SOURCE=.\Resource.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\SceneManager.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\SimDataPath.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\SlabElement.h
 # End Source File
 # Begin Source File
 
@@ -288,6 +360,10 @@ SOURCE=.\StdAfx.h
 # Begin Source File
 
 SOURCE=.\UIDataPath.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\Viewpoint.h
 # End Source File
 # Begin Source File
 

@@ -7,7 +7,7 @@
 // CortonaControl.cpp
 // 17/03/2002 - Warren Moore
 //
-// $Id: CortonaControl.cpp,v 1.3 2002/03/23 21:18:35 vap-warren Exp $
+// $Id: CortonaControl.cpp,v 1.4 2002/03/25 02:34:53 vap-warren Exp $
 
 #include "stdafx.h"
 #include "VTStrucVis.h"
@@ -90,7 +90,7 @@ IEngine *CCortonaControl::GetEngine() {
       // If we've found the property, get the value
       m_oDispatch.GetProperty(dwDispID, VT_DISPATCH, &pEngineDisp);
       // Now query for the IEngine interface
-      if (pEngine) {
+      if (pEngineDisp) {
          HRESULT hResult = pEngineDisp->QueryInterface(IID_IEngine, (void**)&pEngine);
          pEngineDisp->Release();
          if (FAILED(hResult))
@@ -101,7 +101,7 @@ IEngine *CCortonaControl::GetEngine() {
    return pEngine;
 }
 
-void CCortonaControl::NavBar(short sVal) {
+void CCortonaControl::NavBar(bool bVal) {
    // Check we have a dispatch interface
    if (!m_bAttached)
       return;
@@ -116,7 +116,26 @@ void CCortonaControl::NavBar(short sVal) {
                                           0,
                                           &dwDispID))) {
       static BYTE parms[] = VTS_I2;
-      m_oDispatch.InvokeHelper(dwDispID, DISPATCH_PROPERTYPUT, VT_EMPTY, NULL, parms, sVal);
+      m_oDispatch.InvokeHelper(dwDispID, DISPATCH_PROPERTYPUT, VT_EMPTY, NULL, parms, (bVal ? 1 : 0));
+   }
+}
+
+void CCortonaControl::ContextMenu(bool bVal) {
+   // Check we have a dispatch interface
+   if (!m_bAttached)
+      return;
+
+   DISPID dwDispID;
+   USES_CONVERSION;
+   // Use Automation to set the context menu
+   LPCOLESTR lpOleStr = T2OLE("ContextMenu");
+   if (SUCCEEDED(m_pDispatch->GetIDsOfNames(IID_NULL,
+                                          (LPOLESTR*)&lpOleStr,
+                                          1,
+                                          0,
+                                          &dwDispID))) {
+      static BYTE parms[] = VTS_BOOL;
+      m_oDispatch.InvokeHelper(dwDispID, DISPATCH_PROPERTYPUT, VT_EMPTY, NULL, parms, bVal);
    }
 }
 
@@ -127,7 +146,7 @@ void CCortonaControl::Headlight(bool bVal) {
 
    DISPID dwDispID;
    USES_CONVERSION;
-   // Use Automation to set the Navigation bars
+   // Use Automation to set the headlight
    LPCOLESTR lpOleStr = T2OLE("HeadLight");
    if (SUCCEEDED(m_pDispatch->GetIDsOfNames(IID_NULL,
                                           (LPOLESTR*)&lpOleStr,
@@ -146,7 +165,7 @@ void CCortonaControl::Edit() {
 
    DISPID dwDispID;
    USES_CONVERSION;
-   // Use Automation to set the Navigation bars
+   // Use Automation to set Cortona to Edit
    LPCOLESTR lpOleStr = T2OLE("Edit");
    if (SUCCEEDED(m_pDispatch->GetIDsOfNames(IID_NULL,
                                           (LPOLESTR*)&lpOleStr,
@@ -164,7 +183,7 @@ void CCortonaControl::Refresh() {
 
    DISPID dwDispID;
    USES_CONVERSION;
-   // Use Automation to set the Navigation bars
+   // Use Automation to refresh the control
    LPCOLESTR lpOleStr = T2OLE("Refresh");
    if (SUCCEEDED(m_pDispatch->GetIDsOfNames(IID_NULL,
                                           (LPOLESTR*)&lpOleStr,
@@ -182,7 +201,7 @@ void CCortonaControl::Trace(const char *pcText) {
 
    DISPID dwDispID;
    USES_CONVERSION;
-   // Use Automation to set the Navigation bars
+   // Use Automation to trace to the Cortona console
    LPCOLESTR lpOleStr = T2OLE("trace");
    if (SUCCEEDED(m_pDispatch->GetIDsOfNames(IID_NULL,
                                           (LPOLESTR*)&lpOleStr,
