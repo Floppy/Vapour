@@ -6,7 +6,7 @@
 // DataManager.cpp
 // 19/03/2002 - James Smith
 //
-// $Id: DataManager.cpp,v 1.1 2002/03/22 14:56:26 vap-james Exp $
+// $Id: DataManager.cpp,v 1.2 2002/03/22 15:59:42 vap-james Exp $
 
 #include "stdafx.h"
 #include "DataManager.h"
@@ -82,13 +82,13 @@ const float g_pfNodeDisplacements[g_iNumFrames][27] = {
    }
 };
 
-const g_iNumGroups = 2;
+const g_iNumGroups = 4;
 
 const TElementType g_ptGroupTypes[g_iNumGroups] = {
    BEAM, SLAB
 };
 const float g_pfGroupTemps[g_iNumFrames][g_iNumGroups] = {
-   {30,30},{40,40},{60,50},{80,60}
+   {30,30,30,30},{40,40,40,40},{60,60,60,50},{80,80,80,60}
 };
 
 const unsigned int g_iNumBeams = 6;
@@ -105,7 +105,7 @@ const unsigned int g_piBeamNodes[g_iNumBeams][2] = {
    {8, 9}
 };
 const unsigned int g_piBeamGroups[g_iNumBeams] = {
-   1,1,1,1,1,1
+   1,1,2,2,3,3
 };
 const float g_pfBeamStresses[g_iNumFrames][g_iNumBeams][6] = {
    {
@@ -188,7 +188,7 @@ const unsigned int g_piSlabNodes[1][9] = {
    {9, 6, 3, 2, 1, 4, 7, 8, 5}
 };
 const unsigned int g_piSlabGroups[g_iNumSlabs] = {
-   2
+   4
 };
 const unsigned char g_pcSlabCracks[g_iNumFrames][g_iNumSlabs][9] = {
    {{0,0,0,0,0,0,0,0,0}},
@@ -295,6 +295,11 @@ float CDataManager::GroupTemp(unsigned int iGroup) {
 
 TElementType CDataManager::GroupType(unsigned int iGroup) {
    return g_ptGroupTypes[iGroup];
+}
+
+void CDataManager::StressRange(float& fMin, float& fMax) {
+   fMin = 0;
+   fMax = 100;
 }
 
 unsigned int CDataManager::NumBeams(void) {

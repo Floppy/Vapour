@@ -6,7 +6,7 @@
 // DataManager.h
 // 19/03/2002 - James Smith
 //
-// $Id: DataManager.h,v 1.2 2002/03/22 14:59:36 vap-james Exp $
+// $Id: DataManager.h,v 1.3 2002/03/22 15:59:42 vap-james Exp $
 
 #ifndef __DATAMANAGER__
 #define __DATAMANAGER__
@@ -62,6 +62,9 @@ public:
 
    TElementType GroupType(unsigned int iGroup);
    // Returns the type of element that the group contains.
+
+   void StressRange(float& fMin, float& fMax);
+   // Return the minimum and maximum stress values.
 
    unsigned int NumBeams(void);
    // Returns the number of beam elements in the dataset.
