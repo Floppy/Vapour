@@ -1,22 +1,21 @@
-//=======---
-// Avanew
-//-------
-// Avatar editor and exporter
+//====---
+// VAL
+//----
+// Vapour Technology All-Purpose Library
 // Copyright 2000 Vapour Technology Ltd.
 //
 // AvatarFileHalflife.h - 16/2/2000 - James Smith
 //	Halflife MDL export filter header
 //
-// $Id: AvatarFileHalflife.h,v 1.1 2000/07/11 16:42:25 waz Exp $
+// $Id: AvatarFileHalflife.h,v 1.2 2000/07/11 17:41:37 waz Exp $
 //
 
 #pragma once
 
-#ifndef _VAPOUR_AVATARFILEHALFLIFE_
-#define _VAPOUR_AVATARFILEHALFLIFE_
+#ifndef _VAL_AVATARFILEHALFLIFE_
+#define _VAL_AVATARFILEHALFLIFE_
 
 #include "AvatarFileStore.h"
-#include "ProgressDialog.h"
 #include "BodyPart.h"
 
 #include <fstream.h>
@@ -24,7 +23,7 @@
 
 typedef std::vector<int> vTriStrip;
 
-//////////////////
+////////////////////////
 // CAvatarFileHalflife
 
 class CAvatarFileHalflife : public CAvatarFile {
@@ -34,7 +33,6 @@ class CAvatarFileHalflife : public CAvatarFile {
 private:
 
    mutable char* m_pszModelname;
-   mutable CProgressDialog* m_pProgressDlg;
    mutable std::vector<int> m_vCompressedSkeletonMap;
    mutable int m_pReverseCompressedSkeletonMap[TOTAL_NUMBER_BODYPARTS];
    const int m_iScaleFactor;
@@ -76,4 +74,4 @@ private:
 
 };
 
-#endif // _VAPOUR_AVATARFILEHALFLIFE_
+#endif // _VAL_AVATARFILEHALFLIFE_

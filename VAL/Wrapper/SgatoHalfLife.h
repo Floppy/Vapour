@@ -7,7 +7,7 @@
 // SGAToHalfLife.h - 06/07/2000 - Warren Moore
 //	SGA Avatar to Half Life converter wrapper 
 //
-// $Id: SgatoHalfLife.h,v 1.1 2000/07/11 16:31:15 waz Exp $
+// $Id: SgatoHalfLife.h,v 1.2 2000/07/11 17:41:38 waz Exp $
 //
 
 #ifndef _WRAP_SGATOHALFLIFE_
@@ -33,15 +33,15 @@
 
 //#===--- Data types
 
-/////////////
-// CSGAToHL
+///////////////////
+// CSGAToHalfLife
 
-class CSGAToHL {
+class CSGAToHalfLife {
 //#===--- External functions
 public:
 // Standard constructor/destructor
-	CSGAToHL();
-	~CSGAToHL();
+	CSGAToHalfLife();
+	~CSGAToHalfLife();
 
 // Set export options prior to export execution
 	VARESULT SetOption(int iOption, int iArgument);						// Integer options

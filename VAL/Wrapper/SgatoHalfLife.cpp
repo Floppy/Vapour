@@ -7,7 +7,7 @@
 // SGAToHalfLife.cpp - 06/07/2000 - Warren Moore
 //	SGA Avatar to Half Life converter wrapper 
 //
-// $Id: SgatoHalfLife.cpp,v 1.1 2000/07/11 16:31:14 waz Exp $
+// $Id: SgatoHalfLife.cpp,v 1.2 2000/07/11 17:41:38 waz Exp $
 //
 
 #include "StdAfx.h"
@@ -17,7 +17,7 @@
 
 #include <iostream.h>
 #include "AvatarFileAME.h"
-#include "AvatarFileSims.h"
+#include "AvatarFileHalfLife.h"
 #include "Avatar.h"
 #include "TimeLimit.h"
 #include "Wedgie.h"
@@ -175,7 +175,7 @@ VARESULT CSGAToHalfLife::Export() {
 // Check for correct options
 	m_eResult = VA_OK;
 	bool bOk = m_pcSGAFilename && m_pcHLModelname;
-	if (!bOk) {
+	if (!bOk)
 		m_eResult = VA_MISSING_FILENAME;
 // Start model export
 	if (bOk) {
@@ -214,7 +214,7 @@ VARESULT CSGAToHalfLife::Export() {
 				strcpy(pcFilename, m_pcHLPath);
 			strcat(pcFilename, m_pcHLModelname);
 		// Create the exporter
-			CAvatarFileHL oHL;
+			CAvatarFileHalflife oHL;
 		// Set the options
 
 		// Save the Sims model
