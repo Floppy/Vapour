@@ -9,7 +9,7 @@
 //! file      = "Control/DataManager.cpp"
 //! author    = "James Smith"
 //! date      = "19/3/2002"
-//! rcsid     = "$Id: DataManager.cpp,v 1.19 2002/04/03 15:57:09 vap-warren Exp $"
+//! rcsid     = "$Id: DataManager.cpp,v 1.20 2002/04/04 10:07:53 vap-james Exp $"
 
 #include "stdafx.h"
 #include "DataManager.h"
@@ -346,7 +346,7 @@ bool CDataManager::Setup(const unsigned char* pcData, unsigned int iLength) {
 
    // Read setup data
    if (m_oState == LOADING) {
-      if (m_pChunk == NULL) m_pChunk = new CChunk();
+      if (m_pChunk == NULL) m_pChunk = new CIChunk();
       unsigned int iUsed = 0;
       if (!m_pChunk->CreateChunk(pcData,iLength,iUsed,true)) return false;
       else m_oState = READY;
@@ -362,7 +362,7 @@ bool CDataManager::Setup(const unsigned char* pcData, unsigned int iLength) {
       }
 
       // Read number of beams and slabs
-      const CChunk* pChunk = m_pChunk->SubChunk(CHUNK_BEAMS);
+      const CIChunk* pChunk = m_pChunk->SubChunk(CHUNK_BEAMS);
       if (pChunk) {
          m_iNumBeams = *reinterpret_cast<const unsigned int*>(pChunk->Data());
       }
@@ -405,7 +405,7 @@ bool CDataManager::LoadFrame(const unsigned char* pcData, unsigned int iLength) 
    if (m_pChunk) delete m_pChunk;
    m_pChunk = NULL;
    // Load frame data from passed memory chunk
-   m_pChunk = new CChunk();
+   m_pChunk = new CIChunk();
    unsigned int iUsed = 0;
    if (!m_pChunk->CreateChunk(pcData,iLength,iUsed,true) || m_pChunk->Type() != CHUNK_FRAME) {
       delete m_pChunk;
@@ -414,7 +414,7 @@ bool CDataManager::LoadFrame(const unsigned char* pcData, unsigned int iLength) 
    }
 
    // Load temperature data
-   const CChunk* pChunk = m_pChunk->SubChunk(CHUNK_TEMP);
+   const CIChunk* pChunk = m_pChunk->SubChunk(CHUNK_TEMP);
    if (pChunk) {
       const unsigned char* pcData = pChunk->Data();
       pcData += sizeof(unsigned int);
@@ -434,7 +434,7 @@ unsigned int CDataManager::NumFrames(void) {
 
 unsigned int CDataManager::NumNodes(void) {
    if (m_pChunk == NULL) return NULL;
-   const CChunk* pChunk = m_pChunk->SubChunk(CHUNK_NODES);
+   const CIChunk* pChunk = m_pChunk->SubChunk(CHUNK_NODES);
    if (pChunk) {
       return *reinterpret_cast<const unsigned int*>(pChunk->Data());
    }
@@ -443,7 +443,7 @@ unsigned int CDataManager::NumNodes(void) {
 
 const float* CDataManager::NodePositions(void) {
    if (m_pChunk == NULL) return NULL;
-   const CChunk* pChunk = m_pChunk->SubChunk(CHUNK_NODES);
+   const CIChunk* pChunk = m_pChunk->SubChunk(CHUNK_NODES);
    if (pChunk) {
       const unsigned char* pcData = pChunk->Data();
       pcData += sizeof(unsigned int);
@@ -454,7 +454,7 @@ const float* CDataManager::NodePositions(void) {
 
 const float* CDataManager::NodeDisplacements() {
    if (m_pChunk == NULL) return NULL;
-   const CChunk* pChunk = m_pChunk->SubChunk(CHUNK_NODEDISP);
+   const CIChunk* pChunk = m_pChunk->SubChunk(CHUNK_NODEDISP);
    if (pChunk) {
       const unsigned char* pcData = pChunk->Data();
       pcData += sizeof(unsigned int);
@@ -487,7 +487,7 @@ const float* CDataManager::GroupColour(unsigned int iGroup) {
 
 void CDataManager::StressRange(float& fMin, float& fMax) {
    if (m_pChunk == NULL) return;
-   const CChunk* pChunk = m_pChunk->SubChunk(CHUNK_STRESSR);
+   const CIChunk* pChunk = m_pChunk->SubChunk(CHUNK_STRESSR);
    if (pChunk) {
       const float *pfData = reinterpret_cast<const float*>(pChunk->Data());
       fMin = *pfData++;
@@ -503,7 +503,7 @@ unsigned int CDataManager::NumBeams(void) {
 const unsigned int* CDataManager::BeamNodes(int iBeam) {
    if (m_pChunk == NULL) return NULL;
    iBeam--;
-   const CChunk* pChunk = m_pChunk->SubChunk(CHUNK_BEAMS);
+   const CIChunk* pChunk = m_pChunk->SubChunk(CHUNK_BEAMS);
    if (pChunk) {
       const unsigned int* piData = reinterpret_cast<const unsigned int*>(pChunk->Data());
       int iNumBeams = *piData++;
@@ -517,7 +517,7 @@ const unsigned int* CDataManager::BeamNodes(int iBeam) {
 unsigned int CDataManager::BeamGroup(int iBeam) {
    if (m_pChunk == NULL) return 0;
    iBeam--;
-   const CChunk* pChunk = m_pChunk->SubChunk(CHUNK_BEAMS);
+   const CIChunk* pChunk = m_pChunk->SubChunk(CHUNK_BEAMS);
    if (pChunk) {
       const unsigned int* piData = reinterpret_cast<const unsigned int*>(pChunk->Data());
       int iNumBeams = *piData++;
@@ -531,7 +531,7 @@ unsigned int CDataManager::BeamGroup(int iBeam) {
 void CDataManager::BeamSizes(int iGroup, float& fHeight, float& fWidth, float& fFlange, float& fWeb) {
    if (m_pChunk == NULL) return;
    iGroup--;
-   const CChunk* pChunk = m_pChunk->SubChunk(CHUNK_BEAMSIZE);
+   const CIChunk* pChunk = m_pChunk->SubChunk(CHUNK_BEAMSIZE);
    if (pChunk) {
       const unsigned char* pcData = pChunk->Data();
       int iNumGroups = *reinterpret_cast<const unsigned int*>(pcData);
@@ -553,7 +553,7 @@ void CDataManager::BeamSizes(int iGroup, float& fHeight, float& fWidth, float& f
 const float* CDataManager::BeamStresses(unsigned int iBeam) {
    if (m_pChunk == NULL) return NULL;
    iBeam--;
-   const CChunk* pChunk = m_pChunk->SubChunk(CHUNK_BEAMFORC);
+   const CIChunk* pChunk = m_pChunk->SubChunk(CHUNK_BEAMFORC);
    if (pChunk) {
       const float* pfData = reinterpret_cast<const float*>(pChunk->Data() + sizeof(unsigned int));
       pfData += 6 * iBeam;
@@ -569,7 +569,7 @@ unsigned int CDataManager::NumSlabs(void) {
 const unsigned int* CDataManager::SlabNodes(int iSlab) {
    if (m_pChunk == NULL) return NULL;
    iSlab--;
-   const CChunk* pChunk = m_pChunk->SubChunk(CHUNK_SLABS);
+   const CIChunk* pChunk = m_pChunk->SubChunk(CHUNK_SLABS);
    if (pChunk) {
       const unsigned int* piData = reinterpret_cast<const unsigned int*>(pChunk->Data());
       int iNumSlabs = *piData++;
@@ -583,7 +583,7 @@ const unsigned int* CDataManager::SlabNodes(int iSlab) {
 unsigned int CDataManager::SlabGroup(int iSlab) {
    if (m_pChunk == NULL) return 0;
    iSlab--;
-   const CChunk* pChunk = m_pChunk->SubChunk(CHUNK_SLABS);
+   const CIChunk* pChunk = m_pChunk->SubChunk(CHUNK_SLABS);
    if (pChunk) {
       const unsigned int* piData = reinterpret_cast<const unsigned int*>(pChunk->Data());
       int iNumSlabs = *piData++;
@@ -597,7 +597,7 @@ unsigned int CDataManager::SlabGroup(int iSlab) {
 void CDataManager::SlabSizes(int iGroup, float& fThickness) {
    if (m_pChunk == NULL) return;
    iGroup--;
-   const CChunk* pChunk = m_pChunk->SubChunk(CHUNK_SLABSIZE);
+   const CIChunk* pChunk = m_pChunk->SubChunk(CHUNK_SLABSIZE);
    if (pChunk) {
       const unsigned char* pcData = pChunk->Data();
       int iNumGroups = *reinterpret_cast<const unsigned int*>(pcData);
@@ -613,7 +613,7 @@ void CDataManager::SlabSizes(int iGroup, float& fThickness) {
 const float* CDataManager::SlabStresses(unsigned int iSlab) {
    if (m_pChunk == NULL) return NULL;
    iSlab--;
-   const CChunk* pChunk = m_pChunk->SubChunk(CHUNK_SLABFORC);
+   const CIChunk* pChunk = m_pChunk->SubChunk(CHUNK_SLABFORC);
    if (pChunk) {
       const float* pfData = reinterpret_cast<const float*>(pChunk->Data() + sizeof(unsigned int));
       pfData += 27 * iSlab;
@@ -625,7 +625,7 @@ const float* CDataManager::SlabStresses(unsigned int iSlab) {
 const unsigned char* CDataManager::SlabCracks(unsigned int iSlab, unsigned int) {
    if (m_pChunk == NULL) return NULL;
    iSlab--;
-   const CChunk* pChunk = m_pChunk->SubChunk(CHUNK_CRACKS);
+   const CIChunk* pChunk = m_pChunk->SubChunk(CHUNK_CRACKS);
    if (pChunk) {
       return pChunk->Data() + sizeof(unsigned int) + (9*iSlab*sizeof(unsigned char));
    }

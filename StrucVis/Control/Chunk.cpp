@@ -9,7 +9,7 @@
 //! file      = "Control/Chunk.cpp"
 //! author    = "James Smith"
 //! date      = "19/3/2002"
-//! rcsid     = "$Id: Chunk.cpp,v 1.12 2002/04/03 15:57:07 vap-warren Exp $"
+//! rcsid     = "$Id: Chunk.cpp,v 1.13 2002/04/04 10:07:53 vap-james Exp $"
 
 #include "stdafx.h"
 #include "Chunk.h"
@@ -22,10 +22,10 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-/////////
-// CChunk
+//////////
+// CIChunk
 
-CChunk::CChunk() :
+CIChunk::CIChunk() :
    m_iBufferLength(0),
    m_iDataSize(0),
    m_iDataProcessed(0),
@@ -36,12 +36,12 @@ CChunk::CChunk() :
 {
 }
 
-CChunk::~CChunk() {
+CIChunk::~CIChunk() {
    if (m_pcBuffer) delete [] m_pcBuffer;
    if (m_pTempSubChunk) delete m_pTempSubChunk;
 }
 
-bool CChunk::CreateChunk(const unsigned char* pcData, unsigned int iLength, unsigned int& iUsed, bool bLoadSubChunks) {
+bool CIChunk::CreateChunk(const unsigned char* pcData, unsigned int iLength, unsigned int& iUsed, bool bLoadSubChunks) {
 
    iUsed = 0;
 
@@ -128,7 +128,7 @@ bool CChunk::CreateChunk(const unsigned char* pcData, unsigned int iLength, unsi
       while (iLength != 0 && m_iDataProcessed < m_iChunkLength) {
          // Create new subchunk if we don't have one
          if (m_pTempSubChunk == NULL) {
-            m_pTempSubChunk = new CChunk;
+            m_pTempSubChunk = new CIChunk;
          }
          // Add data to subchunk
          if (m_pTempSubChunk->CreateChunk(pcData,iLength,iUsed)) {
@@ -152,11 +152,11 @@ bool CChunk::CreateChunk(const unsigned char* pcData, unsigned int iLength, unsi
    return true;
 }
 
-const unsigned char* CChunk::Data(void) const {
+const unsigned char* CIChunk::Data(void) const {
    return m_pcBuffer + 6;
 }
 
-const CChunk* CChunk::SubChunk(TChunkType oType) const {
+const CIChunk* CIChunk::SubChunk(TChunkType oType) const {
    for (std::vector<CTOCEntry>::const_iterator pEntry=m_oTOC.begin(); pEntry!=m_oTOC.end(); pEntry++) {
       if (pEntry->m_oType == oType) return pEntry->m_pChunk;
    }

@@ -9,7 +9,7 @@
 //! file      = "Control/Chunk.h"
 //! author    = "James Smith"
 //! date      = "19/3/2002"
-//! rcsid     = "$Id: Chunk.h,v 1.12 2002/04/03 16:20:02 vap-james Exp $"
+//! rcsid     = "$Id: Chunk.h,v 1.13 2002/04/04 10:07:53 vap-james Exp $"
 
 #ifndef __VTSTRUCVIS_CHUNK__
 #define __VTSTRUCVIS_CHUNK__
@@ -46,20 +46,20 @@ enum TChunkType {
    CHUNK_CRACKS   = 0x26,
 };
 
-//: A data chunk
-// This class provides an interface to a VSV file data chunk.
+//: An input data chunk
+// This class provides an interface to a VSV file data chunk, specifically for file loading.
 
-class CChunk {
+class CIChunk {
 
 public:
 
    //:-------------------------
    //: Construction/Destruction
 
-   CChunk();
+   CIChunk();
    //: Constructor
    
-   virtual ~CChunk();
+   virtual ~CIChunk();
    //: Destructor
 
    //:---------
@@ -79,7 +79,7 @@ public:
    const unsigned char* Data(void) const;
    //: Access to raw chunk data
 
-   const CChunk* SubChunk(TChunkType oType) const;
+   const CIChunk* SubChunk(TChunkType oType) const;
    //: Get a subchunk with the specified type
 
 protected:
@@ -99,7 +99,7 @@ protected:
       TChunkType m_oType;
       unsigned int m_iOffset;
       unsigned int m_iLength;
-      CChunk* m_pChunk;
+      CIChunk* m_pChunk;
    };
    //: TOC Information
 
@@ -124,7 +124,7 @@ protected:
    TChunkType m_oType;
    //: The type of the chunk
 
-   CChunk* m_pTempSubChunk;
+   CIChunk* m_pTempSubChunk;
    //: Temporary storage for currently-building subchunk
 
 };
@@ -132,7 +132,7 @@ protected:
 //: A specialised data chunk
 // This class provides an interface to a VSV file root data chunk.
 
-class CRootChunk : public CChunk {
+class CRootChunk : public CIChunk {
 
 public:
 

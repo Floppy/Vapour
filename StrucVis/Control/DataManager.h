@@ -9,7 +9,7 @@
 //! file      = "Control/DataManager.h"
 //! author    = "James Smith"
 //! date      = "19/3/2002"
-//! rcsid     = "$Id: DataManager.h,v 1.12 2002/04/03 16:20:02 vap-james Exp $"
+//! rcsid     = "$Id: DataManager.h,v 1.13 2002/04/04 10:07:53 vap-james Exp $"
 
 #ifndef __VTSTRUCVIS_DATAMANAGER__
 #define __VTSTRUCVIS_DATAMANAGER__
@@ -181,7 +181,7 @@ protected:
    unsigned int m_iNumSlabs;
    //: The number of slabs in the data
 
-   CChunk* m_pChunk;
+   CIChunk* m_pChunk;
    //: Temporary chunk storage
 
    enum TIOState {
