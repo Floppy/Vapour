@@ -4,6 +4,6 @@ $(silent:
 	$(set:viewmode=user)
 	$(set:methodtype=scope_user)
 	$(define:checkview:$(if:$access=public:%arg%))
-	$(set:refPattern=%.html)
+	$(set:refPattern=%.php)
 )
 $(include:class.stmpl)

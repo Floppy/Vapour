@@ -1,4 +1,4 @@
-<P CLASS="CLASSTITLE">$(FullName)</P>
+<P CLASS=CLASSTITLE>$(FullName)</P>
 <P>$(ifset:brief:$(brief))</P>
 
 <!-- FILENAME:$(file) -->
