@@ -7,7 +7,7 @@
 // CortonaField.cpp
 // 07/03/2002 - Warren Moore
 //
-// $Id: CortonaField.cpp,v 1.11 2002/03/25 01:38:52 vap-warren Exp $
+// $Id: CortonaField.cpp,v 1.12 2002/03/26 14:57:22 vap-warren Exp $
 
 #include "stdafx.h"
 
@@ -218,6 +218,7 @@ bool CCortonaField::AddMFVec3f(const float fX, const float fY, const float fZ) {
       }
       else {
          SafeArrayDestroy(pSA);
+         pMFVec3f->Release();
          return false;
       }
 
@@ -501,7 +502,7 @@ bool CCortonaField::AddMFColor(const float fR, const float fG, const float fB) {
       return false;
 
    // Get the IMFVec3f interface
-   IMFVec3fObject *pMFColor = NULL;
+   IMFColorObject *pMFColor = NULL;
    HRESULT hResult = m_pField->QueryInterface(IID_IMFColorObject, (void**)&pMFColor);
    if (SUCCEEDED(hResult)) {
       // Create the safe array
@@ -531,6 +532,7 @@ bool CCortonaField::AddMFColor(const float fR, const float fG, const float fB) {
       }
       else {
          SafeArrayDestroy(pSA);
+         pMFColor->Release();
          return false;
       }
 
