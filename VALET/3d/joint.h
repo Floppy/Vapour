@@ -9,17 +9,18 @@
 #define _VALET_3D_JOINT_
 
 ////////////////
-//! file 		= "VALET/3d/joint.h"
-//! author 		= "James Smith"
-//! date 		= "18/10/2001"
-//! lib 		= libVALET3d
-//! rcsid 		= "$Id: joint.h,v 1.4 2001/10/24 22:01:42 vap-james Exp $"
-//! userlevel 	        = Normal
-//! docentry 	        = "VALET.3D.Animation"
+//! file       = "VALET/3d/joint.h"
+//! author     = "James Smith"
+//! date       = "18/10/2001"
+//! lib        = libVALET3d
+//! rcsid      = "$Id: joint.h,v 1.5 2001/10/24 23:03:48 vap-james Exp $"
+//! userlevel  = Normal
+//! docentry   = "VALET.3D.Animation"
 
 //#===--- Includes
 #include "VALET/valet.h"
 #include "VALET/vector3d.h"
+#include "VALET/eulerrotation.h"
 #include "VALET/homtransform.h"
 #include "VALET/axisrotation.h"
 
@@ -34,16 +35,16 @@ namespace NVALET {
 
    protected:
 
-      CVector3D m_vecCentre;
+      CVector3D m_oCentre;
       //: The joint centre
       
-      CVector3D m_vecMinRotation;
+      CEulerRotation m_oMinRotation;
       //: Minimum values for the joint angles.
 
-      CVector3D m_vecMaxRotation;
+      CEulerRotation m_oMaxRotation;
       //: Maximum values for the joint angles.
 
-      CVector3D m_vecDamping;
+      CEulerRotation m_oDamping;
       //: Damping values for the joint angles.
 
       typedef vector<CJoint>::iterator JointPtr;
@@ -52,19 +53,19 @@ namespace NVALET {
       JointPtr m_pParent;
       //: Parent joint.
 
-      vector<JointPtr> m_lChildren;
+      vector<JointPtr> m_oChildren;
       //: Child joints.
 
-      vector<int> m_pVertices;
+      vector<int> m_oVertices;
       //: A list of affected vertices.
 
-      vector<int> m_pFaces;
+      vector<int> m_oFaces;
       //: A list of affected faces.
 
       CAxisRotation m_oRotation;
       //: The current joint rotation.
 
-      CHomTransform m_htTransform;
+      CHomTransform m_oTransform;
       //: The transform below this point in the skeleton.
       // This is the complete transform as far as (and including) this joint.
 
@@ -79,9 +80,9 @@ namespace NVALET {
       //:-------------------------
       //: Construction/Destruction
 
-      CJoint(CVector3D vecCentre, JointPtr pParent = JointPtr());
+      CJoint(CVector3D oCentre, JointPtr pParent = JointPtr());
       //: Default constructor
-      //!param: vecCentre = the joint's centre of rotation.
+      //!param: oCentre = the joint's centre of rotation.
       //!param: pParent = a pointer/iterator to the joint's parent.
 
       ~CJoint();
@@ -90,46 +91,46 @@ namespace NVALET {
       //:-----------------
       //: Access functions      
 
-      const CVector3D& Centre(void) const {return m_vecCentre;}
+      const CVector3D& Centre(void) const;
       //: Access the joint centre.
       //!param: return = the joint's centre of rotation.
 
-      const CVector3D& MinRotation(void) const {return m_vecMinRotation;}
+      const CEulerRotation& MinRotation(void) const;
       //: Access the minimum rotation values.
-      //!param: return = the minimum X,Y and Z rotation values of the joint
+      //!param: return = the minimum rotation values of the joint
 
-      CVector3D& MinRotation(void) {return m_vecMinRotation;}
+      CEulerRotation& MinRotation(void);
       //: Non-const access to the minimum rotation values.
       // This can be used to change the values.
-      //!param: return = the minimum X,Y and Z rotation values of the joint
+      //!param: return = the minimum rotation values of the joint
 
-      const CVector3D& MaxRotation(void) const {return m_vecMaxRotation;}
+      const CEulerRotation& MaxRotation(void) const;
       //: Access the maximum rotation values.
-      //!param: return = the maximum X,Y and Z rotation values of the joint
+      //!param: return = the maximum rotation values of the joint
 
-      CVector3D& MaxRotation(void) {return m_vecMaxRotation;}
+      CEulerRotation& MaxRotation(void);
       //: Non-const access to the maximum rotation values.
       // This can be used to change the values.
-      //!param: return = the maximum X,Y and Z rotation values of the joint
+      //!param: return = the maximum rotation values of the joint
 
-      const CVector3D& Damping(void) const {return m_vecDamping;}
+      const CEulerRotation& Damping(void) const;
       //: Access the rotation damping values.
-      //!param: return = the scale factor on X, Y and Z rotations.
+      //!param: return = the scale factor on the rotations.
 
-      CVector3D& Damping(void) {return m_vecDamping;}
+      CEulerRotation& Damping(void);
       //: Non-const access to the rotation damping values.
       // This can be used to change the values.
-      //!param: return = the scale factor on X, Y and Z rotations.
+      //!param: return = the scale factor on the rotations.
       
-      const JointPtr Parent(void) const {return m_pParent;}
+      const JointPtr Parent(void) const;
       //: Get the parent
       //!param: return = a pointer/iterator to the parent joint.
 
-      int NumChildren(void) const {return m_lChildren.size();}
+      int NumChildren(void) const;
       //: How many children does this joint have?
       //!param: return = the number of children this joint has.
 
-      const JointPtr Child(int iChild) const {return m_lChildren[iChild];}
+      const JointPtr Child(int iChild) const;
       //: Access an individual child joint.
       //!param: iChild = the index of the desired child joint - should be < NumChildren()
       //!param: return = a pointer/iterator to the requested child.

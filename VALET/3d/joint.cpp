@@ -7,69 +7,125 @@
 // Add confidentiality notice
 
 ////////////////
-//! file 		= "VALET/3d/joint.cpp"
-//! author 		= "James Smith"
-//! date 		= "18/10/2001"
-//! lib 		= libVALET3d
-//! rcsid 		= "$Id: joint.cpp,v 1.4 2001/10/24 22:01:42 vap-james Exp $"
-//! userlevel 	        = Normal
-//! docentry 	        = "VALET.3D.Animation"
+//! file       = "VALET/3d/joint.cpp"
+//! author     = "James Smith"
+//! date       = "18/10/2001"
+//! lib        = libVALET3d
+//! rcsid      = "$Id: joint.cpp,v 1.5 2001/10/24 23:03:47 vap-james Exp $"
+//! userlevel  = Normal
+//! docentry   = "VALET.3D.Animation"
 
 #include "VALET/joint.h"
 
 // VALET includes
-#include "VALET/eulerrotation.h"
+#include "VALET/log.h"
 
 // Standard includes
 #include <math.h>
 
 namespace NVALET {
 
-   CJoint::CJoint(CVector3D vecCentre, JointPtr pParent) :
-      m_vecCentre(vecCentre),
-      m_vecMinRotation(-M_PI,-M_PI,-M_PI),
-      m_vecMaxRotation(M_PI,M_PI,M_PI),
-      m_vecDamping(1,1,1),
+   CJoint::CJoint(CVector3D oCentre, JointPtr pParent) :
+      m_oCentre(oCentre),
       m_pParent(pParent),
       m_bDirtyAngle(false),
       m_bDirtyShape(false)
    {
+      CLog oLog("3d","CJoint::Constructor (CVector3D,JointPtr)",LL_OBJECT);
+      CEulerRotation::TEulerType tType;
+      tType.m_eID = CEulerRotation::XYZS;
+      m_oMinRotation = CEulerRotation(-M_PI,-M_PI,-M_PI,tType);
+      m_oMaxRotation = CEulerRotation(M_PI,M_PI,M_PI,tType);
+      m_oDamping = CEulerRotation(1,1,1,tType);
    }
 
    CJoint::~CJoint() {
+      CLog oLog("3d","CJoint::Destructor",LL_OBJECT);
+   }
+
+   const CVector3D& CJoint::Centre(void) const {
+      CLog oLog("3d","CJoint::Centre",LL_FUNCTION);
+      return m_oCentre;
+   }
+
+   const CEulerRotation& CJoint::MinRotation(void) const {
+      CLog oLog("3d","CJoint::MinRotation (const)",LL_FUNCTION);
+      return m_oMinRotation;
+   }
+
+   CEulerRotation& CJoint::MinRotation(void) {
+      CLog oLog("3d","CJoint::MinRotation",LL_FUNCTION);
+      return m_oMinRotation;
+   }
+
+   const CEulerRotation& CJoint::MaxRotation(void) const {
+      CLog oLog("3d","CJoint::MaxRotation (const)",LL_FUNCTION);
+      return m_oMaxRotation;
+   }
+
+   CEulerRotation& CJoint::MaxRotation(void) {
+      CLog oLog("3d","CJoint::MaxRotation",LL_FUNCTION);
+      return m_oMaxRotation;
+   }
+
+   const CEulerRotation& CJoint::Damping(void) const {
+      CLog oLog("3d","CJoint::Damping (const)",LL_FUNCTION);
+      return m_oDamping;
+   }
+
+   CEulerRotation& CJoint::Damping(void) {
+      CLog oLog("3d","CJoint::Damping",LL_FUNCTION);
+      return m_oDamping;
+   }
+      
+   const CJoint::JointPtr CJoint::Parent(void) const {
+      CLog oLog("3d","CJoint::Parent",LL_FUNCTION);
+      return m_pParent;
+   }
+
+   int CJoint::NumChildren(void) const {
+      CLog oLog("3d","CJoint::NumChildren",LL_FUNCTION);
+      return m_oChildren.size();
+   }
+
+   const CJoint::JointPtr CJoint::Child(int iChild) const {
+      CLog oLog("3d","CJoint::Child",LL_FUNCTION);
+      return m_oChildren[iChild];
    }
 
    const CAxisRotation& CJoint::Rotate(const CAxisRotation& oRot, bool bLimit, bool bDamp) {
+      CLog oLog("3d","CJoint::Rotate",LL_FUNCTION);
       // Devolve to Euler rotation
       CEulerRotation::TEulerType tType;
       tType.m_eID = CEulerRotation::XYZS;
-      CHomTransform htTemp(oRot);
-      CEulerRotation rotEulerRotation(htTemp, tType);
+      CHomTransform oTemp(oRot);
+      CEulerRotation oEulerRotation(oTemp, tType);
       // Damp if enabled
-      if (bDamp) rotEulerRotation *= m_vecDamping;
+      if (bDamp) oEulerRotation *= m_oDamping;
       // Convert back to axis/angle
-      CAxisRotation rotDampedRotation(rotEulerRotation);
+      CAxisRotation oDampedRotation(oEulerRotation);
       // Add to current rotation
-      rotDampedRotation.MergeInside(m_oRotation);
+      oDampedRotation.MergeInside(m_oRotation);
       // Set and limit using RotateAbs with damping turned off.
-      return RotateAbs(rotDampedRotation,true,false);
+      return RotateAbs(oDampedRotation,true,false);
    }
 
    const CAxisRotation& CJoint::RotateAbs(const CAxisRotation& oRot, bool bLimit, bool bDamp) {
+      CLog oLog("3d","CJoint::RotateAbs",LL_FUNCTION);
       if (bLimit) {
          // Devolve to Euler rotation
          CEulerRotation::TEulerType tType;
          tType.m_eID = CEulerRotation::XYZS;
-         CHomTransform htTemp(oRot);
-         CEulerRotation rotEulerRotation(htTemp, tType);
+         CHomTransform oTemp(oRot);
+         CEulerRotation oEulerRotation(oTemp, tType);
          // Damp if enabled
-         if (bDamp) rotEulerRotation *= m_vecDamping;
+         if (bDamp) oEulerRotation *= m_oDamping;
          // Limit
-         rotEulerRotation.Limit(m_vecMaxRotation,m_vecMinRotation);
+         oEulerRotation.Limit(m_oMaxRotation,m_oMinRotation);
          // Convert back to axis/angle
-         CAxisRotation rotLimitedRotation(rotEulerRotation);
+         CAxisRotation oLimitedRotation(oEulerRotation);
          // Store
-         m_oRotation = rotLimitedRotation;
+         m_oRotation = oLimitedRotation;
       }
       else {
          m_oRotation = oRot;
