@@ -55,6 +55,9 @@ BEGIN_MESSAGE_MAP(CPeekDialog, CDialog)
 	ON_BN_CLICKED(IDC_UPDATE_BUTTON, OnUpdateButton)
 	ON_BN_CLICKED(IDC_COPY_BUTTON, OnCopyButton)
 	ON_NOTIFY_EX( TTN_NEEDTEXT, 0, OnToolTipNotify )
+	ON_EN_KILLFOCUS(IDC_LOOK_BOX, OnKillfocusLookBox)
+	ON_EN_KILLFOCUS(IDC_POS_BOX, OnKillfocusPosBox)
+	ON_EN_KILLFOCUS(IDC_UP_BOX, OnKillfocusUpBox)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
@@ -140,9 +143,9 @@ BOOL CPeekDialog::OnInitDialog() {
    m_cUpBox.SubclassDlgItem(IDC_UP_BOX,this);
 
    // Setup edit boxes
-   m_cPosBox.setNumEntries(3);
-   m_cLookBox.setNumEntries(3);
-   m_cUpBox.setNumEntries(3);
+   m_cPosBox.SetOptions(3);
+   m_cLookBox.SetOptions(3);
+   m_cUpBox.SetOptions(3);
 
    // Set edit box fonts
 	m_fntCourier = new CFont;
@@ -295,4 +298,28 @@ void CPeekDialog::ResetData()
 	m_strUpVector = "0 1 0";
 	m_strResult = "0 1 0 0";
 	FormatOutput(m_strOutput);
+}
+
+void CPeekDialog::OnKillfocusLookBox() 
+{
+	UpdateData(true);	
+	RecalculateOrientation(m_strResult);
+	FormatOutput(m_strOutput);
+	UpdateData(false);
+}
+
+void CPeekDialog::OnKillfocusPosBox() 
+{
+	UpdateData(true);	
+	RecalculateOrientation(m_strResult);
+	FormatOutput(m_strOutput);
+	UpdateData(false);
+}
+
+void CPeekDialog::OnKillfocusUpBox() 
+{
+	UpdateData(true);	
+	RecalculateOrientation(m_strResult);
+	FormatOutput(m_strOutput);
+	UpdateData(false);
 }
