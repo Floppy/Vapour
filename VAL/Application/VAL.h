@@ -7,7 +7,7 @@
 // VAL.h - 03/07/2000 - Warren Moore
 //	VAL management object for OS independent functions
 //
-// $Id: VAL.h,v 1.8 2000/08/22 11:28:13 waz Exp $
+// $Id: VAL.h,v 1.9 2000/11/26 17:09:34 waz Exp $
 //
 
 #ifndef _VAL_
@@ -17,8 +17,19 @@
 
 //#===--- Macros
 
+// Only use these macros when building VAL (for use with non-MFC projects)
+#ifdef VAL_BUILD
 #define NEWBEGIN	try { 
 #define NEWEND(x)	} catch (CMemoryException *pException) { TRACE("Out of memory : %s\n", x); pException->Delete(); } 
+#else
+#define NEWBEGIN
+#define NEWEND(x)
+#endif
+
+// Define ASSERT if it doesn't already
+#ifndef ASSERT
+#define ASSERT(X)
+#endif
 
 //#===--- Defines
 
