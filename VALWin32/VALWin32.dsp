@@ -64,7 +64,7 @@ LIB32=link.exe -lib
 # PROP Intermediate_Dir "Debug"
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /MDd /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_AFXDLL" /Yu"stdafx.h" /FD /GZ /c
-# ADD CPP /nologo /MDd /W3 /Gm /GX /ZI /Od /I "Application" /I "..\VAL\Application" /I "..\VAL\Avatar" /I "..\VAL\AvatarFiles" /I "..\VAL\DataTypes" /I "..\VAL\Image" /I "..\VAL\Wrapper" /I "..\VAL\ImageFiles" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_LIB" /D "_AFXDLL" /D "_MBCS" /D "VAL_BUILD" /Yu"stdafx.h" /FD /GZ /c
+# ADD CPP /nologo /MDd /W3 /Gm /GX /ZI /Od /I "Application" /I "Render" /I "..\VAL\Application" /I "..\VAL\Avatar" /I "..\VAL\AvatarFiles" /I "..\VAL\DataTypes" /I "..\VAL\Image" /I "..\VAL\Wrapper" /I "..\VAL\ImageFiles" /I "..\VAL\Render" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_LIB" /D "_AFXDLL" /D "_MBCS" /D "VAL_BUILD" /Yu"stdafx.h" /FD /GZ /c
 # ADD BASE RSC /l 0x809 /d "_DEBUG" /d "_AFXDLL"
 # ADD RSC /l 0x809 /d "_DEBUG" /d "_AFXDLL"
 BSC32=bscmake.exe
@@ -86,6 +86,14 @@ LIB32=link.exe -lib
 # Begin Source File
 
 SOURCE=.\Application\FolderDialog.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\Render\RCOpenGLBufferWin32.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\Render\RCOpenGLWin32.cpp
 # End Source File
 # Begin Source File
 
@@ -111,6 +119,14 @@ SOURCE=.\Application\VALWin32.cpp
 # Begin Source File
 
 SOURCE=.\Application\FolderDialog.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\Render\RCOpenGLBufferWin32.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\Render\RCOpenGLWin32.h
 # End Source File
 # Begin Source File
 
