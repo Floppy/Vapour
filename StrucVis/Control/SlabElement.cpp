@@ -6,7 +6,7 @@
 // SlabElement.cpp
 // 19/03/2002 - James Smith
 //
-// $Id: SlabElement.cpp,v 1.13 2002/03/22 11:09:57 vap-james Exp $
+// $Id: SlabElement.cpp,v 1.14 2002/03/22 12:16:16 vap-james Exp $
 
 #include "stdafx.h"
 #include "SlabElement.h"
@@ -113,7 +113,7 @@ bool CSlabElement::Display(void) const {
       if (pField==NULL) return false;
       // Set values
       for (i=0; i<9 && bOK; i++) {
-         //if (bOK && !pField->SetMFColor(i, pfColours[(i*3)], pfColours[(i*3)+1], pfColours[(i*3)+2]))
+         //if (bOK && !pField->AddMFColor(pfColours[(i*3)], pfColours[(i*3)+1], pfColours[(i*3)+2]))
             //bOK = false;
       }      
       // Send event
@@ -128,7 +128,7 @@ bool CSlabElement::Display(void) const {
       if (pField == NULL) return false;
       // Set values
       for (i=0; i<9 && bOK; i++) {
-         //if (bOK && !pField->SetMFInt32(i, m_pcCracks[i])
+         //if (bOK && !pField->AddMFInt32(m_pcCracks[i])
             //bOK = false;
       }      
       // Send event

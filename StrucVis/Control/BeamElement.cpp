@@ -6,7 +6,7 @@
 // BeamElement.cpp
 // 19/03/2002 - James Smith
 //
-// $Id: BeamElement.cpp,v 1.12 2002/03/21 23:35:31 vap-james Exp $
+// $Id: BeamElement.cpp,v 1.13 2002/03/22 12:16:16 vap-james Exp $
 
 #include "stdafx.h"
 #include "BeamElement.h"
@@ -114,8 +114,8 @@ bool CBeamElement::Display(void) const {
       if (pField==NULL) return false;
       // Set values
       for (i=0; i<2 && bOK; i++) {
-         if (bOK && !pField->SetMFColor(1, pfColours[(i*3)], pfColours[(i*3)+1], pfColours[(i*3)+2]))
-            bOK = false;
+         //if (bOK && !pField->AddMFColor(pfColours[(i*3)], pfColours[(i*3)+1], pfColours[(i*3)+2]))
+            //bOK = false;
       }      
       // Send event
       if (bOK && !m_poNodePtr->AssignEventIn("set_colours",*pField))
