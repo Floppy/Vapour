@@ -1,13 +1,13 @@
-//=======---
-// Avanew
-//-------
-// Avatar editor and exporter
+//====---
+// VAL
+//----
+// Vapour Technology All-Purpose Library
 // Copyright 2000 Vapour Technology Ltd.
 //
 // AvatarFileSims.cpp - 16/2/2000 - James Smith
 //	Sims export filter implementation
 //
-// $Id: AvatarFileSims.cpp,v 1.1 2000/06/16 21:59:04 waz Exp $
+// $Id: AvatarFileSims.cpp,v 1.2 2000/07/10 09:13:20 waz Exp $
 //
 
 

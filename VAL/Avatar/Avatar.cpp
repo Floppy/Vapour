@@ -1,13 +1,13 @@
-//=======---
-// Avanew
-//-------
-// Avatar editor and exporter
+//====---
+// VAL
+//----
+// Vapour Technology All-Purpose Library
 // Copyright 2000 Vapour Technology Ltd.
 //
 // Avatar.cpp - 17/06/2000 - James Smith
 //	Avatar class implementation
 //
-// $Id: Avatar.cpp,v 1.2 2000/06/17 10:42:09 waz Exp $
+// $Id: Avatar.cpp,v 1.3 2000/07/10 09:12:31 waz Exp $
 //
 
 #include "stdafx.h"

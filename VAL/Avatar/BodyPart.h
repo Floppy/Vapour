@@ -1,13 +1,13 @@
-//=======---
-// Avanew
-//-------
-// Avatar editor and exporter
+//====---
+// VAL
+//----
+// Vapour Technology All-Purpose Library
 // Copyright 2000 Vapour Technology Ltd.
 //
 // BodyPart.h - 17/06/2000 - James Smith
 //	Body Part information structures and types
 //
-// $Id: BodyPart.h,v 1.2 2000/06/17 10:42:10 waz Exp $
+// $Id: BodyPart.h,v 1.3 2000/07/10 09:15:08 waz Exp $
 //
 
 #ifndef _VAL_BODYPART_

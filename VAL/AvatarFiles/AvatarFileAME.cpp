@@ -1,13 +1,13 @@
-//=======---
-// Avanew
-//-------
-// Avatar editor and exporter
+//====---
+// VAL
+//----
+// Vapour Technology All-Purpose Library
 // Copyright 2000 Vapour Technology Ltd.
 //
 // AvatarFileAME.cpp - 17/06/2000 - James Smith
 //	AME import filter implementation
 //
-// $Id: AvatarFileAME.cpp,v 1.2 2000/06/17 10:42:08 waz Exp $
+// $Id: AvatarFileAME.cpp,v 1.3 2000/07/10 09:13:00 waz Exp $
 //
 
 #include "stdafx.h"
