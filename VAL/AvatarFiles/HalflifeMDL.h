@@ -7,7 +7,7 @@
 // HalflifeMDL.h - 16/02/2000 - James Smith
 //	Structures and definitions for halflife MDL export
 //
-// $Id: HalflifeMDL.h,v 1.2 2000/06/17 10:42:07 waz Exp $
+// $Id: HalflifeMDL.h,v 1.3 2000/07/11 17:30:21 waz Exp $
 //
 
 #ifndef _VAL_HALFLIFEMDL_
@@ -19,7 +19,7 @@
 #define HLMDLVERSION      0xA0
 #define HLMDLHEADERLENGTH sizeof(HlMDLHeader)
 
-#define SIZEOF_VECTOR   0xC
+#define HLSIZEOFVECTOR   0xC
 
 struct HlMDLHeader {
    
