@@ -1,9 +1,13 @@
+//====---
+// VAL
+//----
+// Vapour Technology All-Purpose Library
 // Copyright 2000 Vapour Technology Ltd.
 //
 // RenderObject.h - 28/02/2000 - Warren Moore
 //	Base render object header
 //
-// $Id: RenderObject.h,v 1.1 2000/07/29 13:14:26 waz Exp $
+// $Id: RenderObject.h,v 1.2 2000/07/30 14:57:55 waz Exp $
 //
 
 #ifndef _VAL_RENDEROBJECT_
@@ -14,17 +18,23 @@
 //#===--- Includes
 #include "VAL.h"
 #include "RenderContext.h"
-#include "gl\gl.h"
 
 //#===--- Defines
 
+// Render object modes
+#define ROM_DEFAULT					0
+#define ROM_WIRE						1
+#define ROM_FLAT						2
+#define ROM_TEXTURE					3
+#define ROM_SELECTION				4
+#define ROM_SUBSELECTION		5
 
 //////////////////
 // CRenderObject
 
 class CRenderObject {
 public:
-	CRenderObject(CRenderContext *pContext);
+	CRenderObject(CRenderContext *poContext);
 	virtual ~CRenderObject();
 
 	//#===--- Initialisation/Shutdown
@@ -33,27 +43,29 @@ public:
 
 	//#===--- Settings
 	// Set an object from another
-	void Set(CRenderObject *pObject);
+	void Set(CRenderObject *poObject);
 
 	// Modify the position on the object
 	void SetPosition(AXIS eAxis, float fPos);
 	void SetPosition(float fX, float fY, float fZ);
-	void SetPosition(CRenderObject *pObject);
+	void SetPosition(CRenderObject *poObject);
 	void TranslateBy(AXIS eAxis, float fPos);
 	void GetPosition(float &fX, float &fY, float &fZ);
 
 	// Modify rotation of the object
 	void SetRotation(AXIS eAxis, float fAngle);
 	void SetRotation(float fX, float fY, float fZ);
-	void SetRotation(CRenderObject *pObject);
+	void SetRotation(CRenderObject *poObject);
 	void RotateBy(AXIS eAxis, float fAngle);
 	void GetRotation(float &fX, float &fY, float &fZ);
 
-	// Set a transition value for the object
-	void SetTransition(float fTransition);
+	// Set a transition value for the object (between 0 and 1)
+	void Transition(float fTransition);
 
 	//#===--- Selection
+	// Force a selection value
 	virtual void Selection(unsigned int uSelection);
+	// Return the current selection value
 	virtual unsigned int Selection() const;
 
 	//#===--- Render mode control
@@ -69,10 +81,10 @@ protected:
 
 //#===--- Internal Data
 protected:
-	CRenderContext *m_pContext;										// Render context
+	CRenderContext *m_poContext;									// Render context
 	float m_fXPos, m_fYPos, m_fZPos;							// Object position
 	float m_fXAngle, m_fYAngle, m_fZAngle;				// Object rotation
-	unsigned int m_eMode;													// Render mode
+	unsigned int m_uMode;													// Render mode
 	float m_fTransition;													// Transition value
 	unsigned int m_uSelection;										// Selection value
 };
@@ -99,8 +111,8 @@ inline unsigned int CRenderObject::Selection() const {
 	return m_uSelection;
 } // Selection (Get)
 
-inline RENDERMODE CRenderObject::RenderMode() const {
-	return m_eRenderMode;
+inline unsigned int CRenderObject::RenderMode() const {
+	return m_uMode;
 } // RenderMode (Get)
 
 #endif // _VAL_RENDEROBJECT_

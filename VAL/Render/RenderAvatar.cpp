@@ -7,7 +7,7 @@
 // RenderAvatar.cpp - 29/02/2000 - Warren Moore
 //	Avatar render object implementation
 //
-// $Id: RenderAvatar.cpp,v 1.1 2000/07/29 14:04:35 waz Exp $
+// $Id: RenderAvatar.cpp,v 1.2 2000/07/30 14:57:54 waz Exp $
 //
 
 #include "StdAfx.h"
@@ -24,20 +24,18 @@ static char THIS_FILE[]=__FILE__;
 //////////////////
 // CRenderAvatar
 
-CRenderAvatar::CRenderAvatar(CScene *pScene) : CGLObject(pScene) {
+CRenderAvatar::CRenderAvatar(CRenderContext *poContext) : CRenderObject(poContext) {
 	m_pAvatar = NULL;
 
 	m_bNewAvatar = false;
 	m_bGeneric = true;
 
-	m_eRenderMode = ROM_TEXTURE;
+	m_uMode = ROM_TEXTURE;
 
 	m_iNumTextures = 0;
 } // Constructor
 
 CRenderAvatar::~CRenderAvatar() {
-	if (m_pAvatar)
-		delete m_pAvatar;
 } // Destructor
 
 void CRenderAvatar::SetAvatar(CAvatar *pAvatar, bool bGeneric) {
@@ -59,52 +57,15 @@ CAvatarPose CRenderAvatar::ExportPose() {
 	return m_pAvatar->ExportPose();
 } // ExportPose
 
-/*
-void CRenderAvatar::MoveBy(int iX, int iY) {
-	ASSERT(m_uSelection > 0);
-	// Get the line of the mouse position through the viewport
-	GLint piViewport[4];
-	GLdouble pdMVMatrix[16], pdPrMatrix[16];
-	GLdouble pdCoord[3];
-	glGetIntegerv(GL_VIEWPORT, piViewport);
-	glGetDoublev(GL_MODELVIEW_MATRIX, pdMVMatrix);
-	glGetDoublev(GL_PROJECTION_MATRIX, pdPrMatrix);
-	iY = piViewport[3] - (GLint)iY - 1;
-	// Create the near plane coord
-	gluUnProject((GLdouble)iX, (GLdouble)iY, 1.0, pdMVMatrix, pdPrMatrix, piViewport,
-								 &pdCoord[0], &pdCoord[1], &pdCoord[2]);
-	CVector3D oVNear(pdCoord[0], pdCoord[1], pdCoord[2]);
-	TRACE("Near plane  : %7.3f, %7.3f, %7.3f\n",
-		pdCoord[0], pdCoord[1], pdCoord[2]);
-	// Create the far plane coord
-	gluUnProject((GLdouble)iX, (GLdouble)iY, 0.0, pdMVMatrix, pdPrMatrix, piViewport,
-								 &pdCoord[0], &pdCoord[1], &pdCoord[2]);
-	CVector3D oVFar(pdCoord[0], pdCoord[1], pdCoord[2]);
-	TRACE("Far plane   : %7.3f, %7.3f, %7.3f\n",
-		pdCoord[0], pdCoord[1], pdCoord[2]);
-// Get the child of the selected body part
-	const SBodyPart *pPart = m_pAvatar->BodyParts();
-	const SBodyPart &oChild = pPart[pPart[m_uSelection - 1].m_bpChildren[0]];
-	const SPoint3D &oCoord = oChild.m_pntCurrentCentre;
-	CVector3D oVPos(oCoord.m_dComponents[0], oCoord.m_dComponents[1], oCoord.m_dComponents[2]);
-	TRACE("Current pos : %7.3f, %7.3f, %7.3f\n",
-		oCoord.m_dComponents[0], oCoord.m_dComponents[1], oCoord.m_dComponents[2]);
-	oVPos = oVPos - oVNear;
-	CVector3D oVTarget = oVFar - oVNear;
-	double dDot = oVTarget.Dot(oVPos);
-	double dLength = oVTarget.Length();
-	oVTarget = oVTarget.Normalise() * dDot / dLength;
-	oVTarget = oVTarget + oVNear;
-//	TRACE("Target pos  : %s\n", oVTarget.ToString(3));
-// Move the body part
-	m_pAvatar->IKSetPose(pPart[m_uSelection - 1].m_bpChildren[0], oVTarget, sacroiliac);
-} // MoveBy
-*/
-
 void CRenderAvatar::Init() {
+	// Check the context is active
+	if (!m_poContext->Active())
+		return;
 	// If an avatar is present and is not generic, load it's textures into memory
 	if (m_pAvatar && (!m_bGeneric))
 		CreateTextures();
+	// Avatar sorted
+	m_bNewAvatar = false;
 } // Init
 
 void CRenderAvatar::Exit() {
@@ -116,12 +77,15 @@ void CRenderAvatar::Exit() {
 void CRenderAvatar::RenderMode(unsigned int uMode) {
 	m_uMode = uMode;
 	// If the avatar is generic and texture mode is set, set to flat mode
-	if (m_bGeneric && (m_uModeMode == ROM_TEXTURE)) {
+	if (m_bGeneric && (m_uMode == ROM_TEXTURE)) {
 		m_uMode = ROM_FLAT;
 	}
 } // RenderMode (Set)
 
 void CRenderAvatar::Execute() {
+	// Move to the object position
+	glTranslatef(m_fXPos, m_fYPos, m_fZPos);
+
 	if (m_pAvatar) {
 		// If new avatar set, update the textures
 		if (m_bNewAvatar) {
@@ -152,9 +116,9 @@ void CRenderAvatar::RenderFlat() {
 	// Set the shade model
 	glShadeModel(GL_SMOOTH);
 	// Create the material params
-	GLfloat fAmbient[] = { SC_AMBIENT, SC_AMBIENT, SC_AMBIENT, 1.0F };
-	GLfloat fDiffuseWhite[] = { SC_DIFFUSE, SC_DIFFUSE, SC_DIFFUSE, 1.0F };
-	GLfloat fDiffuseBlue[] = { SC_DIFFUSE_SEL, SC_DIFFUSE_SEL, SC_DIFFUSE, 1.0F };
+	GLfloat fAmbient[] = { ROAV_AMBIENT, ROAV_AMBIENT, ROAV_AMBIENT, 1.0F };
+	GLfloat fDiffuseWhite[] = { ROAV_DIFFUSE, ROAV_DIFFUSE, ROAV_DIFFUSE, 1.0F };
+	GLfloat fDiffuseBlue[] = { ROAV_DIFFUSE_SEL, ROAV_DIFFUSE_SEL, ROAV_DIFFUSE, 1.0F };
 	// Enable backface culling
 	glEnable(GL_CULL_FACE);
 	// Enable lighting
@@ -219,9 +183,9 @@ void CRenderAvatar::RenderTexture() {
 	// Set the shade model
 	glShadeModel(GL_SMOOTH);
 	// Create the material params
-	GLfloat fAmbient[] = { SC_AMBIENT, SC_AMBIENT, SC_AMBIENT, 1.0F };
-	GLfloat fDiffuseWhite[] = { SC_DIFFUSE, SC_DIFFUSE, SC_DIFFUSE, 1.0F };
-	GLfloat fDiffuseBlue[] = { SC_DIFFUSE_SEL, SC_DIFFUSE_SEL, SC_DIFFUSE, 1.0F };
+	GLfloat fAmbient[] = { ROAV_AMBIENT, ROAV_AMBIENT, ROAV_AMBIENT, 1.0F };
+	GLfloat fDiffuseWhite[] = { ROAV_DIFFUSE, ROAV_DIFFUSE, ROAV_DIFFUSE, 1.0F };
+	GLfloat fDiffuseBlue[] = { ROAV_DIFFUSE_SEL, ROAV_DIFFUSE_SEL, ROAV_DIFFUSE, 1.0F };
 	// Enable backface culling
 	glEnable(GL_CULL_FACE);
 	// Enable lighting
@@ -260,7 +224,7 @@ void CRenderAvatar::RenderTexture() {
 			iTextureNum = m_pAvatar->m_pFaces[iCurrentFace].m_iTextureNumber;
 			ASSERT(m_iTexture[iTextureNum] != -1);
 			// Set the texture
-			m_pScene->BindTexture(m_iTexture[iTextureNum]);
+			m_poContext->UseTexture(m_iTexture[iTextureNum]);
 			sTexCoords = m_pAvatar->m_pFaces[iCurrentFace].m_sTexCoords;
 			// Draw the triangle
 			glBegin(GL_TRIANGLES);
@@ -347,7 +311,7 @@ void CRenderAvatar::CreateTextures() {
 		// For each texture in the model
 		for (int i = 0; i < iNumTextures; i++) {
 			CImage *pImg = m_pAvatar->Texture(i);
-			m_iTexture[i] = m_pContext->CreateTexture(*pImg);
+			m_iTexture[i] = m_poContext->ImportTexture(*pImg);
 			if (m_iTexture[i] >= 0)
 				m_iNumTextures++;
 		}
@@ -357,7 +321,7 @@ void CRenderAvatar::CreateTextures() {
 
 void CRenderAvatar::DeleteTextures() {
 	for (int i = 0; i < m_iNumTextures; i++) {
-		m_pContext->DeleteTexture(m_iTexture[i]);
+		m_poContext->DeleteTexture(m_iTexture[i]);
 		m_iTexture[i] = -1;
 	}
 	m_iNumTextures = 0;

@@ -1,9 +1,13 @@
+//====---
+// VAL
+//----
+// Vapour Technology All-Purpose Library
 // Copyright 2000 Vapour Technology Ltd.
 //
 // RenderObject.cpp - 28/02/2000 - Warren Moore
 //	Base render object implementation
 //
-// $Id: RenderObject.cpp,v 1.1 2000/07/29 13:14:26 waz Exp $
+// $Id: RenderObject.cpp,v 1.2 2000/07/30 14:57:57 waz Exp $
 //
 
 #include "StdAfx.h"
@@ -21,12 +25,12 @@ static char THIS_FILE[]=__FILE__;
 //////////////////
 // CRenderObject
 
-CRenderObject::CRenderObject(CScene *pScene) {
-	ASSERT(pScene);
-	m_pScene = pScene;
+CRenderObject::CRenderObject(CRenderContext *poContext) {
+	ASSERT(poContext);
+	m_poContext = poContext;
 	m_fXPos = m_fYPos = m_fZPos = 0.0F;
 	m_fXAngle = m_fYAngle = m_fZAngle = 0.0F;
-	m_eRenderMode = RM_DEFAULT;
+	m_uMode = ROM_DEFAULT;
 	m_fTransition = 1.0F;
 	m_uSelection = 0;
 } // Constructor
@@ -36,56 +40,60 @@ CRenderObject::~CRenderObject() {
 
 //#===--- Settings
 
-void CRenderObject::Set(CRenderObject *pObject) {
-	ASSERT(pObject);
-// Copy the position
-	m_fXPos = pObject->m_fXPos;
-	m_fYPos = pObject->m_fYPos;
-	m_fZPos = pObject->m_fZPos;
-// Copy the rotation
-	m_fXAngle = pObject->m_fXAngle;
-	m_fYAngle = pObject->m_fYAngle;
-	m_fZAngle = pObject->m_fZAngle;
+void CRenderObject::Set(CRenderObject *poObject) {
+	ASSERT(poObject);
+	if (poObject) {
+		// Copy the position
+		m_fXPos = poObject->m_fXPos;
+		m_fYPos = poObject->m_fYPos;
+		m_fZPos = poObject->m_fZPos;
+		// Copy the rotation
+		m_fXAngle = poObject->m_fXAngle;
+		m_fYAngle = poObject->m_fYAngle;
+		m_fZAngle = poObject->m_fZAngle;
+	}
 } // Set
 
 void CRenderObject::SetPosition(AXIS eAxis, float fPos) {
 	switch (eAxis) {
 		case X:
-			m_fXPos = (GLfloat)fPos;
+			m_fXPos = fPos;
 			break;
 		case Y:
-			m_fYPos = (GLfloat)fPos;
+			m_fYPos = fPos;
 			break;
 		case Z:
-			m_fZPos = (GLfloat)fPos;
+			m_fZPos = fPos;
 			break;
 	}
 } // SetPosition
 
 void CRenderObject::SetPosition(float fX, float fY, float fZ) {
-	m_fXPos = (GLfloat)fX;
-	m_fYPos = (GLfloat)fY;
-	m_fZPos = (GLfloat)fZ;
+	m_fXPos = fX;
+	m_fYPos = fY;
+	m_fZPos = fZ;
 } // SetPosition
 
-void CRenderObject::SetPosition(CRenderObject *pObject) {
-	ASSERT(pObject);
-// Copy the position
-	m_fXPos = pObject->m_fXPos;
-	m_fYPos = pObject->m_fYPos;
-	m_fZPos = pObject->m_fZPos;
+void CRenderObject::SetPosition(CRenderObject *poObject) {
+	ASSERT(poObject);
+	if (poObject) {
+		// Copy the position
+		m_fXPos = poObject->m_fXPos;
+		m_fYPos = poObject->m_fYPos;
+		m_fZPos = poObject->m_fZPos;
+	}
 } // SetRotation
 
 void CRenderObject::TranslateBy(AXIS eAxis, float fPos) {
 	switch (eAxis) {
 		case X:
-			m_fXAngle += (GLfloat)fPos;
+			m_fXAngle += fPos;
 			break;
 		case Y:
-			m_fYAngle += (GLfloat)fPos;
+			m_fYAngle += fPos;
 			break;
 		case Z:
-			m_fZAngle += (GLfloat)fPos;
+			m_fZAngle += fPos;
 			break;
 	}
 } // RotateBy
@@ -93,52 +101,54 @@ void CRenderObject::TranslateBy(AXIS eAxis, float fPos) {
 void CRenderObject::SetRotation(AXIS eAxis, float fAngle) {
 	switch (eAxis) {
 		case X:
-			m_fXAngle = (GLfloat)(fmod(fAngle, 360.0F));
+			m_fXAngle = fmod(fAngle, 360.0F);
 			break;
 		case Y:
-			m_fYAngle = (GLfloat)(fmod(fAngle, 360.0F));
+			m_fYAngle = fmod(fAngle, 360.0F);
 			break;
 		case Z:
-			m_fZAngle = (GLfloat)(fmod(fAngle, 360.0F));
+			m_fZAngle = fmod(fAngle, 360.0F);
 			break;
 	}
 } // SetRotation
 
 void CRenderObject::SetRotation(float fX, float fY, float fZ) {
-	m_fXAngle = (GLfloat)(fmod(fX, 360.0F));
-	m_fYAngle = (GLfloat)(fmod(fY, 360.0F));
-	m_fZAngle = (GLfloat)(fmod(fZ, 360.0F));
+	m_fXAngle = fmod(fX, 360.0F);
+	m_fYAngle = fmod(fY, 360.0F);
+	m_fZAngle = fmod(fZ, 360.0F);
 } // SetRotation
 
-void CRenderObject::SetRotation(CRenderObject *pObject) {
-	ASSERT(pObject);
-// Copy the rotation
-	m_fXAngle = pObject->m_fXAngle;
-	m_fYAngle = pObject->m_fYAngle;
-	m_fZAngle = pObject->m_fZAngle;
+void CRenderObject::SetRotation(CRenderObject *poObject) {
+	ASSERT(poObject);
+	if (poObject) {
+		// Copy the rotation
+		m_fXAngle = poObject->m_fXAngle;
+		m_fYAngle = poObject->m_fYAngle;
+		m_fZAngle = poObject->m_fZAngle;
+	}
 } // SetRotation
 
 void CRenderObject::RotateBy(AXIS eAxis, float fAngle) {
 	switch (eAxis) {
 		case X:
-			fAngle += (float)m_fXAngle;
-			m_fXAngle = (GLfloat)(fmod(fAngle, 360.0F));
+			fAngle += m_fXAngle;
+			m_fXAngle = fmod(fAngle, 360.0F);
 			break;
 		case Y:
-			fAngle += (float)m_fYAngle;
-			m_fYAngle = (GLfloat)(fmod(fAngle, 360.0F));
+			fAngle += m_fYAngle;
+			m_fYAngle = fmod(fAngle, 360.0F);
 			break;
 		case Z:
-			fAngle += (float)m_fZAngle;
-			m_fZAngle = (GLfloat)(fmod(fAngle, 360.0F));
+			fAngle += m_fZAngle;
+			m_fZAngle = fmod(fAngle, 360.0F);
 			break;
 	}
 } // RotateBy
 
-void CRenderObject::SetTransition(float fTransition) {
+void CRenderObject::Transition(float fTransition) {
 	m_fTransition = (fTransition < 0.0F) ? 0.0F : (fTransition > 1.0F) ? 1.0F : fTransition;
 } // SetTransition
 
-void CRenderObject::RenderMode(RENDERMODE eMode) {
-	m_eRenderMode = eMode;
+void CRenderObject::RenderMode(unsigned int uMode) {
+	m_uMode = uMode;
 } // RenderMode (Set)

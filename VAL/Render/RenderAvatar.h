@@ -7,7 +7,7 @@
 // RenderAvatar.h - 29/02/2000 - Warren Moore
 //	Avatar render object header
 //
-// $Id: RenderAvatar.h,v 1.1 2000/07/29 14:04:35 waz Exp $
+// $Id: RenderAvatar.h,v 1.2 2000/07/30 14:57:55 waz Exp $
 //
 
 #ifndef _VAL_RENDERAVATAR_
@@ -23,13 +23,18 @@
 #include "AvatarPose.h"
 
 //#===--- Defines
+#define ROAV_MAX_TEXTURES						50
+
+#define ROAV_AMBIENT								0.9F
+#define ROAV_DIFFUSE								0.9F
+#define ROAV_DIFFUSE_SEL						0.5F
 
 //////////////////
 // CRenderAvatar
 
 class CRenderAvatar : public CRenderObject {
 public:
-	CRenderAvatar(CRenderContext *pContext);
+	CRenderAvatar(CRenderContext *poContext);
 	virtual ~CRenderAvatar();
 
 	//#===--- Import/Export
@@ -71,7 +76,7 @@ protected:
 	bool m_bGeneric;											// Generic (i.e. textureless) avatar indicator
 
 	int m_iNumTextures;										// Number of textures loaded
-	int m_iTexture[SC_MAXTEXTURES];				// Texture handle table
+	int m_iTexture[ROAV_MAX_TEXTURES];		// Texture handle table
 
 //#===--- Friend classes
 
