@@ -38,7 +38,7 @@ checked out (build procedure will leave dir as found). Edit VALET_DOCROOT and
 VALET_CVSOPTIONS to suit.
 
 Hmmmm, currently Vapour/CxxDoc/class/global.stmpl set the internal doc path to 
-/internal/docs and the filesystem path to /www/vapourtech/www/internal/docs. 
+/internal/docs and the filesystem path to /usr/local/www/vapourtech/www/internal/docs. 
 If you can get your local Apache set-up to match this location (through cunning
 use of symlinks) then you're laughing. Otherwise I'll have to look into a better
 method (such as moving it into vsrcdoc_core.php).
@@ -48,4 +48,4 @@ method (such as moving it into vsrcdoc_core.php).
 Now this is all done, just run ./build_local_docs.sh in your temp directory and
 the whole thing should be built!
 
-$Id: README,v 1.1 2001/09/26 10:29:40 vap-warren Exp $
+$Id: README,v 1.2 2001/09/26 13:19:29 vap-warren Exp $
