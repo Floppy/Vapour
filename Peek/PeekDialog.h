@@ -59,6 +59,9 @@ protected:
 	afx_msg void OnUpdateButton();
 	afx_msg void OnCopyButton();
 	afx_msg BOOL OnToolTipNotify( UINT id, NMHDR * pNMHDR, LRESULT * pResult );
+	afx_msg void OnKillfocusLookBox();
+	afx_msg void OnKillfocusPosBox();
+	afx_msg void OnKillfocusUpBox();
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 };
