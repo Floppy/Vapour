@@ -7,7 +7,7 @@
 // SGAToUnrealTournament.h - 12/06/2000 - Warren Moore
 //	SGA Avatar to Unreal Tournament converter wrapper 
 //
-// $Id: SgatoUnrealTournament.h,v 1.3 2000/07/19 08:49:40 waz Exp $
+// $Id: SgatoUnrealTournament.h,v 1.4 2000/08/29 13:49:30 waz Exp $
 //
 
 #ifndef _WRAP_SGATOUNREALTOURNAMENT_
@@ -18,6 +18,14 @@
 #include "Wrapper.h"
 
 //#===--- Defines
+
+// Definitions of class options and arguments
+// Option IDs
+#define UNREAL_SEX			   5
+// Option values
+// UNREAL_SEX
+#define UNREAL_MALE		      1
+#define UNREAL_FEMALE			2
 
 //#===--- Data types
 
@@ -32,7 +40,7 @@ public:
 	~CSGAToUnrealTournament();
 
 // Set export options prior to export execution
-	VARESULT SetOption(int iOption, int iArgument);						// Integer options
+	VARESULT SetOption(int iOption, int iArgument);					// Integer options
 	VARESULT SetOption(int iOption, const char *pcString);		// String options
 	const int GetOptionInt(int iOption);
 	const char *GetOptionString(int iOption);
@@ -53,12 +61,14 @@ private:
 private:
 	char *m_pcSGAFilename;												// SGA filename storage
 	char *m_pcModelname;													// Model filename storage
-	char *m_pcPath;																// Model temp directory
+	char *m_pcPath;														// Model temp directory
 
-	bool m_bVerbose;															// Verbose output indicator
+	int m_iSex;																// Model properties
 
-	VARESULT m_eResult;														// Status storage
-	static const char *m_pcError[];								// Status/error string table
+	bool m_bVerbose;														// Verbose output indicator
+
+	VARESULT m_eResult;													// Status storage
+	static const char *m_pcError[];									// Status/error string table
 };
 
 #endif // _WRAP_SGATOUNREALTOURNAMENT_

@@ -7,7 +7,7 @@
 // SGAToUnrealTournament.cpp - 12/06/2000 - Warren Moore
 //	SGA Avatar to Unreal Tournament converter wrapper 
 //
-// $Id: SgatoUnrealTournament.cpp,v 1.5 2000/08/02 18:05:03 waz Exp $
+// $Id: SgatoUnrealTournament.cpp,v 1.6 2000/08/29 13:49:26 waz Exp $
 //
 
 #include "StdAfx.h"
@@ -24,7 +24,7 @@
 
 //#===--- Internal Defines
 
-#define VEM_GAMENAME			"Unreal Tournament"
+#define VEM_GAMENAME				"Unreal Tournament"
 #define VEM_VERSION				"1.0"
 #define VEM_WJENAME				"utdata.wje"
 #define VEM_SFXNAME				"utsfx.exe"
@@ -43,6 +43,7 @@ CSGAToUnrealTournament::CSGAToUnrealTournament() {
 	m_pcModelname = NULL;
 	m_pcPath = NULL;
 	m_bVerbose = true;
+	m_iSex = VEM_UNKNOWN;
 } // Contructor
 
 CSGAToUnrealTournament::~CSGAToUnrealTournament() {
@@ -62,6 +63,12 @@ VARESULT CSGAToUnrealTournament::SetOption(int iOption, int iArgument) {
 				m_bVerbose = iArgument == VEM_TRUE;
 			else
 				m_eResult = VA_INVALID_ARGUMENT;
+		case UNREAL_SEX:
+			if ((iArgument == UNREAL_MALE) || (iArgument == UNREAL_FEMALE))
+				m_iSex = iArgument;
+			else
+				m_eResult = VA_INVALID_ARGUMENT;
+			break;
 		default:
 			m_eResult = VA_INVALID_OPTION;
 	}
@@ -196,6 +203,11 @@ VARESULT CSGAToUnrealTournament::Export() {
 			if (m_pcPath)
 				cout << m_pcPath;
 			cout << m_pcModelname << endl;
+			cout << "Model Sex      : ";
+			switch (m_iSex) {
+				case UNREAL_MALE: cout << "Male" << endl; break;
+				case UNREAL_FEMALE: cout << "Female" << endl; break;
+			}
 			cout << "Starting model export..." << endl;
 		}
 
@@ -225,7 +237,7 @@ VARESULT CSGAToUnrealTournament::Export() {
 		// Create the exporter
 			CAvatarFileUnreal oAvatarFile;
 		// Set the options
-
+			oAvatarFile.SetOption(UNREAL_SEX, m_iSex);
 		// Save the model
 			if (oAvatarFile.Save(pcFilename, poAvatar) != F_OK)
 				m_eResult = VA_MODEL_SAVE_ERROR;
