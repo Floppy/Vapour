@@ -7,7 +7,7 @@
 // BodyPart.h - 17/06/2000 - James Smith
 //	Body Part information structures and types
 //
-// $Id: BodyPart.h,v 1.3 2000/07/10 09:15:08 waz Exp $
+// $Id: BodyPart.h,v 1.4 2000/08/21 23:07:51 waz Exp $
 //
 
 #ifndef _VAL_BODYPART_
@@ -176,8 +176,10 @@ struct SBodyPart {
 	double m_dMinY;
 	double m_dMinZ;
 
-   // The rotation required to rotate the limit coordinate system onto the global one
-	CAxisRotation m_rotLimitOrientation;
+   // The set of rotation damping factors
+	double m_dDampX;
+	double m_dDampY;
+	double m_dDampZ;
 
 	// The parent body part
 	BodyPart m_bpParent;

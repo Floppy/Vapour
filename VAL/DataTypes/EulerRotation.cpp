@@ -7,7 +7,7 @@
 // EulerRotation.cpp - 12/04/2000 - James Smith
 //	Euler rotation class implementation
 //
-// $Id: EulerRotation.cpp,v 1.1 2000/06/16 21:59:17 waz Exp $
+// $Id: EulerRotation.cpp,v 1.2 2000/08/21 23:07:50 waz Exp $
 //
 
 // Windows includes/defines
@@ -139,6 +139,13 @@ CEulerRotation::~CEulerRotation() {
 //////////////////////////////////////////////////////////////////////
 // Utility Functions
 //////////////////////////////////////////////////////////////////////
+
+void CEulerRotation::Damp(double dDampFirst, double dDampSecond, double dDampThird) {
+   m_pAngles[0] *= dDampFirst;
+   m_pAngles[1] *= dDampSecond;
+   m_pAngles[2] *= dDampThird;
+   return;
+} //Damp(double dDampFirst, double dDampSecond, double dDampThird)
 
 bool CEulerRotation::Limit(double dMaxFirst, double dMaxSecond, double dMaxThird, double dMinFirst, double dMinSecond, double dMinThird) {
 	bool bReturn = false;

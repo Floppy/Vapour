@@ -1,4 +1,4 @@
-	//====---
+//====---
 // VAL
 //----
 // Vapour Technology All-Purpose Library
@@ -7,7 +7,7 @@
 // AvatarFileAME.cpp - 17/06/2000 - James Smith
 //	AME import filter implementation
 //
-// $Id: AvatarFileAME.cpp,v 1.6 2000/08/10 22:44:20 waz Exp $
+// $Id: AvatarFileAME.cpp,v 1.7 2000/08/21 23:07:49 waz Exp $
 //
 
 #include "stdafx.h"
@@ -423,7 +423,8 @@ CAvatar* CAvatarFileAME::Load(const char* pszFilename) const {
          pNewAvatar->SetupSkeleton(r_hand_tip,r_wrist);
 			// Set joint limits
          g_poVAL->StepProgress("AMELoad") ;
-         g_poVAL->SetProgressText("AMELoad", "Setting skeleton limits");
+         g_poVAL->SetProgressText("AMELoad", "Setting skeleton parameters");
+         // Set joint limits
          pNewAvatar->SetJointLimit(root,V_PI,V_PI,V_PI,V_MINUS_PI,V_MINUS_PI,V_MINUS_PI);
          pNewAvatar->SetJointLimit(sacroiliac,V_PI,V_PI,V_PI,V_MINUS_PI,V_MINUS_PI,V_MINUS_PI);
          pNewAvatar->SetJointLimit(l_hip,0.5,0.78,0.78,-2,-0.78,-0.34);
@@ -437,7 +438,7 @@ CAvatar* CAvatarFileAME::Load(const char* pszFilename) const {
          pNewAvatar->SetJointLimit(vt8,0.2,0.2,0.2,-0.2,-0.2,-0.2);
          pNewAvatar->SetJointLimit(vt4,0.2,0.2,0.2,-0.2,-0.2,-0.2);
          pNewAvatar->SetJointLimit(vc7,0.1,0.1,0.1,0,-0.1,-0.1);
-         pNewAvatar->SetJointLimit(skullbase,1,1,1,-1,-1,-1);
+         pNewAvatar->SetJointLimit(skullbase,1.56,1.56,0.78,-0.78,-1.56,-0.78);
          pNewAvatar->SetJointLimit(l_acromioclavicular,0,0,0,0,0,0);
          pNewAvatar->SetJointLimit(l_shoulder,0.6,1.56,3,-3.14,-0.2,-0.78);
          pNewAvatar->SetJointLimit(l_elbow,0,0,0,0,-3.14,-2.35);
@@ -446,6 +447,17 @@ CAvatar* CAvatarFileAME::Load(const char* pszFilename) const {
          pNewAvatar->SetJointLimit(r_shoulder,0.6,0.2,0.78,-3.14,-1.56,-3);
          pNewAvatar->SetJointLimit(r_elbow,0,3.14,2.35,0,0,0);
          pNewAvatar->SetJointLimit(r_wrist,0.6,0,1.3,-0.2,0,-1.56);
+         // Set joint damping
+         pNewAvatar->SetJointDamping(l_hip,1.0,0.5,1.0);
+         pNewAvatar->SetJointDamping(r_hip,1.0,0.5,1.0);
+         pNewAvatar->SetJointDamping(l_ankle,1.0,0.2,1.0);
+         pNewAvatar->SetJointDamping(r_ankle,1.0,0.2,1.0);
+         pNewAvatar->SetJointDamping(vl5,1.0,1.0,0.1);
+         pNewAvatar->SetJointDamping(vt12,1.0,1.0,0.1);
+         pNewAvatar->SetJointDamping(vt8,1.0,1.0,0.1);
+         pNewAvatar->SetJointDamping(vt4,1.0,1.0,0.1);
+         pNewAvatar->SetJointDamping(vc7,1.0,1.0,0.1);
+         pNewAvatar->SetJointDamping(skullbase,1.0,1.0,0.1);
          // Unpose model
          g_poVAL->StepProgress("AMELoad") ;
          g_poVAL->SetProgressText("AMELoad", "Unposing model");
@@ -461,8 +473,8 @@ CAvatar* CAvatarFileAME::Load(const char* pszFilename) const {
          pNewAvatar->AlignDefaultCentres(r_hand_tip,CVector3D(0,-1,0));
          CAxisRotation rotLeftWrist(0,1,0,-1.57);
          CAxisRotation rotRightWrist(0,1,0,1.57);
-         pNewAvatar->SetJointAngle(l_wrist,pBodyParts[l_wrist].m_rotCurrentRotation.MergeOutside(rotLeftWrist));
-         pNewAvatar->SetJointAngle(r_wrist,pBodyParts[r_wrist].m_rotCurrentRotation.MergeOutside(rotRightWrist));
+         pNewAvatar->SetJointAngle(l_wrist,pBodyParts[l_wrist].m_rotCurrentRotation.MergeOutside(rotLeftWrist),false);
+         pNewAvatar->SetJointAngle(r_wrist,pBodyParts[r_wrist].m_rotCurrentRotation.MergeOutside(rotRightWrist),false);
          pNewAvatar->CalculateDefaultVertices();
 			// Remove any x-axis translation on the model
          g_poVAL->StepProgress("AMELoad") ;
@@ -837,26 +849,26 @@ CAvatar* CAvatarFileAME::LoadSections(const char* pszFilename, int bsSections) c
 			// Set joint limits
          pNewAvatar->SetJointLimit(root,V_PI,V_PI,V_PI,V_MINUS_PI,V_MINUS_PI,V_MINUS_PI);
          pNewAvatar->SetJointLimit(sacroiliac,V_PI,V_PI,V_PI,V_MINUS_PI,V_MINUS_PI,V_MINUS_PI);
-         pNewAvatar->SetJointLimit(l_hip,0.5,0.78,0.78,-2,-0.78,-0.34);
-         pNewAvatar->SetJointLimit(l_knee,2.34,0,0,0,0,0);
-         pNewAvatar->SetJointLimit(l_ankle,1.56,0.2,0.2,-0.2,-0.2,-0.2);
-         pNewAvatar->SetJointLimit(r_hip,0.5,0.78,0.34,-2,-0.78,-0.78);
-         pNewAvatar->SetJointLimit(r_knee,2.34,0,0,0,0,0);
-         pNewAvatar->SetJointLimit(r_ankle,1.56,0.2,0.2,-0.2,-0.2,-0.2);
-         pNewAvatar->SetJointLimit(vl5,0.2,0.2,0.2,-0.2,-0.2,-0.2);
-         pNewAvatar->SetJointLimit(vt12,0.2,0.2,0.2,-0.2,-0.2,-0.2);
-         pNewAvatar->SetJointLimit(vt8,0.2,0.2,0.2,-0.2,-0.2,-0.2);
-         pNewAvatar->SetJointLimit(vt4,0.2,0.2,0.2,-0.2,-0.2,-0.2);
-         pNewAvatar->SetJointLimit(vc7,0.1,0.1,0.1,0,-0.1,-0.1);
-         pNewAvatar->SetJointLimit(skullbase,1,1,1,-1,-1,-1);
+         pNewAvatar->SetJointLimit(l_hip,V_PI,V_PI,V_PI,V_MINUS_PI,V_MINUS_PI,V_MINUS_PI);
+         pNewAvatar->SetJointLimit(l_knee,V_PI,V_PI,V_PI,V_MINUS_PI,V_MINUS_PI,V_MINUS_PI);
+         pNewAvatar->SetJointLimit(l_ankle,V_PI,V_PI,V_PI,V_MINUS_PI,V_MINUS_PI,V_MINUS_PI);
+         pNewAvatar->SetJointLimit(r_hip,V_PI,V_PI,V_PI,V_MINUS_PI,V_MINUS_PI,V_MINUS_PI);
+         pNewAvatar->SetJointLimit(r_knee,V_PI,V_PI,V_PI,V_MINUS_PI,V_MINUS_PI,V_MINUS_PI);
+         pNewAvatar->SetJointLimit(r_ankle,V_PI,V_PI,V_PI,V_MINUS_PI,V_MINUS_PI,V_MINUS_PI);
+         pNewAvatar->SetJointLimit(vl5,V_PI,V_PI,V_PI,V_MINUS_PI,V_MINUS_PI,V_MINUS_PI);
+         pNewAvatar->SetJointLimit(vt12,0,0,0,0,0,0);
+         pNewAvatar->SetJointLimit(vt8,0,0,0,0,0,0);
+         pNewAvatar->SetJointLimit(vt4,0,0,0,0,0,0);
+         pNewAvatar->SetJointLimit(vc7,V_PI,V_PI,V_PI,V_MINUS_PI,V_MINUS_PI,V_MINUS_PI);
+         pNewAvatar->SetJointLimit(skullbase,V_PI,V_PI,V_PI,V_MINUS_PI,V_MINUS_PI,V_MINUS_PI);
          pNewAvatar->SetJointLimit(l_acromioclavicular,0,0,0,0,0,0);
-         pNewAvatar->SetJointLimit(l_shoulder,0.6,1.56,3,-3.14,-0.2,-0.78);
-         pNewAvatar->SetJointLimit(l_elbow,0,0,0,0,-3.14,-2.35);
-         pNewAvatar->SetJointLimit(l_wrist,0.6,0,1.56,-0.2,0,-1.3);
+         pNewAvatar->SetJointLimit(l_shoulder,V_PI,V_PI,V_PI,V_MINUS_PI,V_MINUS_PI,V_MINUS_PI);
+         pNewAvatar->SetJointLimit(l_elbow,V_PI,V_PI,V_PI,V_MINUS_PI,V_MINUS_PI,V_MINUS_PI);
+         pNewAvatar->SetJointLimit(l_wrist,V_PI,V_PI,V_PI,V_MINUS_PI,V_MINUS_PI,V_MINUS_PI);
          pNewAvatar->SetJointLimit(r_acromioclavicular,0,0,0,0,0,0);
-         pNewAvatar->SetJointLimit(r_shoulder,0.6,0.2,0.78,-3.14,-1.56,-3);
-         pNewAvatar->SetJointLimit(r_elbow,0,3.14,2.35,0,0,0);
-         pNewAvatar->SetJointLimit(r_wrist,0.6,0,1.3,-0.2,0,-1.56);
+         pNewAvatar->SetJointLimit(r_shoulder,V_PI,V_PI,V_PI,V_MINUS_PI,V_MINUS_PI,V_MINUS_PI);
+         pNewAvatar->SetJointLimit(r_elbow,V_PI,V_PI,V_PI,V_MINUS_PI,V_MINUS_PI,V_MINUS_PI);
+         pNewAvatar->SetJointLimit(r_wrist,V_PI,V_PI,V_PI,V_MINUS_PI,V_MINUS_PI,V_MINUS_PI);
          // Unpose model
          pNewAvatar->AlignDefaultCentres(l_knee,CVector3D(0,-1,0));
          pNewAvatar->AlignDefaultCentres(l_ankle,CVector3D(0,-1,0));

@@ -7,7 +7,7 @@
 // Avatar.h - 16/06/2000 - James Smith
 //	Avatar class header
 //
-// $Id: Avatar.h,v 1.4 2000/07/30 14:59:08 waz Exp $
+// $Id: Avatar.h,v 1.5 2000/08/21 23:07:50 waz Exp $
 //
 
 #ifndef _VAL_AVATAR_
@@ -17,7 +17,7 @@
 #include <vector>
 
 // libVapour includes
-#include "VAL.h"
+#include "Val.h"
 #include "Point3D.h"
 #include "TriFace.h"
 #include "DList.h"
@@ -116,6 +116,9 @@ public:
    // Enters joint limit information into a body part
    void SetJointLimit(BodyPart bpPart, double dMaxX, double dMaxY, double dMaxZ, double dMinX, double dMinY, double dMinZ);
 
+   // Enters joint damping information into a body part
+   void SetJointDamping(BodyPart bpPart, double dDampX, double dDampY, double dDampZ);
+
    // Fixed body part associations - this needs to be done before shape
    // calculations can be done. It's a bit of a hack at the moment and will be replaced.
    void FixAssociations(void);
@@ -206,8 +209,8 @@ public:
    void ResetPose(void);
 
    // Sets the angle for a particular joint.
-	// This new angle will only take effect when UpdateModel() is called.
-   void SetJointAngle(BodyPart bpJoint, CAxisRotation& rotNewRotation, bool bLimit = true);
+	// This new angle will only take effect when UpdateModel() is called.   
+   void SetJointAngle(BodyPart bpJoint, CAxisRotation& rotNewRotation, bool bLimit = true, bool bDamp = true);
 
 	// Sets a translation for the entire model
 	// This new translation will only take effect when UpdateModel() is called.
@@ -225,7 +228,8 @@ public:
    // The sksleton will be moved as far up as bpFixed, which will not move.
    // bTranslation specifies whether the root joint of the model is allowed to translate (if used).
    // bLimit specifies whether joint limit information will be used to constrain the motion.
-   void IKSetPose(BodyPart bpJoint, CVector3D& vecTarget, BodyPart bpFixed = unknown, bool bTranslation = false, bool bLimit = true);
+   // bDamp specified whether joint damping factors are used during joint limitation.
+   void IKSetPose(BodyPart bpJoint, CVector3D& vecTarget, BodyPart bpFixed = unknown, bool bTranslation = false, bool bLimit = true, bool bDamp = true);
    
    ///////////////////////////////////////////////////////////////////////
    // Pose Storage Functions /////////////////////////////////////////////

@@ -7,7 +7,7 @@
 // Avatar.cpp - 17/06/2000 - James Smith
 //	Avatar class implementation
 //
-// $Id: Avatar.cpp,v 1.4 2000/07/11 16:09:38 waz Exp $
+// $Id: Avatar.cpp,v 1.5 2000/08/21 23:07:49 waz Exp $
 //
 
 #include "stdafx.h"
@@ -82,6 +82,9 @@ CAvatar::CAvatar(int iNumVertices, int iNumFaces) {
 			m_pBodyParts[i].m_dMinX = V_MINUS_PI;
 			m_pBodyParts[i].m_dMinY = V_MINUS_PI;
 			m_pBodyParts[i].m_dMinZ = V_MINUS_PI;
+			m_pBodyParts[i].m_dDampX = 1;
+			m_pBodyParts[i].m_dDampY = 1;
+			m_pBodyParts[i].m_dDampZ = 1;
          m_pBodyParts[i].m_bpChildren[0] = unknown;
          m_pBodyParts[i].m_bpChildren[1] = unknown;
          m_pBodyParts[i].m_bpChildren[2] = unknown;
@@ -209,6 +212,15 @@ void CAvatar::SetJointLimit(BodyPart bpPart, double dMaxX, double dMaxY, double 
    }
    return;
 } //SetJointLimit(BodyPart bpPart, double dMaxX, double dMaxY, double dMaxZ, double dMinX, double dMinY, double dMinZ)
+
+void CAvatar::SetJointDamping(BodyPart bpPart, double dDampX, double dDampY, double dDampZ) {
+   if (m_bLoading) {
+      m_pBodyParts[bpPart].m_dDampX = dDampX;
+      m_pBodyParts[bpPart].m_dDampY = dDampY;
+      m_pBodyParts[bpPart].m_dDampZ = dDampZ;
+   }
+   return;
+} //SetJointDamping(BodyPart bpPart, double dDampX, double dDampY, double dDampZ)
 
 void CAvatar::FixAssociations(void) {
    // Fix vertex and face lists
@@ -352,21 +364,22 @@ void CAvatar::ResetPose(void) {
    return;
 } //ResetPose(void)
 
-void CAvatar::SetJointAngle(enum BodyPart bpJoint, CAxisRotation& rotNewRotation, bool bLimit) {
+void CAvatar::SetJointAngle(enum BodyPart bpJoint, CAxisRotation& rotNewRotation, bool bLimit, bool bDamp) {
    SBodyPart* pCurrentPart = &(m_pBodyParts[bpJoint]);
    if (bLimit) {
 	   UEulerType uType;
 	   uType.m_eIdentifier = XYZs;
 	   CHomTransform htTemp(rotNewRotation);
-	   CEulerRotation rotEulerRotation(htTemp, uType);	
-	   if (rotEulerRotation.Limit(pCurrentPart->m_dMaxX,pCurrentPart->m_dMaxY,pCurrentPart->m_dMaxZ,pCurrentPart->m_dMinX,pCurrentPart->m_dMinY,pCurrentPart->m_dMinZ)) {
-		   CQuaternion quatTemp(rotEulerRotation);
-		   CAxisRotation rotLimitedRotation(quatTemp);
-		   pCurrentPart->m_rotCurrentRotation = rotLimitedRotation;
-	   }
-	   else {
-		   pCurrentPart->m_rotCurrentRotation = rotNewRotation;
-	   }
+	   CEulerRotation rotEulerRotation(htTemp, uType);
+      // Damp rotation
+      if (bDamp) rotEulerRotation.Damp(pCurrentPart->m_dDampX,pCurrentPart->m_dDampY,pCurrentPart->m_dDampZ);
+      // Limit joint rotation
+	   rotEulerRotation.Limit(pCurrentPart->m_dMaxX,pCurrentPart->m_dMaxY,pCurrentPart->m_dMaxZ,pCurrentPart->m_dMinX,pCurrentPart->m_dMinY,pCurrentPart->m_dMinZ);
+      // Convert back to axis/angle
+		CQuaternion quatTemp(rotEulerRotation);
+		CAxisRotation rotLimitedRotation(quatTemp);
+      // Store
+		pCurrentPart->m_rotCurrentRotation = rotLimitedRotation;
    }
    else {
       pCurrentPart->m_rotCurrentRotation = rotNewRotation;
@@ -376,7 +389,7 @@ void CAvatar::SetJointAngle(enum BodyPart bpJoint, CAxisRotation& rotNewRotation
    BodyPart bpParent = pCurrentPart->m_bpParent;
    if (bpParent != unknown) m_pBodyParts[bpParent].m_bDirtyShape = true;
 	return;
-} //SetJointAngle(BodyPart bpJoint, CAxisRotation& rotNewRotation, bool bLimit)
+} //SetJointAngle(BodyPart bpJoint, CAxisRotation& rotNewRotation, bool bLimit, bool bDamp)
 
 void CAvatar::SetRootTranslation(CVector3D& vecNewTranslation) {
 	m_vecRootTranslation = vecNewTranslation;
@@ -407,7 +420,7 @@ void CAvatar::AlignBodyPart(enum BodyPart bpJoint, CVector3D& vecTarget, bool bL
    return;
 } //AlignBodyPart(enum BodyPart bpJoint, CVector3D& vecTarget, bool bLimit)
 
-void CAvatar::IKSetPose(BodyPart bpJoint, CVector3D& vecTarget, BodyPart bpFixed, bool bTranslation, bool bLimit) {
+void CAvatar::IKSetPose(BodyPart bpJoint, CVector3D& vecTarget, BodyPart bpFixed, bool bTranslation, bool bLimit, bool bDamp) {
    BodyPart bpCurrent = m_pBodyParts[bpJoint].m_bpParent;   
    CVector3D vecCurrentPos(m_pBodyParts[bpJoint].m_pntCurrentCentre);
    while ((vecCurrentPos != vecTarget) && (bpCurrent != bpFixed)) {
@@ -421,7 +434,7 @@ void CAvatar::IKSetPose(BodyPart bpJoint, CVector3D& vecTarget, BodyPart bpFixed
       CAxisRotation rotRotation(vecAxis,dAngle);
       // Store joint angle
       rotRotation = rotRotation.MergeInside(m_pBodyParts[bpCurrent].m_rotCurrentRotation);
-      SetJointAngle(bpCurrent, rotRotation, bLimit);
+      SetJointAngle(bpCurrent, rotRotation, bLimit, bDamp);
       // Update Skeleton positions
       CHomTransform htTransform(m_vecRootTranslation);
       UpdateSkeleton(root,htTransform,false);
@@ -435,7 +448,7 @@ void CAvatar::IKSetPose(BodyPart bpJoint, CVector3D& vecTarget, BodyPart bpFixed
       SetRootTranslation(vecResidual);
    }
    return;
-} //IKSetPose(BodyPart bpJoint, CVector3D& vecTarget, BodyPart bpFixed, bool bTranslation, bool bLimit)
+} //IKSetPose(BodyPart bpJoint, CVector3D& vecTarget, BodyPart bpFixed, bool bTranslation, bool bLimit, bool bDamp)
 
 ///////////////////////////////////////////////////////////////////////
 // Pose Storage Functions /////////////////////////////////////////////
@@ -456,7 +469,7 @@ bool CAvatar::ImportPose(CAvatarPose& apNewPose) {
    m_vecRootTranslation = apNewPose.m_vecRootTranslation;
    for (int i=0; i<TOTAL_NUMBER_BODYPARTS; i++) {
       // Set Joint angle
-      SetJointAngle((BodyPart)i,apNewPose.m_pJointRotations[i]);
+      SetJointAngle((BodyPart)i,apNewPose.m_pJointRotations[i],false);
    }
    return true;
 } //ImportPose(CAvatarPose& apNewPose)

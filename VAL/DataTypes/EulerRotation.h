@@ -7,7 +7,7 @@
 // EulerRotation.h - 12/04/2000 - James Smith
 //	Euler rotation class header
 //
-// $Id: EulerRotation.h,v 1.2 2000/06/17 10:42:15 waz Exp $
+// $Id: EulerRotation.h,v 1.3 2000/08/21 23:07:50 waz Exp $
 //
 
 #ifndef _VAL_EULERROTATION_
@@ -130,6 +130,9 @@ public:
    virtual ~CEulerRotation();
 
 	// Utility functions //////////////////////////////////////////////////
+
+   // Damping function. Multiplies each angle by the appropriate factor.
+   void Damp(double dDampFirst, double dDampSecond, double dDampThird);
 
    // Limiting function. The angles are clipped to the maximum and minimum values supplied
    // Returns true if the angle was clipped to the limits.
