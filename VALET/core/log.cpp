@@ -11,7 +11,7 @@
 //! author		= "Warren Moore"
 //! date			= "23/09/2001"
 //! lib 			= libVALETcore
-//! rcsid		= "$Id: log.cpp,v 1.4 2001/10/21 14:38:32 vap-warren Exp $"
+//! rcsid		= "$Id: log.cpp,v 1.5 2001/10/24 14:26:26 vap-warren Exp $"
 
 //#===--- Includes
 #include "log.h"
@@ -19,6 +19,8 @@
 namespace NValet {
 	
    //#===--- CLog
+   
+#ifdef VDEBUG
 
 	CLog::CLog(const char* pcType, const char* pcFunction, int iLevel) :
 		m_iID(-1),
@@ -57,6 +59,8 @@ namespace NValet {
 		if (m_pcFunction)
 			delete [] m_pcFunction;
 	} // CLog::CLog
+
+#endif // VDEBUG
 	
 }
 
