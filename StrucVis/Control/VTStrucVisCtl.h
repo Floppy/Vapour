@@ -7,7 +7,7 @@
 // VTStructVisCtl.cpp
 // 05/03/2002 - Warren Moore
 //
-// $Id: VTStrucVisCtl.h,v 1.20 2002/04/02 13:13:22 vap-warren Exp $
+// $Id: VTStrucVisCtl.h,v 1.21 2002/04/02 22:40:00 vap-warren Exp $
 
 #ifndef __VTSTRUCTVIS_CONTROL__
 #define __VTSTRUCTVIS_CONTROL__
@@ -24,13 +24,6 @@
 #include "SimDataPath.h"
 #include "CortonaUtil.h"
 #include "SceneManager.h"
-
-// Category support functions
-HRESULT CreateComponentCategory(CATID catid, WCHAR *catDescription);
-HRESULT RegisterCLSIDInCategory(REFCLSID clsid, CATID catid);
-HRESULT UnregisterCLSIDInCategory(REFCLSID clsid, CATID catid);
-HRESULT RegisterCLSIDInReqCategory(REFCLSID clsid, CATID catid);
-HRESULT UnregisterCLSIDInReqCategory(REFCLSID clsid, CATID catid);
 
 ///////////////////
 // CVTStrucVisCtl
@@ -49,6 +42,11 @@ HRESULT UnregisterCLSIDInReqCategory(REFCLSID clsid, CATID catid);
 // Timer IDs
 #define TI_MOUSEOVER          100
 #define TI_ANIMATE            101
+
+// Scale factor limits
+#define SF_MAX                50.0f
+#define SF_MIN                 1.0f
+#define SF_STEPS              49
 
 class CVTStrucVisCtl : public COleControl {
 // Dynamic construction
@@ -245,6 +243,9 @@ protected:
    ESimResult m_eSimResult;                  // SimDataPath result
    unsigned int m_uiAsyncFlags;              // Asynchronous data flags
    CString m_oWRLPath;                       // Scene WRL path
+   CString m_oPosition;                      // Viewpoint position
+   CString m_oOrientation;                   // Viewpoint orientation
+   CString m_oScale;                         // Scale factor string
 
    // UI vars
    bool m_bLButtonDown;                      // Left mouse button down indicator
@@ -322,6 +323,10 @@ protected:
 	afx_msg void SetWRLPath(LPCTSTR lpszNewValue);
 	afx_msg BSTR GetPosition();
 	afx_msg void SetPosition(LPCTSTR lpszNewValue);
+	afx_msg BSTR GetOrientation();
+	afx_msg void SetOrientation(LPCTSTR lpszNewValue);
+	afx_msg BSTR GetScale();
+	afx_msg void SetScale(LPCTSTR lpszNewValue);
 	//}}AFX_DISPATCH
 	DECLARE_DISPATCH_MAP()
 
@@ -340,6 +345,8 @@ public:
    dispidUIData = 2L,
 	dispidWRLPath = 3L,
 	dispidPosition = 4L,
+	dispidOrientation = 5L,
+	dispidScale = 6L,
 	//}}AFX_DISP_ID
 	};
 };

@@ -7,12 +7,15 @@
 // VTStructVisCtl.cpp
 // 05/03/2002 - Warren Moore
 //
-// $Id: VTStrucVisCtl.cpp,v 1.22 2002/04/02 13:13:22 vap-warren Exp $
+// $Id: VTStrucVisCtl.cpp,v 1.23 2002/04/02 22:40:00 vap-warren Exp $
 
 #include "stdafx.h"
 #include "VTStrucVis.h"
 #include "VTStrucVisCtl.h"
 #include "VTStrucVisPpg.h"
+
+#include "category.h"
+#include "util.h"
 
 #include <math.h>
 
@@ -21,136 +24,6 @@
 #undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
 #endif
-
-///////////////////////////////
-// Category Support Functions
-
-// Require these for proper Internet aware controls
-const CATID CATID_SafeForScripting =
-   {0x7dd95801,0x9882,0x11cf,{0x9f,0xa9,0x00,0xaa,0x00,0x6c,0x42,0xc4}};
-const CATID CATID_SafeForInitializing =
-   {0x7dd95802,0x9882,0x11cf,{0x9f,0xa9,0x00,0xaa,0x00,0x6c,0x42,0xc4}};
-
-// Creates a category entry
-HRESULT CreateComponentCategory(CATID catid, WCHAR *catDescription) {
-   ICatRegister *pcr = NULL;
-   HRESULT hResult = S_OK;
-
-   // Create an instance of the category manager
-   hResult = CoCreateInstance(CLSID_StdComponentCategoriesMgr,
-                              NULL,
-                              CLSCTX_INPROC_SERVER,
-                              IID_ICatRegister,
-                              (void**)&pcr);
-   if (FAILED(hResult))
-      return hResult;
-
-   CATEGORYINFO catinfo;
-   catinfo.catid = catid;
-   // English locale ID in hex
-   catinfo.lcid = 0x0409;
-
-   int len = wcslen(catDescription);
-   wcsncpy(catinfo.szDescription, catDescription, len);
-   catinfo.szDescription[len] = '\0';
-
-   hResult = pcr->RegisterCategories(1, &catinfo);
-   pcr->Release();
-
-   return hResult;
-}
-
-// Registers that the category entry is implemented
-HRESULT RegisterCLSIDInCategory(REFCLSID clsid, CATID catid) {
-   ICatRegister *pcr = NULL;
-   HRESULT hResult = S_OK;
-
-   // Create an instance of the category manager
-   hResult = CoCreateInstance(CLSID_StdComponentCategoriesMgr,
-                              NULL,
-                              CLSCTX_INPROC_SERVER,
-                              IID_ICatRegister,
-                              (void**)&pcr);
-   if (SUCCEEDED(hResult)) {
-      CATID rgcatid[1];
-      rgcatid[0] = catid;
-      hResult = pcr->RegisterClassImplCategories(clsid, 1, rgcatid);
-   }
-
-   if (pcr != NULL)
-      pcr->Release();
-
-   return hResult;
-}
-
-// Unregisters the implemented category
-HRESULT UnregisterCLSIDInCategory(REFCLSID clsid, CATID catid) {
-   ICatRegister *pcr = NULL;
-   HRESULT hResult = S_OK;
-
-   // Create an instance of the category manager
-   hResult = CoCreateInstance(CLSID_StdComponentCategoriesMgr,
-                              NULL,
-                              CLSCTX_INPROC_SERVER,
-                              IID_ICatRegister,
-                              (void**)&pcr);
-   if (SUCCEEDED(hResult)) {
-      CATID rgcatid[1];
-      rgcatid[0] = catid;
-      hResult = pcr->UnRegisterClassImplCategories(clsid, 1, rgcatid);
-   }
-
-   if (pcr != NULL)
-      pcr->Release();
-
-   return hResult;
-}
-
-// Registers that the category is required
-HRESULT RegisterCLSIDInReqCategory(REFCLSID clsid, CATID catid) {
-   ICatRegister *pcr = NULL;
-   HRESULT hResult = S_OK;
-
-   // Create an instance of the category manager
-   hResult = CoCreateInstance(CLSID_StdComponentCategoriesMgr,
-                              NULL,
-                              CLSCTX_INPROC_SERVER,
-                              IID_ICatRegister,
-                              (void**)&pcr);
-   if (SUCCEEDED(hResult)) {
-      CATID rgcatid[1];
-      rgcatid[0] = catid;
-      hResult = pcr->RegisterClassReqCategories(clsid, 1, rgcatid);
-   }
-
-   if (pcr != NULL)
-      pcr->Release();
-
-   return hResult;
-}
-
-// Unregisters the required category
-HRESULT UnregisterCLSIDInReqCategory(REFCLSID clsid, CATID catid) {
-   ICatRegister *pcr = NULL;
-   HRESULT hResult = S_OK;
-
-   // Create an instance of the category manager
-   hResult = CoCreateInstance(CLSID_StdComponentCategoriesMgr,
-                              NULL,
-                              CLSCTX_INPROC_SERVER,
-                              IID_ICatRegister,
-                              (void**)&pcr);
-   if (SUCCEEDED(hResult)) {
-      CATID rgcatid[1];
-      rgcatid[0] = catid;
-      hResult = pcr->UnRegisterClassReqCategories(clsid, 1, rgcatid);
-   }
-
-   if (pcr != NULL)
-      pcr->Release();
-
-   return hResult;
-}
 
 ////////////////////////////
 // CVTStrucVisCtl::CSlider
@@ -297,6 +170,8 @@ BEGIN_DISPATCH_MAP(CVTStrucVisCtl, COleControl)
 	DISP_PROPERTY_EX(CVTStrucVisCtl, "UIData", GetUIData, SetUIData, VT_BSTR)
 	DISP_PROPERTY_EX(CVTStrucVisCtl, "WRLPath", GetWRLPath, SetWRLPath, VT_BSTR)
 	DISP_PROPERTY_EX(CVTStrucVisCtl, "Position", GetPosition, SetPosition, VT_BSTR)
+	DISP_PROPERTY_EX(CVTStrucVisCtl, "Orientation", GetOrientation, SetOrientation, VT_BSTR)
+	DISP_PROPERTY_EX(CVTStrucVisCtl, "Scale", GetScale, SetScale, VT_BSTR)
 	DISP_STOCKFUNC_REFRESH()
 	DISP_STOCKPROP_READYSTATE()
 	DISP_STOCKPROP_BACKCOLOR()
@@ -419,9 +294,9 @@ CVTStrucVisCtl::CVTStrucVisCtl() :
    m_bStressColour(false),
    m_uiUITab(0),
    m_bRunning(false),
-   m_fXScale(1.0f), 
-   m_fYScale(25.0f), 
-   m_fZScale(1.0f),
+   m_fXScale(SF_MIN), 
+   m_fYScale(SF_MIN), 
+   m_fZScale(SF_MIN),
    m_uiAnimSpeed(5),
    m_uiStartGroup(0),
    m_pbVisibleGroup(NULL) {
@@ -445,20 +320,20 @@ CVTStrucVisCtl::CVTStrucVisCtl() :
    // X scale slider
    m_oSXScale.SetPos(0, 185);
    m_oSXScale.SetSize(180, 10);
-   m_oSXScale.SetLimitF(1.0f, 50.0f, m_fXScale);
-   m_oSXScale.SetSteps(49);
+   m_oSXScale.SetLimitF(SF_MIN, SF_MAX, m_fXScale);
+   m_oSXScale.SetSteps(SF_STEPS);
 
    // Y scale slider
    m_oSYScale.SetPos(0, 210);
    m_oSYScale.SetSize(180, 10);
-   m_oSYScale.SetLimitF(1.0f, 50.0f, m_fYScale);
-   m_oSYScale.SetSteps(49);
+   m_oSYScale.SetLimitF(SF_MIN, SF_MAX, m_fYScale);
+   m_oSYScale.SetSteps(SF_STEPS);
 
    // Z scale slider
    m_oSZScale.SetPos(0, 235);
    m_oSZScale.SetSize(180, 10);
-   m_oSZScale.SetLimitF(1.0f, 50.0f, m_fZScale);
-   m_oSZScale.SetSteps(49);
+   m_oSZScale.SetLimitF(SF_MIN, SF_MAX, m_fZScale);
+   m_oSZScale.SetSteps(SF_STEPS);
 
    // Animation speed slider
    m_oSAnimSpeed.SetPos(0, 185);
@@ -495,12 +370,26 @@ bool CVTStrucVisCtl::InitCortona() {
          // Set the WRL path
          m_poScene->SetBaseURL(m_oWRLPath);
 
-         // Setup viewpoint location
-         float pfPosition[3] = {12.0f, -26.5f, 12.5f};
-         float pfRotation[4] = {0.48f, 0.75f, -0.48f, 1.88f};
-         m_poScene->SetViewpoint(pfPosition, pfRotation);
+         // Set the viewpoint params
+         float pfPosition[3] = {0.0f, 0.0f, 0.0f};
+         float pfOrientation[4] = {0.0f, 0.0f, 0.0f, 0.0f};
+         if ((ParseFloat(m_oPosition, 3, pfPosition) == 3) &&
+             (ParseFloat(m_oOrientation, 4, pfOrientation) == 4)) {
+            m_poScene->SetViewpoint(pfPosition, pfOrientation);
+         }
 
          // Set scale factor
+         float pfScale[3] = {0.0f, 0.0f, 0.0f};
+         if ((ParseFloat(m_oScale, 3, pfScale) == 3)) {
+            // Store values within limits
+            m_fXScale = (pfScale[0] > SF_MAX ? SF_MAX : (pfScale[0] < SF_MIN ? SF_MIN : pfScale[0]));
+            m_fYScale = (pfScale[1] > SF_MAX ? SF_MAX : (pfScale[1] < SF_MIN ? SF_MIN : pfScale[1]));
+            m_fZScale = (pfScale[2] > SF_MAX ? SF_MAX : (pfScale[2] < SF_MIN ? SF_MIN : pfScale[2]));
+            // Update the sliders
+            m_oSXScale.SetLimitF(SF_MIN, SF_MAX, m_fXScale);
+            m_oSYScale.SetLimitF(SF_MIN, SF_MAX, m_fYScale);
+            m_oSZScale.SetLimitF(SF_MIN, SF_MAX, m_fZScale);
+         }
          m_poScene->SetScaleFactor(m_fXScale, m_fYScale, m_fZScale);
 
          // Set colour scheme
@@ -548,7 +437,7 @@ bool CVTStrucVisCtl::GetCortona() {
          // What have we got?
          LPUNKNOWN pNextControl = NULL;
          bool bNext = true;
-         while (bNext && SUCCEEDED(pEnumUnknown->Next(1, &pNextControl, NULL))) {
+         while (bNext && SUCCEEDED(pEnumUnknown->Next(1, &pNextControl, NULL)) && pNextControl) {
             // Get the OLE object interface
             LPOLEOBJECT pOleObject = NULL;
             hResult = pNextControl->QueryInterface(IID_IOleObject, (LPVOID*)&pOleObject);
@@ -1575,6 +1464,13 @@ void CVTStrucVisCtl::DoPropExchange(CPropExchange* pPX) {
    // Sort out the WRL path first
    PX_String(pPX, _T("WRLPath"), m_oWRLPath, "");
 
+   // Get the initial position and orientation
+   PX_String(pPX, _T("Position"), m_oPosition, "");
+   PX_String(pPX, _T("Orientation"), m_oOrientation, "");
+
+   // Get the scale factor
+   PX_String(pPX, _T("Scale"), m_oScale, "");
+
    // Reset the async data flags if loading
    if (pPX->IsLoading()) {
       // Indicate that the synchronous data has been loaded
@@ -1717,6 +1613,17 @@ void CVTStrucVisCtl::OnLButtonUp(UINT nFlags, CPoint point) {
                m_pbVisibleGroup[uiGroup] = !m_pbVisibleGroup[uiGroup];
                m_poScene->SetVisibility(uiGroup + 1, m_pbVisibleGroup[uiGroup]);
             }
+         }
+         // Check for the down arrow
+         int fDown = (uiViewGroups * 15) + 170;
+         if ((point.x >= 170) && (point.x < 180) && (point.y >= (fDown - 10)) && (point.y < fDown)) {
+            if ((uiGroups > uiMaxGroups) && (uiMaxGroups + m_uiStartGroup < uiGroups))
+               m_uiStartGroup++;
+         }
+         // Check for the up arrow
+         if ((point.x >= 170) && (point.x < 180) && (point.y >= 170) && (point.y < 180)) {
+            if ((uiGroups > uiMaxGroups) && (m_uiStartGroup > 1))
+               m_uiStartGroup--;
          }
       }
    }
@@ -1861,12 +1768,51 @@ void CVTStrucVisCtl::SetWRLPath(LPCTSTR lpszNewValue) {
 }
 
 BSTR CVTStrucVisCtl::GetPosition() {
-	CString strResult;
+	CString strResult = m_oPosition;
+
+   // Check for the scene
+   if (m_poScene) {
+      strResult.Format("%s", m_poScene->GetCurrentPosition());
+      // Now delete the string
+      delete [] m_poScene;
+   }
 
 	return strResult.AllocSysString();
 }
 
 void CVTStrucVisCtl::SetPosition(LPCTSTR lpszNewValue) {
-
-	SetModifiedFlag();
+   // Do nothing yet
 }
+
+BSTR CVTStrucVisCtl::GetOrientation() {
+	CString strResult = m_oOrientation;
+
+   // Check for the scene
+   if (m_poScene) {
+      m_oOrientation.Format("%s", m_poScene->GetCurrentOrientation());
+      strResult = m_oOrientation;
+      // Now delete the string
+      delete [] m_poScene;
+   }
+
+	return strResult.AllocSysString();
+}
+
+void CVTStrucVisCtl::SetOrientation(LPCTSTR lpszNewValue) {
+   // Do nothing yet
+}
+
+BSTR CVTStrucVisCtl::GetScale() {
+	CString strResult = m_oScale;
+
+   // Get the scale format
+   m_oScale.Format("%.3f, %.3f, %.3f", m_fXScale, m_fYScale, m_fZScale);
+   strResult = m_oScale;
+
+	return strResult.AllocSysString();
+}
+
+void CVTStrucVisCtl::SetScale(LPCTSTR lpszNewValue) {
+   // Do nothing yet
+}
+
