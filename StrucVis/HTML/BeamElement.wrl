@@ -1,4 +1,13 @@
 #VRML V2.0 utf8
+#=============---
+# Arup Simulation Visualisation System
+#-------------
+# Copyright 2002 Vapour Technology Ltd.
+#
+# BeamElement.wrl
+# 19/03/2002 - James Smith
+#
+# $Id: BeamElement.wrl,v 1.5 2002/03/21 15:09:28 vap-james Exp $
 
 PROTO BeamElement [
    eventIn MFColor set_colours
