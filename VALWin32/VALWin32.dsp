@@ -89,6 +89,10 @@ SOURCE=.\Application\FolderDialog.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\Application\NumericEdit.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\Render\RCOpenGLBufferWin32.cpp
 # End Source File
 # Begin Source File
@@ -115,6 +119,10 @@ SOURCE=.\Application\VALWin32.cpp
 # Begin Source File
 
 SOURCE=.\Application\FolderDialog.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\Application\NumericEdit.h
 # End Source File
 # Begin Source File
 
