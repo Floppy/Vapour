@@ -1,5 +1,5 @@
 ! author="Warren Moore"
-: Compilation Notes
+: Requirements and Common Errors
 
 <P CLASS=HEADING>
 Requirements
@@ -12,6 +12,8 @@ These packages are required for compilation of the control
 <LI>Parallel Graphics Cortona SDK 2.6</LI>
 </UL>
 
+<HR>
+
 <P CLASS=HEADING>
 Cannot open include file: 'shelley.h'
 </P>
@@ -21,6 +23,8 @@ recompilation of several source files every build. Shelley.idl only needs to be 
 or when the modifications are made directly to Shelley.idl.
 </P>
 
+<HR>
+
 <P CLASS=HEADING>
 statements outside library block are illegal in mktyplib compatability mode
 </P>
@@ -28,4 +32,3 @@ statements outside library block are illegal in mktyplib compatability mode
 Visual Studio does not remember compilation parameters for disabled files, so to avoid compilation errors of
 Shelley.h, disable the 'MkTypLib compatible' option for the file.
 </P>
-

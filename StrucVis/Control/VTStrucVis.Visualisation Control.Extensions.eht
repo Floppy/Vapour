@@ -1,0 +1,19 @@
+! author="Warren Moore"
+: Extensions and Improvements
+
+<UL>
+<LI><B>Speed</B><BR>
+Simulation data manipulation within the control and within Cortona are fast operations, however transfer of
+data from the control to Cortona is marshalled by Microsoft's Automation engine. Given that Automation is the
+process that allows different languages, such as C++, Visual Basic and Delphi, . By reducing the amount of communication required between the control and
+Cortona for animations, it is possible to work around this bottleneck and dramatically improve frame update speed.</LI>
+<LI><B>Event Sinks</B><BR>
+The Cortona control does provide feedback via ActiveX for VRML events and therefore it is be possible for the
+control to react to user interactions with the VRML scene.</LI>
+<LI><B>Framebuffer Access</B><BR>
+It is possible to directly edit the image rendered by Cortona, allowing the possibility to add extra graphical
+elements such as improved tool-tips, a skinnable HUD and fire effects.</LI>
+<LI><B>Navigation Control</B><BR>
+It is also possible to directly control scene navigation, allowing to use of officially unsupported controllers
+such as 3D-mice or 6DOF 'space-balls'.</LI>
+</UL>

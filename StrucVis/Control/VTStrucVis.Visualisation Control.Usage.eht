@@ -1,8 +1,23 @@
 ! author="Warren Moore"
-: Control Usage
+: Where and How to use the Control
 
 <P CLASS=HEADING>
-Inserting the Control
+</P>
+<P>
+Much like a Java Virtual Machine, an ActiveX Control requires a Container in which to operate.
+Currently, only Windows applications such as Internet Explorer, Microsoft Office, Visual Basic
+and MFC are ActiveX containers.
+</P>
+<P>
+Containers vary on the ActiveX properties and methods they support, and as such controls must be
+vigorously tested for each use within each container. This investigation was set to specifically work
+within Internet Explorer.
+</P>
+
+<HR>
+
+<P CLASS=HEADING>
+Using the Control in a web page
 </P>
 
 <P>
@@ -14,11 +29,8 @@ downloaded from if it is not available on the client machine.
 <PRE>
 &lt;OBJECT CLASSID="CLSID:AD64B056-E5E7-4C45-9243-755802D7CBF7"
  CODEBASE="http://www.example.co.uk/VTStrucVis.ocx" WIDTH=180 HEIGHT=480&gt;
-
 ... Control Parameters ...
-
 ... HTML for browsers that don't support OBJECTs ...
-
 &lt;/OBJECT&gt;
 </PRE>
 
@@ -64,8 +76,17 @@ Cortona Display
 
 <P>
 For the control to display output, an instance of the Cortona ActiveX control must also be inserted into
-the container. Parameter information for Cortona can be found <A HREF="http://www.parallelgraphics.com/developer/products/cortona/html">here</A>.
+the container. Parameter information for Cortona can be found <A HREF="http://www.parallelgraphics.com/developer/products/cortona/html">here</A>.<BR>
+Here is the HTML used in the demonstration web page.
 </P>
+
+<PRE>
+&lt;OBJECT CLASSID="CLSID:86A88967-7A20-11d2-8EDA-00600818EDB1" WIDTH=640 HEIGHT=480&gt;
+&lt;PARAM NAME="BACKCOLOR" VALUE="11579568"&gt;
+&lt;/OBJECT&gt;
+</PRE>
+
+<HR>
 
 <P CLASS=HEADING>
 Control Uninstallation

@@ -1,12 +1,12 @@
 ! author="Warren Moore"
-: ActiveX Control Overview
+: Control Design Decisions
 
 <P>
 This document details the design decision made and the implications they have had on our current implementation.
 </P>
 
 <P CLASS=HEADING>
-Files vs Dynamic Control
+Files vs. Dynamic Control
 </P>
 <P>
 Given that the project brief was to visualise and animate a considerable amount of dynamic data with a web page,
@@ -26,7 +26,7 @@ the data for a single frame would be stored by the browser at any point.
 </P>
 
 <P CLASS=HEADING>
-Java vs ActiveX
+Java vs. ActiveX
 </P>
 <P>
 Only two options are available for running applications within a browser. Although ActiveX was chosen to
@@ -43,7 +43,15 @@ method.
 	<P>As the Java-based method of external communication with a VRML browser, the External Authoring Interface (EAI),
 	is part of the VRML standard, Java does not limit your choice of VRML browser.
 <LI><B>ActiveX</B>
+	<P>Unlike Java, ActiveX Controls are compiled so while they lack security features, they can benefit from
+	faster execution. Like Java, ActiveX controls need a Container, such as Internet Explorer or MS Office
+	applications, in which to run. However, as each container has different capabilities and behaviours, the
+	control has to be explicitly tested with each container in which is it intended for use.
 	<P>
-
 </UL>
 
+<P CLASS=HEADING>
+MFC vs. ATL
+</P>
+<P>
+</P>
