@@ -7,7 +7,7 @@
 // Vector3d.h - 18/05/2000 - James Smith
 //	3D vector class header
 //
-// $Id: Vector3D.h,v 1.2 2000/06/17 10:42:12 waz Exp $
+// $Id: Vector3D.h,v 1.3 2000/07/15 16:31:17 waz Exp $
 //
 
 #ifndef _VAL_VECTOR3D_
@@ -80,6 +80,9 @@ public:
 	char* ToString(int precision) const;
 	void ToPoint3D(SPoint3D& sPoint) const;
 	void ToDouble(double &dX, double &dY, double &dZ) const;
+   double X(void) const;
+   double Y(void) const;
+   double Z(void) const;
 };
 
 #endif // _VAL_VECTOR3D_

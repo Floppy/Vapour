@@ -7,7 +7,7 @@
 // Vector3d.cpp - 18/05/2000 - James Smith
 //	3D vector class implementation
 //
-// $Id: Vector3D.cpp,v 1.1 2000/06/16 21:59:21 waz Exp $
+// $Id: Vector3D.cpp,v 1.2 2000/07/15 16:31:18 waz Exp $
 //
 
 // Windows includes/defines
@@ -376,3 +376,15 @@ void CVector3D::ToDouble(double & dX, double & dY, double & dZ) const {
 	dZ = m_pdVector[2];
 	return;
 } //ToDouble(double & dX, double & dY, double & dZ) const
+
+double CVector3D::X(void) const {
+   return m_pdVector[0];
+} //X(void) const
+
+double CVector3D::Y(void) const {
+   return m_pdVector[1];
+} //Y(void) const
+
+double CVector3D::Z(void) const {
+   return m_pdVector[2];
+} //Z(void) const
