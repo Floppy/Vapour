@@ -11,10 +11,11 @@
 //! author 		= "Warren Moore"
 //! date 		= "26/09/2001"
 //! lib 			= libVALETcore
-//! rcsid 		= "$Id: loghandle.dc.cpp,v 1.6 2001/10/24 21:31:39 vap-james Exp $"
+//! rcsid 		= "$Id: loghandle.dc.cpp,v 1.7 2001/10/27 11:26:57 vap-warren Exp $"
 
 //#===--- Includes
 #include "loghandle.h"
+#include "logmanager.h"
 
 #include <stdio.h>
 
@@ -34,7 +35,7 @@ namespace NVALET {
 	void CLogHandle::Trace(int iLevel, const char *pcFunction, const char *pcMessage) {
 		ASSERT(iLevel >= 0);
 		ASSERT(pcMessage);
-		printf("(%s) %d : %s - %s\n", m_pcType, iLevel, pcFunction, pcMessage);
+		printf("(%s) %s : %s - %s\n", m_pcType, g_pcLogLevel[iLevel], pcFunction, pcMessage);
 	} // CLogHandle::Trace
 	
 }

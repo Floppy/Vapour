@@ -11,10 +11,11 @@
 //! author 		= "Warren Moore"
 //! date 		= "23/09/2001"
 //! lib 			= libVALETcore
-//! rcsid 		= "$Id: loghandle.noarch.cpp,v 1.8 2001/10/27 00:12:10 vap-warren Exp $"
+//! rcsid 		= "$Id: loghandle.noarch.cpp,v 1.9 2001/10/27 11:26:57 vap-warren Exp $"
 
 //#===--- Includes
 #include "loghandle.h"
+#include "logmanager.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -67,7 +68,7 @@ namespace NVALET {
       if (!m_poLogFile)
          return;
       // Write the log message
-      *m_poLogFile << "(" << m_pcType << ") " << iLevel << " : ";
+      *m_poLogFile << "(" << m_pcType << ") " << g_pcLogLevel[iLevel] << " : ";
       *m_poLogFile << pcFunction << " - " << pcMessage << endl;
    } // CLogHandle::Trace
    

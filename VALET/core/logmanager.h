@@ -14,7 +14,7 @@
 //! author 		= "Warren Moore"
 //! date 		= "23/09/2001"
 //! lib 			= libVALETcore
-//! rcsid 		= "$Id: logmanager.h,v 1.11 2001/10/24 21:31:39 vap-james Exp $"
+//! rcsid 		= "$Id: logmanager.h,v 1.12 2001/10/27 11:26:57 vap-warren Exp $"
 //! userlevel 	= Develop
 //! docentry 	= "VALET.Core.Log"
 //! example 	= VALET/core/log.test.cpp
@@ -39,6 +39,19 @@ namespace NVALET {
    // LL_BLOCK       = Logging of block level operations and below
    //	LL_ERROR       = Logging of errors only
    // LL_CRITICAL    = Logging of fatal errors only
+
+   const static int g_uiLogLevels = 6;
+   // Number of log levels defined in LOG_LEVEL
+   
+   const char g_pcLogLevel[g_uiLogLevels][g_uiStrLength] = {
+      "LL_ALL",
+      "LL_FUNCTION",
+      "LL_OBJECT",
+      "LL_BLOCK",
+      "LL_ERROR",
+      "LL_CRITICAL"
+   };
+   // Array of log level strings
    
 	//#===--- Predeclared Classes
 	class CLogHandle;
