@@ -1,5 +1,5 @@
 $(silent:
-	$(ifset:!docroot:			$(set:docroot=/docs/VALET))
+	$(ifset:!docroot:			$(set:docroot=/internal/docs))
 	$(ifset:!tablewidth:		$(set:tablewidth=85%))
 	$(define:ident:
 		<TABLE WIDTH="100%" BORDER="0" CELLPADDING="0" CELLSACING="0">
