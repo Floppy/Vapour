@@ -6,7 +6,7 @@
 // SlabElement.h
 // 19/03/2002 - James Smith
 //
-// $Id: SlabElement.h,v 1.3 2002/03/20 14:52:11 vap-james Exp $
+// $Id: SlabElement.h,v 1.4 2002/03/20 22:13:25 vap-james Exp $
 
 #ifndef __SLAB_ELEMENT__
 #define __SLAB_ELEMENT__
@@ -46,6 +46,9 @@ public:
                     float fSeventhNode, float fEighthNode, float fNinthNode);
    // Sets stresses for individual nodes
 
+   void SetSize(float fThickness);
+   // Sets the sizes of the slab
+
 private:
 
    void CalculateColours(float* pfColours) const;
@@ -62,9 +65,11 @@ protected:
    unsigned int m_piNodes[9];
    // The node indices that define the slab
 
-   float m_pfStresses[2];
+   float m_pfStresses[9];
    // Per-node stress values
    
+   float m_fThickness;
+   // Slab dimensions
 };
 
 #endif // __SLAB_ELEMENT__

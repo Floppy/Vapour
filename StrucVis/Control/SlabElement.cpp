@@ -6,10 +6,12 @@
 // SlabElement.cpp
 // 19/03/2002 - James Smith
 //
-// $Id: SlabElement.cpp,v 1.4 2002/03/20 21:57:19 vap-warren Exp $
+// $Id: SlabElement.cpp,v 1.5 2002/03/20 22:13:25 vap-james Exp $
 
 #include "stdafx.h"
 #include "SlabElement.h"
+
+#include <strstrea.h>
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -20,32 +22,59 @@ static char THIS_FILE[] = __FILE__;
 /////////////////
 // CBeamElement
 
-CSlabElement::CSlabElement(CCortonaUtil *pCortona, CNodeSet* pNodeSet) : CElement(pCortona,pNodeSet)
+CSlabElement::CSlabElement(CCortonaUtil *pCortona, CNodeSet* pNodeSet) : 
+   CElement(pCortona,pNodeSet),
+   m_fThickness(1)
 {
    return;
 }
 
-// Simple vrml scene
-const char pcCubeSyntax[] = "                   \
-    DEF CUBE Transform {                        \
-        translation 0 3 0                       \
-        children Shape {                        \
-            geometry Box {                      \
-                size 2 2 2                      \
-            }                                   \
-            appearance Appearance {             \
-                material DEF RED Material {     \
-                    diffuseColor 1 0 0          \
-                }                               \
-            }                                   \
-        }                                       \
-    }";
+// Beginning of SlabElement node
+const char pcSlabStart[] = " \
+   EXTERNPROTO SlabElement [ \
+      eventIn MFColor set_colours \
+      eventIn MFVec3f set_nodes \
+      eventIn SFBool  set_visible \
+      field MFColor colours \
+      field MFVec3f nodes \
+      field SFFloat thickness \
+   ] \
+   [ \
+      \"file://D:\\James\\vapour\\dev.local\\src\\Research\\CortonaBase\\SlabElement.wrl\" \
+   ] \
+   SlabElement { \
+";
 
 bool CSlabElement::Display(void) const {
-   // If the cube isn't there yet
+   // Calculate colours
+   float pfColours[27];
+   CalculateColours(pfColours);
+   // Calculate node positions
+   float pfNodes[27];
+   CalculateNodePositions(pfNodes);
+   // If the slab isn't there yet
    if (m_pNodePtr == NULL) {
-      // Create a cube and add it to the scene
-      if (m_pCortona->CreateVrmlFromString(pcCubeSyntax, &m_pNodePtr)) {
+      // Create a slab and add it to the scene
+      // Create string buffer for VRML text
+      char pcBuffer[2048];
+      memset(pcBuffer,0,2048);
+      ostrstream strSlab(pcBuffer,2048);
+      // Add the basic SlabElement syntax
+      strSlab << pcSlabStart;
+      // Set the size
+      strSlab << " thickness " << m_fThickness;
+      // Set colours
+      strSlab << " colours [ ";
+      for (int c=0; c<27; c++) strSlab << " " << pfColours[c];
+      strSlab << " ] ";
+      // Setup node positions
+      strSlab << " nodes [ ";
+      for (int n=0; n<27; n++) strSlab << " " << pfNodes[n];
+      strSlab << " ] ";
+      // Close the SlabElement
+      strSlab << "}";
+      // Create VRML nodes from the buffer
+      if (m_pCortona->CreateVrmlFromString(pcBuffer, &m_pNodePtr)) {
          m_pCortona->AddToScene(m_pNodePtr);
          return true;
       }
@@ -78,6 +107,10 @@ void CSlabElement::SetNodes(int iFirstNode, int iSecondNode, int iThirdNode,
    m_piNodes[7] = iEighthNode;
    m_piNodes[8] = iNinthNode;
    return;
+}
+
+void CSlabElement::SetSize(float fThickness) {
+   m_fThickness = fThickness;
 }
 
 void CSlabElement::SetStresses(float fFirstNode, float fSecondNode, float fThirdNode, 
