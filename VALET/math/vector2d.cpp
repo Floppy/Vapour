@@ -7,13 +7,13 @@
 // Add confidentiality notice
 
 ////////////////
-//! file 		= "VALET/math/vector2d.cpp"
-//! author 		= "James Smith"
-//! date 		= "18/10/2001"
-//! lib 		= libVALETmath
-//! rcsid 		= "$Id: vector2d.cpp,v 1.1 2001/10/18 16:17:41 vap-james Exp $"
-//! userlevel 	        = Normal
-//! docentry 	        = "VALET.Math.Geometry"
+//! file       = "VALET/math/vector2d.cpp"
+//! author     = "James Smith"
+//! date       = "18/10/2001"
+//! lib        = libVALETmath
+//! rcsid      = "$Id: vector2d.cpp,v 1.2 2001/10/23 16:01:53 vap-warren Exp $"
+//! userlevel  = Normal
+//! docentry   = "VALET.Math.Geometry"
 
 #include "vector2d.h"
 

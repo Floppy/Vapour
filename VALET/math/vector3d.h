@@ -10,13 +10,13 @@
 #define _VALET_MATH_VECTOR3D_
 
 ////////////////
-//! file 		= "VALET/math/vector3d.h"
-//! author 		= "James Smith"
-//! date 		= "01/10/2001"
-//! lib 		= libVALETmath
-//! rcsid 		= "$Id: vector3d.h,v 1.10 2001/10/18 13:07:02 vap-james Exp $"
-//! userlevel 	        = Normal
-//! docentry 	        = "VALET.Math.Geometry"
+//! file       = "VALET/math/vector3d.h"
+//! author     = "James Smith"
+//! date       = "01/10/2001"
+//! lib        = libVALETmath
+//! rcsid      = "$Id: vector3d.h,v 1.11 2001/10/23 16:01:52 vap-warren Exp $"
+//! userlevel  = Normal
+//! docentry   = "VALET.Math.Geometry"
 
 namespace NValet {
   class CAxisRotation;
@@ -274,7 +274,6 @@ namespace NValet {
     //!todo: Document this properly - don't have time now, I can't remember
     //!todo: what the return and parameters mean. Oops!
     //!todo: Rewrite this to use CScalar::ParseString()
-   //!todo: Remove usage of ctype - isdigit
 	
     //:-----------------
     //: Output functions
