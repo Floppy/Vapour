@@ -7,7 +7,7 @@
 // WJESFX.h - 11/07/2000 - Warren Moore
 //	Application and installation
 //
-// $Id: WJESFX.h,v 1.3 2000/07/11 19:20:25 waz Exp $
+// $Id: WJESFX.h,v 1.4 2000/07/14 19:56:15 waz Exp $
 //
 
 #ifndef _WJESFX_
@@ -25,12 +25,9 @@
 
 // Predeclared classes
 class CProgressDlg;
+class CWedgie;
 
 //#===--- Game dependent definitions
-
-#define GAME_SIMS
-//#define GAME_HALFLIFE
-//#define GAME_UNREALTOURNAMENT
 
 // The Sims
 #ifdef GAME_SIMS
@@ -66,6 +63,10 @@ public:
 	void InstallSims(CProgressDlg *poDlg);
 	void InstallHL(CProgressDlg *poDlg);
 	void InstallUT(CProgressDlg *poDlg);
+
+protected:
+	// Game dependent internal functions
+	bool AddFilesToUT(CWedgie &oWJE);
 
 	//{{AFX_VIRTUAL(CWJESFXApp)
 	public:
