@@ -13,7 +13,7 @@
 //! author 		= "James Smith"
 //! date 		= "10/10/2001"
 //! lib 		= libVALET3d
-//! rcsid 		= "$Id: heightfield.h,v 1.3 2001/10/18 13:25:53 vap-james Exp $"
+//! rcsid 		= "$Id: heightfield.h,v 1.4 2001/10/18 15:12:32 vap-james Exp $"
 //! userlevel 	        = Normal
 //! docentry 	        = "VALET.3D.Surface Representations"
 
@@ -90,7 +90,7 @@ namespace NValet {
       // This can be used to set the material.
       //!param: return = the surface material of the height field.
 
-      CVector3D Vertex(int iRow, int iCol) const;
+      CVector3D Vertex3D(int iRow, int iCol) const;
       //: Access a 3D vertex.
       // This functions calculates a 3D vertex position for the specified vertex.
       //!param: iRow = the row of the vertex.

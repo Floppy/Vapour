@@ -11,7 +11,7 @@
 //! author 		= "James Smith"
 //! date 		= "18/10/2001"
 //! lib 		= libVALET3d
-//! rcsid 		= "$Id: heightfield.cpp,v 1.2 2001/10/18 13:25:53 vap-james Exp $"
+//! rcsid 		= "$Id: heightfield.cpp,v 1.3 2001/10/18 15:12:32 vap-james Exp $"
 //! userlevel 	        = Normal
 //! docentry 	        = "VALET.3D.Surface Representations"
 
@@ -35,16 +35,16 @@ namespace NValet {
    CHeightField::~CHeightField() {
    } //~CHeightField()
    
-   CVector3D CHeightField::Vertex(int iRow, int iCol) const {
-      return CVector3D(iCol, CSurface<float>::Vertex((iRow * m_iNumCols) + iCol), iRow) * m_vecScale;
-   } //Vertex(int iRow, int iCol) const
+   CVector3D CHeightField::Vertex3D(int iRow, int iCol) const {
+      return CVector3D(iCol, Vertex((iRow * m_iNumCols) + iCol), iRow) * m_vecScale;
+   } //3DVertex(int iRow, int iCol) const
 
    const float& CHeightField::Height(int iRow, int iCol) const {
-      return CSurface<float>::Vertex((iRow * m_iNumCols) + iCol);
+      return Vertex((iRow * m_iNumCols) + iCol);
    } //Height(int iRow, int iCol) const
 
    float& CHeightField::Height(int iRow, int iCol) {
-      return CSurface<float>::Vertex((iRow * m_iNumCols) + iCol);
+      return Vertex((iRow * m_iNumCols) + iCol);
    } //Height(int iRow, int iCol)
 
 }

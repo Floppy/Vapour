@@ -10,7 +10,7 @@
 //! file 		= "VALET/3D/heightfield.test.cpp"
 //! author 		= "James Smith"
 //! date 		= "18/10/2001"
-//! rcsid 		= "$Id: heightfield.test.cpp,v 1.3 2001/10/18 14:07:08 vap-james Exp $"
+//! rcsid 		= "$Id: heightfield.test.cpp,v 1.4 2001/10/18 15:12:33 vap-james Exp $"
 
 //#===--- Includes
 #include "VALET/heightfield.h"
@@ -29,7 +29,7 @@ int main(int argc, char *argv[]) {
    int iNumRows = 5;
    int iNumCols = 5;
    CHeightField oHF(iNumRows,iNumCols);
-
+   
    // Fill with random data
    for (int r=0; r<iNumRows; r++) {
       for (int c=0; c<iNumRows; c++) {
