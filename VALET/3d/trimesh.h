@@ -13,7 +13,7 @@
 //! author 		= "James Smith"
 //! date 		= "10/10/2001"
 //! lib 		= libVALET3d
-//! rcsid 		= "$Id: trimesh.h,v 1.3 2001/10/12 15:22:17 vap-james Exp $"
+//! rcsid 		= "$Id: trimesh.h,v 1.4 2001/10/15 16:35:39 vap-james Exp $"
 //! userlevel 	        = Normal
 //! docentry 	        = "VALET.3D.Surface Representations"
 
@@ -21,6 +21,9 @@
 #include "../arch/valet.h"
 #include "surface.h"
 #include "../math/vector3d.h"
+#include "mesh.h"
+
+#include <vector>
 
 namespace NValet {
 
@@ -32,7 +35,8 @@ namespace NValet {
   class CTriMesh : public CSurface<CVector3D> {
 
   protected:
-    
+
+    vector<CMesh> m_lMeshes;
 
   public:    
     
@@ -46,6 +50,23 @@ namespace NValet {
     ~CTriMesh();
     //: Destructor
     
+    //:-----------------
+    //: Access functions
+
+    int NumMeshes(void) const {return m_lMeshes.size();}
+    //: Number of meshes
+    //!param: return = how many meshes are in this model?
+
+    const CMesh& Mesh(int iMesh) const {return m_lMeshes[iMesh];}
+    //: Access a particular mesh
+    //!param: iMesh = which mesh to access?
+    //!param: return = constant reference to a mesh.
+
+    CMesh& Mesh(int iMesh) {return m_lMeshes[iMesh];}
+    //: Non-const access to a particular mesh
+    //!param: iMesh = which mesh to access?
+    //!param: return = reference to the mesh.
+
   }; 
 
 }

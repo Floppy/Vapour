@@ -14,14 +14,14 @@
 //! author 		= "James Smith"
 //! date 		= "12/10/2001"
 //! lib 		= libVALET3d
-//! rcsid 		= "$Id: surface.h,v 1.2 2001/10/15 16:06:23 vap-james Exp $"
+//! rcsid 		= "$Id: surface.h,v 1.3 2001/10/15 16:35:39 vap-james Exp $"
 //! userlevel 	        = Normal
 //! docentry 	        = "VALET.3D.Surface Representations"
 
 //#===--- Includes
 #include "../arch/valet.h"
 
-#include <list>
+#include <vector>
 
 namespace NValet {
   
@@ -32,7 +32,7 @@ namespace NValet {
     
   protected:
 	
-    list<T> m_lVertices;
+    vector<T> m_lVertices;
     //: The vertices themselves
     
   public:
