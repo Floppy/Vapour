@@ -14,11 +14,11 @@
 //! author 		= "Warren Moore"
 //! date 		= "17/10/2001"
 //! lib 			= libVALETimage
-//! rcsid 		= "$Id: filter.h,v 1.3 2001/10/18 11:22:30 vap-warren Exp $"
+//! rcsid 		= "$Id: filter.h,v 1.4 2002/02/06 15:45:22 vap-warren Exp $"
 //! userlevel 	= Develop
 //! docentry 	= "VALET.Image.Scaling"
 
-namespace NValet {
+namespace NVALET {
 
    //#===--- CBaseFilter
    //: Base Image Filter Class

@@ -19,12 +19,12 @@
 //! author 		= "Warren Moore"
 //! date 		= "17/10/2001"
 //! lib 			= libVALETimage
-//! rcsid 		= "$Id: imagefile.h,v 1.2 2001/10/24 17:12:45 vap-warren Exp $"
+//! rcsid 		= "$Id: imagefile.h,v 1.3 2002/02/06 15:45:22 vap-warren Exp $"
 //! userlevel 	= Normal
 //! docentry 	= "VALET.Image.File"
 //! example 	= VALET/image/image.test.cpp
 
-namespace NValet {
+namespace NVALET {
 
    //#===--- CImageFile
    //: Base Image Loading/Saving Class

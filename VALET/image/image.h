@@ -14,7 +14,7 @@
 //! author 		= "Warren Moore"
 //! date 		= "17/10/2001"
 //! lib 			= libVALETimage
-//! rcsid 		= "$Id: image.h,v 1.9 2001/10/28 16:52:22 vap-warren Exp $"
+//! rcsid 		= "$Id: image.h,v 1.10 2002/02/06 15:45:22 vap-warren Exp $"
 //! userlevel 	= Normal
 //! docentry 	= "VALET.Image"
 //! example 	= VALET/image/image.test.cpp
@@ -242,16 +242,14 @@ namespace NVALET {
 	//:------
    //: Type Conversion Functions
 
-   
 	//:------
    //: Scaling Functions
-
 
 	//:------
    //: Loading and Saving
 
    //:------
-   // Friends
+   //: Friends
 
    public:
    
