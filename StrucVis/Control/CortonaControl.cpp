@@ -7,7 +7,7 @@
 // CortonaControl.cpp
 // 17/03/2002 - Warren Moore
 //
-// $Id: CortonaControl.cpp,v 1.1 2002/03/20 13:08:26 vap-warren Exp $
+// $Id: CortonaControl.cpp,v 1.2 2002/03/22 16:54:43 vap-warren Exp $
 
 #include "stdafx.h"
 #include "VTStrucVis.h"
@@ -112,4 +112,79 @@ void CCortonaControl::NavBar(short sVal) {
       m_oDispatch.InvokeHelper(dwDispID, DISPATCH_PROPERTYPUT, VT_EMPTY, NULL, parms, sVal);
    }
 }
+
+void CCortonaControl::Headlight(bool bVal) {
+   // Check we have a dispatch interface
+   if (!m_bAttached)
+      return;
+
+   DISPID dwDispID;
+   USES_CONVERSION;
+   // Use Automation to set the Navigation bars
+   LPCOLESTR lpOleStr = T2OLE("HeadLight");
+   if (SUCCEEDED(m_pDispatch->GetIDsOfNames(IID_NULL,
+                                          (LPOLESTR*)&lpOleStr,
+                                          1,
+                                          0,
+                                          &dwDispID))) {
+      static BYTE parms[] = VTS_BOOL;
+      m_oDispatch.InvokeHelper(dwDispID, DISPATCH_PROPERTYPUT, VT_EMPTY, NULL, parms, bVal);
+   }
+}
+
+void CCortonaControl::Edit() {
+   // Check we have a dispatch interface
+   if (!m_bAttached)
+      return;
+
+   DISPID dwDispID;
+   USES_CONVERSION;
+   // Use Automation to set the Navigation bars
+   LPCOLESTR lpOleStr = T2OLE("Edit");
+   if (SUCCEEDED(m_pDispatch->GetIDsOfNames(IID_NULL,
+                                          (LPOLESTR*)&lpOleStr,
+                                          1,
+                                          0,
+                                          &dwDispID))) {
+      m_oDispatch.InvokeHelper(dwDispID, DISPATCH_METHOD, VT_EMPTY, NULL, NULL);
+   }
+}
+
+void CCortonaControl::Refresh() {
+   // Check we have a dispatch interface
+   if (!m_bAttached)
+      return;
+
+   DISPID dwDispID;
+   USES_CONVERSION;
+   // Use Automation to set the Navigation bars
+   LPCOLESTR lpOleStr = T2OLE("Refresh");
+   if (SUCCEEDED(m_pDispatch->GetIDsOfNames(IID_NULL,
+                                          (LPOLESTR*)&lpOleStr,
+                                          1,
+                                          0,
+                                          &dwDispID))) {
+      m_oDispatch.InvokeHelper(dwDispID, DISPATCH_METHOD, VT_EMPTY, NULL, NULL);
+   }
+}
+
+void CCortonaControl::Trace(const char *pcText) {
+   // Check we have a dispatch interface
+   if (!m_bAttached)
+      return;
+
+   DISPID dwDispID;
+   USES_CONVERSION;
+   // Use Automation to set the Navigation bars
+   LPCOLESTR lpOleStr = T2OLE("trace");
+   if (SUCCEEDED(m_pDispatch->GetIDsOfNames(IID_NULL,
+                                          (LPOLESTR*)&lpOleStr,
+                                          1,
+                                          0,
+                                          &dwDispID))) {
+      static BYTE parms[] = VTS_BSTR;
+      m_oDispatch.InvokeHelper(dwDispID, DISPATCH_METHOD, VT_EMPTY, NULL, parms, pcText);
+   }
+}
+
 

@@ -201,7 +201,7 @@ SOURCE=.\CortonaControl.cpp
 # End Source File
 # Begin Source File
 
-SOURCE="C:\Program Files\ParallelGraphics\Cortona SDK\INCLUDE\Shelley.idl"
+SOURCE=.\Shelley.idl
 
 !IF  "$(CFG)" == "VTStrucVis - Win32 Release"
 
@@ -215,6 +215,10 @@ SOURCE="C:\Program Files\ParallelGraphics\Cortona SDK\INCLUDE\Shelley.idl"
 
 !ENDIF 
 
+# End Source File
+# Begin Source File
+
+SOURCE=.\SimDataPath.cpp
 # End Source File
 # Begin Source File
 
@@ -256,6 +260,10 @@ SOURCE=.\CortonaControl.h
 # Begin Source File
 
 SOURCE=.\Resource.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\SimDataPath.h
 # End Source File
 # Begin Source File
 

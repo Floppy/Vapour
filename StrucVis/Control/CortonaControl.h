@@ -7,7 +7,7 @@
 // CortonaControl.h
 // 17/03/2002 - Warren Moore
 //
-// $Id: CortonaControl.h,v 1.1 2002/03/20 13:08:26 vap-warren Exp $
+// $Id: CortonaControl.h,v 1.2 2002/03/22 16:54:43 vap-warren Exp $
 
 #ifndef __VTSTRUCVIS_CORTONACONTROL__
 #define __VTSTRUCVIS_CORTONACONTROL__
@@ -39,6 +39,18 @@ public:
 
    void NavBar(short sVal);
    // Turns the nvaigation bar on(1) or off(0)
+
+   void Headlight(bool bVal);
+   // Sets the headlight 
+
+   void Edit();
+   // Enables direct scene modication
+
+   void Refresh();
+   // Refreshes the Cortona render pipeline
+
+   void Trace(const char *pcText);
+   // Outputs a string to the Cortona console
 
 //#===--- Member Variables
 protected:

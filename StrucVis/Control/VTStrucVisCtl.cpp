@@ -7,7 +7,7 @@
 // VTStructVisCtl.cpp
 // 05/03/2002 - Warren Moore
 //
-// $Id: VTStrucVisCtl.cpp,v 1.3 2002/03/20 13:08:26 vap-warren Exp $
+// $Id: VTStrucVisCtl.cpp,v 1.4 2002/03/22 16:54:43 vap-warren Exp $
 
 #include "stdafx.h"
 #include "VTStrucVis.h"
@@ -150,47 +150,52 @@ HRESULT UnregisterCLSIDInReqCategory(REFCLSID clsid, CATID catid) {
    return hResult;
 }
 
-////////////////////
-// CVTStrucVisCtrl
+///////////////////
+// CVTStrucVisCtl
 
-IMPLEMENT_DYNCREATE(CVTStrucVisCtrl, COleControl)
+IMPLEMENT_DYNCREATE(CVTStrucVisCtl, COleControl)
 
 // Message map
-BEGIN_MESSAGE_MAP(CVTStrucVisCtrl, COleControl)
-	//{{AFX_MSG_MAP(CVTStrucVisCtrl)
+BEGIN_MESSAGE_MAP(CVTStrucVisCtl, COleControl)
+	//{{AFX_MSG_MAP(CVTStrucVisCtl)
 	ON_WM_LBUTTONDOWN()
 	//}}AFX_MSG_MAP
 	ON_OLEVERB(AFX_IDS_VERB_PROPERTIES, OnProperties)
 END_MESSAGE_MAP()
 
 // Dispatch map
-BEGIN_DISPATCH_MAP(CVTStrucVisCtrl, COleControl)
-	//{{AFX_DISPATCH_MAP(CVTStrucVisCtrl)
+BEGIN_DISPATCH_MAP(CVTStrucVisCtl, COleControl)
+	//{{AFX_DISPATCH_MAP(CVTStrucVisCtl)
+	DISP_PROPERTY_EX(CVTStrucVisCtl, "SimData", GetSimData, SetSimData, VT_BSTR)
+	DISP_STOCKFUNC_REFRESH()
 	DISP_STOCKPROP_READYSTATE()
+	DISP_STOCKPROP_BACKCOLOR()
+	DISP_STOCKPROP_FORECOLOR()
+	DISP_STOCKPROP_CAPTION()
 	//}}AFX_DISPATCH_MAP
-	DISP_FUNCTION_ID(CVTStrucVisCtrl, "AboutBox", DISPID_ABOUTBOX, AboutBox, VT_EMPTY, VTS_NONE)
+	DISP_FUNCTION_ID(CVTStrucVisCtl, "AboutBox", DISPID_ABOUTBOX, AboutBox, VT_EMPTY, VTS_NONE)
 END_DISPATCH_MAP()
 
 // Event map
-BEGIN_EVENT_MAP(CVTStrucVisCtrl, COleControl)
-	//{{AFX_EVENT_MAP(CVTStrucVisCtrl)
+BEGIN_EVENT_MAP(CVTStrucVisCtl, COleControl)
+	//{{AFX_EVENT_MAP(CVTStrucVisCtl)
 	EVENT_STOCK_READYSTATECHANGE()
 	//}}AFX_EVENT_MAP
 END_EVENT_MAP()
 
 // Property pages
 // TODO: Add more property pages as needed.  Remember to increase the count!
-BEGIN_PROPPAGEIDS(CVTStrucVisCtrl, 1)
+BEGIN_PROPPAGEIDS(CVTStrucVisCtl, 1)
 	PROPPAGEID(CVTStrucVisPropPage::guid)
-END_PROPPAGEIDS(CVTStrucVisCtrl)
+END_PROPPAGEIDS(CVTStrucVisCtl)
 
 
 // Initialize class factory and guid
-IMPLEMENT_OLECREATE_EX(CVTStrucVisCtrl, "VTStructVis.Control.1",
+IMPLEMENT_OLECREATE_EX(CVTStrucVisCtl, "VTStructVis.Control.1",
 	0xad64b056, 0xe5e7, 0x4c45, 0x92, 0x43, 0x75, 0x58, 0x2, 0xd7, 0xcb, 0xf7)
 
 // Type library ID and version
-IMPLEMENT_OLETYPELIB(CVTStrucVisCtrl, _tlid, _wVerMajor, _wVerMinor)
+IMPLEMENT_OLETYPELIB(CVTStrucVisCtl, _tlid, _wVerMajor, _wVerMinor)
 
 // Interface IDs
 const IID BASED_CODE IID_DVTStrucVis =
@@ -207,10 +212,10 @@ static const DWORD BASED_CODE _dwVTStrucVisOleMisc =
 	OLEMISC_CANTLINKINSIDE |
 	OLEMISC_RECOMPOSEONRESIZE;
 
-IMPLEMENT_OLECTLTYPE(CVTStrucVisCtrl, IDS_VTSTRUCVIS, _dwVTStrucVisOleMisc)
+IMPLEMENT_OLECTLTYPE(CVTStrucVisCtl, IDS_VTSTRUCVIS, _dwVTStrucVisOleMisc)
 
-// Adds or removes system registry entries for CVTStrucVisCtrl
-BOOL CVTStrucVisCtrl::CVTStrucVisCtrlFactory::UpdateRegistry(BOOL bRegister) {
+// Adds or removes system registry entries for CVTStrucVisCtl
+BOOL CVTStrucVisCtl::CVTStrucVisCtlFactory::UpdateRegistry(BOOL bRegister) {
 
    if (bRegister) {
       // Regsiter as a control
@@ -218,19 +223,21 @@ BOOL CVTStrucVisCtrl::CVTStrucVisCtrlFactory::UpdateRegistry(BOOL bRegister) {
                               L"Controls");
       RegisterCLSIDInCategory(m_clsid, CATID_Control);
       // Register safe for initialising
-      CreateComponentCategory(CATID_SafeForInitializing, L"Controls safely initializable from persistent data");
+      CreateComponentCategory(CATID_SafeForInitializing,
+                              L"Controls safely initializable from persistent data");
       RegisterCLSIDInCategory(m_clsid, CATID_SafeForInitializing);
       // Register safe for scripting
-      CreateComponentCategory(CATID_SafeForScripting, L"Controls that are safely scriptable");
+      CreateComponentCategory(CATID_SafeForScripting,
+                              L"Controls that are safely scriptable");
       RegisterCLSIDInCategory(m_clsid, CATID_SafeForScripting);
-      // Register persists to property bag
-//      CreateComponentCategory(CATID_PersistsToPropertyBag,
-//                              L"Support initialize via PersistPropertyBag");
-//      RegisterCLSIDInCategory(m_clsid, CATID_PersistsToPropertyBag);
+      // Register supports initialise via property bag
+      CreateComponentCategory(CATID_PersistsToPropertyBag,
+                              L"Support initialize via PersistPropertyBag");
+      RegisterCLSIDInCategory(m_clsid, CATID_PersistsToPropertyBag);
       // Register requires data path host
-//      CreateComponentCategory(CATID_RequiresDataPathHost,
-//                              L"Requires Data Path Host");
-//      RegisterCLSIDInReqCategory(m_clsid, CATID_RequiresDataPathHost);
+      CreateComponentCategory(CATID_RequiresDataPathHost,
+                              L"Requires Data Path Host");
+      RegisterCLSIDInReqCategory(m_clsid, CATID_RequiresDataPathHost);
       // Register Internet aware
       CreateComponentCategory(CATID_InternetAware,
                               L"Internet-Aware");
@@ -241,7 +248,7 @@ BOOL CVTStrucVisCtrl::CVTStrucVisCtrlFactory::UpdateRegistry(BOOL bRegister) {
 			m_lpszProgID,
 			IDS_VTSTRUCVIS,
 			IDB_VTSTRUCVIS,
-			afxRegApartmentThreading,
+			afxRegInsertable | afxRegApartmentThreading,
 			_dwVTStrucVisOleMisc,
 			_tlid,
 			_wVerMajor,
@@ -252,33 +259,42 @@ BOOL CVTStrucVisCtrl::CVTStrucVisCtrlFactory::UpdateRegistry(BOOL bRegister) {
       UnregisterCLSIDInCategory(m_clsid, CATID_Control);
       UnregisterCLSIDInCategory(m_clsid, CATID_SafeForInitializing);
       UnregisterCLSIDInCategory(m_clsid, CATID_SafeForScripting);
-//      UnregisterCLSIDInCategory(m_clsid, CATID_PersistsToPropertyBag);
-//      UnregisterCLSIDInReqCategory(m_clsid, CATID_RequiresDataPathHost);
+      UnregisterCLSIDInCategory(m_clsid, CATID_PersistsToPropertyBag);
+      UnregisterCLSIDInReqCategory(m_clsid, CATID_RequiresDataPathHost);
       UnregisterCLSIDInCategory(m_clsid, CATID_InternetAware);
 		return AfxOleUnregisterClass(m_clsid, m_lpszProgID);
    }
 }
 
 // Constructor
-CVTStrucVisCtrl::CVTStrucVisCtrl() {
+CVTStrucVisCtl::CVTStrucVisCtl() {
 	InitializeIIDs(&IID_DVTStrucVis, &IID_DVTStrucVisEvents);
 
+   // Set the initial state to loading
 	m_lReadyState = READYSTATE_LOADING;
-	// TODO: Call InternalSetReadyState when the readystate changes.
 
-	// TODO: Initialize your control's instance data here.
-   m_oDrawText = "Started";
+   // Set the data path controls
+   m_oSimData.SetControl(this);
+
+   // Set the initial window size
+   SetInitialSize(200, 200);
+
+   // Set the initial draw text
+   m_oDrawText = "Loading\n";
 }
 
 // Destructor
-CVTStrucVisCtrl::~CVTStrucVisCtrl() {
+CVTStrucVisCtl::~CVTStrucVisCtl() {
 }
 
 // Drawing function
-void CVTStrucVisCtrl::OnDraw(CDC* pdc, const CRect& rcBounds, const CRect& rcInvalid) {
-   // Paint the background white
+void CVTStrucVisCtl::OnDraw(CDC* pdc, const CRect& rcBounds, const CRect& rcInvalid) {
+   // Check if we're enabled - set the background accordingly
    CBrush bkBrush;
-   bkBrush.CreateSolidBrush(RGB(0xff, 0xff, 0xff));
+   if (GetEnabled())
+      bkBrush.CreateSolidBrush(TranslateColor(GetBackColor()));
+   else
+      bkBrush.CreateHatchBrush(HS_DIAGCROSS, TranslateColor(GetBackColor()));
    pdc->FillRect(rcBounds, &bkBrush);
    // Draw the text from the member string
    pdc->SetBkMode(TRANSPARENT);
@@ -287,48 +303,69 @@ void CVTStrucVisCtrl::OnDraw(CDC* pdc, const CRect& rcBounds, const CRect& rcInv
 }
 
 // Persistence support
-void CVTStrucVisCtrl::DoPropExchange(CPropExchange* pPX) {
+void CVTStrucVisCtl::DoPropExchange(CPropExchange* pPX) {
 	ExchangeVersion(pPX, MAKELONG(_wVerMinor, _wVerMajor));
 	COleControl::DoPropExchange(pPX);
 
-	// TODO: Call PX_ functions for each persistent custom property.
+   // Mark the other persistant properties with PX_ calls
+   PX_DataPath(pPX, _T("SimData"), m_oSimData);
 
+   // If it's loading the property data, set the ready state to loaded
+   // to indicate that all the synchronous data is in
+   if(pPX->IsLoading())
+      InternalSetReadyState(READYSTATE_LOADED);
 }
 
 // Reset control to default state
-void CVTStrucVisCtrl::OnResetState() {
+void CVTStrucVisCtl::OnResetState() {
 	COleControl::OnResetState();  // Resets defaults found in DoPropExchange
 
 	// TODO: Reset any other control state here.
 }
 
 // Display an "About" box to the user
-void CVTStrucVisCtrl::AboutBox() {
+void CVTStrucVisCtl::AboutBox() {
 	CDialog dlgAbout(IDD_ABOUTBOX_VTSTRUCVIS);
 	dlgAbout.DoModal();
 }
 
 // Enable flicker free activation
-DWORD CVTStrucVisCtrl::GetControlFlags() {
+DWORD CVTStrucVisCtl::GetControlFlags() {
 	return COleControl::GetControlFlags() | noFlickerActivate;
 }
 
 /////////////////////
-// Message handlers
+// Member Functions
 
-void CVTStrucVisCtrl::OnLButtonDown(UINT nFlags, CPoint point) {
-   // Set the draw string to clicked and repaint
-   if (GetCortona()) {
-      // Turn on the Nav nar
+bool CVTStrucVisCtl::InitCortona() {
+   // Find the control
+   bool bFound = GetCortona();
+   if (bFound) {
+
+      m_oDrawText += "Loading " + m_oSimData.GetPath() + "\n";
+
+      // Found the control, so initialise it
+      m_oDrawText += "Setting up the control\n";
       m_oControl.NavBar(1);
-      m_oDrawText += "Turning on nav bars\n";
+      m_oControl.Trace("Turned on the nav bar\n");
+      m_oControl.Headlight(true);
+      m_oControl.Trace("Turned on the headlight\n");
+      m_oControl.Edit();
+      m_oControl.Trace("Prepared the engine for direct editing\n");
+      m_oControl.Refresh();
    }
+   else {
+      // Control not found, so not much we can do
+      m_oDrawText += "Control not found";
+   }
+
+   // Repaint
    InvalidateControl();
-	
-	COleControl::OnLButtonDown(nFlags, point);
+
+   return bFound;
 }
 
-bool CVTStrucVisCtrl::GetCortona() {
+bool CVTStrucVisCtl::GetCortona() {
    LPOLECONTAINER pContainer = NULL;
    // Get a pointer to the IOleItemContainer interface
    HRESULT hResult = GetClientSite()->GetContainer(&pContainer);
@@ -342,7 +379,6 @@ bool CVTStrucVisCtrl::GetCortona() {
       hResult = pContainer->EnumObjects(dwFlags, &pEnumUnknown);
       if (SUCCEEDED(hResult)) {
          // What have we got?
-         m_oDrawText = "";
          LPUNKNOWN pNextControl = NULL;
          bool bNext = true;
          while (bNext && pEnumUnknown->Next(1, &pNextControl, NULL) == S_OK) {
@@ -385,11 +421,11 @@ bool CVTStrucVisCtrl::GetCortona() {
                m_oDrawText += "Found control but no OLE object\n";
             pNextControl->Release();
          }
+         // Release the EnumUnknown interface
+         pEnumUnknown->Release();
       }
       else
          m_oDrawText = "Failed to enum objects";
-      // Release the EnumUnknown interface
-      pEnumUnknown->Release();
       // Release the container interface
       pContainer->Release();
    }
@@ -398,3 +434,24 @@ bool CVTStrucVisCtrl::GetCortona() {
 
    return m_oControl.Attached();
 }
+
+/////////////////////
+// Message handlers
+
+void CVTStrucVisCtl::OnLButtonDown(UINT nFlags, CPoint point) {
+
+   COleControl::OnLButtonDown(nFlags, point);
+}
+
+BSTR CVTStrucVisCtl::GetSimData() {
+	CString strResult = m_oSimData.GetPath();
+
+	return strResult.AllocSysString();
+}
+
+void CVTStrucVisCtl::SetSimData(LPCTSTR lpszNewValue) {
+   Load(lpszNewValue, m_oSimData);
+
+	SetModifiedFlag();
+}
+
