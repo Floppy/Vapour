@@ -9,7 +9,7 @@
 //! file      = "Control/DataManager.cpp"
 //! author    = "James Smith"
 //! date      = "19/3/2002"
-//! rcsid     = "$Id: DataManager.cpp,v 1.21 2002/04/04 11:01:34 vap-warren Exp $"
+//! rcsid     = "$Id: DataManager.cpp,v 1.22 2002/04/23 11:35:32 vap-james Exp $"
 
 #include "stdafx.h"
 #include "DataManager.h"
@@ -267,6 +267,7 @@ void CDataManager::BeamSizes(int iGroup, float& fHeight, float& fWidth, float& f
    if (pChunk) {
       const unsigned char* pcData = pChunk->Data();
       int iNumGroups = *reinterpret_cast<const unsigned int*>(pcData);
+      if (iGroup >= iNumGroups) iGroup = iNumGroups-1;   // Check group number
       pcData += sizeof(unsigned int);
       pcData += iGroup * 4*sizeof(float);
       if (iGroup < iNumGroups) {
@@ -333,6 +334,7 @@ void CDataManager::SlabSizes(int iGroup, float& fThickness) {
    if (pChunk) {
       const unsigned char* pcData = pChunk->Data();
       int iNumGroups = *reinterpret_cast<const unsigned int*>(pcData);
+      if (iGroup >= iNumGroups) iGroup = iNumGroups-1;   // Check group number
       pcData += sizeof(unsigned int);
       pcData += iGroup * sizeof(float);
       if (iGroup < iNumGroups) {
