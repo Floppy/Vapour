@@ -7,7 +7,7 @@
 # SlabElement.wrl
 # 19/03/2002 - James Smith
 #
-# $Id: SlabElement.wrl,v 1.9 2002/03/22 19:06:30 vap-james Exp $
+# $Id: SlabElement.wrl,v 1.10 2002/03/26 20:09:59 vap-james Exp $
 
 PROTO SlabElement [
    eventIn MFColor  set_colours
@@ -208,7 +208,7 @@ PROTO SlabElement [
          function update_colours(colourset) {
             for (i=0; i<9; i++) {
                for (j=0; j<4; j++) {
-                  colourNode.color[(i*4) + j] = colours[i];
+                  colourNode.color[(i*4) + j] = colourset[i];
                }
             }
          }
