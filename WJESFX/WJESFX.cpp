@@ -7,7 +7,7 @@
 // WJESFX.cpp - 11/07/2000 - Warren Moore
 //	Application and installation
 //
-// $Id: WJESFX.cpp,v 1.5 2000/07/15 16:28:32 waz Exp $
+// $Id: WJESFX.cpp,v 1.6 2000/08/29 12:49:57 waz Exp $
 //
 
 #include "stdafx.h"
@@ -236,8 +236,8 @@ void CWJESFXApp::InstallUT(CProgressDlg *poDlg) {
 // Find the game directory
 	CRegistry oReg;
 	CString strPath = oReg.ReadString(LOCAL_MACHINE,
-																		"Software\\Unreal Technology\\Installed Apps\\UnrealTournament", 
-																		"Folder", "");
+												 "Software\\Unreal Technology\\Installed Apps\\UnrealTournament", 
+												 "Folder", "");
 	if (strPath == "") {
 		AfxMessageBox("Unable to find the Unreal Tournament directory. Please select your directory.", MB_OK);
 		CFolderDialog oFolder;
@@ -302,10 +302,12 @@ void CWJESFXApp::InstallUT(CProgressDlg *poDlg) {
 			uCount++;
 		}
 		// Add the successfully installed files to UT system\manifest.ini
-		if (!AddFilesToUT(oWedgie)) 
+		bool bExist = false;
+		if (!AddFilesToUT(oWedgie, bExist)) 
 			AfxMessageBox("Error updating Unreal Tournament installed modules file", MB_OK|MB_ICONERROR);
 		else 
-			AfxMessageBox("Unreal Tournament file System\\Manifest.ini renamed to System\\Manifest.ini.bak", MB_OK);
+			if (!bExist)
+				AfxMessageBox("Unreal Tournament file System\\Manifest.ini renamed to System\\Manifest.ini.bak", MB_OK);
 		// Clean up
 		oWedgie.Close();
 		poWJE->close();
@@ -317,7 +319,10 @@ void CWJESFXApp::InstallUT(CProgressDlg *poDlg) {
 		poDlg->DestroyWindow();
 } // InstallHL
 
-bool CWJESFXApp::AddFilesToUT(CWedgie &oWJE) {
+bool CWJESFXApp::AddFilesToUT(CWedgie &oWJE, bool &bExist) {
+	// Overwrite previous value
+	bExist = false;
+
 	// Open the ini file
 	CString strININame;
 	strININame = oWJE.Directory();
@@ -328,6 +333,7 @@ bool CWJESFXApp::AddFilesToUT(CWedgie &oWJE) {
 		oInFile.close();
 		return false;
 	}
+
 	// Create a temporary ini file
 	CString strTempName(strININame);
 	strTempName += ".vap";
@@ -338,15 +344,18 @@ bool CWJESFXApp::AddFilesToUT(CWedgie &oWJE) {
 		oOutFile.close();
 		return false;
 	}
-	// Generate the module name
-	const char *pcName = oWJE.Filename(0);
+
+	// Generate the module name from the executable name
+//	const char *pcName = oWJE.Filename(0);
+	const char *pcName = g_poVAL->GetAppName();
+
 	if (!pcName) {
 		oInFile.close();
 		oOutFile.close();
 		return false;
 	}
 	while(strchr(pcName, '\\') != NULL) 
-		pcName = strchr(pcName, '\\');
+		pcName = strchr(pcName, '\\') + 1;
 	int iLength = strlen(pcName);
 	bool bFound = false;
 	while (!bFound && (iLength > 0))
@@ -357,6 +366,10 @@ bool CWJESFXApp::AddFilesToUT(CWedgie &oWJE) {
 	char pcModName[STR_SIZE] = "";
 	memcpy(pcModName, pcName, iLength);
 	pcModName[iLength] = '\0';
+
+	// Calculate the group name
+	char pcGroupName[STR_SIZE] = "Group=";
+	strcat(pcGroupName, pcModName);
 	// Read through the file
 	char pcSection[STR_SIZE] = "";
 	char pcLine[STR_SIZE] = "";
@@ -364,8 +377,12 @@ bool CWJESFXApp::AddFilesToUT(CWedgie &oWJE) {
 	while (!oInFile.eof()) {
 		// Read a line
 		oInFile.getline(pcLine, STR_SIZE);
+		// Check if the group has already been written
+		if (stricmp(pcGroupName, pcLine) == 0) {
+			bExist = true;
+		}
 		// Check if we need to add our lines
-		if ((!bWritten) && (strlen(pcSection) != 0) && 
+		if ((!bExist) && (!bWritten) && (strlen(pcSection) != 0) && 
 			 ((strlen(pcLine) == 0) || (pcLine[0] == '['))) {
 			// Check for the setup section
 			if (stricmp("Setup", pcSection) == 0)
@@ -390,15 +407,19 @@ bool CWJESFXApp::AddFilesToUT(CWedgie &oWJE) {
 		oOutFile.write(pcLine, strlen(pcLine));
 		oOutFile << endl;
 	}
+
 	// Write the module settings
-	oOutFile << "[" << pcModName << "]" << endl;
-	unsigned int uCount = 0;
-	while (uCount < oWJE.Files()) {
-		oOutFile << "File=" << oWJE.Filename(uCount) << endl;
-		uCount++;
+	if (!bExist) {
+		oOutFile << "[" << pcModName << "]" << endl;
+		unsigned int uCount = 0;
+		while (uCount < oWJE.Files()) {
+			oOutFile << "File=" << oWJE.Filename(uCount) << endl;
+			uCount++;
+		}
+		oOutFile << "Caption=" << pcModName << endl;
+		oOutFile << "Version=100" << endl << endl;
 	}
-	oOutFile << "Caption=" << pcModName << endl;
-	oOutFile << "Version=100" << endl << endl;
+	// Check everything is Ok
 	bool bOk = (!oInFile.bad()) && (!oOutFile.bad());
 	// Close the files
 	oInFile.close();

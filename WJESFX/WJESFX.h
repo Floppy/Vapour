@@ -7,7 +7,7 @@
 // WJESFX.h - 11/07/2000 - Warren Moore
 //	Application and installation
 //
-// $Id: WJESFX.h,v 1.4 2000/07/14 19:56:15 waz Exp $
+// $Id: WJESFX.h,v 1.5 2000/08/29 12:49:57 waz Exp $
 //
 
 #ifndef _WJESFX_
@@ -66,7 +66,8 @@ public:
 
 protected:
 	// Game dependent internal functions
-	bool AddFilesToUT(CWedgie &oWJE);
+	// Returns true if installed successfully, bExist set true if group already exists
+	bool AddFilesToUT(CWedgie &oWJE, bool &bExist);
 
 	//{{AFX_VIRTUAL(CWJESFXApp)
 	public:
