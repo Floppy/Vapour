@@ -14,10 +14,14 @@ if (not $VALET_SRCROOT or not $VALET_DOCROOT) {
 `mkdir eht`;
 
 # move the eht files into the dir
-my $find_results = "`find $VALET_SRCROOT -name '*.eht'`";
+my $find_results = `find $VALET_SRCROOT -name '*.eht' -printf "%p "`;
+printf "Found: $find_results\n";
 if ($find_results) {
 	`cp $find_results eht`;
 }
 
 # run CxxDoc on the source
 `CxxDoc -pn VALET -o $VALET_DOCROOT -p $VALET_SRCROOT -i $VALET_SRCROOT -eht eht -tc class -td docnode > /dev/null 2>&1`;
+
+# delete the eht dir
+`rm -rf eht`;
