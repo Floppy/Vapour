@@ -7,12 +7,13 @@
 // RCOpenGLBufferWin32.cpp - 23/07/2000 - Warren Moore
 //	Render context for an OpenGL bitmap buffer
 //
-// $Id: RCOpenGLBufferWin32.cpp,v 1.3 2000/07/30 17:29:43 waz Exp $
+// $Id: RCOpenGLBufferWin32.cpp,v 1.4 2000/10/10 17:56:19 waz Exp $
 //
 
 #include "StdAfx.h"
 
 #include "VALWin32.h"
+#include "RenderContextProxy.h"
 #include "RCOpenGLBufferWin32.h"
 
 #include "gl\glu.h"
@@ -26,10 +27,15 @@ static char THIS_FILE[] = __FILE__;
 #endif
 
 //#===--- Defines
-#define RC_ID					"RCOpenGLBufferWin32-23072000"
+#define RC_ID					"OpenGL Offscreen Win32"
+#define RC_VERSION			0.1F
+
+extern CRenderContextStore g_oRenderContextStore;
 
 /////////////////////////
 // CRCOpenGLBufferWin32
+
+CRenderContextProxy<CRCOpenGLBufferWin32> g_oRCProxyOpenGLBufferWin32;
 
 CRCOpenGLBufferWin32::CRCOpenGLBufferWin32() : CRenderContext() {
 	m_poDC = NULL;
@@ -48,21 +54,35 @@ CRCOpenGLBufferWin32::~CRCOpenGLBufferWin32() {
 
 //#===--- Options
 
-const char *CRCOpenGLBufferWin32::GetID() const {
+const char *CRCOpenGLBufferWin32::GetID() {
 	return RC_ID;
 } // GetID
 
+float CRCOpenGLBufferWin32::GetVersion() {
+	return RC_VERSION;
+} // GetVersion
+
 RCRESULT CRCOpenGLBufferWin32::SetSize(unsigned int uWidth, unsigned int uHeight) {
-	m_uWidth = uWidth;
-	m_uHeight = uHeight;
+	CRenderContext::SetSize(uWidth, uHeight);
+	return Resize();
+} // SetSize
+
+RCRESULT CRCOpenGLBufferWin32::Resize() {
+	// Stop here if nothing to change
+	if ((m_uNewWidth == m_uWidth) && (m_uNewHeight == m_uHeight))
+		return RC_OK;
+	// Otherwise update new values
+	m_uWidth = m_uNewWidth;
+	m_uHeight = m_uNewHeight;
 	// Disable an enabled context
 	if (m_bEnabled)
 		Disable();
 	// If context exists, destroy it (have to for off-screen rendering)
 	if (m_bCreated)
 		Destroy();
-	return RC_OK;
-} // SetSize
+	// Create the new context
+	return Create();
+} // Resize
 
 RCRESULT CRCOpenGLBufferWin32::SetOption(int iOption, unsigned int uValue) {
 	RCRESULT eResult = CRenderContext::SetOption(iOption, uValue);
@@ -71,7 +91,21 @@ RCRESULT CRCOpenGLBufferWin32::SetOption(int iOption, unsigned int uValue) {
 } // SetOption (Int)
 
 RCRESULT CRCOpenGLBufferWin32::GetOption(int iOption, unsigned int &uValue) {
-	RCRESULT eResult = CRenderContext::GetOption(iOption, uValue);
+	RCRESULT eResult = RC_OK;
+	switch (iOption) {
+		case RCO_MODE:
+			uValue = RCV_OPENGL;
+			break;
+		case RCO_MEDIUM:
+			uValue = RCV_BUFFER;
+			break;
+		case RCO_VIEW:
+			uValue = RCV_NORMAL;
+			break;
+		default:
+			eResult = CRenderContext::GetOption(iOption, uValue);;
+	}
+	
 	// Make any changes here
 	return eResult;
 } // GetOption (Int)
@@ -90,11 +124,63 @@ RCRESULT CRCOpenGLBufferWin32::GetOption(int iOption, float &fValue) {
 
 //#===--- Context Control
 
+RCRESULT CRCOpenGLBufferWin32::CheckSelection(RCOptionListVector &oOptionList) {
+	RCRESULT eResult = RC_OK;
+	RCOptionListVector::iterator pOption = oOptionList.begin();
+	// Loop through all options
+	while ((eResult == RC_OK) && (pOption != oOptionList.end())) {
+		SRCOptionTuple sOption = *pOption;
+		if ((sOption.m_iOption != RCO_UNKNOWN) && (sOption.m_uValue != RCV_DONT_CARE)) {
+			switch (sOption.m_iOption) {
+				case RCO_UNKNOWN:
+					break;
+				case RCO_MODE:
+					if (sOption.m_uValue != GetMode())
+						eResult = RC_INCORRECT_MODE;
+					break;
+				case RCO_MEDIUM:
+					if (sOption.m_uValue != RCV_BUFFER)
+						eResult = RC_UNSUPPORTED_MEDIUM;
+					break;
+				case RCO_VIEW:
+					if (sOption.m_uValue != RCV_NORMAL)
+						eResult = RC_UNSUPPORTED_VIEW;
+					break;
+				default:
+					eResult = CRenderContext::SetOption(sOption.m_iOption, sOption.m_uValue);
+			}
+		}
+		// Step to the next option
+		pOption++;
+	}
+	return eResult;
+} // CheckSelection
+
 RCRESULT CRCOpenGLBufferWin32::Create() {
+	if (m_bCreated)
+		return RC_OK;
+	// Create the memory bitmap
+	RCRESULT eResult = CreateBitmap();
+	// Create the pixel format
+	if (eResult == RC_OK)
+		eResult = CreateContext();
+	// Set the creation flag, and initialise params. Delete if failed
+	m_bCreated = (eResult == RC_OK);
+	// Either set the projection mode or destroy the bitmap
+	if (m_bCreated) {
+		SetProjectionMode();
+	}
+	else
+		Destroy();
+
+	return eResult;
+} // Create
+
+RCRESULT CRCOpenGLBufferWin32::CreateBitmap() {
 	// Create the device context
 	NEWBEGIN
 	m_poDC = (CDC*) new CDC;
-	NEWEND("CRCOpenGLBufferWin32::Create - Win32 Device Context")
+	NEWEND("CRCOpenGLBufferWin32::CreateBitmap - Win32 Device Context")
 	if (!m_poDC)
 		return RC_OUT_OF_MEMORY;
 	m_poDC->CreateCompatibleDC(NULL);
@@ -107,32 +193,35 @@ RCRESULT CRCOpenGLBufferWin32::Create() {
 	sBIH.biWidth = m_uWidth;
 	sBIH.biHeight = m_uHeight;
 	sBIH.biPlanes = 1;
-	sBIH.biBitCount = m_uDepth;
+	sBIH.biBitCount = m_uColourDepth;
 	sBIH.biCompression = BI_RGB;
 	// Create the DIB section for off-screen rendering
 	m_hBitmap = CreateDIBSection(m_poDC->m_hDC,
-															 (BITMAPINFO*) &sBIH,
-															 DIB_PAL_COLORS,
-															 (void**)(&m_pcData),
-															 NULL,
-															 0);
+										  (BITMAPINFO*) &sBIH,
+										  DIB_PAL_COLORS,
+										  (void**)(&m_pcData),
+										  NULL,
+										  0);
 	// Select the new bitmap in the current DC
 	if (m_hBitmap)
 		m_hOldBitmap = (HBITMAP)SelectObject(m_poDC->m_hDC, m_hBitmap);
 	else 
 		return RC_MEDIA_ERROR;
-	// Create the pixel format
-	RCRESULT eResult = CreateContext();
-	// Set the creation flag, and initialise params. Delete if failed
-	m_bCreated = (eResult == RC_OK);
-	if (m_bCreated) {
-		SetProjectionMode();
-	}
-	else
-		Destroy();
 
-	return eResult;
-} // Create
+	return RC_OK;
+} // CreateBitmap
+
+void CRCOpenGLBufferWin32::DestroyBitmap() {
+	// Destroy the bitmap
+	if (m_hBitmap) {
+		// Select the old bitmap
+		if (m_hOldBitmap)
+			SelectObject(m_poDC->m_hDC, m_hOldBitmap);
+		// Delete the bitmap
+		DeleteObject(m_hBitmap);
+		m_hBitmap = NULL;
+	}
+} // DestroyBitmap
 
 RCRESULT CRCOpenGLBufferWin32::CreateContext() {
 	// Set context params
@@ -140,23 +229,23 @@ RCRESULT CRCOpenGLBufferWin32::CreateContext() {
 
 	// Set the preferred pixel format options
 	PIXELFORMATDESCRIPTOR sPixelFormat = {
-		sizeof(PIXELFORMATDESCRIPTOR),			// structure size
-		1,																	// structure version
-		PFD_DRAW_TO_BITMAP |								// set off-screen rendering
+		sizeof(PIXELFORMATDESCRIPTOR),					// structure size
+		1,															// structure version
+		PFD_DRAW_TO_BITMAP |									// set off-screen rendering
 		PFD_SUPPORT_OPENGL,									// support OpenGL
 		PFD_TYPE_RGBA,											// colour type
-		m_uDepth,														// preferred colour depth
+		m_uColourDepth,										// preferred colour depth
 		0, 0, 0, 0, 0, 0,										// colour bits (ignored)
-		0,																	// no alpha buffer
-		0,																	// alpha bits
-		0,																	// no accumulation buffer
-		0, 0, 0, 0,													// accum bits (ignored)
-		32,																	// depth buffer
-		0,																	// no stencil buffer
-		0,																	// no auxiliary buffers
-		PFD_MAIN_PLANE,											// main layer
-		0,																	// reserved
-		0, 0, 0,														// no layer, visible, damage masks
+		0,															// no alpha buffer
+		0,															// alpha bits
+		0,															// no accumulation buffer
+		0, 0, 0, 0,												// accum bits (ignored)
+		m_uZBuffer,												// depth buffer
+		0,															// no stencil buffer
+		0,															// no auxiliary buffers
+		PFD_MAIN_PLANE,										// main layer
+		0,															// reserved
+		0, 0, 0,													// no layer, visible, damage masks
 	};
 
 	// Choose an appriate pixel format
@@ -166,9 +255,10 @@ RCRESULT CRCOpenGLBufferWin32::CreateContext() {
 	if (m_iPixelFormat == 0)
 		return RC_FORMAT_NOT_AVAILABLE;
 
-	// Return error if palettized display given
-	if (sPixelFormat.dwFlags & PFD_NEED_PALETTE)
-		return RC_FORMAT_NOT_AVAILABLE;
+	// Return error if not all parameters were met
+	RCRESULT eResult = CheckContextParams(sPixelFormat);
+	if (eResult != RC_OK)
+		return eResult;
 
 	// Set the returned pixel format
 	if (SetPixelFormat(m_poDC->m_hDC, m_iPixelFormat, &sPixelFormat) != TRUE)
@@ -181,19 +271,36 @@ RCRESULT CRCOpenGLBufferWin32::CreateContext() {
 	return RC_OK;
 } // CreateContext
 
+RCRESULT CRCOpenGLBufferWin32::CheckContextParams(PIXELFORMATDESCRIPTOR sFormat) {
+	// Return error if format does not support OpenGL
+	if (!(sFormat.dwFlags & PFD_SUPPORT_OPENGL))
+		return RC_FORMAT_NOT_AVAILABLE;
+	// Return error if format does not support rendering to a memory bitmap
+	if (!(sFormat.dwFlags & PFD_DRAW_TO_BITMAP))
+		return RC_FORMAT_NOT_AVAILABLE;
+	// Return error if palettized display given
+	if (sFormat.dwFlags & PFD_NEED_PALETTE)
+		return RC_FORMAT_NOT_AVAILABLE;
+	// Check the colour depth
+	if ((sFormat.iPixelType != PFD_TYPE_RGBA) || (sFormat.cColorBits != m_uColourDepth)) {
+		m_uColourDepth = sFormat.cColorBits;
+		return RC_UNSUPPORTED_COLOUR_DEPTH;
+	}
+	// Check the z-buffer size
+	if (sFormat.cDepthBits != m_uZBuffer) {
+		m_uZBuffer = sFormat.cDepthBits;
+		return RC_UNSUPPORTED_Z_BUF_SIZE;
+	}
+
+	return RC_OK;
+} // CheckContextParams
+
 RCRESULT CRCOpenGLBufferWin32::Destroy() {
 	// Make sure the context isn't enabled
 	if (m_bEnabled)
 		Disable();
 	// Delete the bitmap
-	if (m_hBitmap) {
-		// Select the old bitmap
-		if (m_hOldBitmap)
-			SelectObject(m_poDC->m_hDC, m_hOldBitmap);
-		// Delete the bitmap
-		DeleteObject(m_hBitmap);
-		m_hBitmap = NULL;
-	}
+	DestroyBitmap();
 	// Destroy the device context
 	if (m_poDC) {
 		m_poDC->DeleteDC();
@@ -316,9 +423,6 @@ RCRESULT CRCOpenGLBufferWin32::UseTexture(int iHandle) {
 	// Make sure we are created
 	if (!m_bCreated)
 		return RC_NOT_CREATED;
-	// Make sure we are created
-	if (!m_bCreated)
-		return RC_NOT_CREATED;
 	RCRESULT eResult = RC_OK;
 	// If texture exists, bind it
 	if (m_puTexNum[iHandle])
@@ -372,7 +476,7 @@ RCRESULT CRCOpenGLBufferWin32::Snapshot(CImage *&poImage) {
 		return RC_NOT_ACTIVE;
 	// Set the image type
 	IMAGETYPE sType = IT_UNKNOWN;
-	switch (m_uDepth) {
+	switch (m_uColourDepth) {
 		case 24:
 			sType = IT_RGB;
 			break;

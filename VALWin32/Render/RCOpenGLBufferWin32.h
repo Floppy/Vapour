@@ -7,7 +7,7 @@
 // RCOpenGLBufferWin32.h - 23/07/2000 - Warren Moore
 //	Render context for an OpenGL Win32 bitmap buffer
 //
-// $Id: RCOpenGLBufferWin32.h,v 1.3 2000/07/30 17:29:44 waz Exp $
+// $Id: RCOpenGLBufferWin32.h,v 1.4 2000/10/10 17:56:20 waz Exp $
 //
 
 #ifndef _VAL_RENDERCONTEXTOPENGLBUFFERWIN32_
@@ -17,6 +17,7 @@
 
 #include "VAL.h"
 
+#include "RenderContextStore.h"
 #include "RenderContext.h"
 #include "gl\gl.h"
 
@@ -32,14 +33,20 @@ public:
 	CRCOpenGLBufferWin32();
 	~CRCOpenGLBufferWin32();
 
-//#===--- External Functions
+//#===--- RenderContextProxy Functions
 	//#===--- Status Functions
 	// Returns the unique ID for the context
-	const char *GetID() const;
+	static const char *GetID();
+	// Returns the version number of the context
+	static float GetVersion();
 
+//#===--- External Functions
 	//#===--- Options
-	// Context resolution (Note: Setting size destroys an active context)
+	// Render mode
+	unsigned int GetMode() const;
+	// Context resolution
 	RCRESULT SetSize(unsigned int uWidth, unsigned int uHeight);
+	RCRESULT Resize();
 	// Flagged options
 	RCRESULT SetOption(int iOption, unsigned int uValue);
 	RCRESULT GetOption(int iOption, unsigned int &uValue);
@@ -47,6 +54,8 @@ public:
 	RCRESULT GetOption(int iOption, float &fValue);
 
 	//#===--- Context Control
+	// Checks selection options for suitability, and passes in creatio options
+	RCRESULT CheckSelection(RCOptionListVector &oOptionList);
 	// Create the context as per the supplied options
 	RCRESULT Create();
 	// Destroy the current context
@@ -82,18 +91,31 @@ public:
 
 protected:
 //#===--- Internal Functions
+	// Creates the memory bitmap render surface
+	RCRESULT CreateBitmap();
+	// Destroys the memory bitmap
+	void DestroyBitmap();
 	// Create the OpenGL context
 	RCRESULT CreateContext();
+	// Checks the format selected with the specified params
+	// NB: Sets internal params to match those it could support
+	RCRESULT CheckContextParams(PIXELFORMATDESCRIPTOR sFormat);
 
 //#===--- Internal Data
 	// Context Info
-	CDC *m_poDC;																	// Windows device context pointer
+	CDC *m_poDC;														// Windows device context pointer
 	HBITMAP	m_hBitmap, m_hOldBitmap;							// Windows DIBSection pointer
-	unsigned char *m_pcData;											// Pointer to start of bitmap data
-	HGLRC m_hGLRC;																// OpenGL render context handle
-	int m_iPixelFormat;														// Current OpenGL pixel format
+	unsigned char *m_pcData;										// Pointer to start of bitmap data
+	HGLRC m_hGLRC;														// OpenGL render context handle
+	int m_iPixelFormat;												// Current OpenGL pixel format
 	// Texture Info
-	unsigned int m_puTexNum[GLBW_MAX_TEXTURES];		// Texture handles
+	unsigned int m_puTexNum[GLBW_MAX_TEXTURES];				// Texture handles
 };
+
+//#===--- Inline functions
+
+inline unsigned int CRCOpenGLBufferWin32::GetMode() const {
+	return RCV_OPENGL;
+} // GetMode
 
 #endif // _VAL_RENDERCONTEXTOPENGLBUFFERWIN32_
