@@ -6,7 +6,7 @@
 // SlabElement.cpp
 // 19/03/2002 - James Smith
 //
-// $Id: SlabElement.cpp,v 1.14 2002/03/22 12:16:16 vap-james Exp $
+// $Id: SlabElement.cpp,v 1.15 2002/03/22 12:48:35 vap-james Exp $
 
 #include "stdafx.h"
 #include "SlabElement.h"
@@ -38,6 +38,7 @@ const char pcSlabStart[] = " \
       eventIn MFInt32 set_cracks \
       eventIn MFVec3f set_nodes \
       eventIn SFBool  set_visible \
+      exposedField MFString description \
       field MFColor colours \
       field MFInt32 cracks  \
       field MFVec3f nodes \
@@ -67,6 +68,8 @@ bool CSlabElement::Display(void) const {
       ostrstream strSlab(pcBuffer, 2048);
       // Add the basic SlabElement syntax
       strSlab << pcSlabStart;
+      // Set the description
+      strSlab << " description \"Group: " << m_iGroup << "\" ";
       // Set the size
       strSlab << " thickness " << m_fThickness;
       // Set colours
@@ -113,8 +116,8 @@ bool CSlabElement::Display(void) const {
       if (pField==NULL) return false;
       // Set values
       for (i=0; i<9 && bOK; i++) {
-         //if (bOK && !pField->AddMFColor(pfColours[(i*3)], pfColours[(i*3)+1], pfColours[(i*3)+2]))
-            //bOK = false;
+         if (bOK && !pField->AddMFColor(pfColours[(i*3)], pfColours[(i*3)+1], pfColours[(i*3)+2]))
+            bOK = false;
       }      
       // Send event
       if (bOK && !m_poNodePtr->AssignEventIn("set_colours",*pField))
@@ -128,8 +131,8 @@ bool CSlabElement::Display(void) const {
       if (pField == NULL) return false;
       // Set values
       for (i=0; i<9 && bOK; i++) {
-         //if (bOK && !pField->AddMFInt32(m_pcCracks[i])
-            //bOK = false;
+         if (bOK && !pField->AddMFInt32(m_pcCracks[i]))
+            bOK = false;
       }      
       // Send event
       if (bOK && !m_poNodePtr->AssignEventIn("set_cracks",*pField))

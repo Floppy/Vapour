@@ -7,12 +7,13 @@
 # BeamElement.wrl
 # 19/03/2002 - James Smith
 #
-# $Id: BeamElement.wrl,v 1.6 2002/03/22 00:23:15 vap-james Exp $
+# $Id: BeamElement.wrl,v 1.7 2002/03/22 12:48:35 vap-james Exp $
 
 PROTO BeamElement [
    eventIn MFColor set_colours
    eventIn MFVec3f set_nodes
    eventIn SFBool  set_visible
+   exposedField MFString description []
    field   MFColor colours [ 1 1 1, 1 1 1]
    field   SFFloat flange  0.1
    field   SFFloat height  1

@@ -6,7 +6,7 @@
 // BeamElement.cpp
 // 19/03/2002 - James Smith
 //
-// $Id: BeamElement.cpp,v 1.13 2002/03/22 12:16:16 vap-james Exp $
+// $Id: BeamElement.cpp,v 1.14 2002/03/22 12:48:35 vap-james Exp $
 
 #include "stdafx.h"
 #include "BeamElement.h"
@@ -39,6 +39,7 @@ const char pcBeamStart[] = " \
       eventIn MFColor set_colours \
       eventIn MFVec3f set_nodes \
       eventIn SFBool  set_visible \
+      exposedField MFString description \
       field MFColor colours \
       field SFFloat flange \
       field SFFloat height \
@@ -69,6 +70,8 @@ bool CBeamElement::Display(void) const {
       ostrstream strBeam(pcBuffer,2048);
       // Add the basic BeamElement syntax
       strBeam << pcBeamStart;
+      // Set the description
+      strBeam << " description \"Group: " << m_iGroup << "\" ";
       // Set the size
       strBeam << " height " << m_fHeight;
       strBeam << " width "  << m_fWidth;
@@ -114,8 +117,8 @@ bool CBeamElement::Display(void) const {
       if (pField==NULL) return false;
       // Set values
       for (i=0; i<2 && bOK; i++) {
-         //if (bOK && !pField->AddMFColor(pfColours[(i*3)], pfColours[(i*3)+1], pfColours[(i*3)+2]))
-            //bOK = false;
+         if (bOK && !pField->AddMFColor(pfColours[(i*3)], pfColours[(i*3)+1], pfColours[(i*3)+2]))
+            bOK = false;
       }      
       // Send event
       if (bOK && !m_poNodePtr->AssignEventIn("set_colours",*pField))

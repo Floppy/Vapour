@@ -7,13 +7,14 @@
 # SlabElement.wrl
 # 19/03/2002 - James Smith
 #
-# $Id: SlabElement.wrl,v 1.7 2002/03/22 12:03:49 vap-james Exp $
+# $Id: SlabElement.wrl,v 1.8 2002/03/22 12:48:35 vap-james Exp $
 
 PROTO SlabElement [
    eventIn MFColor set_colours
    eventIn MFInt32 set_cracks
    eventIn MFVec3f set_nodes
    eventIn SFBool  set_visible
+   exposedField MFString description []
    field MFColor colours [ 1 1 1, 1 1 1, 1 1 1, 1 1 1, 1 1 1, 1 1 1, 1 1 1, 1 1 1, 1 1 1]
    field MFInt32 cracks  [ 0 0 0 0 0 0 0 0 0 ]
    field MFVec3f nodes   [ 0.5 0 0.5, 0 0 0.5, -0.5 0 0.5, -0.5 0 0, -0.5 0 -0.5, 0 0 -0.5, 0.5 0 -0.5, , 0.5 0 0, 0 0 0]
