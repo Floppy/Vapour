@@ -7,7 +7,7 @@
 // Stores.cpp - 01/06/2000 - Warren Moore
 //	VAL Specialty stores for external linkage
 //
-// $Id: Stores.cpp,v 1.3 2000/07/19 08:47:36 waz Exp $
+// $Id: Stores.cpp,v 1.4 2000/10/06 13:02:48 waz Exp $
 //
 
 #include "StdAfx.h"
@@ -21,4 +21,8 @@ CImageFileStore g_oImageFileStore;
 //#===--- Avatar file format speciality store
 #include "AvatarFileStore.h"
 CAvatarFileStore g_oAvatarFileStore;
+
+//#===--- Render context speciality store
+#include "RenderContextStore.h"
+CRenderContextStore g_oRenderContextStore;
 
