@@ -4,12 +4,19 @@
 #include "stdafx.h"
 #include "SpinDoctor.h"
 #include "SpinDoctorDlg.h"
+#include "Registry.h"
+
+// VAL
+#include "Val.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
 #endif
+
+// VAL management object
+CVAL *g_poVAL = NULL;
 
 /////////////////////////////////////////////////////////////////////////////
 // CSpinDoctorApp
@@ -41,36 +48,50 @@ CSpinDoctorApp theApp;
 
 BOOL CSpinDoctorApp::InitInstance()
 {
-	// Standard initialization
-	// If you are not using these features and wish to reduce the size
-	//  of your final executable, you should remove from the following
-	//  the specific initialization routines you do not need.
 
+   // Enable 3D Controls
 #ifdef _AFXDLL
-	Enable3dControls();			// Call this when using MFC in a shared DLL
+	Enable3dControls();
 #else
-	Enable3dControlsStatic();	// Call this when linking to MFC statically
+	Enable3dControlsStatic();
 #endif
 
-	// Set registry key
-	SetRegistryKey("vapourtech");
+	CRegistry oReg;
+   int iPrecision, iAngleType, iOnTop, iSelectedTab;
 
+	// Load registry settings
+   oReg.OpenKey(CURRENT_USER, "Software\\vapourtech\\SpinDoctor", true);
+   iPrecision = oReg.ReadInt("Precision", 2);
+   iAngleType = oReg.ReadInt("AngleType", 0);
+   iOnTop = oReg.ReadInt("OnTop", 0);
+   iSelectedTab = oReg.ReadInt("SelectedTab", 0);
+	oReg.CloseKey();
+	
+   // Create dialog
 	CSpinDoctorDlg dlg;
 	m_pMainWnd = &dlg;
 
-	dlg.SetSettings(GetProfileInt("SpinDoctor", "Precision", 2),GetProfileInt("SpinDoctor", "AngleType", 0),GetProfileInt("SpinDoctor", "OnTop", 0));
+   // Set information in main dialog
+	dlg.SetOptions(iPrecision,iAngleType,iOnTop,iSelectedTab);
 
+   // Display dialog
 	dlg.DoModal();
 
-	// Save precision to registry
-	int iPrecision, iAngleType, iOnTop;
-	dlg.GetSettings(&iPrecision, &iAngleType, &iOnTop);
-	int success = WriteProfileInt("SpinDoctor", "Precision", iPrecision);
-	success &= WriteProfileInt("SpinDoctor", "AngleType", iAngleType);
-	success &= WriteProfileInt("SpinDoctor", "OnTop", iOnTop);
-	if (!success) AfxMessageBox("Could not save settings!");
+   // Retrieve settings from dialog
+   dlg.GetOptions(&iPrecision,&iAngleType,&iOnTop,&iSelectedTab);
 
-	// Since the dialog has been closed, return FALSE so that we exit the
-	// application, rather than start the application's message pump.
+	// Save registry settings
+   if (oReg.OpenKey(CURRENT_USER, "Software\\vapourtech\\SpinDoctor", false)) {
+      oReg.WriteInt("Precision", iPrecision);
+      oReg.WriteInt("AngleType", iAngleType);
+      oReg.WriteInt("OnTop", iOnTop);
+      oReg.WriteInt("SelectedTab",iSelectedTab);
+	   oReg.CloseKey();
+   }
+   else {
+      ::AfxMessageBox("Could not save registry settings!",MB_ICONERROR|MB_OK);
+   }
+	
+   // Finised, so return false
 	return FALSE;
 }
