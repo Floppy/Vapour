@@ -14,7 +14,7 @@
 //! author 		= "Warren Moore"
 //! date 		= "26/09/2001"
 //! lib 			= libVALETcore
-//! rcsid 		= "$Id: loghandle.dc.h,v 1.8 2001/10/24 21:31:39 vap-james Exp $"
+//! rcsid 		= "$Id: loghandle.dc.h,v 1.9 2001/10/26 12:53:06 vap-warren Exp $"
 //! userlevel 	= Develop
 //! docentry 	= "VALET.Core.Log"
 //! example 	= VALET/core/log.test.cpp
@@ -47,7 +47,7 @@ namespace NVALET {
 
 	protected:
 
-		char m_pcType[m_uiStrLength];		// Name of log type
+		char m_pcType[g_uiStrLength];		// Name of log type
 		
 	};
 

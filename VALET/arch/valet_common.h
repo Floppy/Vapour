@@ -13,7 +13,7 @@
 //! file 		= "VALET/arch/valet_common.h""
 //! author 		= "Warren Moore"
 //! date 		= "23/09/2001"
-//! rcsid 		= "$Id: valet_common.h,v 1.11 2001/10/24 23:30:46 vap-warren Exp $"
+//! rcsid 		= "$Id: valet_common.h,v 1.12 2001/10/26 12:53:05 vap-warren Exp $"
 //! userlevel 	= Normal
 //! docentry 	= "VALET.Arch"
 //! maindoc		= 1
@@ -25,7 +25,7 @@
 namespace NVALET {
 
    /*#===--- Constants */
-   const unsigned int m_uiStrLength = 1024;	    // Default fixed string length
+   const unsigned int g_uiStrLength = 1024;	    // Default fixed string length
 
    enum EFileResult {
       FR_OK = 0,

@@ -11,7 +11,7 @@
 //! author 		= "Warren Moore"
 //! date 		= "23/09/2001"
 //! lib 			= libVALETcore
-//! rcsid 		= "$Id: loghandle.noarch.cpp,v 1.5 2001/10/24 21:31:39 vap-james Exp $"
+//! rcsid 		= "$Id: loghandle.noarch.cpp,v 1.6 2001/10/26 12:53:06 vap-warren Exp $"
 
 //#===--- Includes
 #include "loghandle.h"
@@ -28,7 +28,7 @@ namespace NVALET {
       using namespace std;
       ASSERT(pcType);
       // Create the log filename
-      char pcName[m_uiStrLength] = "";
+      char pcName[g_uiStrLength] = "";
       strcpy(pcName, pcType);
       strcat(pcName, ".log");
       // Create the log file
