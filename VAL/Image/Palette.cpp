@@ -7,7 +7,7 @@
 // Palette.cpp - 19/03/2000 - Warren Moore
 //	Palette implementation
 //
-// $Id: Palette.cpp,v 1.6 2000/08/09 18:28:40 waz Exp $
+// $Id: Palette.cpp,v 1.7 2000/08/22 11:30:33 waz Exp $
 //
 
 #include "stdafx.h"
@@ -194,32 +194,32 @@ int CImagePalette::MatchColour(unsigned int uColour) {
 	// Create the cache
 	if (!m_psCache)
 		CreateCache();
-	if (!m_psHash)
-		CreateHash();
+//	if (!m_psHash)
+//		CreateHash();
 	// Try to find the colour in the cache
 	int iIndex = CheckCache(uColour);
 	if (iIndex != -1) {
-		static unsigned int uCacheHits = 0;
-		uCacheHits++;
-		TRACE("Cache hit (%6u) - Index: %3d\n", uCacheHits, iIndex);
+//		static unsigned int uCacheHits = 0;
+//		uCacheHits++;
+//		TRACE("Cache hit (%6u) - Index: %3d\n", uCacheHits, iIndex);
 		return iIndex;
 	}
 	// Find the nearest match in the hash table
-	iIndex = CheckHash(uColour);
-	if (iIndex != -1) {
-		static unsigned int uHashHits = 0;
-		uHashHits++;
-		TRACE("Hash hit (%6u) - Index: %3d\n", uHashHits, iIndex);
-		AddCacheEntry(uColour, iIndex);
-		return iIndex;
-	}
+//	iIndex = CheckHash(uColour);
+//	if (iIndex != -1) {
+//		static unsigned int uHashHits = 0;
+//		uHashHits++;
+//		TRACE("Hash hit (%6u) - Index: %3d\n", uHashHits, iIndex);
+//		AddCacheEntry(uColour, iIndex);
+//		return iIndex;
+//	}
 	// Check over palette entry to find the lowest error
 	iIndex = FindLowest(uColour);
 	// Must have found one now, so add cache entry
 	AddCacheEntry(uColour, iIndex);
-	static unsigned int uSADHits = 0;
-	uSADHits++;
-	TRACE("SAD hit (%6u) - Index: %3d\n", uSADHits, iIndex);
+//	static unsigned int uSADHits = 0;
+//	uSADHits++;
+//	TRACE("SAD hit (%6u) - Index: %3d\n", uSADHits, iIndex);
 	return iIndex;
 } // MatchColour
 
