@@ -7,14 +7,14 @@
 // Add confidentiality notice
 
 ////////////////
-//! file 		= "VALET/3D/vector3d.test.cpp"
+//! file 		= "VALET/3D/vector2d.test.cpp"
 //! author 		= "James Smith"
 //! date 		= "1/11/2001"
-//! rcsid 		= "$Id: vector3d.test.cpp,v 1.2 2001/11/02 11:54:27 vap-james Exp $"
+//! rcsid 		= "$Id: vector2d.test.cpp,v 1.1 2001/11/02 11:54:27 vap-james Exp $"
 
 //#===--- Includes
 #include "VALET/valet.h"
-#include "VALET/vector3d.h"
+#include "VALET/vector2d.h"
 #include "VALET/axisrotation.h"
 #include "VALET/log.h"
 
@@ -27,7 +27,7 @@ using namespace NVALET;
 int main(int argc, char *argv[]) {
  
    g_oLogManager.SetLog("math",true,LL_ALL);
-   CLog oLog("math","vector3d.test",LL_FUNCTION);
+   CLog oLog("math","vector2d.test",LL_FUNCTION);
 
    bool bError(false);
 
@@ -38,9 +38,8 @@ int main(int argc, char *argv[]) {
 
       const double dX = static_cast(double,rand()) / static_cast(double,RAND_MAX);
       const double dY = static_cast(double,rand()) / static_cast(double,RAND_MAX);
-      const double dZ = static_cast(double,rand()) / static_cast(double,RAND_MAX);
       
-      CVector3D oVec(dX,dY,dZ);
+      CVector2D oVec(dX,dY);
 
       // Check equality operator
       if (!(oVec == oVec)) {
@@ -61,7 +60,7 @@ int main(int argc, char *argv[]) {
       }
 
       // Check inversion and copy constructor
-      CVector3D oInv(oVec);
+      CVector2D oInv(oVec);
       oInv.Invert();
       if ((oVec+oInv).Length() != 0) {
          oLog.Trace("Inversion test failed",LL_ERROR);
@@ -81,17 +80,10 @@ int main(int argc, char *argv[]) {
          bError = true;
       }
 
-      // Check rotation functions
-      CAxisRotation oRot(0,1,0,M_PI*2);
-      if ((oVec.Rotate(oRot) - oVec).Length() > dError) {
-         oLog.Trace("Rotation test failed",LL_ERROR);
-         bError = true;         
-      }
-
       // Check string output and parsing
       {
          char* pcString = oVec.ToString(9);
-         CVector3D oSVec;
+         CVector2D oSVec;
          if (!oSVec.ParseString(pcString)) {
             oLog.Trace("String parsing failed",LL_ERROR);
             bError = true;
