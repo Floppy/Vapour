@@ -7,7 +7,7 @@
 // CortonaField.cpp
 // 07/03/2002 - Warren Moore
 //
-// $Id: CortonaField.cpp,v 1.8 2002/03/22 19:52:02 vap-james Exp $
+// $Id: CortonaField.cpp,v 1.9 2002/03/24 13:43:49 vap-warren Exp $
 
 #include "stdafx.h"
 #include "CortonaBase.h"
@@ -208,13 +208,13 @@ bool CCortonaField::AddMFVec3f(const float fX, const float fY, const float fZ) {
          // Populate the array
          VariantInit(pVal);
          pVal[0].vt = VT_R4;
-         pVal[0].fltVal = fX,
+         pVal[0].fltVal = fX;
          VariantInit(pVal + 1);
          pVal[1].vt = VT_R4;
-         pVal[1].fltVal = fY,
+         pVal[1].fltVal = fY;
          VariantInit(pVal + 2);
          pVal[2].vt = VT_R4;
-         pVal[2].fltVal = fZ,
+         pVal[2].fltVal = fZ;
          SafeArrayUnaccessData(pSA);
       }
       else {
@@ -330,13 +330,13 @@ bool CCortonaField::SetSFVec3f(const float fX, const float fY, const float fZ) {
          // Populate the array
          VariantInit(pVal);
          pVal[0].vt = VT_R4;
-         pVal[0].fltVal = fX,
+         pVal[0].fltVal = fX;
          VariantInit(pVal + 1);
          pVal[1].vt = VT_R4;
-         pVal[1].fltVal = fY,
+         pVal[1].fltVal = fY;
          VariantInit(pVal + 2);
          pVal[2].vt = VT_R4;
-         pVal[2].fltVal = fZ,
+         pVal[2].fltVal = fZ;
          SafeArrayUnaccessData(pSA);
       }
       else {
@@ -453,13 +453,13 @@ bool CCortonaField::SetMFColor(const long liIndex, const float fR, const float f
          // Populate the array
          VariantInit(pVal);
          pVal[0].vt = VT_R4;
-         pVal[0].fltVal = fR,
+         pVal[0].fltVal = fR;
          VariantInit(pVal + 1);
          pVal[1].vt = VT_R4;
-         pVal[1].fltVal = fG,
+         pVal[1].fltVal = fG;
          VariantInit(pVal + 2);
          pVal[2].vt = VT_R4;
-         pVal[2].fltVal = fB,
+         pVal[2].fltVal = fB;
          SafeArrayUnaccessData(pSA);
       }
       else {
@@ -524,10 +524,10 @@ bool CCortonaField::AddMFColor(const float fR, const float fG, const float fB) {
          pVal[0].fltVal = fR,
          VariantInit(pVal + 1);
          pVal[1].vt = VT_R4;
-         pVal[1].fltVal = fG,
+         pVal[1].fltVal = fG;
          VariantInit(pVal + 2);
          pVal[2].vt = VT_R4;
-         pVal[2].fltVal = fB,
+         pVal[2].fltVal = fB;
          SafeArrayUnaccessData(pSA);
       }
       else {
@@ -823,10 +823,10 @@ bool CCortonaField::SetMFString(const long liIndex, const char* pcString) {
       return false;
 
    // Convert to BSTR
-   _bstr_t oBSTR(pcString);
+   COleVariant oStr(pcString);
 
    // Put the value
-   hResult = pMFString->put_Value(liIndex, oBSTR);
+   hResult = pMFString->put_Value(liIndex, oStr.bstrVal);
 
    // Release the MFString interface
    pMFString->Release();
