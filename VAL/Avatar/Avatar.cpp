@@ -7,7 +7,7 @@
 // Avatar.cpp - 17/06/2000 - James Smith
 //	Avatar class implementation
 //
-// $Id: Avatar.cpp,v 1.8 2000/08/29 12:47:41 waz Exp $
+// $Id: Avatar.cpp,v 1.9 2000/08/30 14:09:12 waz Exp $
 //
 
 #include "stdafx.h"
@@ -292,7 +292,7 @@ CImage* CAvatar::Texture(int iTextureIndex, bool& bMore) const {
    return Texture(iTextureIndex);
 } //Texture(int iTextureIndex, bool& bMore)
 
-void CAvatar::BoundingBox(BodyPart bpBodyPart, SPoint3D& max, SPoint3D& min) {
+void CAvatar::BoundingBox(BodyPart bpBodyPart, SPoint3D& max, SPoint3D& min) const {
    SPoint3D* pVertices = m_pCurrentVertices;
    if (bpBodyPart==unknown) {
       int iCurrentVertex = 0;
@@ -352,7 +352,11 @@ void CAvatar::BoundingBox(BodyPart bpBodyPart, SPoint3D& max, SPoint3D& min) {
       min.m_dComponents[2] = m_pBodyParts[bpBodyPart].m_pntDefaultCentre.m_dComponents[2];
    }
    return;
-} //BoundingBox(BodyPart bpBodyPart, SPoint3D& max, SPoint3D& min)
+} //BoundingBox(BodyPart bpBodyPart, SPoint3D& max, SPoint3D& min) const
+
+const CDList<int>* CAvatar::FacesPerVertex(int iVertexIndex) const {
+   return &(m_plFacesPerVertexMap[iVertexIndex]);
+} //FacesPerVertex(int iVertexIndex) const
 
 ///////////////////////////////////////////////////////////////////////
 // Posing Functions ///////////////////////////////////////////////////

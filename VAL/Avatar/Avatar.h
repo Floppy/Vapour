@@ -7,7 +7,7 @@
 // Avatar.h - 16/06/2000 - James Smith
 //	Avatar class header
 //
-// $Id: Avatar.h,v 1.7 2000/08/29 12:47:42 waz Exp $
+// $Id: Avatar.h,v 1.8 2000/08/30 14:09:13 waz Exp $
 //
 
 #ifndef _VAL_AVATAR_
@@ -199,7 +199,10 @@ public:
 
    // Calculates a bounding box for a body part. 
    // If body part is -1, a bounding box is calculated for the whole avatar.
-   void BoundingBox(BodyPart bpBodyPart, SPoint3D& max, SPoint3D& min);
+   void BoundingBox(BodyPart bpBodyPart, SPoint3D& max, SPoint3D& min) const;
+
+   // Get list of faces attached to a certain vertex.
+   const CDList<int>* FacesPerVertex(int iVertexIndex) const;
 
    ///////////////////////////////////////////////////////////////////////
    // Posing Functions ///////////////////////////////////////////////////
