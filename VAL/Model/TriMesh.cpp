@@ -7,7 +7,7 @@
 // TriMesh.cpp - 16/11/2000 - James Smith
 //	Triangular mesh class implementation
 //
-// $Id: TriMesh.cpp,v 1.0 2000/11/21 16:47:15 waz Exp $
+// $Id: TriMesh.cpp,v 1.1 2000/12/02 07:33:21 warren Exp $
 //
 
 #include "stdafx.h"
@@ -221,11 +221,13 @@ int CTriMesh::AddMaterial(void) {
    pNewMaterial = new CSurfaceMaterial;
    NEWEND("CTriMesh::AddMaterial - material allocation failed")
    if (pNewMaterial != NULL) {
-      if (m_lMaterials.AddBack(pNewMaterial)) iResult = m_lMaterials.Length()-1;
-      else delete pNewMaterial;
+      if (m_lMaterials.AddBack(pNewMaterial))
+			iResult = m_lMaterials.Length()-1;
+      else
+			delete pNewMaterial;
    }
    return iResult;
-}
+} // AddMaterial
 
 ///////////////////////////////////////////////////////////////////////
 // Info Functions /////////////////////////////////////////////////////

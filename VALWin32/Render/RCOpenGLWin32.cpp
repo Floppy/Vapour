@@ -7,7 +7,7 @@
 // RCOpenGLWin32.cpp - 23/11/2000 - Warren Moore
 //	Render context for an OpenGL window
 //
-// $Id: RCOpenGLWin32.cpp,v 1.3 2000/11/26 17:05:25 waz Exp $
+// $Id: RCOpenGLWin32.cpp,v 1.4 2000/12/02 07:35:15 warren Exp $
 //
 
 #include "StdAfx.h"
@@ -409,6 +409,9 @@ RCRESULT CRCOpenGLWin32::UseTexture(int iHandle) {
 	// Make sure we are created
 	if (!m_bCreated)
 		return RC_NOT_CREATED;
+	// Make sure a valid texture handle is passed in
+	if (iHandle < 0)
+		return RC_NO_TEXTURE;
 	RCRESULT eResult = RC_OK;
 	// If texture exists, bind it
 	if (m_puTexNum[iHandle])
