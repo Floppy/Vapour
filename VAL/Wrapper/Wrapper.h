@@ -7,7 +7,7 @@
 // Wrapper.h - 06/06/2000 - Warren Moore
 //	Global definitions for avatar converter wrappers
 //
-// $Id: Wrapper.h,v 1.3 2000/07/19 08:50:24 waz Exp $
+// $Id: Wrapper.h,v 1.4 2000/07/21 17:13:19 waz Exp $
 //
 
 #ifndef _WRAP_
@@ -59,7 +59,7 @@ enum VARESULT {
 	"A required filename has not been specified", \
 	"A required option argument was not set", \
 	"An error occured loading the SGA avatar", \
-	"An error occured saving the Sims model", \
+	"An error occured saving the exported model", \
 	"Evaluation time expired", \
 	"Unable to allocate memory block", \
 	"Error editing a model directory", \
