@@ -7,7 +7,7 @@
 // AvatarFileHalflife.cpp - 16/2/2000 - James Smith
 //	Halflife export filter implementation
 //
-// $Id: AvatarFileHalflife.cpp,v 1.6 2000/07/22 23:24:58 waz Exp $
+// $Id: AvatarFileHalflife.cpp,v 1.7 2000/07/23 15:50:12 waz Exp $
 //
 
 
@@ -272,7 +272,9 @@ int CAvatarFileHalflife::Save(ofstream& osOutputStream, CAvatar* pAvatar) const 
    sHeader.iID = HLMDLMAGIC;
    sHeader.iVersion = HLMDLVERSION;
    // Model name
-   strncpy(sHeader.pszName,m_pszModelname,64);
+	 char pcModelName[64] = "";
+	 sprintf(pcModelName, "%s\\%s.mdl", m_pszModelname, m_pszModelname);
+   strncpy(sHeader.pszName,pcModelName,64);
    // Initialise length counter
    sHeader.iLength = 0;
    // Set the vectors and flags to 0.
