@@ -7,12 +7,14 @@
 // CortonaField.cpp
 // 07/03/2002 - Warren Moore
 //
-// $Id: CortonaField.cpp,v 1.7 2002/03/22 12:25:45 vap-warren Exp $
+// $Id: CortonaField.cpp,v 1.8 2002/03/22 19:52:02 vap-james Exp $
 
 #include "stdafx.h"
 #include "CortonaBase.h"
 
 #include "CortonaField.h"
+
+#include <comdef.h>
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -801,6 +803,33 @@ bool CCortonaField::AddMFInt32(const long liValue) {
 
    // Release the MFVec3f interface
    pMFInt32->Release();
+
+   return SUCCEEDED(hResult);
+}
+
+bool CCortonaField::SetMFString(const long liIndex, const char* pcString) {
+   // Check the field pointer
+   if (!m_pField || liIndex < 1)
+      return false;
+
+   // Check the type
+   if (m_eType != tMFString)
+      return false;
+
+   // Get the IMFString interface
+   IMFStringObject *pMFString = NULL;
+   HRESULT hResult = m_pField->QueryInterface(IID_IMFStringObject, (void**)&pMFString);
+   if (FAILED(hResult))
+      return false;
+
+   // Convert to BSTR
+   _bstr_t oBSTR(pcString);
+
+   // Put the value
+   hResult = pMFString->put_Value(liIndex, oBSTR);
+
+   // Release the MFString interface
+   pMFString->Release();
 
    return SUCCEEDED(hResult);
 }

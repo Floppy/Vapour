@@ -7,7 +7,7 @@
 // CortonaField.h
 // 12/03/2002 - Warren Moore
 //
-// $Id: CortonaField.h,v 1.8 2002/03/22 12:25:45 vap-warren Exp $
+// $Id: CortonaField.h,v 1.9 2002/03/22 19:52:02 vap-james Exp $
 
 #ifndef __CORTONAFIELD__
 #define __CORTONAFIELD__
@@ -94,6 +94,10 @@ public:
 
    bool AddMFInt32(const long liValue);
    // Appends the value to the end of the list
+
+   //--- MFString Functions
+
+   bool SetMFString(const long liIndex, const char* pcString);
 
 protected:
 
