@@ -7,7 +7,7 @@
 // RCOpenGLBufferWin32.cpp - 23/07/2000 - Warren Moore
 //	Render context for an OpenGL bitmap buffer
 //
-// $Id: RCOpenGLBufferWin32.cpp,v 1.4 2000/10/10 17:56:19 waz Exp $
+// $Id: RCOpenGLBufferWin32.cpp,v 1.5 2000/11/25 22:41:15 waz Exp $
 //
 
 #include "StdAfx.h"
@@ -37,7 +37,7 @@ extern CRenderContextStore g_oRenderContextStore;
 
 CRenderContextProxy<CRCOpenGLBufferWin32> g_oRCProxyOpenGLBufferWin32;
 
-CRCOpenGLBufferWin32::CRCOpenGLBufferWin32() : CRenderContext() {
+CRCOpenGLBufferWin32::CRCOpenGLBufferWin32(CDisplayContext *poDisplay) : CRenderContext(poDisplay) {
 	m_poDC = NULL;
 	m_hBitmap = m_hOldBitmap = NULL;
 	m_hGLRC = NULL;
@@ -365,8 +365,9 @@ int CRCOpenGLBufferWin32::ImportTexture(CImage &oImage) {
 	}
 	// If found, create the texture
 	if (iHandle < GLBW_MAX_TEXTURES) {
-		int iWidth = oImage.m_iWidth;
-		int iHeight = oImage.m_iHeight;
+		int iWidth = 0;
+		int iHeight = 0;
+		oImage.GetSize(iWidth, iHeight);
 		// Create the texture object
 		glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
 		glGenTextures(1, &(m_puTexNum[iHandle]));

@@ -94,6 +94,10 @@ SOURCE=.\Application\NumericEdit.cpp
 # Begin Source File
 
 SOURCE=.\Render\RCOpenGLBufferWin32.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\Render\RCOpenGLWin32.cpp
 
 !IF  "$(CFG)" == "VALWin32 - Win32 Release"
 
@@ -139,6 +143,10 @@ SOURCE=.\Render\RCOpenGLBufferWin32.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\Render\RCOpenGLWin32.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\Application\Registry.h
 # End Source File
 # Begin Source File
@@ -154,9 +162,5 @@ SOURCE=.\StdAfx.h
 SOURCE=.\Application\VALWin32.h
 # End Source File
 # End Group
-# Begin Source File
-
-SOURCE=.\Readme.txt
-# End Source File
 # End Target
 # End Project

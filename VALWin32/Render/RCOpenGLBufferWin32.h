@@ -7,7 +7,7 @@
 // RCOpenGLBufferWin32.h - 23/07/2000 - Warren Moore
 //	Render context for an OpenGL Win32 bitmap buffer
 //
-// $Id: RCOpenGLBufferWin32.h,v 1.4 2000/10/10 17:56:20 waz Exp $
+// $Id: RCOpenGLBufferWin32.h,v 1.5 2000/11/25 22:41:15 waz Exp $
 //
 
 #ifndef _VAL_RENDERCONTEXTOPENGLBUFFERWIN32_
@@ -30,7 +30,7 @@
 
 class CRCOpenGLBufferWin32 : public CRenderContext {
 public:
-	CRCOpenGLBufferWin32();
+	CRCOpenGLBufferWin32(CDisplayContext *poDisplay = NULL);
 	~CRCOpenGLBufferWin32();
 
 //#===--- RenderContextProxy Functions
