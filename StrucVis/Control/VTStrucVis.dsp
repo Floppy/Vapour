@@ -70,7 +70,7 @@ SOURCE="$(InputPath)"
 # Begin Special Build Tool
 SOURCE="$(InputPath)"
 PostBuild_Desc=Copying control to HTML directory
-PostBuild_Cmds=copy Release\VTStrucVis.ocx HTML
+PostBuild_Cmds=copy Release\VTStrucVis.ocx ..\HTML
 # End Special Build Tool
 
 !ELSEIF  "$(CFG)" == "VTStrucVis - Win32 Debug"
@@ -113,7 +113,7 @@ SOURCE="$(InputPath)"
 # Begin Special Build Tool
 SOURCE="$(InputPath)"
 PostBuild_Desc=Copying control to HTML directory
-PostBuild_Cmds=copy Debug\VTStrucVis.ocx HTML
+PostBuild_Cmds=copy Debug\VTStrucVis.ocx ..\HTML
 # End Special Build Tool
 
 !ENDIF 
