@@ -7,7 +7,7 @@
 // VAL.cpp - 03/07/2000 - Warren Moore
 //	VAL management object for OS independent functions
 //
-// $Id: VAL.cpp,v 1.1 2000/07/03 10:46:41 waz Exp $
+// $Id: VAL.cpp,v 1.2 2000/07/10 09:14:03 waz Exp $
 //
 
 #include "StdAfx.h"
@@ -23,3 +23,8 @@ static char THIS_FILE[] = __FILE__;
 /////////
 // CVAL
 
+CVAL::CVAL() {
+} // Constructor
+
+CVAL::~CVAL() {
+} // Destructor
