@@ -7,7 +7,7 @@
 // counter.cpp - 06/12/2000 - Warren Moore
 //	  Main application
 //
-// $Id: counter.cpp,v 1.3 2001/06/30 16:51:28 warren Exp $
+// $Id: counter.cpp,v 1.4 2002/12/08 17:25:43 vap-warren Exp $
 //
 
 #include <stdio.h>
@@ -32,41 +32,32 @@
 #define STR_SIZE					1024
 
 #ifdef WIN32
-//#===--- Windows
-
+// Windows
 #define COUNTER_ROOT				"D:\\Vapour\\Data\\"
 #define COUNTER_ZERO				"%s\\0.gif"
 #define COUNTER_PIC				"%s\\%c.gif"			
-
-const char g_pcReferrers[][STR_SIZE] = {
-	"vapourtech.hollowhill.com/",
-	"vapournet.hollowhill.com/",
-	"waz.hollowhill.com/",
-	"oak.hollowhill.com/",
-	"w-e-s.hollowhill.com/",
-	""
-};
-
 #else
 #ifdef LINUX
-//#===--- Linux
+// Linux
 #define COUNTER_ROOT				"/www/vapournet/counter/"
 //#define COUNTER_ROOT				"/home/waz/src/counter/data/"
 #define COUNTER_ZERO				"%s/0.gif"
 #define COUNTER_PIC				"%s/%c.gif"		
 
 const char g_pcReferrers[][STR_SIZE] = {
-	"vapourtech.hollowhill.com/",
-	"vapournet.hollowhill.com/",
-	"waz.hollowhill.com/",
-	"oak.hollowhill.com/",
-	"w-e-s.hollowhill.com/",
+	"vapourtech.waz.local/",
+	"vapournet.waz.local/",
+	"waz.waz.local/",
+	"oak.waz.local/",
+	"w-e-s.waz.local/",
+	"web3d.waz.local/",
+	"lamps.waz.local/",
 	""
 };
 
 #else
-//#===--- FreeBSD
-#define COUNTER_ROOT				"/www/vapourisp/counter/"
+// FreeBSD
+#define COUNTER_ROOT				"/www/vapournet/counter/"
 #define COUNTER_ZERO				"%s/0.gif"
 #define COUNTER_PIC				"%s/%c.gif"		
 
@@ -84,6 +75,7 @@ const char g_pcReferrers[][STR_SIZE] = {
 	"county-oak.org.uk/",
 	"moorecentral.org.uk/",
 	"tablefootball.org.uk/",
+	"cottagelamps.co.uk/",
 	""
 };
 
