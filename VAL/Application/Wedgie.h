@@ -5,9 +5,9 @@
 // Copyright 2000 Vapour Technology Ltd.
 //
 // Wedgie.h - 02/07/2000 - Warren Moore
-//	Wedgie file class 
+//	Creation and reading of compressed Wedgie files
 //
-// $Id: Wedgie.h,v 1.1 2000/07/02 22:59:51 waz Exp $
+// $Id: Wedgie.h,v 1.2 2000/07/02 23:22:36 waz Exp $
 //
 
 #ifndef _VAL_WEDGIE_
@@ -34,7 +34,7 @@
 enum WJERESULT {
 	WJE_OK = 0,
 	WJE_ERROR,
-}
+};
 
 //////////////////
 // CWedgieCreate
@@ -46,16 +46,17 @@ public:
 
 //#===--- External Functions
 	// Open the wedgie (assumes the file stream is already opened correctly)
+	// Require the base directory to be created from or extracted to
 	// Creates the wedgie if bCreate = true
 	// Reads the wedgie data if bCreate = false
-	WJERESULT Open(fstream *pFile, bool bCreate = false);
+	WJERESULT Open(fstream *pFile, const char *pDir = NULL, bool bCreate = false);
 	// Close the wedgie (does not close the file stream)
 	WJERESULT Close();
 
-	// Set the base directory - where to read from on create, where to write to on read
-	void Directory(const char *pDir);
-	// Return the current directory set
-	const char *Directory();
+	// Return the current base directory 
+	const char *Directory() const;
+	// Return the current wedgie name
+	const char *Name() const;
 
 	// Return the number of files in the wedgie
 	int Files() const;
@@ -76,11 +77,15 @@ protected:
 	} sFileData;
 
 //#===--- Internal Functions
+	// Count the files within the base directory
+	int Count();
 
 //#===--- Internal Data
-	char *m_pBaseDir;					// Base directory
-	char *m_pWJEName;					// Wedgie filename
-	int m_iFiles;							// Number of files in wedgie
+	char *m_pcBaseDir;					// Base directory
+	char *m_pcWJEName;					// Wedgie filename
+	fstream *m_poFile;					// Active file stream pointer
+	bool m_bCreate;							// Wedgie creation indicator
+	int m_iFiles;								// Number of files in wedgie
 
 	// Wedgie version number
 	const char m_cVerHigh;

@@ -5,32 +5,66 @@
 // Copyright 2000 Vapour Technology Ltd.
 //
 // Wedgie.cpp - 02/07/2000 - Warren Moore
-//	Wedgie file class implemenation
+//	Creation and reading of compressed Wedgie files
 //
-// $Id: Wedgie.cpp,v 1.1 2000/07/02 22:59:50 waz Exp $
+// $Id: Wedgie.cpp,v 1.2 2000/07/02 23:22:36 waz Exp $
 //
 
 #include "StdAfx.h"
 
 #include "Wedgie.h"
 
+#include <string.h>
+#include "CompressDeflate.h"
+#include "ProgressControl.h"
+
+#ifdef _DEBUG
+#define new DEBUG_NEW
+#undef THIS_FILE
+static char THIS_FILE[] = __FILE__;
+#endif
+
+extern CProgressControl g_oProgressControl;
+
 ////////////
 // CWedgie
 
-CWedgie();
-virtual ~CWedgie();
+CWedgie::CWedgie() : m_cVerHigh(WEDGIE_VER_HIGH), m_cVerLow(WEDGIE_VER_LOW) {
+	m_pcBaseDir = NULL;
+	m_pcWJEName = NULL;
+	m_poFile = NULL;
+	m_bCreate = false;
+	m_iFiles = 0;
+} // Constructor
 
-WJERESULT Open(fstream *pFile, bool bCreate = false);
+CWedgie::~CWedgie() {
+} // Destructor
 
-WJERESULT Close();
+WJERESULT CWedgie::Open(fstream *pFile, const char *pDir, bool bCreate) {
+	// If a wedgie is open, close it ignoring the return
+	if (m_poFile)
+		Close();
 
-void Directory(const char *pDir);
+	// Count the file
+	return WJE_OK;
+} // Open
 
-const char *Directory();
+WJERESULT CWedgie::Close() {
+	return WJE_OK;
+} // Close
 
-int Files() const;
+const char *CWedgie::Directory() const {
+	return m_pcBaseDir;
+} // Directory
 
-char *m_pBaseDir;					// Base directory
-char *m_pWJEName;					// Wedgie filename
-int m_iFiles;							// Number of files in wedgie
+const char *CWedgie::Name() const {
+	return m_pcWJEName;
+} // Name
 
+int CWedgie::Files() const {
+	return m_iFiles;
+} // Files
+
+int CWedgie::Count() {
+	return 0;
+} // Count
