@@ -7,7 +7,7 @@
 // SGAToSims.h - 12/06/2000 - Warren Moore
 //	SGA Avatar to The Sims converter wrapper 
 //
-// $Id: SgatoSims.h,v 1.5 2000/07/19 08:49:03 waz Exp $
+// $Id: SgatoSims.h,v 1.6 2000/08/29 12:47:54 waz Exp $
 //
 
 #ifndef _WRAP_SGATOSIMS_
@@ -55,7 +55,7 @@ public:
 
 // Set export options prior to export execution
 	VARESULT SetOption(int iOption, int iArgument);						// Integer options
-	VARESULT SetOption(int iOption, const char *pcString);		// String options
+	VARESULT SetOption(int iOption, const char *pcString);			// String options
 	const int GetOptionInt(int iOption);
 	const char *GetOptionString(int iOption);
 
@@ -73,16 +73,16 @@ private:
 
 //#===--- Internal Data
 private:
-	char *m_pcSGAFilename;												// SGA filename storage
-	char *m_pcModelname;													// Model filename storage
+	char *m_pcSGAFilename;														// SGA filename storage
+	char *m_pcModelname;															// Model filename storage
 	char *m_pcPath;																// Model temp directory
 
-	int m_iAge, m_iSex, m_iSkinTone, m_iBuild;		// Sims model properties
+	int m_iAge, m_iSex, m_iSkinTone, m_iBuild;							// Sims model properties
 
-	bool m_bVerbose;															// Verbose output indicator
+	bool m_bVerbose;																// Verbose output indicator
 
-	VARESULT m_eResult;														// Status storage
-	static const char *m_pcError[];								// Status/error string table
+	VARESULT m_eResult;															// Status storage
+	static const char *m_pcError[];											// Status/error string table
 };
 
 #endif // _WRAP_SGATOSIMS_
