@@ -11,7 +11,7 @@
 //! author 		= "Warren Moore"
 //! date 		= "23/09/2001"
 //! lib 			= libVALETcore
-//! rcsid 		= "$Id: loghandle.noarch.cpp,v 1.9 2001/10/27 11:26:57 vap-warren Exp $"
+//! rcsid 		= "$Id: loghandle.noarch.cpp,v 1.10 2001/10/28 16:49:55 vap-warren Exp $"
 
 //#===--- Includes
 #include "loghandle.h"
@@ -37,7 +37,7 @@ namespace NVALET {
       // Check to see if the log file's been open
       if (!m_poLogFile) {
          // Open the log file
-         m_poLogFile = new ofstream("test.log", ios::out|ios::app);
+         m_poLogFile = new ofstream("log.txt", ios::out|ios::app);
          if (m_poLogFile) {
             *m_poLogFile << "---" << endl;
          }
