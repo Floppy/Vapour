@@ -64,7 +64,7 @@ LIB32=link.exe -lib
 # PROP Intermediate_Dir "Debug"
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_MBCS" /D "_LIB" /Yu"stdafx.h" /FD /GZ /c
-# ADD CPP /nologo /MDd /W3 /Gm /GX /ZI /Od /I "Application" /I "Avatar" /I "AvatarFiles" /I "DataTypes" /I "Image" /I "ImageFiles" /D "WIN32" /D "_DEBUG" /D "_MBCS" /D "_LIB" /D "VAL_BUILD" /Yu"stdafx.h" /FD /GZ /c
+# ADD CPP /nologo /MDd /W3 /Gm /GX /ZI /Od /I "Application" /I "Avatar" /I "AvatarFiles" /I "DataTypes" /I "Image" /I "ImageFiles" /I "Wrapper" /D "WIN32" /D "_DEBUG" /D "_MBCS" /D "_LIB" /D "VAL_BUILD" /Yu"stdafx.h" /FD /GZ /c
 # ADD BASE RSC /l 0x809 /d "_DEBUG"
 # ADD RSC /l 0x809 /d "_DEBUG" /d "_AFXDLL"
 BSC32=bscmake.exe
@@ -94,6 +94,10 @@ SOURCE=.\Avatar\AvatarFile.cpp
 # Begin Source File
 
 SOURCE=.\AvatarFiles\AvatarFileAME.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\AvatarFiles\AvatarFileHalflife.cpp
 # End Source File
 # Begin Source File
 
@@ -181,6 +185,10 @@ SOURCE=.\Application\SFX.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\Wrapper\SgatoHalfLife.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\Wrapper\SgatoSims.cpp
 # End Source File
 # Begin Source File
@@ -223,6 +231,10 @@ SOURCE=.\Avatar\AvatarFile.h
 # Begin Source File
 
 SOURCE=.\AvatarFiles\AvatarFileAME.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\AvatarFiles\AvatarFileHalflife.h
 # End Source File
 # Begin Source File
 
@@ -294,7 +306,7 @@ SOURCE=.\DataTypes\EulerRotation.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\Avatar\HalflifeMDL.h
+SOURCE=.\AvatarFiles\HalflifeMDL.h
 # End Source File
 # Begin Source File
 
@@ -351,6 +363,10 @@ SOURCE=.\DataTypes\Quaternion.h
 # Begin Source File
 
 SOURCE=.\Application\SFX.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\Wrapper\SgatoHalfLife.h
 # End Source File
 # Begin Source File
 
