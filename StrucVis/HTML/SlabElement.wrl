@@ -7,7 +7,7 @@
 # SlabElement.wrl
 # 19/03/2002 - James Smith
 #
-# $Id: SlabElement.wrl,v 1.6 2002/03/22 11:38:24 vap-james Exp $
+# $Id: SlabElement.wrl,v 1.7 2002/03/22 12:03:49 vap-james Exp $
 
 PROTO SlabElement [
    eventIn MFColor set_colours
@@ -31,6 +31,7 @@ PROTO SlabElement [
          translation IS translation
          children [
             Switch {
+               whichChoice IS type
                choice [
                   Group {}
                   Shape {
@@ -143,17 +144,17 @@ PROTO SlabElement [
                ]
             }
          }
-         DEF CRACKS Group {
+         Group {
             children [
-               Crack {}
-               Crack {}
-               Crack {}
-               Crack {}
-               Crack {}
-               Crack {}
-               Crack {}
-               Crack {}
-               Crack {}
+               DEF CRACK1 Crack {}
+               DEF CRACK2 Crack {}
+               DEF CRACK3 Crack {}
+               DEF CRACK4 Crack {}
+               DEF CRACK5 Crack {}
+               DEF CRACK6 Crack {}
+               DEF CRACK7 Crack {}
+               DEF CRACK8 Crack {}
+               DEF CRACK9 Crack {}
             ]
          }
       ]
@@ -174,7 +175,15 @@ PROTO SlabElement [
       field SFNode  colourNode USE COLOURS
       field SFNode  steelmaterial USE STEELMATERIAL
       field SFNode  slabmaterial USE SLABMATERIAL
-      field SFNode  cracks USE CRACKS
+      field SFNode  crack1 USE CRACK1
+      field SFNode  crack2 USE CRACK2
+      field SFNode  crack3 USE CRACK3
+      field SFNode  crack4 USE CRACK4
+      field SFNode  crack5 USE CRACK5
+      field SFNode  crack6 USE CRACK6
+      field SFNode  crack7 USE CRACK7
+      field SFNode  crack8 USE CRACK8
+      field SFNode  crack9 USE CRACK9
       url "javascript:
          function initialize() {
             // Create points
@@ -208,17 +217,29 @@ PROTO SlabElement [
                }
             }
             // Set crack locations
-            for (i=0; i<9; i++) {
-               //cracks.children[i].translation = nodeset[9].add(nodeset[i].subtract(nodeset[9]));
-            }
+            crack1.translation = coordNode.point[32].add(coordNode.point[0].subtract(coordNode.point[32]).multiply(0.5));
+            crack2.translation = coordNode.point[32].add(coordNode.point[4].subtract(coordNode.point[32]).multiply(0.5));
+            crack3.translation = coordNode.point[32].add(coordNode.point[8].subtract(coordNode.point[32]).multiply(0.5));
+            crack4.translation = coordNode.point[32].add(coordNode.point[12].subtract(coordNode.point[32]).multiply(0.5));
+            crack5.translation = coordNode.point[32].add(coordNode.point[16].subtract(coordNode.point[32]).multiply(0.5));
+            crack6.translation = coordNode.point[32].add(coordNode.point[20].subtract(coordNode.point[32]).multiply(0.5));
+            crack7.translation = coordNode.point[32].add(coordNode.point[24].subtract(coordNode.point[32]).multiply(0.5));
+            crack8.translation = coordNode.point[32].add(coordNode.point[28].subtract(coordNode.point[32]).multiply(0.5));
+            crack9.translation = coordNode.point[32].add(coordNode.point[32].subtract(coordNode.point[32]).multiply(0.5));
          }
          function set_cracks(value,time) {
             update_cracks(value);
          }
          function update_cracks(crack_types) {
-            for (i=0; i<9; i++) {
-               //cracks.children[i].type = crack_types[i];
-            }
+            crack1.type = crack_types[0];
+            crack2.type = crack_types[1];
+            crack3.type = crack_types[2];
+            crack4.type = crack_types[3];
+            crack5.type = crack_types[4];
+            crack6.type = crack_types[5];
+            crack7.type = crack_types[6];
+            crack8.type = crack_types[7];
+            crack9.type = crack_types[8];
          }
          function set_visible(value,time) {
             if (value == true) {
