@@ -6,7 +6,7 @@
 // SceneManager.h
 // 19/03/2002 - James Smith
 //
-// $Id: SceneManager.h,v 1.2 2002/03/21 23:36:45 vap-james Exp $
+// $Id: SceneManager.h,v 1.3 2002/03/22 02:31:36 vap-james Exp $
 
 #ifndef __SCENEMANAGER__
 #define __SCENEMANAGER__
@@ -38,18 +38,6 @@ public:
    unsigned int NumFrames(void) {return m_iNumFrames;}
    // The number of frames
 
-   void FrameFirst(void);
-   // Skips to the first frame
-
-   void FramePrev(void);
-   // Displays the previous frame
-
-   void FrameNext(void);
-   // Displays the next frame
-
-   void FrameLast(void);
-   // Skips to the last frame
-
    unsigned int NumGroups(void);
    // How many groups are there?
    
@@ -72,6 +60,9 @@ public:
    void SetViewpoint(float pfPosition[3], float pfRotation[4]);
    // Set the camera position
 
+   void ShowFrame(unsigned int iFrame);
+   // Show frame
+
 private:
 
    class CGroup {
@@ -80,9 +71,6 @@ private:
       float m_fTemperature;
    };
    // Group information type
-
-   void ShowFrame(void);
-   // Show current frame
 
    void Update(void);
    // Updates the display of all elements
@@ -107,9 +95,6 @@ protected:
 
    unsigned int m_iNumFrames;
    // The number of frames in the sequence
-
-   unsigned int m_iCurrentFrame;
-   // The frame we're currently on
 
 };
 

@@ -6,7 +6,7 @@
 // SceneManager.cpp
 // 19/03/2002 - James Smith
 //
-// $Id: SceneManager.cpp,v 1.7 2002/03/22 00:52:01 vap-james Exp $
+// $Id: SceneManager.cpp,v 1.8 2002/03/22 02:31:36 vap-james Exp $
 
 #include "stdafx.h"
 #include "SceneManager.h"
@@ -136,7 +136,6 @@ typedef std::vector<CSceneManager::CGroup>::iterator grpIter;
 CSceneManager::CSceneManager(CCortonaUtil *poCortona) :
    m_poCortona(poCortona),
    m_oViewpoint(poCortona),
-   m_iCurrentFrame(0),
    m_iNumFrames(0)
 {
 }
@@ -193,36 +192,6 @@ void CSceneManager::Load(void) {
 
 }
 
-void CSceneManager::FrameFirst(void) {
-   // First frame
-   m_iCurrentFrame = 0;
-   // Show frame
-   ShowFrame();
-}
-
-void CSceneManager::FramePrev(void) {
-   // Previous frame
-   m_iCurrentFrame--;
-   if (m_iCurrentFrame < 0) m_iCurrentFrame = 0;
-   // Show frame
-   ShowFrame();
-}
-
-void CSceneManager::FrameNext(void) {
-   // Next frame
-   m_iCurrentFrame++;
-   if (m_iCurrentFrame >= m_iNumFrames) m_iCurrentFrame = m_iNumFrames - 1;
-   // Show frame
-   ShowFrame();
-}
-
-void CSceneManager::FrameLast(void) {
-   // Last frame
-   m_iCurrentFrame = m_iNumFrames - 1;
-   // Show frame
-   ShowFrame();
-}
-
 unsigned int CSceneManager::NumGroups(void) {
    return m_oGroups.size();
 }
@@ -261,20 +230,20 @@ void CSceneManager::SetViewpoint(float pfPosition[3], float pfRotation[4]) {
    //m_oViewpoint.Set(pfPosition,pfRotation);
 }
 
-void CSceneManager::ShowFrame(void) {
+void CSceneManager::ShowFrame(unsigned int iFrame) {
    // Load temperatures into groups
    for (int g=0; g<m_oGroups.size(); g++) {
-      m_oGroups[g].m_fTemperature = g_pfGroupTemps[m_iCurrentFrame][g];
+      m_oGroups[g].m_fTemperature = g_pfGroupTemps[iFrame][g];
    }
    // Load node displacements
-   m_oNodeSet.Displace(g_pfNodeDisplacments[m_iCurrentFrame]);
+   m_oNodeSet.Displace(g_pfNodeDisplacments[iFrame]);
    // Load node stresses
    for (elemIter pElem = m_oElements.begin(); pElem != m_oElements.end(); pElem++) {
       if ((*pElem)->Type() == BEAM) {
          // Enter beam node stresses
          float pfStresses[2];
          for (int i=0; i<2; i++) {
-            pfStresses[i] = g_pfNodeStresses[m_iCurrentFrame][(*pElem)->Node(i)];
+            pfStresses[i] = g_pfNodeStresses[iFrame][(*pElem)->Node(i)];
          }
          (*pElem)->SetStresses(pfStresses);
       }
@@ -282,7 +251,7 @@ void CSceneManager::ShowFrame(void) {
          // Enter slab node stresses
          float pfStresses[9];
          for (int i=0; i<9; i++) {
-            pfStresses[i] = g_pfNodeStresses[m_iCurrentFrame][(*pElem)->Node(i)];
+            pfStresses[i] = g_pfNodeStresses[iFrame][(*pElem)->Node(i)];
          }
          (*pElem)->SetStresses(pfStresses);
       }
