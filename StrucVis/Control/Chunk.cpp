@@ -7,7 +7,7 @@
 // Chunk.cpp
 // 19/03/2002 - James Smith
 //
-// $Id: Chunk.cpp,v 1.1 2002/03/27 01:33:02 vap-james Exp $
+// $Id: Chunk.cpp,v 1.2 2002/03/27 02:19:31 vap-james Exp $
 
 #include "stdafx.h"
 #include "Chunk.h"
@@ -40,13 +40,13 @@ bool CChunk::CreateChunk(const unsigned char* pcData, unsigned int iLength) {
    // Is this the first lump of data?
    if (m_pcBuffer == NULL) {
       // Create a minimum buffer space
-      m_pcBuffer = (unsigned char*) malloc(iLength);
+      m_pcBuffer = static_cast<unsigned char*>(malloc(iLength));
       if (m_pcBuffer == NULL) return false;
       m_iBufferLength = iLength;
    }
    // Make sure buffer is big enough to take the data
    if (iLength + m_iDataSize > m_iBufferLength) {
-      m_pcBuffer = (unsigned char*) realloc(m_pcBuffer,(iLength + m_iDataSize) * 2);
+      m_pcBuffer = static_cast<unsigned char*>(realloc(m_pcBuffer,(iLength + m_iDataSize) * 2));
       if (m_pcBuffer == NULL) return false;
       m_iBufferLength = (iLength + m_iDataSize) * 2;
    }
@@ -55,9 +55,15 @@ bool CChunk::CreateChunk(const unsigned char* pcData, unsigned int iLength) {
    m_iDataSize += iLength;
    
    // Read type from data chunk
-   if (m_oType == NONE && m_iDataSize > 0) {
-      m_oType = static_cast<TChunkType>(m_pcBuffer[0]);
-   }
+   if (m_iDataSize < 1) return false;
+   m_oType = static_cast<TChunkType>(m_pcBuffer[0]);
+   
+   // Read chunk size
+   if (m_iDataSize < 5) return false;
+   unsigned int iSize = *reinterpret_cast<unsigned int*>(m_pcBuffer+1);
+
+   // Is the chunk complete?
+   if (m_iDataSize < iSize) return false;
 
    // Done
    return true;
@@ -92,7 +98,7 @@ bool CRootChunk::CreateTOC(const unsigned char* pcData, unsigned int iLength, un
    if (m_oType != ROOT) return false;
    // Can we read the number of TOC entries?
    if (m_iDataSize < 6) return false;
-   int iTOCLength = m_pcBuffer[5] * (1 + sizeof(unsigned int));
+   int iTOCLength = 6 + m_pcBuffer[5] * (1 + sizeof(unsigned int));
    // Check if we have all TOC data
    if (m_iDataSize < iTOCLength) {
       iUsed = iLength;

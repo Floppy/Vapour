@@ -7,7 +7,7 @@
 // Chunk.h
 // 19/03/2002 - James Smith
 //
-// $Id: Chunk.h,v 1.1 2002/03/27 01:33:01 vap-james Exp $
+// $Id: Chunk.h,v 1.2 2002/03/27 02:19:31 vap-james Exp $
 
 #ifndef __VTSTRUCVIS_CHUNK__
 #define __VTSTRUCVIS_CHUNK__
@@ -58,6 +58,9 @@ public:
    bool CreateChunk(const unsigned char* pcData, unsigned int iLength);
    // Adds data to the chunk
    // Returns true if the chunk is complete
+
+   TChunkType Type(void) {return m_oType;}
+   // The type of the chunk
 
 //#===--- Member Variables
 protected:
