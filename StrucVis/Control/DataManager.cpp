@@ -7,7 +7,7 @@
 // DataManager.cpp
 // 19/03/2002 - James Smith
 //
-// $Id: DataManager.cpp,v 1.10 2002/03/26 20:10:48 vap-james Exp $
+// $Id: DataManager.cpp,v 1.11 2002/03/27 01:34:04 vap-james Exp $
 
 #include "stdafx.h"
 #include "DataManager.h"
@@ -293,19 +293,76 @@ float g_fMaxStress = 100;
 typedef std::vector<CDataManager::CGroup>::iterator grpIter;
 
 CDataManager::CDataManager() :
-   m_pcBuffer(NULL),
-   m_iNumFrames(0)//,
-   //m_iBufferLength(0),
-   //m_iDataSize(0),
-   //m_iTOCLength(0)
+   m_oState(INIT)
 {
 }
 
 CDataManager::~CDataManager() {
-   if (m_pcBuffer) delete [] m_pcBuffer;
 }
 
 bool CDataManager::Setup(const unsigned char* pcData, unsigned int iLength) {
+
+   // If we already have complete data, dump it and start again
+   if (m_oState == READY) {
+      m_oRoot.Reset();
+      // Reset data manager state
+      m_oState = INIT;
+   }
+
+   // Validate header
+   if (m_oState == INIT) {
+      // We need 4 bytes to validate the header
+      if (iLength < 4) return false;
+      // Validate header
+      if (pcData[0] != 'A' || 
+          pcData[1] != 'S' ||
+          pcData[2] != 'V' ||
+          pcData[3] != 0x01) return false;
+      else {
+         pcData += 4;
+         iLength -= 4;
+         m_oState = VALID;
+      }
+   }
+
+   // Read TOC into root chunk
+   unsigned int iUsed = 0;
+   if (m_oState == VALID) {
+      if (!m_oRoot.CreateTOC(pcData,iLength,iUsed)) return false;
+      else {
+         pcData += iUsed;
+         iLength -= iUsed;
+         m_oState = SETUP;
+      }
+   }
+
+
+   // Read setup data
+   if (m_oState == SETUP) {
+      //if (m_pChunk == NULL) m_pChunk = new CChunk();
+      //if (!m_pChunk.CreateChunk(pcData,iLength)) return false;
+      // else
+      m_oState = READY;
+   }
+
+   // Load data if we're ready to
+   if (m_oState == READY) {
+
+      // Create groups
+      for (int i=0; i<g_iNumGroups; i++) {
+         CGroup oGroup;
+         oGroup.m_fTemperature = 0;
+         oGroup.m_oType = g_ptGroupTypes[i];
+         oGroup.m_pfColour[0] = (float)rand() / (float)RAND_MAX;
+         oGroup.m_pfColour[1] = (float)rand() / (float)RAND_MAX;
+         oGroup.m_pfColour[2] = (float)rand() / (float)RAND_MAX;
+         m_oGroups.push_back(oGroup);
+      }
+
+      //delete m_pChunk;
+      //m_pChunk = NULL;
+   }
+
    /*// Is this the first lump of data?
    if (m_pcBuffer == NULL) {
       // Create a minimum buffer space
@@ -323,15 +380,6 @@ bool CDataManager::Setup(const unsigned char* pcData, unsigned int iLength) {
    memcpy(m_pcBuffer+m_iDataSize,pcData,iLength);
    m_iDataSize += iLength;
    
-   // Check the header
-   if (m_iDataSize < 4) return false;
-   if (m_pcBuffer[0] != 'A' ||
-       m_pcBuffer[1] != 'S' ||
-       m_pcBuffer[2] != 'V' ||
-       m_pcBuffer[3] != 0x01) {
-      // Header error
-      return false;
-   }
 
    // Make sure we've got a root chunk
    if (m_iDataSize < 5) return false;
@@ -365,43 +413,20 @@ bool CDataManager::Setup(const unsigned char* pcData, unsigned int iLength) {
       m_oTOC.push_back(oEntry);
    }*/
 
-   // Initialise frame counters.
-   m_iNumFrames = g_iNumFrames;
-
-   // Create groups
-   for (int i=0; i<g_iNumGroups; i++) {
-      CGroup oGroup;
-      oGroup.m_fTemperature = 0;
-      oGroup.m_oType = g_ptGroupTypes[i];
-      oGroup.m_pfColour[0] = (float)rand() / (float)RAND_MAX;
-      oGroup.m_pfColour[1] = (float)rand() / (float)RAND_MAX;
-      oGroup.m_pfColour[2] = (float)rand() / (float)RAND_MAX;
-      m_oGroups.push_back(oGroup);
-   }
-
    return true;
 }
 
 bool CDataManager::FrameInfo(unsigned int iFrame, unsigned int& iOffset, unsigned int& iLength) {
-   if (iFrame < m_iNumFrames) {
-      // TESTING --------------
-      m_iCurrentFrame = iFrame;
-      // TESTING --------------
-      iOffset = 0;
-      iLength = 1;
-      //iOffset = m_oTOC[iFrame+1].m_iOffset;
-      //iLength = m_oTOC[iFrame+1].m_iLength;
-      return true;
-   }
-   else return false;
+   // TESTING --------------
+   m_iCurrentFrame = iFrame;
+   // TESTING --------------
+   bool bOK = m_oRoot.FrameInfo(iFrame,iOffset,iLength);
+   // Add header length to offset;
+   iOffset += 4;
+   return bOK;
 }
 
 bool CDataManager::LoadFrame(const unsigned char* pcData, unsigned int iLength) {
-   if (m_pcBuffer) {
-      delete [] m_pcBuffer;
-      m_pcBuffer = NULL;
-   }
-   
    // Load frame data from passed memory chunk
    //m_pcBuffer = new unsigned char
 
@@ -415,7 +440,7 @@ bool CDataManager::LoadFrame(const unsigned char* pcData, unsigned int iLength) 
 }
 
 unsigned int CDataManager::NumFrames(void) {
-   return m_iNumFrames;
+   return m_oRoot.NumFrames();
 }
 
 unsigned int CDataManager::NumNodes(void) {

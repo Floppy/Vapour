@@ -7,12 +7,13 @@
 // DataManager.h
 // 19/03/2002 - James Smith
 //
-// $Id: DataManager.h,v 1.6 2002/03/24 13:52:00 vap-warren Exp $
+// $Id: DataManager.h,v 1.7 2002/03/27 01:34:04 vap-james Exp $
 
 #ifndef __VTSTRUCVIS_DATAMANAGER__
 #define __VTSTRUCVIS_DATAMANAGER__
 
 #include "Element.h"
+#include "Chunk.h"
 #include <vector>
 
 #if _MSC_VER > 1000
@@ -127,14 +128,19 @@ protected:
    std::vector<CGroup> m_oGroups;
    // Group information
 
-   unsigned char* m_pcBuffer;
-   // Data buffer
-
-   unsigned int m_iNumFrames;
-   // The number of frames in the sequence
-
    unsigned int m_iCurrentFrame;
    // Current frame (temporary hack for testing)
+
+   CRootChunk m_oRoot;
+   // The root chunk of the file. 
+   // Contains the complete TOC.
+
+   enum TIOState {
+      INIT,
+      VALID,
+      SETUP,
+      READY
+   } m_oState;
 
 };
 
