@@ -7,18 +7,51 @@
 // BodyPart.cpp - 12/06/2000 - James Smith
 //	Body Part information structures and types
 //
-// $Id: BodyPart.cpp,v 1.1 2000/06/16 21:58:18 waz Exp $
+// $Id: BodyPart.cpp,v 1.2 2000/11/30 11:26:59 warren Exp $
 //
 
 #include "stdafx.h"
 
 #include "BodyPart.h"
+#include "MathConstants.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
 #endif
+
+SBodyPart::SBodyPart() :
+   m_bDirtyAngle(false),
+	m_bDirtyShape(false),
+	m_iNumVertices(0),
+   m_pliVertices(NULL),
+	m_piVertices(NULL),
+	m_iNumFaces(0),
+   m_pliFaces(NULL),
+	m_piFaces(NULL),
+	m_dMaxX(V_PI),
+	m_dMaxY(V_PI),
+	m_dMaxZ(V_PI),
+	m_dMinX(V_MINUS_PI),
+	m_dMinY(V_MINUS_PI),
+	m_dMinZ(V_MINUS_PI),
+	m_dDampX(1),
+	m_dDampY(1),
+	m_dDampZ(1),
+   m_bpParent(unknown)
+{
+   m_bpChildren[0] = unknown;
+   m_bpChildren[1] = unknown;
+   m_bpChildren[2] = unknown;
+	return;
+} //SBodyPart()
+
+// Destructor
+SBodyPart::~SBodyPart() {
+	if (m_piVertices != NULL) delete [] m_piVertices;
+	if (m_piFaces != NULL) delete [] m_piFaces;
+} //~SBodyPart()
 
 const char* SBodyPart::Names[] = {
 	"root",

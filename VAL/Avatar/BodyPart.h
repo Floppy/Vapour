@@ -7,7 +7,7 @@
 // BodyPart.h - 17/06/2000 - James Smith
 //	Body Part information structures and types
 //
-// $Id: BodyPart.h,v 1.5 2000/11/21 16:41:15 waz Exp $
+// $Id: BodyPart.h,v 1.6 2000/11/30 11:26:29 warren Exp $
 //
 
 #ifndef _VAL_BODYPART_
@@ -191,6 +191,12 @@ struct SBodyPart {
 
    // A static array of joint name strings
    static const char* Names[];
+
+	// Constructor
+	SBodyPart();
+
+	// Destructor
+	~SBodyPart();
 
 };
 
