@@ -14,7 +14,18 @@
 # pull in the eht's
 echo "VTStrucVis Documentation"
 echo "Copyright 2002 Vapour Technology Ltd."
+
+# Get the eht's
 mkdir eht 2> /dev/null
-cp -f `find .. -name '*.eht' -printf "%h/*.eht "` eht
+cp -f `find .. -name '*.eht' -printf "%h/*.eht "` eht 2> /dev/null
+
+# Generate the documentation
+rm -rf ../Doc/*
 CxxDoc -pn VTStrucVis -o ../Doc/ -p .. -i .. -eht eht -tc class -td docnode
+
+# fix the namespace problems
+cp -f ../Doc/user/class/..html ../Doc/user/class/std.html 2> /dev/null
+cp -f ../Doc/developer/class/..html ../Doc/developer/class/std.html
+
+# Remove the temp dir
 rm -rf eht
