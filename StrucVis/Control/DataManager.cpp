@@ -7,7 +7,7 @@
 // DataManager.cpp
 // 19/03/2002 - James Smith
 //
-// $Id: DataManager.cpp,v 1.14 2002/03/27 15:11:18 vap-james Exp $
+// $Id: DataManager.cpp,v 1.15 2002/03/27 15:35:43 vap-james Exp $
 
 #include "stdafx.h"
 #include "DataManager.h"
@@ -319,7 +319,7 @@ bool CDataManager::Setup(const unsigned char* pcData, unsigned int iLength) {
       // We need 4 bytes to validate the header
       if (iLength < 4) return false;
       // Validate header
-      if (pcData[0] != 'A' || 
+      if (pcData[0] != 'V' || 
           pcData[1] != 'S' ||
           pcData[2] != 'V' ||
           pcData[3] != 0x01) return false;
