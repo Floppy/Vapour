@@ -211,6 +211,10 @@ SOURCE=.\BeamElement.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\Chunk.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\CortonaControl.cpp
 # End Source File
 # Begin Source File
@@ -240,22 +244,7 @@ SOURCE=.\SceneManager.cpp
 # Begin Source File
 
 SOURCE=.\Shelley.idl
-
-!IF  "$(CFG)" == "VTStrucVis - Win32 Release"
-
-# SUBTRACT MTL /mktyplib203
-
-!ELSEIF  "$(CFG)" == "VTStrucVis - Win32 Debug"
-
 # PROP Exclude_From_Build 1
-# SUBTRACT MTL /mktyplib203
-
-!ELSEIF  "$(CFG)" == "VTStrucVis - Win32 Unicode Debug"
-
-!ELSEIF  "$(CFG)" == "VTStrucVis - Win32 Unicode Release"
-
-!ENDIF 
-
 # End Source File
 # Begin Source File
 
@@ -309,6 +298,10 @@ SOURCE=.\VTStrucVisPpg.cpp
 # Begin Source File
 
 SOURCE=.\BeamElement.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\Chunk.h
 # End Source File
 # Begin Source File
 
