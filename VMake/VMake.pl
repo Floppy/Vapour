@@ -5,20 +5,22 @@
 # script to emulate intended VMake functionality
 
 # 17/09/2001 - Warren Moore
-# $Id: VMake.pl,v 1.5 2001/09/21 12:13:04 vap-warren Exp $
+# $Id: VMake.pl,v 1.6 2001/09/21 12:26:23 vap-warren Exp $
 # Copyright 2000-2001 Vapour Technology Ltd.
 
 use strict;
 
 #=== global vars
-my $version = '$Id: VMake.pl,v 1.5 2001/09/21 12:13:04 vap-warren Exp $';				# version number
-$version =~ s/\$//g;					# remove the $'s
+# get a nice version number from the rcs id
+my $rcs_id = '$Id: VMake.pl,v 1.6 2001/09/21 12:26:23 vap-warren Exp $';
+$rcs_id =~ s/\$//g;
+my $version = ($rcs_id =~ /^Id: [^\s]+ ([0-9\.]+)/) ? $1 : "(unknown)";
 my $list_name = "arch.list";		# default arch.list location
 my $def_build = "noarch";			# default build target
 my $silent = "";						# default verbose output
 my $doc = "";							# default build, not document
 my $banner = <<BANNER;				# app banner
-VMake.pl '$version'
+VMake.pl v$version
 17/01/2001 - Warren Moore
 Copyright 2001 Vapour Technology Ltd.
 BANNER
