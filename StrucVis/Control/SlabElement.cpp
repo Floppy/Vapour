@@ -6,7 +6,7 @@
 // SlabElement.cpp
 // 19/03/2002 - James Smith
 //
-// $Id: SlabElement.cpp,v 1.11 2002/03/21 22:56:57 vap-warren Exp $
+// $Id: SlabElement.cpp,v 1.12 2002/03/21 23:35:31 vap-james Exp $
 
 #include "stdafx.h"
 #include "SlabElement.h"
@@ -119,12 +119,12 @@ bool CSlabElement::Display(void) const {
    }
 }
 
-void CSlabElement::SetNodes(unsigned int* piNodes) {
+void CSlabElement::SetNodes(const unsigned int* piNodes) {
    memcpy(m_piNodes,piNodes,9*sizeof(int));
    return;
 }
 
-void CSlabElement::SetStresses (float* pfStresses) const {
+void CSlabElement::SetStresses (const float* pfStresses) const {
    memcpy(m_pfStresses,pfStresses,9*sizeof(float));
    return;
 }

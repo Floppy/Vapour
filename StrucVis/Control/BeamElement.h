@@ -6,7 +6,7 @@
 // BeamElement.h
 // 19/03/2002 - James Smith
 //
-// $Id: BeamElement.h,v 1.7 2002/03/21 21:54:59 vap-james Exp $
+// $Id: BeamElement.h,v 1.8 2002/03/21 23:35:31 vap-james Exp $
 
 #ifndef __BEAM_ELEMENT__
 #define __BEAM_ELEMENT__
@@ -28,6 +28,9 @@ public:
    TElementType Type(void) const {return BEAM;}
    // Return the element type.
 
+   unsigned int Node(int iIndex) {return m_piNodes[iIndex];}
+   // Get the control node with the passed index
+
    bool Display(void) const;
    // Updates all information and displays the object
    // Returns true if successful, false otherwise.
@@ -40,11 +43,11 @@ public:
    void SetSize(float fHeight, float fWidth, float fFlangeThickness, float fWebThickness);
    // Sets the sizes of the I-beam
 
-   void SetNodes(unsigned int* piNodes);
+   void SetNodes(const unsigned int* piNodes);
    // Sets which nodes the beam is controlled by
    // This function expects a pointer to a 9-uint array
 
-   void SetStresses(float* pfStresses) const;
+   void SetStresses(const float* pfStresses) const;
    // Sets stresses for individual nodes
    // This function expects a pointer to a 9-float array
 
