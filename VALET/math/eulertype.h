@@ -14,7 +14,7 @@
 //! author     = "James Smith"
 //! date       = "27/10/2001"
 //! lib        = libVALETmath
-//! rcsid      = "$Id: eulertype.h,v 1.1 2001/10/27 13:06:09 vap-james Exp $"
+//! rcsid      = "$Id: eulertype.h,v 1.2 2001/11/01 14:26:23 vap-james Exp $"
 //! userlevel  = Normal
 //! docentry   = "VALET.Math.Geometry"
 
@@ -95,6 +95,8 @@ namespace NVALET {
          EU_ZYZS = EU_ZOSS,
          EU_ZYZR = EU_ZOSR
       };
+
+      const static int m_iNumIDs = static_cast(int,EU_ZOSR) + 1;
       
       //: Axis IDs for Euler Angles
       enum EEulerAxis {
