@@ -6,7 +6,7 @@
 // SceneManager.cpp
 // 19/03/2002 - James Smith
 //
-// $Id: SceneManager.cpp,v 1.16 2002/03/22 17:04:37 vap-james Exp $
+// $Id: SceneManager.cpp,v 1.17 2002/03/22 19:07:07 vap-james Exp $
 
 #include "stdafx.h"
 #include "SceneManager.h"
@@ -53,7 +53,7 @@ void CSceneManager::Load(void) {
    m_oNodeSet.SetDefault(m_oDataMgr.NodePositions());
 
    // Create groups
-   for (int i=0; i<m_oDataMgr.NumGroups(); i++) {
+   for (int i=1; i<=m_oDataMgr.NumGroups(); i++) {
       CGroup oGroup;
       oGroup.m_fTemperature = 0;
       oGroup.m_oType = m_oDataMgr.GroupType(i);
@@ -64,12 +64,13 @@ void CSceneManager::Load(void) {
    }
 
    // Create some beams
-   for (i=0; i<m_oDataMgr.NumBeams(); i++) {
+   for (i=1; i<=m_oDataMgr.NumBeams(); i++) {
       // Create beam
       CBeamElement* pBeam = new CBeamElement(m_poCortona,&m_oNodeSet);
       // Set info
       pBeam->SetID(i);
-      pBeam->SetGroup(m_oDataMgr.BeamGroup(pBeam->ID())-1);
+      pBeam->SetGroup(m_oDataMgr.BeamGroup(pBeam->ID()));
+      pBeam->SetTemp(m_oGroups[pBeam->Group()-1].m_fTemperature);
       // Set sizes
       float fHeight, fWidth, fFlange, fWeb;
       m_oDataMgr.BeamSizes(pBeam->Group(),fHeight, fWidth, fFlange, fWeb);
@@ -78,9 +79,9 @@ void CSceneManager::Load(void) {
       pBeam->SetNodes(m_oDataMgr.BeamNodes(pBeam->ID()));
       // Set other info
       pBeam->SetColourScheme(m_tColourScheme);
-      pBeam->SetColour(m_oGroups[pBeam->Group()].m_pfColour[0],
-                       m_oGroups[pBeam->Group()].m_pfColour[1],
-                       m_oGroups[pBeam->Group()].m_pfColour[2]);
+      pBeam->SetColour(m_oGroups[pBeam->Group()-1].m_pfColour[0],
+                       m_oGroups[pBeam->Group()-1].m_pfColour[1],
+                       m_oGroups[pBeam->Group()-1].m_pfColour[2]);
       float fMin,fMax;
       m_oDataMgr.StressRange(fMin,fMax);
       pBeam->SetStressRange(fMin,fMax);
@@ -89,12 +90,13 @@ void CSceneManager::Load(void) {
    }
 
    // Create some slabs
-   for (i=0; i<m_oDataMgr.NumSlabs(); i++) {
+   for (i=1; i<=m_oDataMgr.NumSlabs(); i++) {
       // Create slab
       CSlabElement* pSlab = new CSlabElement(m_poCortona,&m_oNodeSet);
       // Set info
       pSlab->SetID(i);
-      pSlab->SetGroup(m_oDataMgr.SlabGroup(pSlab->ID())-1);
+      pSlab->SetGroup(m_oDataMgr.SlabGroup(pSlab->ID()));
+      pSlab->SetTemp(m_oGroups[pSlab->Group()-1].m_fTemperature);
       // Set sizes
       float fThickness;
       m_oDataMgr.SlabSizes(pSlab->Group(),fThickness);
@@ -103,9 +105,9 @@ void CSceneManager::Load(void) {
       pSlab->SetNodes(m_oDataMgr.SlabNodes(pSlab->ID()));
       // Set other info
       pSlab->SetColourScheme(m_tColourScheme);
-      pSlab->SetColour(m_oGroups[pSlab->Group()].m_pfColour[0],
-                       m_oGroups[pSlab->Group()].m_pfColour[1],
-                       m_oGroups[pSlab->Group()].m_pfColour[2]);
+      pSlab->SetColour(m_oGroups[pSlab->Group()-1].m_pfColour[0],
+                       m_oGroups[pSlab->Group()-1].m_pfColour[1],
+                       m_oGroups[pSlab->Group()-1].m_pfColour[2]);
       float fMin,fMax;
       m_oDataMgr.StressRange(fMin,fMax);
       pSlab->SetStressRange(fMin,fMax);
@@ -115,6 +117,9 @@ void CSceneManager::Load(void) {
    
    Update();
 
+   for (elemIter pElem = m_oElements.begin(); pElem != m_oElements.end(); pElem++) {
+      m_oViewpoint.Connect(*pElem);
+   }      
 }
 
 void CSceneManager::FrameInfo(unsigned int iFrame, unsigned int& iOffset, unsigned int& iLength) {
@@ -177,8 +182,11 @@ bool CSceneManager::ShowFrame(const unsigned char* pcData, unsigned int iLength)
    }
    // Load node displacements
    m_oNodeSet.Displace(m_oDataMgr.NodeDisplacements());
-   // Load node stresses
+   // Load per-element data
    for (elemIter pElem = m_oElements.begin(); pElem != m_oElements.end(); pElem++) {
+      // Set new temperature
+      (*pElem)->SetTemp(m_oGroups[(*pElem)->Group()-1].m_fTemperature);
+      // Load node stresses
       if ((*pElem)->Type() == BEAM) {
          // Enter beam node stresses
          float pfStresses[2];
