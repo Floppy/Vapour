@@ -7,7 +7,7 @@
 // RenderAvatar.cpp - 29/02/2000 - Warren Moore
 //	Avatar render object implementation
 //
-// $Id: RenderAvatar.cpp,v 1.2 2000/07/30 14:57:54 waz Exp $
+// $Id: RenderAvatar.cpp,v 1.3 2000/10/06 13:17:39 waz Exp $
 //
 
 #include "StdAfx.h"
@@ -143,9 +143,9 @@ void CRenderAvatar::RenderFlat() {
 			// Get the current face
 			iCurrentFace = pPart[iPartNum].m_piFaces[iCount];
 			// Calculate the point
-			int iV0 = m_pAvatar->m_pFaces[iCurrentFace].m_iVertices[0];
-			int iV1 = m_pAvatar->m_pFaces[iCurrentFace].m_iVertices[1];
-			int iV2 = m_pAvatar->m_pFaces[iCurrentFace].m_iVertices[2];
+			int iV0 = m_pAvatar->m_pFaces[iCurrentFace].m_sVertices[0].m_iVertex;
+			int iV1 = m_pAvatar->m_pFaces[iCurrentFace].m_sVertices[1].m_iVertex;
+			int iV2 = m_pAvatar->m_pFaces[iCurrentFace].m_sVertices[2].m_iVertex;
 			pNormal = m_pAvatar->m_pVertexNormals;
 			pVertex = m_pAvatar->m_pCurrentVertices;
 			// Draw the triangle
@@ -194,7 +194,7 @@ void CRenderAvatar::RenderTexture() {
 	glEnable(GL_TEXTURE_2D);
 	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 	// Avatar vars
-	STexCoord *sTexCoords = NULL;
+	SFaceVertex *sTexCoords = NULL;
 	SPoint3D *pNormal = NULL;
 	SPoint3D *pVertex = NULL;
 	// Loop vars
@@ -215,9 +215,9 @@ void CRenderAvatar::RenderTexture() {
 			// Get the current face
 			iCurrentFace = pPart[iPartNum].m_piFaces[iCount];
 			// Calculate the point
-			int iV0 = m_pAvatar->m_pFaces[iCurrentFace].m_iVertices[0];
-			int iV1 = m_pAvatar->m_pFaces[iCurrentFace].m_iVertices[1];
-			int iV2 = m_pAvatar->m_pFaces[iCurrentFace].m_iVertices[2];
+			int iV0 = m_pAvatar->m_pFaces[iCurrentFace].m_sVertices[0].m_iVertex;
+			int iV1 = m_pAvatar->m_pFaces[iCurrentFace].m_sVertices[1].m_iVertex;
+			int iV2 = m_pAvatar->m_pFaces[iCurrentFace].m_sVertices[2].m_iVertex;
 			pNormal = m_pAvatar->m_pVertexNormals;
 			pVertex = m_pAvatar->m_pCurrentVertices;
 			// Find the texture
@@ -225,14 +225,14 @@ void CRenderAvatar::RenderTexture() {
 			ASSERT(m_iTexture[iTextureNum] != -1);
 			// Set the texture
 			m_poContext->UseTexture(m_iTexture[iTextureNum]);
-			sTexCoords = m_pAvatar->m_pFaces[iCurrentFace].m_sTexCoords;
+			sTexCoords = m_pAvatar->m_pFaces[iCurrentFace].m_sVertices;
 			// Draw the triangle
 			glBegin(GL_TRIANGLES);
 				glNormal3f(pNormal[iV0].m_dComponents[0],
 									 pNormal[iV0].m_dComponents[1],
 									 pNormal[iV0].m_dComponents[2]);
-				glTexCoord2f(sTexCoords[0].dU,
-										 sTexCoords[0].dV);
+				glTexCoord2f(sTexCoords[0].m_sTexCoord.dU,
+										 sTexCoords[0].m_sTexCoord.dV);
 				glVertex3f(pVertex[iV0].m_dComponents[0],
 									 pVertex[iV0].m_dComponents[1],
 									 pVertex[iV0].m_dComponents[2]);
@@ -240,8 +240,8 @@ void CRenderAvatar::RenderTexture() {
 				glNormal3f(pNormal[iV1].m_dComponents[0],
 									 pNormal[iV1].m_dComponents[1],
 									 pNormal[iV1].m_dComponents[2]);
-				glTexCoord2f(sTexCoords[1].dU,
-										 sTexCoords[1].dV);
+				glTexCoord2f(sTexCoords[1].m_sTexCoord.dU,
+										 sTexCoords[1].m_sTexCoord.dV);
 				glVertex3f(pVertex[iV1].m_dComponents[0],
 									 pVertex[iV1].m_dComponents[1],
 									 pVertex[iV1].m_dComponents[2]);
@@ -249,8 +249,8 @@ void CRenderAvatar::RenderTexture() {
 				glNormal3f(pNormal[iV2].m_dComponents[0],
 									 pNormal[iV2].m_dComponents[1],
 									 pNormal[iV2].m_dComponents[2]);
-				glTexCoord2f(sTexCoords[2].dU,
-										 sTexCoords[2].dV);
+				glTexCoord2f(sTexCoords[2].m_sTexCoord.dU,
+										 sTexCoords[2].m_sTexCoord.dV);
 				glVertex3f(pVertex[iV2].m_dComponents[0],
 									 pVertex[iV2].m_dComponents[1],
 									 pVertex[iV2].m_dComponents[2]);
@@ -282,9 +282,9 @@ void CRenderAvatar::RenderSelection() {
 			// Get the current face
 			iCurrentFace = pPart[iPartNum].m_piFaces[iCount];
 			// Calculate the point
-			int iV0 = m_pAvatar->m_pFaces[iCurrentFace].m_iVertices[0];
-			int iV1 = m_pAvatar->m_pFaces[iCurrentFace].m_iVertices[1];
-			int iV2 = m_pAvatar->m_pFaces[iCurrentFace].m_iVertices[2];
+			int iV0 = m_pAvatar->m_pFaces[iCurrentFace].m_sVertices[0].m_iVertex;
+			int iV1 = m_pAvatar->m_pFaces[iCurrentFace].m_sVertices[1].m_iVertex;
+			int iV2 = m_pAvatar->m_pFaces[iCurrentFace].m_sVertices[2].m_iVertex;
 			// Draw the triangle
 			glBegin(GL_TRIANGLES);
 				glVertex3f(m_pAvatar->m_pCurrentVertices[iV0].m_dComponents[0],
