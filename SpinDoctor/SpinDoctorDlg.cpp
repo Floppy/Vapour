@@ -43,6 +43,8 @@ CSpinDoctorDlg::CSpinDoctorDlg(CWnd* pParent /*=NULL*/)
 	m_icoCopyA = AfxGetApp()->LoadIcon(IDI_COPYA);
 	m_icoCopyB = AfxGetApp()->LoadIcon(IDI_COPYB);
 	m_icoSwap =  AfxGetApp()->LoadIcon(IDI_SWAP);
+   m_iCurrentTab = 0;
+   m_iPrecision = 2;
 }
 
 void CSpinDoctorDlg::DoDataExchange(CDataExchange* pDX)
@@ -139,9 +141,9 @@ BOOL CSpinDoctorDlg::OnInitDialog()
 	
 	// Set up numeric edit controls
 	m_ctrlInputA.SubclassDlgItem(IDC_INPUT_A,this);
-	m_ctrlInputA.setNumEntries(10);
+	m_ctrlInputA.SetOptions(4);
 	m_ctrlInputB.SubclassDlgItem(IDC_INPUT_B,this);
-	m_ctrlInputB.setNumEntries(10);
+	m_ctrlInputB.SetOptions(4);
 
 	// Set up spin control
 	((CSpinButtonCtrl*) GetDlgItem(IDC_PRECISION_SPIN))->SetRange(0,9);
@@ -176,15 +178,35 @@ BOOL CSpinDoctorDlg::OnInitDialog()
     m_tabControl.GetClientRect(&tabRect);
     m_tabControl.AdjustRect(FALSE, &tabRect);
 
+    // Create tab dialogs
     tabVector->Create(CVectorTabDlg::IDD, &m_tabControl);
-    tabVector->SetWindowPos(NULL, tabRect.left, tabRect.top + 1, tabRect.right - tabRect.left, tabRect.bottom - tabRect.top, SWP_NOZORDER);
-    tabVector->ShowWindow(SW_SHOW);
     tabScalar->Create(CScalarTabDlg::IDD, &m_tabControl);
-    tabScalar->SetWindowPos(NULL, tabRect.left, tabRect.top + 1, tabRect.right - tabRect.left, tabRect.bottom - tabRect.top, SWP_NOZORDER);
-    tabScalar->ShowWindow(SW_HIDE);
     tabRotation->Create(CRotationTabDlg::IDD, &m_tabControl);
+
+    // Set positions
+    tabVector->SetWindowPos(NULL, tabRect.left, tabRect.top + 1, tabRect.right - tabRect.left, tabRect.bottom - tabRect.top, SWP_NOZORDER);
+    tabScalar->SetWindowPos(NULL, tabRect.left, tabRect.top + 1, tabRect.right - tabRect.left, tabRect.bottom - tabRect.top, SWP_NOZORDER);
     tabRotation->SetWindowPos(NULL, tabRect.left, tabRect.top + 1, tabRect.right - tabRect.left, tabRect.bottom - tabRect.top, SWP_NOZORDER);
+
+    // Hide all tabs
+    tabVector->ShowWindow(SW_HIDE);
+    tabScalar->ShowWindow(SW_HIDE);
     tabRotation->ShowWindow(SW_HIDE);
+
+    // Display appropriate tab
+    m_tabControl.SetCurSel(m_iCurrentTab);
+    switch (m_iCurrentTab) {
+    case 2:
+       tabRotation->ShowWindow(SW_SHOW);
+       break;
+    case 1:
+       tabScalar->ShowWindow(SW_SHOW);
+       break;
+    case 0:
+    default:
+       tabVector->ShowWindow(SW_SHOW);
+       break;
+    }
 
 	// Set up icon buttons
 	((CButton*) GetDlgItem(IDC_PASTE_A))->SetIcon(m_icoPaste);
@@ -345,12 +367,13 @@ void CSpinDoctorDlg::OnAboutButton()
 
 void CSpinDoctorDlg::OnSelchangeTab(NMHDR* pNMHDR, LRESULT* pResult) 
 {
-	int idx = m_tabControl.GetCurSel();
-    TC_ITEM tci;
-    tci.mask = TCIF_PARAM;
-    m_tabControl.GetItem(idx, &tci);
-    CWnd *pWnd = (CWnd *)tci.lParam;
-    pWnd->ShowWindow(SW_SHOW);
+	m_iCurrentTab = m_tabControl.GetCurSel();
+
+   TC_ITEM tci;
+   tci.mask = TCIF_PARAM;
+   m_tabControl.GetItem(m_iCurrentTab, &tci);
+   CWnd *pWnd = (CWnd *)tci.lParam;
+   pWnd->ShowWindow(SW_SHOW);
 	
 	*pResult = 0;
 	return;
@@ -369,21 +392,21 @@ void CSpinDoctorDlg::OnSelchangingTab(NMHDR* pNMHDR, LRESULT* pResult)
 	return;
 } //OnSelchangingTab(NMHDR* pNMHDR, LRESULT* pResult)
 
-void CSpinDoctorDlg::SetSettings(int iPrecision, int iAngleType, int iOnTop)
-{
+void CSpinDoctorDlg::SetOptions(int iPrecision, int iAngleType, int iOnTop, int iSelectedTab) {
 	m_iPrecision = iPrecision;
 	m_iAngleType= iAngleType;
-	m_bOnTop = iOnTop == 0 ? false : true;
+	m_bOnTop = iOnTop == 0 ? false : true;   
+   m_iCurrentTab = iSelectedTab;
 	return;
-} //SetSettings(int iPrecision, int iAngleType, int iOnTop)
+} //SetOptions(int iPrecision, int iAngleType, int iOnTop, int iSelectedTab)
 
-void CSpinDoctorDlg::GetSettings(int* ipPrecision, int* ipAngleType, int* ipOnTop)
-{
-	*ipPrecision = m_iPrecision;
-	*ipAngleType= m_iAngleType;
-	*ipOnTop = (int)m_bOnTop;
+void CSpinDoctorDlg::GetOptions(int* piPrecision, int* piAngleType, int* piOnTop, int* piSelectedTab) {
+	*piPrecision = m_iPrecision;
+	*piAngleType= m_iAngleType;
+	*piOnTop = (int)m_bOnTop;
+   *piSelectedTab = m_iCurrentTab;
 	return;	
-} //GetSettings(int* ipPrecision, int* ipAngleType, int* ipOnTop)
+} //GetOptions(int* piPrecision, int* piAngleType, int* piOnTop, int* piSelectedTab)
 
 void CSpinDoctorDlg::OnKillfocusPrecision() 
 {

@@ -17,8 +17,8 @@ class CSpinDoctorDlg : public CDialog
 {
 // Construction
 public:
-	void SetSettings(int iPrecision, int iAngleType, int iOnTop);
-	void GetSettings(int* ipPrecision, int* ipAngleType, int* ipOnTop);
+	void SetOptions(int iPrecision, int iAngleType, int iOnTop, int iSelectedTab);
+	void GetOptions(int* piPrecision, int* piAngleType, int* piOnTop, int* piSelectedTab);
 	CSpinDoctorDlg(CWnd* pParent = NULL);	// standard constructor
 
 protected:
@@ -52,6 +52,7 @@ protected:
 	CNumericEdit m_ctrlInputA;
 	int m_iPrecision;
 	HICON m_hIcon;
+   int m_iCurrentTab;
 
 	// Generated message map functions
 	//{{AFX_MSG(CSpinDoctorDlg)
