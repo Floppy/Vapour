@@ -158,7 +158,7 @@ HCURSOR CWedgieDlg::OnQueryDragIcon() {
 } // OnQueryDragIcon
 
 void CWedgieDlg::OnBrowse() {
-	CFolderDialog oFolderDlg;
+	CFolderDialog oFolderDlg(m_strDirName);
 	if (oFolderDlg.DoModal() == IDOK) {
 		m_strDirName = oFolderDlg.GetPathName();
 		UpdateData(FALSE);
