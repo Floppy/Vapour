@@ -8,7 +8,7 @@
 # SlabElement.wrl
 # 19/03/2002 - James Smith
 #
-# $Id: SlabElement.wrl,v 1.15 2002/03/28 13:31:05 vap-james Exp $
+# $Id: SlabElement.wrl,v 1.16 2002/03/31 17:31:10 vap-james Exp $
 
 PROTO SlabElement [
    eventIn MFColor  set_colours
@@ -28,6 +28,7 @@ PROTO SlabElement [
       field SFVec3f size 0.1 0.2 0.1
       exposedField SFInt32 type 0
       exposedField SFVec3f translation 0 0 0
+      exposedField SFFloat transparency 0
    ]
    {
       Transform {
@@ -41,6 +42,7 @@ PROTO SlabElement [
                      appearance Appearance {
                         material Material {
                            diffuseColor 1 1 0
+                           transparency IS transparency
                         }
                      }
                      geometry DEF GEOM Box {
@@ -51,6 +53,7 @@ PROTO SlabElement [
                      appearance Appearance {
                         material Material {
                            diffuseColor 1 0 0
+                           transparency IS transparency
                         }
                      }
                      geometry USE GEOM
@@ -59,6 +62,7 @@ PROTO SlabElement [
                      appearance Appearance {
                         material Material {
                            diffuseColor 0 1 1
+                           transparency IS transparency
                         }
                      }
                      geometry USE GEOM
@@ -242,10 +246,28 @@ PROTO SlabElement [
             if (value == true) {
                steelmaterial.transparency = 0;
                slabmaterial.transparency = 0;
+               crack1.transparency = 0;
+               crack2.transparency = 0;
+               crack3.transparency = 0;
+               crack4.transparency = 0;
+               crack5.transparency = 0;
+               crack6.transparency = 0;
+               crack7.transparency = 0;
+               crack8.transparency = 0;
+               crack9.transparency = 0;
             }
             else {
                steelmaterial.transparency = 0.9;
                slabmaterial.transparency = 0.9;
+               crack1.transparency = 1;
+               crack2.transparency = 1;
+               crack3.transparency = 1;
+               crack4.transparency = 1;
+               crack5.transparency = 1;
+               crack6.transparency = 1;
+               crack7.transparency = 1;
+               crack8.transparency = 1;
+               crack9.transparency = 1;
             }
          }
          function set_mouseOver(value,time) {
