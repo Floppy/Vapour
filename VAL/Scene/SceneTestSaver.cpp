@@ -7,7 +7,7 @@
 // SceneTestSaver.cpp - 23/11/2000 - Warren Moore
 //	  Scene rendering class for avatar screen saver
 //
-// $Id: SceneTestSaver.cpp,v 1.1 2000/12/02 07:39:54 warren Exp $
+// $Id: SceneTestSaver.cpp,v 1.2 2000/12/03 13:24:25 warren Exp $
 //
 
 #include "StdAfx.h"
@@ -259,6 +259,17 @@ SCRESULT CSceneTestSaver::SetSize(int iWidth, int iHeight) {
 	if (!m_poRC)
 		return SC_NO_CONTEXT;
 	// Set the size
+	m_poRC->SetSize(iWidth, iHeight);
+	return SC_OK;
+} // SetSize
+
+SCRESULT CSceneTestSaver::SetSize(int iWidth, int iHeight, int iWidthOffset, int iHeightOffset) {
+	// Check for a render context
+	if (!m_poRC)
+		return SC_NO_CONTEXT;
+	// Set the size
+	m_poRC->SetOption(RCO_WIDTH_OFFSET, (unsigned int)abs(iWidthOffset));
+	m_poRC->SetOption(RCO_HEIGHT_OFFSET, (unsigned int)abs(iHeightOffset));
 	m_poRC->SetSize(iWidth, iHeight);
 	return SC_OK;
 } // SetSize

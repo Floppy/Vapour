@@ -7,7 +7,7 @@
 // RCOpenGLBufferWin32.h - 23/11/2000 - Warren Moore
 //	Render context for an OpenGL Win32 display
 //
-// $Id: RCOpenGLWin32.h,v 1.3 2000/11/26 17:05:25 waz Exp $
+// $Id: RCOpenGLWin32.h,v 1.4 2000/12/03 13:25:46 warren Exp $
 //
 
 #ifndef _VAL_RENDERCONTEXTOPENGLWIN32_
@@ -112,6 +112,8 @@ protected:
 	unsigned int m_puTexNum[GLBW_MAX_TEXTURES];				// Texture handles
 	// Render options
 	bool m_bDepthTest;												// Depth test indicator
+	// Window offset
+	unsigned int m_uWidthOffset, m_uHeightOffset;			// Display offset
 };
 
 //#===--- Inline functions

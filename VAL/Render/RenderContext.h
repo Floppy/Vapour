@@ -7,7 +7,7 @@
 // RenderContext.h - 23/07/2000 - Warren Moore
 //	Base class for render contexts
 //
-// $Id: RenderContext.h,v 1.9 2000/11/26 17:06:58 waz Exp $
+// $Id: RenderContext.h,v 1.10 2000/12/03 13:24:25 warren Exp $
 //
 
 #ifndef _VAL_RENDERCONTEXT_
@@ -42,6 +42,8 @@
 #define RCO_BACKRED						  12
 #define RCO_BACKGREEN					  13
 #define RCO_BACKBLUE						  14
+#define RCO_WIDTH_OFFSET				  15
+#define RCO_HEIGHT_OFFSET				  16
 
 //#===--- Option values
 #define RCV_DONT_CARE						0

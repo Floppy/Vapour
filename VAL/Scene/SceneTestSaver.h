@@ -7,7 +7,7 @@
 // SceneAvatarSaver.h - 27/11/2000 - Warren Moore
 //	  Scene rendering class for avatar screen saver
 //
-// $Id: SceneTestSaver.h,v 1.1 2000/12/02 07:39:54 warren Exp $
+// $Id: SceneTestSaver.h,v 1.2 2000/12/03 13:24:25 warren Exp $
 //
 
 #ifndef _VAL_SCENEAVATARSAVER_
@@ -54,6 +54,8 @@ public:
 	SCRESULT Snapshot(CImage *&poImage);
 	// Sets the window size
 	SCRESULT SetSize(int iWidth, int iHeight);
+	// Sets the window size with offset
+	SCRESULT SetSize(int iWidth, int iHeight, int iWidthOffset, int iHeightOffset);
 
 	//#===--- Data Import/Export
 	// Imports an avatar (reference used so calling function must delete avatar)

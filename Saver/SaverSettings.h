@@ -7,7 +7,7 @@
 // SaverSettings.h - 26/11/2000 - Warren Moore
 //	  Stores screen saver settings
 //
-// $Id: SaverSettings.h,v 1.2 2000/11/30 11:04:52 warren Exp $
+// $Id: SaverSettings.h,v 1.3 2000/12/03 13:24:00 warren Exp $
 //
 
 #ifndef _SAVER_SETTINGS_
@@ -83,6 +83,13 @@ public:
 	// Check whether the threshold has been exceeded
 	bool MovedEnough();
 
+	// Change the display settings (true to saver settings, false to set back to normal)
+	void SetDisplay(bool bSaverMode);
+	// Returns true if a certain amount of time has passed after the display change
+	bool MouseStable();
+	// Gets the current screen size
+	void GetSize(int &iWidth, int &iHeight, int &iWidthOffset, int &iHeightOffset);
+
 	// Indicate we have called close, and post close message
 	void Close();
 	// Returns if close has been called by us yet
@@ -97,22 +104,26 @@ protected:
 //#===--- Internal Functions
 
 //#===--- Internal Data
-	// These are required by the screensaver
-	HINSTANCE m_hInstance;				// Application instance
-	HWND m_hWND;							// Window handle
-	HDC m_hDC;								// Window device context
-	SAMODE m_eMode;						// Saver operating mode
+	HINSTANCE m_hInstance;						// Application instance
+	HWND m_hWND;									// Window handle
+	HDC m_hDC;										// Window device context
+	SAMODE m_eMode;								// Saver operating mode
 
-	unsigned int m_uPassDelay;			// Password delay in seconds
-	unsigned int m_uStartTime;			// Time when timer started in ms
-	unsigned int m_uTimerID;			// Windows timer ID
+	unsigned int m_uPassDelay;					// Password delay in seconds
+	unsigned int m_uStartTime;					// Time when timer started in ms
+	unsigned int m_uTimerID;					// Windows timer ID
 
-	bool m_bDialog;						// Dialog status indicator
+	bool m_bDialog;								// Dialog status indicator
 
-	POINT m_sPos;							// Saved cursor position
-	int m_iMoveThresh;					// Movement threshold
+	POINT m_sPos;									// Saved cursor position
+	int m_iMoveThresh;							// Movement threshold
 
-	bool m_bClose;							// Close called indicator
+	bool m_bDisplaySet;							// Display changed indicator
+	unsigned int m_uDisplayTime;				// Time when display mode was set
+	DEVMODE m_sDevMode;							// Original display settings
+	DEVMODE m_sNewMode;							// New display settings (loaded from registry)
+
+	bool m_bClose;									// Close called indicator
 };
 
 //#===--- Inline Functions

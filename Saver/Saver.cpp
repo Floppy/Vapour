@@ -7,7 +7,7 @@
 // Saver.cpp - 26/11/2000 - Warren Moore
 //	  Main screen saver Windows source
 //
-// $Id: Saver.cpp,v 1.3 2000/12/02 07:38:38 warren Exp $
+// $Id: Saver.cpp,v 1.4 2000/12/03 13:24:00 warren Exp $
 //
 
 #include "Saver.h"
@@ -153,8 +153,12 @@ void StartSaver() {
 	// Get the old SPI_SCREENSAVERRUNNING value
 	if (g_poScene) {
 		UINT uParam;
-		if (g_oSettings.GetMode() == SA_SAVER)
+		// If the display is full-screen
+		if (g_oSettings.GetMode() == SA_SAVER) {
 			SystemParametersInfo(SPI_SCREENSAVERRUNNING, 1, &uParam, 0);
+			// Change the display mode
+			g_oSettings.SetDisplay(true);
+		}
 		// Run the screen saver message loop
 		MSG msg;
 		while (GetMessage(&msg, NULL, 0, 0)) {
@@ -296,6 +300,7 @@ void ChangePassword() {
 } // ChangePassword
 
 LRESULT CALLBACK SaverWindowProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam) {
+	int iWidth = 0, iHeight = 0, iWidthOffset = 0, iHeightOffset = 0;
 	switch (msg) {
 		case WM_CREATE:
 			// Save the cursor position
@@ -307,9 +312,8 @@ LRESULT CALLBACK SaverWindowProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 			break;
 		case WM_TIMER:
 			// Set the screen size
-			RECT sRect;
-			GetClientRect(hwnd, &sRect); 
-			g_poScene->SetSize(sRect.right, sRect.bottom);
+			g_oSettings.GetSize(iWidth, iHeight, iWidthOffset, iHeightOffset);
+			g_poScene->SetSize(iWidth, iHeight, iWidthOffset, iHeightOffset);
 			// Render the scene
 			g_poScene->Render();
 			break;
@@ -343,8 +347,15 @@ LRESULT CALLBACK SaverWindowProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 			// Deactivate for debug
 			if ((g_oSettings.GetMode() == SA_SAVER) &&
 				 (!g_oSettings.DialogActive())) {
-				if (g_oSettings.MovedEnough()) {
-					g_oSettings.Close();
+				// If mouse stable, check whether mouse has moved enough
+				if (g_oSettings.MouseStable()) {
+					if (g_oSettings.MovedEnough()) {
+						g_oSettings.Close();
+					}
+				}
+				// other save the cursor
+				else {
+					g_oSettings.SaveCursor();
 				}
 			}
 			break;
@@ -365,6 +376,8 @@ LRESULT CALLBACK SaverWindowProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 				 (g_oSettings.Closed()) && 
 				 (!g_oSettings.DialogActive())) {
 				bool bClose = true;
+				// Change the display back
+				g_oSettings.SetDisplay(false);
 				// If password required
 				if (g_oSettings.CheckPasswordDelay()) {
 					// Run the dialog
@@ -375,17 +388,21 @@ LRESULT CALLBACK SaverWindowProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 					g_oSettings.SaveCursor();
 				}
 				// Close if set
-				if (bClose)
+				if (bClose) {
+					// Close it all down
+					g_oSettings.StopTimer();
+					g_poScene->Destroy();
 					DestroyWindow(hwnd);
+				}
+				// otherwise chagne the display back
+				else
+					g_oSettings.SetDisplay(true);
 			}
 			// Return false so DefProcWindow doesn't get called
 			if (g_oSettings.GetMode() == SA_SAVER)
 				return FALSE;
 			break;
 		case WM_DESTROY:
-			// Close it all down
-			g_oSettings.StopTimer();
-			g_poScene->Destroy();
 			PostQuitMessage(0);
 			break;
 	}

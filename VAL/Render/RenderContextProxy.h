@@ -7,7 +7,7 @@
 // RenderContextProxy.h - 05/10/2000 - Warren Moore
 //	Render context selection speciality store proxy header
 //
-// $Id: RenderContextProxy.h,v 1.3 2000/11/25 11:30:37 waz Exp $
+// $Id: RenderContextProxy.h,v 1.4 2000/12/03 13:24:25 warren Exp $
 //
 
 #pragma once

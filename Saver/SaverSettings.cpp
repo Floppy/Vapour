@@ -7,7 +7,7 @@
 // SaverSettings.cpp - 26/11/2000 - Warren Moore
 //	  Stores screen saver settings
 //
-// $Id: SaverSettings.cpp,v 1.2 2000/11/30 11:05:29 warren Exp $
+// $Id: SaverSettings.cpp,v 1.3 2000/12/03 13:24:00 warren Exp $
 //
 
 #include "VAL.h"
@@ -16,6 +16,7 @@
 #include "Registry.h"
 
 #include <math.h>
+#include <fstream.h>
 
 //#===--- Defines
 
@@ -29,14 +30,23 @@ CSaverSettings::CSaverSettings() :
 	m_hWND(NULL),
 	m_hDC(NULL),
 	m_eMode(SA_NONE),
-	m_uPassDelay(15),
+	m_uPassDelay(10),
 	m_uStartTime(0),
 	m_uTimerID(0),
 	m_bDialog(false),
-	m_iMoveThresh(50),
+	m_iMoveThresh(5),
+	m_bDisplaySet(false),
 	m_bClose(false) {
+	// Set the initial mouse pos
 	m_sPos.x = 0;
 	m_sPos.y = 0;
+	// Set the new display settings
+	memset(&m_sNewMode, 0, sizeof(m_sNewMode));
+	m_sNewMode.dmSize = sizeof(m_sNewMode);
+	m_sNewMode.dmDriverExtra = 0;
+	m_sNewMode.dmBitsPerPel = 16;
+	m_sNewMode.dmPelsWidth = 640;
+	m_sNewMode.dmPelsHeight = 480;
 } // Contructor
 
 CSaverSettings::~CSaverSettings() {
@@ -123,7 +133,7 @@ void CSaverSettings::StoreSettings() {
 void CSaverSettings::StartTimer() {
 	// Get the start time and start the timer
 	m_uStartTime = GetTickCount();
-	m_uTimerID = SetTimer(m_hWND, 0, 100, NULL);
+	m_uTimerID = SetTimer(m_hWND, 0, 40, NULL);
 } // StartTimer
 
 bool CSaverSettings::CheckPasswordDelay() {
@@ -154,3 +164,58 @@ bool CSaverSettings::MovedEnough() {
 	return ((iXDiff > m_iMoveThresh) || (iYDiff > m_iMoveThresh));
 } // MovedEnough
 
+void CSaverSettings::SetDisplay(bool bSaverMode) {
+	// If the display is being set to the mode it's currently in, leave immediately
+	if (m_bDisplaySet == bSaverMode)
+		return;
+	// If the display is being set
+	if (bSaverMode) {
+		// Save the original mode, leaving if we can't
+		if (EnumDisplaySettings(NULL, ENUM_CURRENT_SETTINGS, &m_sDevMode) == 0)
+			return;
+		// Test the new settings
+		m_sNewMode.dmFields = DM_BITSPERPEL | DM_PELSWIDTH | DM_PELSHEIGHT;
+		LONG lResult = ChangeDisplaySettings(&m_sNewMode, CDS_TEST);
+		// If ok, set the display
+		if (lResult == DISP_CHANGE_SUCCESSFUL) {
+			lResult = ChangeDisplaySettings(&m_sNewMode, CDS_FULLSCREEN);
+			if (lResult == DISP_CHANGE_SUCCESSFUL)
+				m_bDisplaySet = true;
+		}
+		// Save the start time
+		m_uDisplayTime = GetTickCount();
+	}
+	else {
+		// Set the display mode back
+		m_sDevMode.dmSize = sizeof(m_sDevMode);
+		m_sDevMode.dmDriverExtra = 0;
+		m_sDevMode.dmFields = DM_BITSPERPEL | DM_PELSWIDTH | DM_PELSHEIGHT;
+		ChangeDisplaySettings(&m_sDevMode, CDS_RESET);
+		m_bDisplaySet = false;
+	}
+} // SetDisplay
+
+bool CSaverSettings::MouseStable() {
+	// Don't bother if the display isn't set
+	if (!m_bDisplaySet)
+		return true;
+	// If it is, check whether enough time has passed
+	return ((GetTickCount() - m_uDisplayTime) > 2000);
+} // MouseStable
+
+void CSaverSettings::GetSize(int &iWidth, int &iHeight, int &iWidthOffset, int &iHeightOffset) {
+	if (!m_bDisplaySet) {
+		RECT sRect;
+		GetClientRect(m_hWND, &sRect); 
+		iWidth = sRect.right;
+		iHeight = sRect.bottom;
+		iWidthOffset = 0;
+		iHeightOffset = 0;
+	}
+	else {
+		iWidth = m_sNewMode.dmPelsWidth;
+		iHeight = m_sNewMode.dmPelsHeight;
+		iWidthOffset = 0;
+		iHeightOffset = m_sDevMode.dmPelsHeight - iHeight;
+	}
+} // GetSize

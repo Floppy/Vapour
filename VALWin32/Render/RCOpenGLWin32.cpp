@@ -7,7 +7,7 @@
 // RCOpenGLWin32.cpp - 23/11/2000 - Warren Moore
 //	Render context for an OpenGL window
 //
-// $Id: RCOpenGLWin32.cpp,v 1.4 2000/12/02 07:35:15 warren Exp $
+// $Id: RCOpenGLWin32.cpp,v 1.5 2000/12/03 13:25:46 warren Exp $
 //
 
 #include "StdAfx.h"
@@ -42,7 +42,9 @@ CRCOpenGLWin32::CRCOpenGLWin32(const CDisplayContext *poDisplay) :
 	m_hDC(NULL),
 	m_hGLRC(NULL),
 	m_iPixelFormat(0),
-	m_bDepthTest(true) {
+	m_bDepthTest(true),
+	m_uWidthOffset(0),
+	m_uHeightOffset(0) {
 	// Get the device context, if provided
 	if (m_poDisplay) {
 		void *pData = NULL;
@@ -100,6 +102,12 @@ RCRESULT CRCOpenGLWin32::SetOption(int iOption, unsigned int uValue) {
 					m_bDepthTest = false;
 				else
 					eResult = RC_INVALID_VALUE;
+		case RCO_WIDTH_OFFSET:
+			m_uWidthOffset = uValue;
+			break;
+		case RCO_HEIGHT_OFFSET:
+			m_uHeightOffset = uValue;
+			break;
 		default:
 			eResult =  CRenderContext::SetOption(iOption, uValue);
 	}
@@ -445,7 +453,7 @@ RCRESULT CRCOpenGLWin32::SetProjectionMode(unsigned int uMode) {
 				// Set the perspective parameters
 				gluPerspective(m_fViewAngle, dAspect, m_fNearPlane, m_fFarPlane);
 				// Set the viewport to fill the context size
-				glViewport(0, 0, m_uWidth, m_uHeight);
+				glViewport(m_uWidthOffset, m_uHeightOffset, m_uWidth, m_uHeight);
 				// Put the matrix in modelview mode
 				glMatrixMode(GL_MODELVIEW);
 				break;
