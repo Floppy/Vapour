@@ -1,24 +1,24 @@
-# Microsoft Developer Studio Project File - Name="sgatosim" - Package Owner=<4>
+# Microsoft Developer Studio Project File - Name="SGAToSim" - Package Owner=<4>
 # Microsoft Developer Studio Generated Build File, Format Version 6.00
 # ** DO NOT EDIT **
 
 # TARGTYPE "Win32 (x86) Console Application" 0x0103
 
-CFG=sgatosim - Win32 Debug
+CFG=SGAToSim - Win32 Debug
 !MESSAGE This is not a valid makefile. To build this project using NMAKE,
 !MESSAGE use the Export Makefile command and run
 !MESSAGE 
-!MESSAGE NMAKE /f "sgatosim.mak".
+!MESSAGE NMAKE /f "SGAToSim.mak".
 !MESSAGE 
 !MESSAGE You can specify a configuration when running NMAKE
 !MESSAGE by defining the macro CFG on the command line. For example:
 !MESSAGE 
-!MESSAGE NMAKE /f "sgatosim.mak" CFG="sgatosim - Win32 Debug"
+!MESSAGE NMAKE /f "SGAToSim.mak" CFG="SGAToSim - Win32 Debug"
 !MESSAGE 
 !MESSAGE Possible choices for configuration are:
 !MESSAGE 
-!MESSAGE "sgatosim - Win32 Release" (based on "Win32 (x86) Console Application")
-!MESSAGE "sgatosim - Win32 Debug" (based on "Win32 (x86) Console Application")
+!MESSAGE "SGAToSim - Win32 Release" (based on "Win32 (x86) Console Application")
+!MESSAGE "SGAToSim - Win32 Debug" (based on "Win32 (x86) Console Application")
 !MESSAGE 
 
 # Begin Project
@@ -28,7 +28,7 @@ CFG=sgatosim - Win32 Debug
 CPP=cl.exe
 RSC=rc.exe
 
-!IF  "$(CFG)" == "sgatosim - Win32 Release"
+!IF  "$(CFG)" == "SGAToSim - Win32 Release"
 
 # PROP BASE Use_MFC 2
 # PROP BASE Use_Debug_Libraries 0
@@ -52,7 +52,7 @@ LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:console /machine:I386
 # ADD LINK32 AME_SDK_DLL.lib zlib.lib /nologo /subsystem:console /profile /machine:I386 /nodefaultlib:"libc.lib" /nodefaultlib:"msvcrt.lib" /include:"?g_oImageProxyBMP@@3V?$CImageFileProxy@VCImageFileBMP@@@@A"
 
-!ELSEIF  "$(CFG)" == "sgatosim - Win32 Debug"
+!ELSEIF  "$(CFG)" == "SGAToSim - Win32 Debug"
 
 # PROP BASE Use_MFC 2
 # PROP BASE Use_Debug_Libraries 1
@@ -81,14 +81,14 @@ LINK32=link.exe
 
 # Begin Target
 
-# Name "sgatosim - Win32 Release"
-# Name "sgatosim - Win32 Debug"
+# Name "SGAToSim - Win32 Release"
+# Name "SGAToSim - Win32 Debug"
 # Begin Group "Source Files"
 
 # PROP Default_Filter "cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 # Begin Source File
 
-SOURCE=.\sgatosim.cpp
+SOURCE=.\SGAToSim.cpp
 # End Source File
 # Begin Source File
 
@@ -101,7 +101,7 @@ SOURCE=.\StdAfx.cpp
 # PROP Default_Filter "h;hpp;hxx;hm;inl"
 # Begin Source File
 
-SOURCE=.\sgatosim.h
+SOURCE=.\SGAToSim.h
 # End Source File
 # Begin Source File
 
