@@ -7,7 +7,7 @@
 // AvatarFileUnreal.cpp - 16/2/2000 - James Smith
 //	Unreal export filter implementation
 //
-// $Id: AvatarFileUnreal.cpp,v 1.12 2000/09/01 11:26:34 waz Exp $
+// $Id: AvatarFileUnreal.cpp,v 1.13 2000/09/02 10:21:06 waz Exp $
 //
 
 #include "stdafx.h"
@@ -2120,24 +2120,25 @@ FRESULT CAvatarFileUnreal::SaveMeshU(const char* pszFilename, CAvatar* pAvatar) 
       // Update export offset
       uExportOffset[2] = uCurrentOffset;
       // Write Bot Script
-      const unsigned int uBotScriptLength = 0x70 + (uNameLength * 3);
+      unsigned int uBotScriptLength = 0x73 + (uNameLength * 3);
       char* pcBotScript = NULL;
       NEWBEGIN
       pcBotScript = new char[uBotScriptLength];
       NEWEND("CAvatarFileUnreal::Save - bot script allocation");
       if (pcBotScript != NULL) {
+         int iLength = 0;
          // Create output string stream
          ostrstream strScript(pcBotScript,uBotScriptLength);
          // Zero first nine values
          strScript << (char)0 << (char)0 << (char)0;
          strScript << (char)0 << (char)0 << (char)0;
          strScript << (char)0 << (char)0 << (char)0;
+         iLength += 9;
          // Write script length
          CUnrealCompactIndex oCIndex((int)(0x65+(uNameLength*3)));
-         // This should only ever write two bytes
-         ASSERT(oCIndex.NumBytes()==2);
          for (int b=0; b<oCIndex.NumBytes(); b++) {
             strScript << oCIndex.CompactIndex()[b];
+            iLength++;
          }
          // Write script itself.         
          strScript << "// " << m_pszName << "Bot.\x0D\x0A";
@@ -2150,6 +2151,9 @@ FRESULT CAvatarFileUnreal::SaveMeshU(const char* pszFilename, CAvatar* pAvatar) 
          strScript << "\x0D\x0A";
          // Terminate
          strScript << (char)0;
+         iLength += 0x65+(uNameLength*3);
+         // Update Length
+         uBotScriptLength = iLength;
       }
       else {
          delete [] pcMeshData;
@@ -2303,24 +2307,25 @@ FRESULT CAvatarFileUnreal::SaveMeshU(const char* pszFilename, CAvatar* pAvatar) 
       // Update export offset
       uExportOffset[4] = uCurrentOffset;
       // Write Selection Mesh Script
-      const unsigned int uSelectScriptLength = 0x152 + (uNameLength * 8);
+      unsigned int uSelectScriptLength = 0x155 + (uNameLength * 8);
       char* pcSelectScript = NULL;
       NEWBEGIN
       pcSelectScript = new char[uSelectScriptLength];
       NEWEND("CAvatarFileUnreal::Save - selection mesh script allocation");
       if (pcSelectScript != NULL) {
+         int iLength = 0;
          // Create output string stream
          ostrstream strScript(pcSelectScript,uSelectScriptLength);
          // Zero first nine values
          strScript << (char)0 << (char)0 << (char)0;
          strScript << (char)0 << (char)0 << (char)0;
          strScript << (char)0 << (char)0 << (char)0;
+         iLength += 9;
          // Write script length
          CUnrealCompactIndex oCIndex((int)(0x147+(uNameLength*8)));
-         // This should only ever write two bytes
-         ASSERT(oCIndex.NumBytes()==2);
          for (int b=0; b<oCIndex.NumBytes(); b++) {
             strScript << oCIndex.CompactIndex()[b];
+            iLength++;
          }
          // Write script itself.         
          strScript << "// Select" << m_pszName << ".\x0D\x0A";
@@ -2335,6 +2340,9 @@ FRESULT CAvatarFileUnreal::SaveMeshU(const char* pszFilename, CAvatar* pAvatar) 
          strScript << "\x0D\x0A";
          // Terminate
          strScript << (char)0;
+         iLength += 0x147+(uNameLength*8);
+         // Update Length
+         uSelectScriptLength = iLength;   
       }
       else {
          delete [] pcBotProperties;
@@ -2351,24 +2359,25 @@ FRESULT CAvatarFileUnreal::SaveMeshU(const char* pszFilename, CAvatar* pAvatar) 
       // Update export offset
       uExportOffset[5] = uCurrentOffset;
       // Write Mesh Script
-      const unsigned int uMeshScriptLength = (m_iSex==UNREAL_FEMALE?0x1EC9:0x1EC7) + (uNameLength*102);
+      unsigned int uMeshScriptLength = 0x1ECC + (uNameLength*102);
       char* pcMeshScript = NULL;
       NEWBEGIN
       pcMeshScript = new char[uMeshScriptLength];
       NEWEND("CAvatarFileUnreal::Save - mesh script allocation");
       if (pcSelectScript != NULL) {
+         int iLength = 0;
          // Create output string stream
          ostrstream strScript(pcMeshScript,uMeshScriptLength);
          // Zero first nine values
          strScript << (char)0 << (char)0 << (char)0;
          strScript << (char)0 << (char)0 << (char)0;
          strScript << (char)0 << (char)0 << (char)0;
+         iLength += 9;
          // Write script length
-         CUnrealCompactIndex oCIndex((int)(uMeshScriptLength-11));
-         // This should only ever write two bytes
-         ASSERT(oCIndex.NumBytes()==2);
+         CUnrealCompactIndex oCIndex((int)((m_iSex==UNREAL_FEMALE?0x1EBE:0x1EBC) + (uNameLength*102)));
          for (int b=0; b<oCIndex.NumBytes(); b++) {
             strScript << oCIndex.CompactIndex()[b];
+            iLength++;
          }
          // Write script itself.         
          strScript << "// " << m_pszName << ".\x0D\x0A";
@@ -2489,6 +2498,9 @@ FRESULT CAvatarFileUnreal::SaveMeshU(const char* pszFilename, CAvatar* pAvatar) 
          strScript << "\x0D\x0A";
          // Terminate
          strScript << (char)0;
+         iLength += (m_iSex==UNREAL_FEMALE?0x1EBE:0x1EBC) + (uNameLength*102);
+         // Update Length
+         uMeshScriptLength = iLength;
       }
       else {
          delete [] pcSelectScript;
