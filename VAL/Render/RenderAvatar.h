@@ -7,7 +7,7 @@
 // RenderAvatar.h - 29/02/2000 - Warren Moore
 //	Avatar render object header
 //
-// $Id: RenderAvatar.h,v 1.4 2000/11/25 22:35:05 waz Exp $
+// $Id: RenderAvatar.h,v 1.5 2000/12/02 07:29:24 warren Exp $
 //
 
 #ifndef _VAL_RENDERAVATAR_
@@ -25,8 +25,6 @@
 //#===--- Defines
 #define ROAV_MAX_TEXTURES						50
 
-#define ROAV_AMBIENT								0.9F
-#define ROAV_DIFFUSE								0.9F
 #define ROAV_DIFFUSE_SEL						0.5F
 
 //////////////////

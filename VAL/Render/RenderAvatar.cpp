@@ -7,7 +7,7 @@
 // RenderAvatar.cpp - 29/02/2000 - Warren Moore
 //	Avatar render object implementation
 //
-// $Id: RenderAvatar.cpp,v 1.7 2000/11/29 21:22:41 james Exp $
+// $Id: RenderAvatar.cpp,v 1.8 2000/12/02 07:29:24 warren Exp $
 //
 
 #include "StdAfx.h"
@@ -115,10 +115,6 @@ void CRenderAvatar::Execute() {
 void CRenderAvatar::RenderFlat() {
 	// Set the shade model
 	glShadeModel(GL_SMOOTH);
-	// Create the material params
-	GLfloat fAmbient[] = { ROAV_AMBIENT, ROAV_AMBIENT, ROAV_AMBIENT, 1.0F };
-	GLfloat fDiffuseWhite[] = { ROAV_DIFFUSE, ROAV_DIFFUSE, ROAV_DIFFUSE, 1.0F };
-	GLfloat fDiffuseBlue[] = { ROAV_DIFFUSE_SEL, ROAV_DIFFUSE_SEL, ROAV_DIFFUSE, 1.0F };
 	// Enable backface culling
 	glEnable(GL_CULL_FACE);
 	// Enable lighting
@@ -129,14 +125,25 @@ void CRenderAvatar::RenderFlat() {
 	// Loop vars
 	int iFaces = 0, iCurrentFace = 0;
 	const SBodyPart *pPart = m_poAvatar->BodyParts();
+	int iMaterial = -1;
+	CSurfaceMaterial *poMaterial = NULL;
 	// Render the flat shaded avatar
 	for (register int iPartNum = 0; iPartNum < TOTAL_NUMBER_BODYPARTS; iPartNum++) {
+		// Get the body part material
+		iMaterial = m_poAvatar->MaterialIndex((BodyPart)iPartNum);
+		// Leave if not valid
+		if (iMaterial == -1)
+			continue;
 		// Set the material
-		glMaterialfv(GL_FRONT, GL_AMBIENT, fAmbient);
-		if ((m_uSelection > 0) && (iPartNum == m_uSelection - 1))
-			glMaterialfv(GL_FRONT, GL_DIFFUSE, fDiffuseBlue);
-		else
-			glMaterialfv(GL_FRONT, GL_DIFFUSE, fDiffuseWhite);
+		poMaterial = m_poAvatar->Material(iMaterial);
+		glMaterialfv(GL_FRONT, GL_AMBIENT, poMaterial->Ambient());
+		CColour oDiffuse(poMaterial->Diffuse());
+//		if ((m_uSelection > 0) && (iPartNum == m_uSelection - 1))
+			// TODO: Set a different colour value to indicate selected
+		glMaterialfv(GL_FRONT, GL_DIFFUSE, oDiffuse);
+		glMaterialfv(GL_FRONT, GL_SPECULAR, poMaterial->Specular());
+		glMaterialfv(GL_FRONT, GL_EMISSION, poMaterial->Emissive());
+		glMaterialf(GL_FRONT, GL_SHININESS, poMaterial->Shininess());
 		// Process the face list for the body part
 		iFaces = pPart[iPartNum].m_iNumFaces;
 		for (register int iCount = 0; iCount < iFaces; iCount++) {
@@ -182,10 +189,6 @@ void CRenderAvatar::RenderFlat() {
 void CRenderAvatar::RenderTexture() {
 	// Set the shade model
 	glShadeModel(GL_SMOOTH);
-	// Create the material params
-	GLfloat fAmbient[] = { ROAV_AMBIENT, ROAV_AMBIENT, ROAV_AMBIENT, 1.0F };
-	GLfloat fDiffuseWhite[] = { ROAV_DIFFUSE, ROAV_DIFFUSE, ROAV_DIFFUSE, 1.0F };
-	GLfloat fDiffuseBlue[] = { ROAV_DIFFUSE_SEL, ROAV_DIFFUSE_SEL, ROAV_DIFFUSE, 1.0F };
 	// Enable backface culling
 	glEnable(GL_CULL_FACE);
 	// Enable lighting
@@ -199,16 +202,28 @@ void CRenderAvatar::RenderTexture() {
 	SPoint3D *pVertex = NULL;
 	// Loop vars
 	int iFaces = 0, iCurrentFace = 0;
-	int iTextureNum = -1;
 	const SBodyPart *pPart = m_poAvatar->BodyParts();
+	int iMaterial = -1;
+	CSurfaceMaterial *poMaterial = NULL;
 	// Render the textured avatar
 	for (register int iPartNum = 0; iPartNum < TOTAL_NUMBER_BODYPARTS; iPartNum++) {
+		// Get the body part material
+		iMaterial = m_poAvatar->MaterialIndex((BodyPart)iPartNum);
+		// Leave if not valid
+		if (iMaterial == -1)
+			continue;
 		// Set the material
-		glMaterialfv(GL_FRONT, GL_AMBIENT, fAmbient);
-		if ((m_uSelection > 0) && (iPartNum == m_uSelection - 1))
-			glMaterialfv(GL_FRONT, GL_DIFFUSE, fDiffuseBlue);
-		else
-			glMaterialfv(GL_FRONT, GL_DIFFUSE, fDiffuseWhite);
+		poMaterial = m_poAvatar->Material(iMaterial);
+		glMaterialfv(GL_FRONT, GL_AMBIENT, poMaterial->Ambient());
+		CColour oDiffuse(poMaterial->Diffuse());
+//		if ((m_uSelection > 0) && (iPartNum == m_uSelection - 1))
+			// TODO: Set a different colour value to indicate selected
+		glMaterialfv(GL_FRONT, GL_DIFFUSE, oDiffuse);
+		glMaterialfv(GL_FRONT, GL_SPECULAR, poMaterial->Specular());
+		glMaterialfv(GL_FRONT, GL_EMISSION, poMaterial->Emissive());
+		glMaterialf(GL_FRONT, GL_SHININESS, poMaterial->Shininess());
+		// Set the texture
+		m_poContext->UseTexture(m_iTexture[iMaterial]);
 		// Process the face list for the body part
 		iFaces = pPart[iPartNum].m_iNumFaces;
 		for (register int iCount = 0; iCount < iFaces; iCount++) {
@@ -220,11 +235,6 @@ void CRenderAvatar::RenderTexture() {
 			int iV2 = m_poAvatar->m_pFaces[iCurrentFace].m_sVertices[2].m_iVertex;
 			pNormal = m_poAvatar->m_pVertexNormals;
 			pVertex = m_poAvatar->m_pVertices;
-			// Find the texture
-			iTextureNum = m_poAvatar->m_pFaces[iCurrentFace].m_iMaterialNumber;
-			ASSERT(m_iTexture[iTextureNum] != -1);
-			// Set the texture
-			m_poContext->UseTexture(m_iTexture[iTextureNum]);
 			sTexCoords = m_poAvatar->m_pFaces[iCurrentFace].m_sVertices;
 			// Draw the triangle
 			glBegin(GL_TRIANGLES);
@@ -317,7 +327,6 @@ void CRenderAvatar::CreateTextures() {
 				   m_iNumTextures++;
          }
 		}
-		ASSERT(m_iNumTextures == iNumTextures);
 	}
 } // CreateTextures
 
