@@ -6,7 +6,7 @@
 // Element.h
 // 19/03/2002 - James Smith
 //
-// $Id: Element.h,v 1.5 2002/03/21 14:32:08 vap-warren Exp $
+// $Id: Element.h,v 1.6 2002/03/21 14:43:23 vap-james Exp $
 
 #ifndef __ELEMENT__
 #define __ELEMENT__
@@ -93,8 +93,9 @@ public:
    }
    // Set the colour scheme to use
 
-   virtual void SetVisible(bool bVisible) const = 0;
-   // Set whether the object is visible or not.
+   virtual bool SetVisible(bool bVisible) const = 0;
+   // Set whether the beam is visible or not.
+   // Returns true if successful
 
 //#===--- Member Variables
 protected:

@@ -6,7 +6,7 @@
 // BeamElement.h
 // 19/03/2002 - James Smith
 //
-// $Id: BeamElement.h,v 1.5 2002/03/21 14:32:07 vap-warren Exp $
+// $Id: BeamElement.h,v 1.6 2002/03/21 14:43:24 vap-james Exp $
 
 #ifndef __BEAM_ELEMENT__
 #define __BEAM_ELEMENT__
@@ -33,8 +33,9 @@ public:
    // Returns true if successful, false otherwise.
    // If the object is not already displayed, it is created.
 
-   void SetVisible(bool bVisible) const;
+   bool SetVisible(bool bVisible) const;
    // Set whether the beam is visible or not.
+   // Returns true if successful
 
    void SetSize(float fHeight, float fWidth, float fFlangeThickness, float fWebThickness);
    // Sets the sizes of the I-beam
