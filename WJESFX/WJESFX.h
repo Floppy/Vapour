@@ -9,6 +9,8 @@
 
 #include "resource.h"
 
+class CProgress;
+
 ///////////////
 // CWJESFXApp
 
@@ -16,7 +18,7 @@ class CWJESFXApp : public CWinApp {
 public:
 	CWJESFXApp();
 
-	void Install();
+	void Install(CProgress *poDlg);
 
 	//{{AFX_VIRTUAL(CWJESFXApp)
 	public:

@@ -80,7 +80,7 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 /nologo /subsystem:windows /debug /machine:I386 /pdbtype:sept
-# ADD LINK32 zlibd.lib /nologo /subsystem:windows /debug /machine:I386 /nodefaultlib:"libcd.lib" /pdbtype:sept
+# ADD LINK32 zlibd.lib /nologo /subsystem:windows /debug /machine:I386 /nodefaultlib:"libcd.lib" /nodefaultlib:"nafxcwd.lib" /pdbtype:sept
 
 !ENDIF 
 
@@ -98,6 +98,10 @@ SOURCE=.\AboutDlg.cpp
 # Begin Source File
 
 SOURCE=.\CreditsDlg.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\Progress.cpp
 # End Source File
 # Begin Source File
 
@@ -127,6 +131,10 @@ SOURCE=.\AboutDlg.h
 # Begin Source File
 
 SOURCE=.\CreditsDlg.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\Progress.h
 # End Source File
 # Begin Source File
 

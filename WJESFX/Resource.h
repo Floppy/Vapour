@@ -11,6 +11,8 @@
 #define IDD_WJESFX_DIALOG               102
 #define IDR_MAINFRAME                   128
 #define IDD_CREDITS_DIALOG              129
+#define IDD_PROGRESS                    130
+#define IDC_PROGRESS                    1002
 #define IDC_VAPOUR_URL                  1003
 #define IDC_VALVE_URL                   1006
 #define IDC_CREDIT_BUTTON               1017
@@ -19,9 +21,9 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        130
+#define _APS_NEXT_RESOURCE_VALUE        131
 #define _APS_NEXT_COMMAND_VALUE         32771
-#define _APS_NEXT_CONTROL_VALUE         1002
+#define _APS_NEXT_CONTROL_VALUE         1003
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

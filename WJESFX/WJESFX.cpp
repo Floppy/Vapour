@@ -11,6 +11,7 @@
 #include "VALWin32.h"
 #include "SFX.h"
 #include "Wedgie.h"
+#include "Progress.h"
 
 //#===--- VALWin32 management object
 CVAL *g_poVAL = NULL;
@@ -60,7 +61,7 @@ BOOL CWJESFXApp::InitInstance() {
 	return FALSE;
 } // InitInstance
 
-void CWJESFXApp::Install() {
+void CWJESFXApp::Install(CProgress *poDlg) {
 // Find the game directory
 	CRegistry oReg;
 	CString strSimPath = oReg.ReadString(LOCAL_MACHINE, "Software\\Maxis\\The Sims", "SIMS_DATA", "");
@@ -104,25 +105,39 @@ void CWJESFXApp::Install() {
 		WJERESULT eResult = oWedgie.Open((fstream*)poWJE, strSimPath);
 		// Check the wedgie opened correctly
 		if (eResult != WJE_OK) {
+			if (poDlg)
+				poDlg->DestroyWindow();
 			AfxMessageBox("Missing model data", MB_OK|MB_ICONERROR);
 			delete poWJE;
 			return;
+		}
+		// Set up the dialog
+		if (poDlg) {
+			poDlg->ShowWindow(SW_SHOWNORMAL);
+			poDlg->SetMax((int)oWedgie.Files());
+			poDlg->UpdateWindow();
 		}
 		// Decompress the files
 		unsigned int uCount = 0;
 		while (uCount < oWedgie.Files()) {
 			eResult = oWedgie.Extract(uCount);
 			if (eResult != WJE_OK) {
+				if (poDlg)
+					poDlg->DestroyWindow();
 				AfxMessageBox("Error decompressing data", MB_OK|MB_ICONERROR);
 				oWedgie.Close();
 				delete poWJE;
 				return;
 			}
+			if (poDlg)
+				poDlg->Step();
 			uCount++;
 		}
 		oWedgie.Close();
 		poWJE->close();
 		delete poWJE;
-		AfxMessageBox("Files extracted OK!", MB_OK);
+		AfxMessageBox("Avatar installed successfully", MB_OK);
 	}
+	if (poDlg)
+		poDlg->DestroyWindow();
 } // Install

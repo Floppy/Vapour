@@ -4,6 +4,8 @@
 #include "WJESFXDlg.h"
 #include "AboutDlg.h"
 
+#include "Progress.h"
+
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #undef THIS_FILE
@@ -109,7 +111,9 @@ HCURSOR CWJESFXDlg::OnQueryDragIcon() {
 
 
 void CWJESFXDlg::OnOK() {
-	((CWJESFXApp*)AfxGetApp())->Install();
+	CProgress oProgressDlg;
+
+	((CWJESFXApp*)AfxGetApp())->Install(oProgressDlg.Create() ? &oProgressDlg : NULL);
 	
 	CDialog::OnOK();
 }
