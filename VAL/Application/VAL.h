@@ -7,7 +7,7 @@
 // VAL.h - 03/07/2000 - Warren Moore
 //	VAL management object for OS independent functions
 //
-// $Id: VAL.h,v 1.7 2000/08/02 18:05:03 waz Exp $
+// $Id: VAL.h,v 1.8 2000/08/22 11:28:13 waz Exp $
 //
 
 #ifndef _VAL_
@@ -35,7 +35,6 @@ enum FRESULT {
 	F_OK,
 	F_DOES_NOT_EXIST,
 	F_FILE_ERROR,
-	F_DIR_ERROR,
 	F_WRONG_FILE_TYPE,
 	F_WRONG_IMAGE_TYPE,
 	F_OUT_OF_MEMORY,
@@ -44,8 +43,11 @@ enum FRESULT {
 	F_NO_FILE_NAME,
 	F_NO_FILE_EXTENSION,
 	F_NO_DATA_TO_SAVE,
-	F_INVALID_OPERATION,
-	F_ERROR,
+   F_DIR_ERROR,
+   F_INVALID_OPERATION,
+   F_BAD_VERSION,
+   F_BAD_DATA,
+   F_ERROR,
 };
 
 // Generic 3D Axes
