@@ -1,0 +1,28 @@
+! author = "Warren Moore"
+! date = "26/09/2001"
+
+: Getting started with VALET
+
+<P>
+Welcome to our library, VALET. This section details all the basics required to run
+and develop VALET applications. Please read these carefully before you start, and they
+will certainly save you a lot of time and trouble. So, we'll start with the basics...
+</P>
+
+<UL>
+<LI><P><B>CVS Tutorial</B> - All the source to our applications, tools and utilities
+are stored using cvs. Read the guide on setting up and using cvs, then check out the goods. 
+</P></P>
+
+<LI><P>
+<B>VMake</B> - This is our custom application for arranging the source code for building
+on a supported architecture. VMake has to be run on source from cvs before it can be
+compiled, so make sure you read this section.
+</P></LI>
+
+<LI><P>
+<B>Documentation Guidelines</B> - While the source itself is a good guide to our documentation
+policies, make sure you know the guidelines. Good documentation makes life easier for everyone
+at every stage of development.
+</P></LI>
+</UL>
