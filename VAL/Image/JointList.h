@@ -7,7 +7,7 @@
 // JointList.h - 28/12/1999 - Warren Moore
 //	Octree colour cube joint manager declaration
 //
-// $Id: JointList.h,v 1.2 2000/06/17 10:42:18 waz Exp $
+// $Id: JointList.h,v 1.3 2000/07/22 23:23:07 waz Exp $
 //
 
 #ifndef _VAL_JOINTLIST_
@@ -24,15 +24,15 @@ class CJointList {
 
 //#===--- Internal Structures
 private:
-	typedef struct sJointNode {
+	typedef struct SJointNode {
 		CColourOctree *m_pOctant;
-		sJointNode *m_pNext;
+		SJointNode *m_pNext;
 
-		sJointNode() {
+		SJointNode() {
 			m_pOctant = NULL;
 			m_pNext = NULL;
 		}
-	} sJoint;
+	} SJoint;
 
 //#===--- Functions
 public:
@@ -48,7 +48,7 @@ public:
 
 //#===--- Internal Data
 protected:
-	sJoint *m_pList;
+	SJoint *m_pList;
 	int m_iEntries;
 };
 

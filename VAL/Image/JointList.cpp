@@ -7,7 +7,7 @@
 // JointList.cpp - 28/12/1999 - Warren Moore
 //	Octree colour cube joint manager
 //
-// $Id: JointList.cpp,v 1.1 2000/06/16 21:59:47 waz Exp $
+// $Id: JointList.cpp,v 1.2 2000/07/22 23:23:07 waz Exp $
 //
 
 #include "stdafx.h"
@@ -35,7 +35,7 @@ CJointList::~CJointList() {
 
 void CJointList::AddOctant(CColourOctree &oOctree) {
 /*
-	sJoint *pTest = m_pList;
+	SJoint *pTest = m_pList;
 	if (pTest) {
 		while (pTest) {
 			if (&oOctree == pTest->m_pOctant) {
@@ -48,7 +48,7 @@ void CJointList::AddOctant(CColourOctree &oOctree) {
 */
 
 // Add entry
-	sJoint *pJoint = new sJoint;
+	SJoint *pJoint = new SJoint;
 	if (!pJoint)
 		return;
 
@@ -61,12 +61,12 @@ void CJointList::AddOctant(CColourOctree &oOctree) {
 CColourOctree &CJointList::FindBest(int &iSum) {
 	ASSERT(m_pList);
 
-	sJoint *pJoint = m_pList;
+	SJoint *pJoint = m_pList;
 	int iHits = 0;
 // Set start point
 	int iLowest = pJoint->m_pOctant->SumNodes();
 	CColourOctree *pOctant = pJoint->m_pOctant;
-	sJoint *pBest = NULL, *pLast = NULL;
+	SJoint *pBest = NULL, *pLast = NULL;
 // Go through entries
 	while (pJoint->m_pNext != NULL) {
 		pLast = pJoint;
@@ -100,8 +100,8 @@ void CJointList::Clear() {
 	if (!m_pList)
 		return;
 
-	sJoint *pJoint = m_pList;
-	sJoint *pNext = pJoint->m_pNext;
+	SJoint *pJoint = m_pList;
+	SJoint *pNext = pJoint->m_pNext;
 	while (pJoint) {
 		pNext = pJoint->m_pNext;
 		delete pJoint;

@@ -7,7 +7,7 @@
 // Image.h - 21/12/1999 - Warren Moore
 //	Image implementation
 //
-// $Id: Image.cpp,v 1.6 2000/07/15 15:13:15 waz Exp $
+// $Id: Image.cpp,v 1.7 2000/07/22 23:23:06 waz Exp $
 //
 
 #include "stdafx.h"
@@ -680,19 +680,19 @@ IRESULT CImage::ScaleVertical(int iHeight, IMAGEFILTERTYPE eFilter) {
 	return eResult;
 } // ScaleVertical
 
-CImage::sContribList *CImage::AllocateContributions(int iWidth, int iWindow) {
+CImage::SContribList *CImage::AllocateContributions(int iWidth, int iWindow) {
 // Allocate the contribution list
-	sContribList *pList = NULL;
+	SContribList *pList = NULL;
 // The list structure
 	NEWBEGIN
-	pList = (sContribList*) new sContribList;
+	pList = (SContribList*) new SContribList;
 	NEWEND("CImage::AllocateContributions - Contribution list")
 	if (pList) {
 		pList->m_iWidth = iWidth;
 		pList->m_iWindow = iWindow;
 	// The line list
 		NEWBEGIN
-		pList->m_pContrib = (sContrib*) new sContrib[iWidth];
+		pList->m_pContrib = (SContrib*) new SContrib[iWidth];
 		NEWEND("CImage::AllocateContributions - Contributions")
 		if (pList->m_pContrib) {
 			int iCount = 0;
@@ -721,8 +721,8 @@ CImage::sContribList *CImage::AllocateContributions(int iWidth, int iWindow) {
 	return pList;
 } // AllocateContributions
 
-CImage::sContribList *CImage::CalculateContributions(int iInputWidth, int iOutputWidth, IMAGEFILTERTYPE eFilter) {
-	sContribList *pList = NULL;
+CImage::SContribList *CImage::CalculateContributions(int iInputWidth, int iOutputWidth, IMAGEFILTERTYPE eFilter) {
+	SContribList *pList = NULL;
 // Allocate the filter
 	CBaseFilter *pFilter = NULL;
 	switch (eFilter) {
@@ -803,7 +803,7 @@ CImage::sContribList *CImage::CalculateContributions(int iInputWidth, int iOutpu
 	return pList;
 } // CalculateContributions
 
-void CImage::DeleteContributions(sContribList *pList) {
+void CImage::DeleteContributions(SContribList *pList) {
 	ASSERT(pList);
 // Delete the weights
 	for (int i = 0; i < pList->m_iWidth; i++) {
@@ -825,7 +825,7 @@ IRESULT CImage::ScaleHorizontalRGB(int iWidth, IMAGEFILTERTYPE eFilter) {
 	IRESULT eResult = CreateImage();
 	if (eResult == I_OK) {
 	// Calculate the weights
-		sContribList *pList = CalculateContributions(iOriginalWidth, m_iWidth, eFilter);
+		SContribList *pList = CalculateContributions(iOriginalWidth, m_iWidth, eFilter);
 		if (pList) {
 		// Loop vars
 			unsigned char *pIData = (unsigned char*)pInputData;
@@ -884,7 +884,7 @@ IRESULT CImage::ScaleVerticalRGB(int iHeight, IMAGEFILTERTYPE eFilter) {
 	IRESULT eResult = CreateImage();
 	if (eResult == I_OK) {
 	// Calculate the weights
-		sContribList *pList = CalculateContributions(iOriginalHeight, m_iHeight, eFilter);
+		SContribList *pList = CalculateContributions(iOriginalHeight, m_iHeight, eFilter);
 		if (pList) {
 		// Loop vars
 			unsigned char *pIData = (unsigned char*)pInputData;

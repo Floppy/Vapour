@@ -7,7 +7,7 @@
 // Image.h - 21/12/1999 - Warren Moore
 //	Image header
 //
-// $Id: Image.h,v 1.6 2000/07/15 15:13:16 waz Exp $
+// $Id: Image.h,v 1.7 2000/07/22 23:23:07 waz Exp $
 //
 
 #ifndef _VAL_IMAGE_
@@ -96,25 +96,25 @@ public:
 	IRESULT ImportAMETexture(stAMETexture &sAME);
 
 //#===--- Internal Typedefs
-	typedef struct sContribStruct {
+	typedef struct SContribStruct {
 		float *m_pWeights;
 		int m_iLeft, m_iRight;
 
-		sContribStruct() {
+		SContribStruct() {
 			m_pWeights = NULL;
 			m_iLeft = m_iRight = 0;
 		}
-	} sContrib;
+	} SContrib;
 
-	typedef struct sContribListStruct {
-		sContrib *m_pContrib;
+	typedef struct SContribListStruct {
+		SContrib *m_pContrib;
 		int m_iWidth, m_iWindow;
 
-		sContribListStruct() {
+		SContribListStruct() {
 			m_pContrib = NULL;
 			m_iWidth = m_iWindow = 0;
 		}
-	} sContribList;
+	} SContribList;
 
 //#===--- Internal Functions
 protected:
@@ -126,9 +126,9 @@ protected:
 	int MatchColour(unsigned long uColour);
 
 // Scaling
-	sContribList *AllocateContributions(int iWidth, int iWindow);
-	sContribList *CalculateContributions(int iInputWidth, int iOutputWidth, IMAGEFILTERTYPE eFilter);
-	void DeleteContributions(sContribList *pList);
+	SContribList *AllocateContributions(int iWidth, int iWindow);
+	SContribList *CalculateContributions(int iInputWidth, int iOutputWidth, IMAGEFILTERTYPE eFilter);
+	void DeleteContributions(SContribList *pList);
 
 	IRESULT ScaleHorizontal(int iWidth, IMAGEFILTERTYPE eFilter);
 	IRESULT ScaleHorizontalRGB(int iWidth, IMAGEFILTERTYPE eFilter);
