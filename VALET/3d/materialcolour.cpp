@@ -11,9 +11,9 @@
 //! author 		= "James Smith"
 //! date 		= "09/10/2001"
 //! lib 		= libVALET3d
-//! rcsid 		= "$Id: materialcolour.cpp,v 1.2 2001/10/09 23:22:33 vap-james Exp $"
+//! rcsid 		= "$Id: materialcolour.cpp,v 1.3 2001/10/10 09:02:32 vap-james Exp $"
 //! userlevel 	        = Normal
-//! docentry 	        = "VALET.3d.Surface Materials"
+//! docentry 	        = "VALET.3D.Surface Materials"
 
 #include "materialcolour.h"
 
@@ -31,11 +31,11 @@ namespace NValet {
     return;
   }
   
-  CMaterialColour::CMaterialColour(double dRed, double dGreen, double dBlue, double dAlpha) {
-    m_pComponents[0] = dRed;
-    m_pComponents[1] = dGreen;
-    m_pComponents[2] = dBlue;
-    m_pComponents[3] = dAlpha;
+  CMaterialColour::CMaterialColour(double dR, double dG, double dB, double dA) {
+    m_pComponents[0] = dR;
+    m_pComponents[1] = dG;
+    m_pComponents[2] = dB;
+    m_pComponents[3] = dA;
     return;
   }
   

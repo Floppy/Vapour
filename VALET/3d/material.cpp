@@ -11,9 +11,9 @@
 //! author 		= "James Smith"
 //! date 		= "09/10/2001"
 //! lib 		= libVALET3d
-//! rcsid 		= "$Id: material.cpp,v 1.2 2001/10/09 23:22:33 vap-james Exp $"
+//! rcsid 		= "$Id: material.cpp,v 1.3 2001/10/10 09:02:31 vap-james Exp $"
 //! userlevel 	        = Normal
-//! docentry 	        = "VALET.3d.Surface Materials"
+//! docentry 	        = "VALET.3D.Surface Materials"
 
 #include "material.h"
 
@@ -29,7 +29,7 @@ namespace NValet {
     m_cDiffuse(0.9F, 0.9F, 0.9F, 1.0F),
     m_cSpecular(0.0F, 0.0F, 0.0F, 1.0F),
     m_cEmissive(0.0F, 0.0F, 0.0F, 0.0F),
-    m_fShininess(0.0F)
+    m_dShininess(0.0F)
   {
   }
   
