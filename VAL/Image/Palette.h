@@ -7,7 +7,7 @@
 // Palette.h - 19/03/2000 - Warren Moore
 //	Palette header
 //
-// $Id: Palette.h,v 1.7 2000/08/09 16:37:07 waz Exp $
+// $Id: Palette.h,v 1.8 2000/08/09 18:28:41 waz Exp $
 //
 
 #ifndef _VAL_PALETTE_
@@ -33,7 +33,7 @@ public:
 	CImagePalette(const CImagePalette &oCopy);
 	~CImagePalette();
 	// Copy the palette into current from a pointer
-	void Copy(CImagePalette *poCopy);
+	void Copy(const CImagePalette *poCopy);
 
 	//#===--- Settings
 	// Set the size of colours within the palette
@@ -122,9 +122,9 @@ protected:
 
 	unsigned int *m_puPalette;					// Palette data
 
-	SCache *m_psCache;									// Colour match cache structure
+	mutable SCache *m_psCache;					// Colour match cache structure
 
-	SHash *m_psHash;										// Colour match hash table
+	mutable SHash *m_psHash;						// Colour match hash table
 };
 
 //#===--- Inline Functions

@@ -7,7 +7,7 @@
 // Palette.cpp - 19/03/2000 - Warren Moore
 //	Palette implementation
 //
-// $Id: Palette.cpp,v 1.5 2000/08/09 16:37:07 waz Exp $
+// $Id: Palette.cpp,v 1.6 2000/08/09 18:28:40 waz Exp $
 //
 
 #include "stdafx.h"
@@ -82,7 +82,7 @@ CImagePalette::~CImagePalette() {
 	DeleteHash();
 } // Destructor
 
-void CImagePalette::Copy(CImagePalette *poCopy) {
+void CImagePalette::Copy(const CImagePalette *poCopy) {
 	ASSERT(poCopy);
 	// Make sure we have a palette to copy
 	if (!poCopy)
