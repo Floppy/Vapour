@@ -14,7 +14,7 @@
 //! author 		= "Warren Moore"
 //! date 		= "17/10/2001"
 //! lib 			= libVALETimage
-//! rcsid 		= "$Id: image.h,v 1.4 2001/10/21 14:58:31 vap-warren Exp $"
+//! rcsid 		= "$Id: image.h,v 1.5 2001/10/21 15:53:22 vap-warren Exp $"
 //! userlevel 	= Normal
 //! docentry 	= "VALET.Image"
 //! example 	= VALET/image/image.test.cpp
@@ -24,9 +24,6 @@
 #include "VALET/palette.h"
 
 namespace NValet {
-
-   /*#===--- Pre-declared classes */
-   class CImageFile;
 
    enum IMAGE_TYPE {
       IT_UNKNOWN = 0,
@@ -79,6 +76,9 @@ namespace NValet {
    // IF_BOX      = Box filter, blocky pixel resize filter
    // IT_BILINEAR = Bilinear filter, smooth resampling filter
 
+   /*#===--- Pre-declared classes */
+   class CImageFile;
+
    //#===--- CImage
    //: Image Class
    // General image loading and manipulation class
@@ -129,7 +129,7 @@ namespace NValet {
       // Import raw RGB888 image data
       // Image must already be created with the correct size
       //<B>NOTE: Does not bounds check the raw data</B>
-      //!todo: Currently reverse and flip are considered false, even if set otherwise
+      //!bug: Currently reverse and flip are considered false, even if set otherwise
       //!param: pucRaw = Pointer to start of raw data
       //!param: bWordAlign = Lines are 32-bit word aligned
       //!param: bReversePixels = Data is BGR formatted
