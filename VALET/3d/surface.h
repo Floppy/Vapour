@@ -14,7 +14,7 @@
 //! author 		= "James Smith"
 //! date 		= "12/10/2001"
 //! lib 		= libVALET3d
-//! rcsid 		= "$Id: surface.h,v 1.4 2001/10/17 14:44:53 vap-warren Exp $"
+//! rcsid 		= "$Id: surface.h,v 1.5 2001/10/18 12:22:11 vap-james Exp $"
 //! userlevel 	        = Normal
 //! docentry 	        = "VALET.3D.Surface Representations"
 
@@ -60,15 +60,16 @@ namespace NValet {
     //!param: iNumVertices = the number of vertices to add.
     //!param: return = true if succesful.
     
-    void SetVertex(int iVertex, const T& oValue) {m_lVertices[iVertex] = oValue;}
-    //: Sets information for a single vertex
-    //!param: iVertex = the vertex to set.
-    //!param: oValue = the value to set the vertex to.
-    
-    const T* Vertex(int iVertex) const {return m_lVertices[iVertex];}
+    const T& Vertex(int iVertex) const {return m_lVertices[iVertex];}
     //: Access to a particular vertex
-    //!param: iVertex = the vertex to access.
-    //!param: return = the requested vertex.
+    //!param: iVertex = the index of the vertex to access.
+    //!param: return = a reference to the requested vertex.
+
+    T& Vertex(int iVertex) {return m_lVertices[iVertex];}
+    //: Non-const access to a particular vertex
+    // This can be used to set vertex information.
+    //!param: iVertex = the index of the vertex to access.
+    //!param: return = a reference to the requested vertex.
 
     int NumVertices(void) const {return m_lVertices.size();}
     //: The number of vertices in the model.
