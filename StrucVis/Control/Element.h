@@ -9,7 +9,7 @@
 //! file      = "Control/Element.h"
 //! author    = "James Smith"
 //! date      = "19/3/2002"
-//! rcsid     = "$Id: Element.h,v 1.26 2002/04/22 10:42:04 vap-james Exp $"
+//! rcsid     = "$Id: Element.h,v 1.27 2002/04/23 11:32:07 vap-james Exp $"
 
 #ifndef __VTSTRUCVIS_ELEMENT__
 #define __VTSTRUCVIS_ELEMENT__
@@ -17,6 +17,8 @@
 #if _MSC_VER > 1000
 #pragma once
 #endif // _MSC_VER > 1000
+
+class CElement;
 
 #include "CortonaUtil.h"
 #include "NodeSet.h"
@@ -178,6 +180,8 @@ protected:
    //: Friends
 
    friend class CViewpoint;
+
+   friend class CNodeSet;
 
 };
 
