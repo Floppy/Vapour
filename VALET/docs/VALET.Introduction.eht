@@ -1,5 +1,6 @@
-! author = "Warren Moore"
-! date = "26/09/2001"
+! author		= "Warren Moore"
+! date		= "26/09/2001"
+! children	= "CVS;VMake;Documentation"
 
 : Getting started with VALET
 
@@ -10,9 +11,10 @@ will certainly save you a lot of time and trouble. So, we'll start with the basi
 </P>
 
 <UL>
-<LI><P><B>CVS Tutorial</B> - All the source to our applications, tools and utilities
+<LI><P>
+<B>CVS Tutorial</B> - All the source to our applications, tools and utilities
 are stored using cvs. Read the guide on setting up and using cvs, then check out the goods. 
-</P></P>
+</P></LI>
 
 <LI><P>
 <B>VMake</B> - This is our custom application for arranging the source code for building
