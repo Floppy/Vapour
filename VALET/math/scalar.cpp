@@ -11,7 +11,7 @@
 //! author 		= "James Smith"
 //! date 		= "01/10/2001"
 //! lib 		= libVALETmath
-//! rcsid 		= "$Id: scalar.cpp,v 1.5 2001/10/27 13:06:09 vap-james Exp $"
+//! rcsid 		= "$Id: scalar.cpp,v 1.6 2001/10/28 14:55:55 vap-james Exp $"
 //! userlevel 	        = Normal
 //! docentry 	        = "VALET.Math.Geometry"
 
@@ -158,9 +158,9 @@ namespace NVALET {
       double dFloor = floor(dTemp);
       double dCeil = ceil(dTemp);
       if ((dCeil - dTemp) <= 0.5) 
-         lFractionalPart = static_cast<long>(dCeil);
+         lFractionalPart = static_cast(long,dCeil);
       else
-         lFractionalPart = static_cast<long>(dFloor);
+         lFractionalPart = static_cast(long,dFloor);
       if (iPrecision == 0) {
          lWholePart += lFractionalPart;
          lFractionalPart = 0;
