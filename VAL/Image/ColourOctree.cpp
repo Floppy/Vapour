@@ -7,7 +7,7 @@
 // ColourOctree.cpp - 26/12/1999 - Warren Moore
 //	Octree colour cube implementation
 //
-// $Id: ColourOctree.cpp,v 1.5 2000/08/07 18:58:12 waz Exp $
+// $Id: ColourOctree.cpp,v 1.6 2000/11/25 11:23:34 waz Exp $
 //
 
 #include "stdafx.h"
@@ -24,20 +24,22 @@ static char THIS_FILE[]=__FILE__;
 //////////////////
 // CColourOctree
 
-CColourOctree::CColourOctree() {
+CColourOctree::CColourOctree() :
 	// No children active
-	m_cActive = 0;
-	m_poParent = NULL;
-	m_cPNode = 0;
+	m_cActive(0),
+	m_poParent(NULL),
+	m_cPNode(0),
+	m_cRPos(0), m_cGPos(0), m_cBPos(0),
+	m_cSize(128),
+	m_iTotal(0),
+	m_cColours(0),
+	// Clear the cache vars
+	m_bValCache(false),
+	m_bSetCache(false),
+	m_bCacheClear(true) {
+	// Clear the children
 	memset(m_poChild, 0, 8 * sizeof(CColourOctree*));
-	m_cRPos = m_cGPos = m_cBPos = 0;
-	m_cSize = 128;
-	m_iTotal = 0;
-	m_cColours = 0;
-
-	m_bValCache = false;
-	m_bSetCache = false;
-	m_bCacheClear = true;
+	// Set the cache pointer
 	m_pbCacheClear = &m_bCacheClear;
 } // Constructor
 
