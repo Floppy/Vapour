@@ -14,7 +14,7 @@
 //! author 		= "Warren Moore"
 //! date 		= "17/10/2001"
 //! lib 			= libVALETimage
-//! rcsid 		= "$Id: palette.h,v 1.6 2001/10/18 10:42:33 vap-warren Exp $"
+//! rcsid 		= "$Id: palette.h,v 1.7 2001/10/18 11:05:56 vap-warren Exp $"
 //! userlevel 	= Advanced
 //! docentry 	= "VALET.Image.Palette"
 
@@ -88,6 +88,47 @@ namespace NValet {
 
    protected:
 
+   //#===--- Structures
+
+   	//: Colour matching cache
+   	struct SCacheStruct {
+         unsigned int m_uColour;
+         int m_iIndex;
+         int m_iHits;
+
+         SCacheStruct() {
+            m_uColour = 0xFF000000;          // Invalid colour = 0xFF000000
+            m_iIndex = -1;                   // Invalid index = -1
+            m_iHits = -1;                    // Value guaranteed to be initially overwritten = -1
+         }
+         // Inline constructor
+
+      };
+
+      //: Hash table entries
+      struct SHashEntryStruct {
+         int m_iIndex;
+         unsigned int m_uColour;
+         int m_iR, m_iG, m_iB;
+      };
+
+      //: Palette hash table
+      struct SHashStruct {
+         unsigned int m_uEntries;            // Number of entries in this part of the hash
+         SHashEntry *m_psColour;
+
+         SHashStruct() {
+            m_uEntries = 0;
+            m_psColour = NULL;
+         }
+         // Inline constructor
+
+      };
+
+      typedef struct SCacheStruct SCache;             // Cache structure typedef
+      typedef struct SHashEntryStruct SHashEntry;     // Hash table entry typedef
+      typedef struct SHashStruct SHash;               // Hash table typedef
+
    //:------
    //: Palette Allocation
 
@@ -131,44 +172,6 @@ namespace NValet {
       int FindLowest(unsigned int uColour);
       // Finds the entry with the lowest error
       //!param: uColour = Colour to match (format 0x00RRGGBB)
-
-   	//: Colour matching cache
-   	struct SCacheStruct {
-         unsigned int m_uColour;
-         int m_iIndex;
-         int m_iHits;
-
-         SCacheStruct() {
-            m_uColour = 0xFF000000;          // Invalid colour = 0xFF000000
-            m_iIndex = -1;                   // Invalid index = -1
-            m_iHits = -1;                    // Value guaranteed to be initially overwritten = -1
-         }
-         // Inline constructor
-
-      };
-      typedef struct SCacheStruct SCache;             //: Cache structure typedef
-
-      //: Hash table entries
-      struct SHashEntryStruct {
-         int m_iIndex;
-         unsigned int m_uColour;
-         int m_iR, m_iG, m_iB;
-      };
-      typedef struct SHashEntryStruct SHashEntry;     //: Hash table entry typedef
-
-      //: Palette hash table
-      struct SHashStruct {
-         unsigned int m_uEntries;            // Number of entries in this part of the hash
-         SHashEntry *m_psColour;
-
-         SHashStruct() {
-            m_uEntries = 0;
-            m_psColour = NULL;
-         }
-         // Inline constructor
-
-      };
-      typedef struct SHashStruct SHash;               //: Hash table typedef
 
       int m_iSize;                           // Max number of colour entries
       int m_iNextEntry;                      // Internal counter for AddEntry function
