@@ -9,7 +9,7 @@
 //! file      = "Convert/OChunk.cpp"
 //! author    = "James Smith"
 //! date      = "19/3/2002"
-//! rcsid     = "$Id: OChunk.cpp,v 1.4 2002/04/04 11:53:43 vap-warren Exp $"
+//! rcsid     = "$Id: OChunk.cpp,v 1.5 2002/04/16 09:45:03 vap-james Exp $"
 
 #include "OChunk.h"
 
@@ -336,10 +336,19 @@ bool COChunk::ReadSlabs(CInputData& oInput) {
    std::vector<unsigned int*> oList;
    // Get per-beam data
    while (oInput.DataReady()) {
-      // Read beam ID
-      oInput.GetUInt();
+      // Read slab ID
+      unsigned int iSlab = oInput.GetUInt();
+      // Read mystery number
+      unsigned int iType = oInput.GetUInt();
+      // If it's not 6, we've finished with the slabs as well
+      if (iType != 6) {
+         // Put read data back onto stream
+         oInput.UngetUInt(iType);
+         oInput.UngetUInt(iSlab);
+         break;
+      }
       // Skip 3 numbers
-      for (int i=0; i<4; i++) oInput.GetFloat();
+      for (int i=0; i<3; i++) oInput.GetFloat();
       // Create new data block
       unsigned int* pEntry = NULL;
       pEntry = new unsigned int[10];
