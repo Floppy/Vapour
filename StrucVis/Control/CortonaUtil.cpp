@@ -7,7 +7,7 @@
 // CortonaUtil.cpp
 // 07/03/2002 - Warren Moore
 //
-// $Id: CortonaUtil.cpp,v 1.7 2002/03/24 13:51:59 vap-warren Exp $
+// $Id: CortonaUtil.cpp,v 1.8 2002/03/24 23:00:08 vap-james Exp $
 
 #include "stdafx.h"
 #include "CortonaBase.h"
@@ -134,4 +134,21 @@ CCortonaField *CCortonaUtil::CreateField(const char *pcType) {
    }
 
    return poField;
+}
+
+bool CCortonaUtil::Clear(void) {
+   // Check for pointers
+   if (!m_pEngine)
+      return false;
+
+   // Get root nodes collection
+   INodesCollection* pRoots;
+   if (FAILED(m_pEngine->get_RootNodes(&pRoots)))
+      return false;
+
+   // Clear the root nodes collection
+   pRoots->Clear();
+   pRoots->Release();
+
+   return true;
 }

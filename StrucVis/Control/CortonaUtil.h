@@ -7,7 +7,7 @@
 // CortonaUtil.h
 // 07/03/2002 - Warren Moore
 //
-// $Id: CortonaUtil.h,v 1.7 2002/03/24 13:52:00 vap-warren Exp $
+// $Id: CortonaUtil.h,v 1.8 2002/03/24 23:00:08 vap-james Exp $
 
 #ifndef __VTSTRUCVIS_CORTONAUTIL__
 #define __VTSTRUCVIS_CORTONAUTIL__
@@ -46,6 +46,9 @@ public:
 
    CCortonaField *CreateField(const char *pcType);
    // Create an empty field, returns NULL if failed
+
+   bool Clear(void);
+   // Empties the VRML scene
 
 //#===--- Member Variables
 protected:
