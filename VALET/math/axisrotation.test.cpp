@@ -10,7 +10,7 @@
 //! file 		= "VALET/3D/axisrotation.test.cpp"
 //! author 		= "James Smith"
 //! date 		= "1/11/2001"
-//! rcsid 		= "$Id: axisrotation.test.cpp,v 1.1 2001/11/01 15:51:18 vap-james Exp $"
+//! rcsid 		= "$Id: axisrotation.test.cpp,v 1.2 2001/11/02 16:36:27 vap-james Exp $"
 
 //#===--- Includes
 #include "VALET/valet.h"
@@ -19,6 +19,7 @@
 
 #include <stdlib.h>
 #include <math.h>
+#include <stdio.h>
 
 //#===--- Namespaces
 using namespace NVALET;
@@ -80,10 +81,16 @@ int main(int argc, char *argv[]) {
          CAxisRotation oERot(oEAngle);
          if ((oRot.Axis() - oERot.Axis()).Length() > dError) {
             oLog.Trace("Euler conversion failed (axis part)",LL_ERROR);
+            char pcStr[512];
+            sprintf(pcStr,"0x%X: %f %f %f != %f %f %f\n",t,oRot.Axis().X(),oRot.Axis().Y(),oRot.Axis().Z(),oERot.Axis().X(),oERot.Axis().Y(),oERot.Axis().Z());
+            oLog.Trace(pcStr,LL_ERROR);
             bError = true;
          }
          if (oRot.Angle() - oERot.Angle() > dError) {
             oLog.Trace("Euler conversion failed (angle part)",LL_ERROR);
+            char pcStr[512];
+            sprintf(pcStr,"0x%X: %f != %f\n",t,oRot.Angle(),oERot.Angle());
+            oLog.Trace(pcStr,LL_ERROR);
             bError = true;
          }
       }
