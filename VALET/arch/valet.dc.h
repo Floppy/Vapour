@@ -14,7 +14,7 @@
 //! author 		= "Warren Moore"
 //! date 		= "23/09/2001"
 //! lib 			= libVALET
-//! rcsid 		= "$Id: valet.dc.h,v 1.3 2001/10/17 14:44:54 vap-warren Exp $"
+//! rcsid 		= "$Id: valet.dc.h,v 1.4 2001/10/21 14:28:51 vap-warren Exp $"
 //! userlevel 	= Normal
 //! docentry 	= "VALET.Arch"
 
@@ -25,7 +25,10 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+// KOS headers and stdlib replacements
 #include "kos.h"
+
 #ifdef __cplusplus
 }
 #endif
