@@ -69,7 +69,7 @@ PostBuild_Cmds=copy Release\VAL.lib ..\..\Lib	copy Application\SGAToSims.h ..\..
 # PROP Intermediate_Dir "Debug"
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_MBCS" /D "_LIB" /Yu"stdafx.h" /FD /GZ /c
-# ADD CPP /nologo /MDd /W3 /Gm /GX /ZI /Od /I "Application" /I "Avatar" /I "AvatarFiles" /I "DataTypes" /I "Image" /I "ImageFiles" /D "WIN32" /D "_DEBUG" /D "_MBCS" /D "_LIB" /D "_AFXDLL" /Yu"stdafx.h" /FD /GZ /c
+# ADD CPP /nologo /MDd /W3 /Gm /GX /ZI /Od /I "Application" /I "Avatar" /I "AvatarFiles" /I "DataTypes" /I "Image" /I "ImageFiles" /D "WIN32" /D "_DEBUG" /D "_MBCS" /D "_LIB" /D "_AFXDLL" /D "VAL_BUILD" /Yu"stdafx.h" /FD /GZ /c
 # ADD BASE RSC /l 0x809 /d "_DEBUG"
 # ADD RSC /l 0x809 /d "_DEBUG" /d "_AFXDLL"
 BSC32=bscmake.exe
@@ -78,11 +78,6 @@ BSC32=bscmake.exe
 LIB32=link.exe -lib
 # ADD BASE LIB32 /nologo
 # ADD LIB32 /nologo /out:"Debug\VALd.lib"
-# Begin Special Build Tool
-SOURCE="$(InputPath)"
-PostBuild_Desc=Copy out debug VAL library
-PostBuild_Cmds=copy Debug\VALd.lib ..\..\Lib	copy Application\SGAToSims.h ..\..\Include	copy Application\CommandLine.h ..\..\Include	copy Application\ProgressControl.h ..\..\Include
-# End Special Build Tool
 
 !ENDIF 
 
@@ -204,7 +199,15 @@ SOURCE=.\Application\TimeLimit.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\Application\VAL.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\DataTypes\Vector3D.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\Application\Wedgie.cpp
 # End Source File
 # End Group
 # Begin Group "Header Files"
@@ -372,7 +375,15 @@ SOURCE=.\DataTypes\TriFace.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\Application\VAL.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\DataTypes\Vector3D.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\Application\Wedgie.h
 # End Source File
 # End Group
 # End Target
