@@ -6,7 +6,7 @@
 // NodeSet.h
 // 19/03/2002 - James Smith
 //
-// $Id: NodeSet.h,v 1.3 2002/03/21 19:00:06 vap-james Exp $
+// $Id: NodeSet.h,v 1.4 2002/03/21 21:16:28 vap-james Exp $
 
 #ifndef __NODESET__
 #define __NODESET__
@@ -19,6 +19,9 @@ class CNodeSet {
 //#===--- Construction/Destruction
 public:
 
+   CNodeSet();
+   // Constructor
+   
    CNodeSet(int iNumNodes);
    // Constructor
    
@@ -26,6 +29,10 @@ public:
    // Destructor
 
 //#===--- Member Functions
+
+   void SetSize(int iNumNodes);
+   // Set the size of the node set
+   // All data will be dumped.
 
    void SetDefault(float* pfNodePositions);
    // The default nodes are overwritten with the passed data.
