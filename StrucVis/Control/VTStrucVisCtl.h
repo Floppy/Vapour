@@ -7,7 +7,7 @@
 // VTStructVisCtl.cpp
 // 05/03/2002 - Warren Moore
 //
-// $Id: VTStrucVisCtl.h,v 1.19 2002/04/02 10:52:35 vap-warren Exp $
+// $Id: VTStrucVisCtl.h,v 1.20 2002/04/02 13:13:22 vap-warren Exp $
 
 #ifndef __VTSTRUCTVIS_CONTROL__
 #define __VTSTRUCTVIS_CONTROL__
@@ -135,6 +135,9 @@ protected:
 
    bool UpdateSliders(unsigned int &uiFrame);
    // Updates the UI values with the slider values, returning true if a value has changed
+
+   void Update(bool bStart);
+   // Freezes the display if start is true, unfreezes otherwise
 
 //#===--- Private Data Types
 protected:
@@ -317,6 +320,8 @@ protected:
 	afx_msg void SetUIData(LPCTSTR lpszNewValue);
 	afx_msg BSTR GetWRLPath();
 	afx_msg void SetWRLPath(LPCTSTR lpszNewValue);
+	afx_msg BSTR GetPosition();
+	afx_msg void SetPosition(LPCTSTR lpszNewValue);
 	//}}AFX_DISPATCH
 	DECLARE_DISPATCH_MAP()
 
@@ -334,6 +339,7 @@ public:
    dispidSimData = 1L,
    dispidUIData = 2L,
 	dispidWRLPath = 3L,
+	dispidPosition = 4L,
 	//}}AFX_DISP_ID
 	};
 };

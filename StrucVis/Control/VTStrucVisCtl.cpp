@@ -7,7 +7,7 @@
 // VTStructVisCtl.cpp
 // 05/03/2002 - Warren Moore
 //
-// $Id: VTStrucVisCtl.cpp,v 1.21 2002/04/02 10:52:35 vap-warren Exp $
+// $Id: VTStrucVisCtl.cpp,v 1.22 2002/04/02 13:13:22 vap-warren Exp $
 
 #include "stdafx.h"
 #include "VTStrucVis.h"
@@ -296,6 +296,7 @@ BEGIN_DISPATCH_MAP(CVTStrucVisCtl, COleControl)
 	DISP_PROPERTY_EX(CVTStrucVisCtl, "SimData", GetSimData, SetSimData, VT_BSTR)
 	DISP_PROPERTY_EX(CVTStrucVisCtl, "UIData", GetUIData, SetUIData, VT_BSTR)
 	DISP_PROPERTY_EX(CVTStrucVisCtl, "WRLPath", GetWRLPath, SetWRLPath, VT_BSTR)
+	DISP_PROPERTY_EX(CVTStrucVisCtl, "Position", GetPosition, SetPosition, VT_BSTR)
 	DISP_STOCKFUNC_REFRESH()
 	DISP_STOCKPROP_READYSTATE()
 	DISP_STOCKPROP_BACKCOLOR()
@@ -1216,13 +1217,15 @@ bool CVTStrucVisCtl::FrameControl(unsigned int &uiFrame) {
             m_eRunMode = RM_PAUSE;
             break;
          }
-         if (uiFrame > uiStep)
+         if (uiFrame >= uiStep)
             uiFrame -= uiStep;
          else
             if (m_bLoop)
                uiFrame = NextFrame(uiFrames - 1);
-            else
+            else {
+               uiFrame = 0;
                m_eRunMode = RM_PAUSE;
+            }
          break;
       // FAST FORWARD
       case RM_FASTFORWARD:
@@ -1346,9 +1349,9 @@ bool CVTStrucVisCtl::CheckSliders(const CPoint oPoint) {
    switch (m_uiUITab) {
       // Scale tab
       case 1:
-          bModified |= m_oSXScale.GetPosition(oPoint);
-          bModified |= m_oSYScale.GetPosition(oPoint);
-          bModified |= m_oSYScale.GetPosition(oPoint);
+         bModified |= m_oSXScale.GetPosition(oPoint);
+         bModified |= m_oSYScale.GetPosition(oPoint);
+         bModified |= m_oSZScale.GetPosition(oPoint);
          break;
       // Animation tab
       case 2:
@@ -1403,9 +1406,9 @@ bool CVTStrucVisCtl::UpdateSliders(unsigned int &uiFrame) {
       }
       // Update the scale factor
       if (bScaleModified) {
-         m_oCortona.Freeze(true);
+         Update(true);
          m_poScene->SetScaleFactor(m_fXScale, m_fYScale, m_fZScale);
-         m_oCortona.Freeze(false);
+         Update(false);
          bModified = true;
       }
    }
@@ -1425,88 +1428,13 @@ bool CVTStrucVisCtl::UpdateSliders(unsigned int &uiFrame) {
    return bModified;
 }
 
-/*
-bool CVTStrucVisCtl::CheckSliders(const CPoint oPoint, unsigned int &uiFrame) {
-   uiFrame = m_uiFrame;
-   // Don't bother if the mouse is down
-   if (!m_bLButtonDown)
-      return false;
-
-   bool bModified = false;
-
-   // Check the frame slider
-   if (m_oSFrame.GetPosition(oPoint)) {
-      // Get the new frame
-      uiFrame = m_oSFrame.GetUnsignedInt();
-      if (uiFrame != m_uiFrame) {
-         // Check the new frame is available
-         unsigned int uiSeek = 0, uiLength = 0;
-         m_poScene->FrameInfo(uiFrame, uiSeek, uiLength);
-         // It's available
-         if (uiLength > 0 && m_oSimData.Available(uiSeek, uiLength)) {
-            bModified = true;
-         }
-         // Don't go there!
-         else
-            uiFrame = m_uiFrame;
-      }
-   }
-
-   // Scale Tab
-   if (m_uiUITab == 1) {
-      bool bScaleModified = false;
-      float fVal = 0.0f;
-      // X Scale
-      if (m_oSXScale.GetPosition(oPoint)) {
-         fVal = m_oSXScale.GetFloat();
-         if (fVal != m_fXScale) {
-            m_fXScale = fVal;
-            bScaleModified = true;
-         }
-      }
-      // Y Scale
-      if (m_oSYScale.GetPosition(oPoint)) {
-         fVal = m_oSYScale.GetFloat();
-         if (fVal != m_fYScale) {
-            m_fYScale = fVal;
-            bScaleModified = true;
-         }
-      }
-      // Z Scale
-      if (m_oSZScale.GetPosition(oPoint)) {
-         fVal = m_oSZScale.GetFloat();
-         if (fVal != m_fZScale) {
-            m_fZScale = fVal;
-            bScaleModified = true;
-         }
-      }
-      // Update the scale factor
-      if (bScaleModified) {
-         m_oCortona.Freeze(true);
-         m_poScene->SetScaleFactor(m_fXScale, m_fYScale, m_fZScale);
-         m_oCortona.Freeze(false);
-         bModified = true;
-      }
-   }
-
-   // Animation tab
-   if (m_uiUITab == 2) {
-      if (m_oSAnimSpeed.GetPosition(oPoint)) {
-         m_uiAnimSpeed = m_oSAnimSpeed.GetUnsignedInt();
-         bModified = true;
-         // Stop the timer, if it's running
-         if (m_bRunning) {
-            KillTimer(TI_ANIMATE);
-         }
-         // Restart the timer with the new animation speed
-         SetTimer(TI_ANIMATE, m_piAnimSpeed[m_uiAnimSpeed], NULL);
-         m_bRunning = true;
-      } 
-   }
-
-   return bModified;
+void CVTStrucVisCtl::Update(bool bStart) {
+   // Make sure we have a control
+   if (!m_oCortona.Attached())
+      return;
+   // Freeze
+   m_oCortona.Freeze(bStart);
 }
-*/
 
 void CVTStrucVisCtl::UILoading() {
    // Set the async data flags
@@ -1582,9 +1510,12 @@ bool CVTStrucVisCtl::ShowFrame(const unsigned int uiFrame) {
       // Get the frame info
       m_poScene->FrameInfo(uiFrame, uiSeek, uiLength);
       // Display or queue the frame
-      if (uiLength > 0)
+      if (uiLength > 0) {
+         // Get the data
          return m_oSimData.ShowFrame(uiFrame, uiSeek, uiLength);
+      }
    }
+
    return false;
 }
 
@@ -1594,15 +1525,14 @@ void CVTStrucVisCtl::ShowFrame(const unsigned int uiFrame,
    // Check we have a scene manager present
    if (!m_poScene)
       return;
-   // Pass the data through
-   m_oCortona.Freeze(true);
-   m_poScene->ShowFrame(pucData, uiLength);
-   m_oCortona.Freeze(false);
+   // Set the current frame
    m_uiFrame = uiFrame;
-   m_poScene->GetCurrentPosition();
-   m_poScene->GetCurrentOrientation();
-   // Refresh the display
-   InvalidateControl();
+   // Set the frame count slider
+   m_oSFrame.SetLimitUI(0, m_poScene->NumFrames() - 1, m_uiFrame);
+   // Update the display
+   Update(true);
+   m_poScene->ShowFrame(pucData, uiLength);
+   Update(false);
 }
 
 void CVTStrucVisCtl::GoInteractive() {
@@ -1767,24 +1697,26 @@ void CVTStrucVisCtl::OnLButtonUp(UINT nFlags, CPoint point) {
       if (uiFrame != m_uiFrame)
          ShowFrame(uiFrame);
 
-      // Check the group list
-      unsigned int uiGroups = m_poScene->NumGroups();
-      // Get the size of the remain screen
-      CRect oScreen;
-      GetClientRect(oScreen);
-      unsigned int uiMaxGroups = (oScreen.bottom - 270) / 10;
-      // Set the extent
-      unsigned int uiViewGroups = uiGroups - m_uiStartGroup;
-      if (uiViewGroups > uiMaxGroups)
-         uiViewGroups = uiMaxGroups;
-      // Go through each group
-      for (unsigned int i = 0; i < uiViewGroups; i++) {
-         unsigned int uiGroup = i + m_uiStartGroup; 
-         int iYLow = 172 + i * 15;
-         int iYHigh = iYLow + 10;
-         if ((point.x >= 2) && (point.x < 10) && (point.y >= iYLow) && (point.y < iYHigh)) {
-            m_pbVisibleGroup[uiGroup] = !m_pbVisibleGroup[uiGroup];
-            m_poScene->SetVisibility(uiGroup + 1, m_pbVisibleGroup[uiGroup]);
+      // Check the group list, if visibility tab set
+      if (m_uiUITab == 0) {
+         unsigned int uiGroups = m_poScene->NumGroups();
+         // Get the size of the remain screen
+         CRect oScreen;
+         GetClientRect(oScreen);
+         unsigned int uiMaxGroups = (oScreen.bottom - 270) / 10;
+         // Set the extent
+         unsigned int uiViewGroups = uiGroups - m_uiStartGroup;
+         if (uiViewGroups > uiMaxGroups)
+            uiViewGroups = uiMaxGroups;
+         // Go through each group
+         for (unsigned int i = 0; i < uiViewGroups; i++) {
+            unsigned int uiGroup = i + m_uiStartGroup; 
+            int iYLow = 172 + i * 15;
+            int iYHigh = iYLow + 10;
+            if ((point.x >= 2) && (point.x < 10) && (point.y >= iYLow) && (point.y < iYHigh)) {
+               m_pbVisibleGroup[uiGroup] = !m_pbVisibleGroup[uiGroup];
+               m_poScene->SetVisibility(uiGroup + 1, m_pbVisibleGroup[uiGroup]);
+            }
          }
       }
    }
@@ -1922,6 +1854,19 @@ BSTR CVTStrucVisCtl::GetWRLPath() {
 void CVTStrucVisCtl::SetWRLPath(LPCTSTR lpszNewValue) {
    // Save the value
    m_oWRLPath = lpszNewValue;
+   // Notify a property browser
+   BoundPropertyChanged(dispidWRLPath);
+   // Mark the properties modified
+	SetModifiedFlag();
+}
+
+BSTR CVTStrucVisCtl::GetPosition() {
+	CString strResult;
+
+	return strResult.AllocSysString();
+}
+
+void CVTStrucVisCtl::SetPosition(LPCTSTR lpszNewValue) {
 
 	SetModifiedFlag();
 }
