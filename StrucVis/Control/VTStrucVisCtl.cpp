@@ -7,7 +7,7 @@
 // VTStructVisCtl.cpp
 // 05/03/2002 - Warren Moore
 //
-// $Id: VTStrucVisCtl.cpp,v 1.16 2002/03/27 02:55:21 vap-warren Exp $
+// $Id: VTStrucVisCtl.cpp,v 1.17 2002/03/27 11:45:15 vap-warren Exp $
 
 #include "stdafx.h"
 #include "VTStrucVis.h"
@@ -179,26 +179,40 @@ void CVTStrucVisCtl::CSlider::SetSize(const unsigned int uiW, const unsigned int
    m_uiH = uiH;
 }
 
-void CVTStrucVisCtl::CSlider::SetLimitI(const int iLow, const int iHigh) {
+void CVTStrucVisCtl::CSlider::SetLimitI(const int iLow, const int iHigh, const int iVal) {
    if (iHigh > iLow) {
       m_iLow = iLow;
       m_iHigh = iHigh;
       m_uiSteps = iHigh - iLow;
+      // Set the initial value
+      const int iLVal = (iVal < iLow ? iLow : (iVal > iHigh ? iHigh : iVal));
+      m_fPos = (float)(iLVal - iLow);
+      m_fPos /= (float)(iHigh - iLow);
    }
 }
 
-void CVTStrucVisCtl::CSlider::SetLimitUI(const unsigned uiLow, const unsigned int uiHigh) {
+void CVTStrucVisCtl::CSlider::SetLimitUI(const unsigned uiLow,
+                                         const unsigned int uiHigh,
+                                         const unsigned int uiVal) {
    if (uiHigh > uiLow) {
       m_uiLow = uiLow;
       m_uiHigh = uiHigh;
       m_uiSteps = uiHigh - uiLow;
+      // Set the initial value
+      const unsigned int uiLVal = (uiVal < uiLow ? uiLow : (uiVal > uiHigh ? uiHigh : uiVal));
+      m_fPos = (float)(uiLVal - uiLow);
+      m_fPos /= (float)(uiHigh - uiLow);
    }
 }
 
-void CVTStrucVisCtl::CSlider::SetLimitF(const float fLow, const float fHigh) {
+void CVTStrucVisCtl::CSlider::SetLimitF(const float fLow, const float fHigh, const float fVal) {
    if (fHigh > fLow) {
       m_fLow = fLow;
       m_fHigh = fHigh;
+      // Set the initial value
+      const float fLVal = (fVal < fLow ? fLow : (fVal > fHigh ? fHigh : fVal));
+      m_fPos = fLVal - fLow;
+      m_fPos /= fHigh - fLow;
    }
 }
 
@@ -209,7 +223,6 @@ void CVTStrucVisCtl::CSlider::SetSteps(const unsigned int uiSteps) {
 bool CVTStrucVisCtl::CSlider::GetPosition(const CPoint oPoint) {
    bool bFound = false;
    // Is the point in the box?
-   m_fPos = 0.0f;
    if ((oPoint.x >= m_uiX) && (oPoint.y >= m_uiY) &&
       (oPoint.x < m_uiX + m_uiW) && (oPoint.y < m_uiY + m_uiH)) {
       const float fX = (float)(oPoint.x - m_uiX);
@@ -390,7 +403,11 @@ CVTStrucVisCtl::CVTStrucVisCtl() :
    m_bStep(false),
    m_bStressColour(false),
    m_uiUITab(0),
-   m_bRunning(false) {
+   m_bRunning(false),
+   m_fXScale(1.0f), 
+   m_fYScale(1.0f), 
+   m_fZScale(1.0f),
+   m_uiAnimSpeed(5) {
 
    InitializeIIDs(&IID_DVTStrucVis, &IID_DVTStrucVisEvents);
 
@@ -404,9 +421,32 @@ CVTStrucVisCtl::CVTStrucVisCtl() :
    // Set the initial window size
    SetInitialSize(180, 250);
 
-   // Set up the sliders
+   // Frame slider
    m_oSFrame.SetPos(0, 40);
    m_oSFrame.SetSize(180, 10);
+
+   // X scale slider
+   m_oSXScale.SetPos(0, 185);
+   m_oSXScale.SetSize(180, 10);
+   m_oSXScale.SetLimitF(1.0f, 10.0f, m_fXScale);
+   m_oSXScale.SetSteps(9);
+
+   // Y scale slider
+   m_oSYScale.SetPos(0, 210);
+   m_oSYScale.SetSize(180, 10);
+   m_oSYScale.SetLimitF(1.0f, 10.0f, m_fYScale);
+   m_oSYScale.SetSteps(9);
+
+   // Z scale slider
+   m_oSZScale.SetPos(0, 235);
+   m_oSZScale.SetSize(180, 10);
+   m_oSZScale.SetLimitF(1.0f, 10.0f, m_fZScale);
+   m_oSZScale.SetSteps(9);
+
+   // Animation speed slider
+   m_oSAnimSpeed.SetPos(0, 185);
+   m_oSAnimSpeed.SetSize(180, 10);
+   m_oSAnimSpeed.SetLimitUI(1, 5, 5);
 }
 
 // Destructor
@@ -424,13 +464,9 @@ bool CVTStrucVisCtl::InitCortona() {
       if (GetCortona()) {
          // Found the control, so initialise it
          m_oCortona.NavBar(false);
-         m_oCortona.Trace("Turned off the nav bar\n");
          m_oCortona.ContextMenu(true);
-         m_oCortona.Trace("Turned off the context menu\n");
          m_oCortona.Headlight(true);
-         m_oCortona.Trace("Turned on the headlight\n");
          m_oCortona.Edit();
-         m_oCortona.Trace("Prepared the engine for direct editing\n");
          m_oCortona.Refresh();
 
          // Create the utility class
@@ -738,12 +774,8 @@ void CVTStrucVisCtl::DrawUI(CDC *pDC, const CRect &rcBounds, bool bRun) {
    oBrush.CreateSolidBrush(TranslateColor(GetBackColor()));
    oDCBuffer.FillRect(rcBounds, &oBrush);
 
-   // Get the bitmap params
-	BITMAP sBitmap;
-	m_oUIBitmap.GetBitmap(&sBitmap);
-   const int iWidth = sBitmap.bmWidth / 2;
    // Copy the base remote
-	oDCBuffer.BitBlt(0, 0, iWidth, sBitmap.bmHeight, &oDCRemote, 0, 0, SRCCOPY);
+	oDCBuffer.BitBlt(0, 0, 180, 170, &oDCRemote, 0, 0, SRCCOPY);
 
    //#===--- Highlight buttons
    // Loop indicator
@@ -769,7 +801,7 @@ void CVTStrucVisCtl::DrawUI(CDC *pDC, const CRect &rcBounds, bool bRun) {
       if (m_bLButtonDown && (m_iUIZone >= 0)) {
          const int iX = (m_iUIZone % 3) * 60;
          const int iY = (m_iUIZone / 3) * 30 + 50;
-      	oDCBuffer.BitBlt(iX, iY, 60, 30, &oDCRemote, iWidth + iX, iY, SRCCOPY);
+      	oDCBuffer.BitBlt(iX, iY, 60, 30, &oDCRemote, 180 + iX, iY, SRCCOPY);
       }
 
       // Current run mode
@@ -796,7 +828,7 @@ void CVTStrucVisCtl::DrawUI(CDC *pDC, const CRect &rcBounds, bool bRun) {
       if (iRunZone >= 0) {
          const int iX = (iRunZone % 3) * 60;
          const int iY = (iRunZone / 3) * 30 + 50;
-      	oDCBuffer.BitBlt(iX, iY, 60, 30, &oDCRemote, iWidth + iX, iY, SRCCOPY);
+      	oDCBuffer.BitBlt(iX, iY, 60, 30, &oDCRemote, 180 + iX, iY, SRCCOPY);
       }
    }
 
@@ -805,7 +837,35 @@ void CVTStrucVisCtl::DrawUI(CDC *pDC, const CRect &rcBounds, bool bRun) {
    if (uiFrames > 0) {
       const int iStep = 180 / (uiFrames - 1);
       // Copy the bar
-      oDCBuffer.BitBlt(0, 40, iStep * m_uiFrame, 10, &oDCRemote, iWidth, 40, SRCCOPY);
+      oDCBuffer.BitBlt(0, 40, iStep * m_uiFrame, 10, &oDCRemote, 180, 40, SRCCOPY);
+   }
+
+   //#===--- Tabs
+   int iVal;
+   switch (m_uiUITab) {
+      case 0:
+         break;
+      case 1:
+         // Back
+         oDCBuffer.BitBlt(0, 170, 180, 75, &oDCRemote, 0, 170, SRCCOPY);
+         // X Scale
+         iVal = (int)(180.0f * m_oSXScale.GetPosition());
+         oDCBuffer.BitBlt(0, 185, iVal, 10, &oDCRemote, 180, 185, SRCCOPY);
+         // Y Scale
+         iVal = (int)(180.0f * m_oSYScale.GetPosition());
+         oDCBuffer.BitBlt(0, 210, iVal, 10, &oDCRemote, 180, 210, SRCCOPY);
+         // Z Scale
+         iVal = (int)(180.0f * m_oSZScale.GetPosition());
+         oDCBuffer.BitBlt(0, 235, iVal, 10, &oDCRemote, 180, 235, SRCCOPY);
+         break;
+      case 2:
+         oDCBuffer.BitBlt(0, 170, 180, 25, &oDCRemote, 0, 245, SRCCOPY);
+         // Anim speed
+         iVal = (int)(180.0f * m_oSAnimSpeed.GetPosition());
+         oDCBuffer.BitBlt(0, 185, iVal, 10, &oDCRemote, 180, 185, SRCCOPY);
+         break;
+      default:
+         break;
    }
 
    //#===--- Frame counter
@@ -817,36 +877,129 @@ void CVTStrucVisCtl::DrawUI(CDC *pDC, const CRect &rcBounds, bool bRun) {
    oDCBuffer.SetBkMode(TRANSPARENT);
    oDCBuffer.SetTextColor(TranslateColor(GetForeColor()));
    // Create and select the font
-   CFont oFont;
-   const int iPoints = 20;
-   oFont.CreateFont(iPoints * 20,
-                    0,
-                    0,
-                    0,
-                    400,
-                    FALSE,
-                    FALSE,
-                    0,
-                    ANSI_CHARSET,
-                    OUT_DEFAULT_PRECIS,
-                    CLIP_DEFAULT_PRECIS,
-                    DEFAULT_QUALITY,
-                    DEFAULT_PITCH | FF_SWISS,
-                    "Arial");
-   CFont *poBufferFont = oDCBuffer.SelectObject(&oFont);
+   CFont oCountFont;
+   const int iCountPoints = 20;
+   oCountFont.CreateFont(iCountPoints * 20,
+                         0,
+                         0,
+                         0,
+                         400,
+                         FALSE,
+                         FALSE,
+                         0,
+                         ANSI_CHARSET,
+                         OUT_DEFAULT_PRECIS,
+                         CLIP_DEFAULT_PRECIS,
+                         DEFAULT_QUALITY,
+                         DEFAULT_PITCH | FF_SWISS,
+                         "Arial");
+   CFont *poBufferFont = oDCBuffer.SelectObject(&oCountFont);
    // Create the font text
-   CString oFrameText("");
-   oFrameText.Format("%d/%d", m_uiFrame + 1, uiFrames);
+   CString oText("");
+   oText.Format("%d/%d", m_uiFrame + 1, uiFrames);
    // Set the coords
    TEXTMETRIC sTM;
    oDCBuffer.GetTextMetrics(&sTM);
-   CSize oTextSize = oDCBuffer.GetTextExtent(oFrameText);
+   CSize oTextSize = oDCBuffer.GetTextExtent(oText);
    oTextSize.cy = sTM.tmHeight + sTM.tmExternalLeading;
    oDCBuffer.LPtoDP(&oTextSize);
    CSize oDevSize(173 - oTextSize.cx, 7);
    oDCBuffer.DPtoLP(&oDevSize);
    // Output the font
-   oDCBuffer.TextOut(oDevSize.cx, oDevSize.cy, oFrameText);
+   oDCBuffer.TextOut(oDevSize.cx, oDevSize.cy, oText);
+
+   // Tab Text
+   CFont oTabFont;
+   const int iTabPoints = 10;
+   oTabFont.CreateFont(iTabPoints * 20,
+                       0,
+                       0,
+                       0,
+                       400,
+                       FALSE,
+                       FALSE,
+                       0,
+                       ANSI_CHARSET,
+                       OUT_DEFAULT_PRECIS,
+                       CLIP_DEFAULT_PRECIS,
+                       DEFAULT_QUALITY,
+                       DEFAULT_PITCH | FF_SWISS,
+                       "Arial");
+   oDCBuffer.SelectObject(oTabFont);
+
+   // Scale Tab
+   if (m_uiUITab == 1) {
+      // X Scale
+      oText.Format("%.3f", m_fXScale);
+      // Set the coords
+      oDCBuffer.GetTextMetrics(&sTM);
+      oTextSize = oDCBuffer.GetTextExtent(oText);
+      oTextSize.cy = sTM.tmHeight + sTM.tmExternalLeading;
+      oDCBuffer.LPtoDP(&oTextSize);
+      oDevSize.cx = 176 - oTextSize.cx;
+      oDevSize.cy = 171;
+      oDCBuffer.DPtoLP(&oDevSize);
+      // Output the font
+      oDCBuffer.TextOut(oDevSize.cx, oDevSize.cy, oText);
+      // Y Scale
+      oText.Format("%.3f", m_fYScale);
+      // Set the coords
+      oDCBuffer.GetTextMetrics(&sTM);
+      oTextSize = oDCBuffer.GetTextExtent(oText);
+      oTextSize.cy = sTM.tmHeight + sTM.tmExternalLeading;
+      oDCBuffer.LPtoDP(&oTextSize);
+      oDevSize.cx = 176 - oTextSize.cx;
+      oDevSize.cy = 196;
+      oDCBuffer.DPtoLP(&oDevSize);
+      // Output the font
+      oDCBuffer.TextOut(oDevSize.cx, oDevSize.cy, oText);
+      // Z Scale
+      oText.Format("%.3f", m_fZScale);
+      // Set the coords
+      oDCBuffer.GetTextMetrics(&sTM);
+      oTextSize = oDCBuffer.GetTextExtent(oText);
+      oTextSize.cy = sTM.tmHeight + sTM.tmExternalLeading;
+      oDCBuffer.LPtoDP(&oTextSize);
+      oDevSize.cx = 176 - oTextSize.cx;
+      oDevSize.cy = 221;
+      oDCBuffer.DPtoLP(&oDevSize);
+      // Output the font
+      oDCBuffer.TextOut(oDevSize.cx, oDevSize.cy, oText);
+   }
+
+   // Animation Tab
+   if (m_uiUITab == 2) {
+      // Animation speed
+      switch (m_uiAnimSpeed) {
+         case 1:
+            oText = "Slowest";
+            break;
+         case 2:
+            oText = "Slow";
+            break;
+         case 3:
+            oText = "Medium";
+            break;
+         case 4:
+            oText = "Fast";
+            break;
+         case 5:
+         default:
+            oText = "Fastest";
+            break;
+      }
+      // Set the coords
+      oDCBuffer.GetTextMetrics(&sTM);
+      oTextSize = oDCBuffer.GetTextExtent(oText);
+      oTextSize.cy = sTM.tmHeight + sTM.tmExternalLeading;
+      oDCBuffer.LPtoDP(&oTextSize);
+      oDevSize.cx = 124;
+      oDevSize.cy = 171;
+      oDCBuffer.DPtoLP(&oDevSize);
+      // Output the font
+      oDCBuffer.TextOut(oDevSize.cx, oDevSize.cy, oText);
+   }
+
    // Restore the DC mapping mode
    oDCBuffer.SetMapMode(MM_TEXT);
 
@@ -954,7 +1107,7 @@ bool CVTStrucVisCtl::FrameControl(unsigned int &uiFrame) {
    // Get the max number of frames
    unsigned int uiFrames = m_poScene->NumFrames();
    // Set the fast forward/ rewind step
-   const unsigned int uiStep = 2;
+   const unsigned int uiStep = 5;
    // Store the current frame and state
    const ERunMode eRunMode = m_eRunMode;
    // Update dependent on the run mode
@@ -977,7 +1130,7 @@ bool CVTStrucVisCtl::FrameControl(unsigned int &uiFrame) {
             uiFrame--;
          else
             if (m_bLoop)
-               uiFrame = uiFrames - 1;
+               uiFrame = NextFrame(uiFrames - 1);
             else
                m_eRunMode = RM_PAUSE;
          if (m_bStep)
@@ -993,7 +1146,7 @@ bool CVTStrucVisCtl::FrameControl(unsigned int &uiFrame) {
             uiFrame -= uiStep;
          else
             if (m_bLoop)
-               uiFrame = uiFrames - 1;
+               uiFrame = NextFrame(uiFrames - 1);
             else
                m_eRunMode = RM_PAUSE;
          break;
@@ -1004,7 +1157,7 @@ bool CVTStrucVisCtl::FrameControl(unsigned int &uiFrame) {
             break;
          }
          if (uiFrame + uiStep < uiFrames)
-            uiFrame += uiStep;
+            uiFrame = NextFrame(uiFrame + uiStep);
          else
             if (m_bLoop)
                uiFrame = 0;
@@ -1017,6 +1170,21 @@ bool CVTStrucVisCtl::FrameControl(unsigned int &uiFrame) {
    }
    // Changed if the frame number or the run mode has change
    return ((uiFrame != m_uiFrame) || (eRunMode != m_eRunMode));
+}
+
+unsigned int CVTStrucVisCtl::NextFrame(const unsigned int uiFrame) {
+   // Set the vars
+   unsigned int uiAvailable = uiFrame;
+   unsigned int uiSeek = 0, uiLength = 0;
+   bool bFound = false;
+   while ((uiAvailable != m_uiFrame) && !bFound) {
+      m_poScene->FrameInfo(uiAvailable, uiSeek, uiLength);
+      if (m_oSimData.Available(uiSeek, uiLength))
+         bFound = true;
+      else
+         uiAvailable += (uiAvailable > m_uiFrame) ? -1 : 1;
+   }
+   return uiAvailable;
 }
 
 void CVTStrucVisCtl::ButtonControl(unsigned int &uiFrame) {
@@ -1058,7 +1226,7 @@ void CVTStrucVisCtl::ButtonControl(unsigned int &uiFrame) {
       // GO TO END
       case 7:
          m_eRunMode = RM_PAUSE;
-         uiFrame = m_poScene->NumFrames() - 1;
+         uiFrame = NextFrame(m_poScene->NumFrames() - 1);
          break;
       // STEP
       case 8:
@@ -1100,8 +1268,51 @@ bool CVTStrucVisCtl::CheckSliders(const CPoint oPoint, unsigned int &uiFrame) {
 
    // Check the frame slider
    if (m_oSFrame.GetPosition(oPoint)) {
+      // Get the new frame
       uiFrame = m_oSFrame.GetUnsignedInt();
       if (uiFrame != m_uiFrame) {
+         // Check the new frame is available
+         unsigned int uiSeek = 0, uiLength = 0;
+         m_poScene->FrameInfo(uiFrame, uiSeek, uiLength);
+         // It's available
+         if (uiLength > 0 && m_oSimData.Available(uiSeek, uiLength)) {
+            bModified = true;
+         }
+         // Don't go there!
+         else
+            uiFrame = m_uiFrame;
+      }
+   }
+
+   // Scale Tab
+   bool bScaleModified = false;
+   if (m_uiUITab == 1) {
+      // X Scale
+      if (m_oSXScale.GetPosition(oPoint)) {
+         m_fXScale = m_oSXScale.GetFloat();
+         bScaleModified = true;
+      }
+      // Y Scale
+      if (m_oSYScale.GetPosition(oPoint)) {
+         m_fYScale = m_oSYScale.GetFloat();
+         bScaleModified = true;
+      }
+      // Z Scale
+      if (m_oSZScale.GetPosition(oPoint)) {
+         m_fZScale = m_oSZScale.GetFloat();
+         bScaleModified = true;
+      }
+      // Update the scale factor
+      if (bScaleModified) {
+         m_poScene->SetScaleFactor(m_fXScale, m_fYScale, m_fZScale);
+      }
+   }
+   bModified &= bScaleModified;
+
+   // Animation tab
+   if (m_uiUITab == 2) {
+      if (m_oSAnimSpeed.GetPosition(oPoint)) {
+         m_uiAnimSpeed = m_oSAnimSpeed.GetUnsignedInt();
          bModified = true;
       }
    }
@@ -1171,9 +1382,14 @@ bool CVTStrucVisCtl::ShowFrame(const unsigned int uiFrame) {
    // Show the current frame
    unsigned int uiSeek, uiLength;
    TRACE("ShowFrame(%d)\n", uiFrame);
-   m_poScene->FrameInfo(uiFrame, uiSeek, uiLength);
-   if (uiLength > 0)
-      return m_oSimData.ShowFrame(uiFrame, uiSeek, uiLength);
+   // Only get the frame when setup is complete
+   if (m_eSimResult == SD_OK) {
+      // Get the frame info
+      m_poScene->FrameInfo(uiFrame, uiSeek, uiLength);
+      // Display or queue the frame
+      if (uiLength > 0)
+         return m_oSimData.ShowFrame(uiFrame, uiSeek, uiLength);
+   }
    return false;
 }
 
@@ -1195,7 +1411,7 @@ void CVTStrucVisCtl::GoInteractive() {
    // Set the control interactive if we have all the properties available
    InternalSetReadyState(READYSTATE_INTERACTIVE);
    // Set the frame count slider
-   m_oSFrame.SetLimitUI(0, m_poScene->NumFrames() - 1);
+   m_oSFrame.SetLimitUI(0, m_poScene->NumFrames() - 1, m_uiFrame);
    // Refresh the control
    InvalidateControl();
 }
@@ -1354,6 +1570,10 @@ void CVTStrucVisCtl::OnLButtonUp(UINT nFlags, CPoint point) {
 void CVTStrucVisCtl::OnMouseMove(UINT nFlags, CPoint point) {
    // If we're running, react to the movement
    if (Running() && Interactive()) {
+      // Check the mouse state
+      if ((nFlags & MK_LBUTTON) > 0)
+         m_bLButtonDown = true;
+
       // Is the mouse in a zone?
       const int iCol = point.x / 60;
       const int iRow = point.y - 50;

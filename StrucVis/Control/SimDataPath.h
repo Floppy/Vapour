@@ -7,7 +7,7 @@
 // SimDataPath.h
 // 19/03/2002 - Warren Moore
 //
-// $Id: SimDataPath.h,v 1.6 2002/03/27 02:55:21 vap-warren Exp $
+// $Id: SimDataPath.h,v 1.7 2002/03/27 11:45:14 vap-warren Exp $
 
 #ifndef __VTSTUCVIS_SIMDATAPATH__
 #define __VTSTUCVIS_SIMDATAPATH__
@@ -32,6 +32,9 @@ public:
                   const unsigned int uiLength);
    // Passes the loaded data into the control, or defers until all the data is in
    // Returns false if it has to defer
+
+   bool Available(const unsigned int uiSeek, const unsigned int uiLength) const;
+   // Returns true if the data is available immediately
 
    bool Waiting() const;
    // Returns true if not setup or waiting on a deferred frame

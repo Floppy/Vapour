@@ -7,7 +7,7 @@
 // VTStructVisCtl.cpp
 // 05/03/2002 - Warren Moore
 //
-// $Id: VTStrucVisCtl.h,v 1.15 2002/03/27 02:55:21 vap-warren Exp $
+// $Id: VTStrucVisCtl.h,v 1.16 2002/03/27 11:45:15 vap-warren Exp $
 
 #ifndef __VTSTRUCTVIS_CONTROL__
 #define __VTSTRUCTVIS_CONTROL__
@@ -118,6 +118,9 @@ protected:
    bool FrameControl(unsigned int &uiFrame);
    // Update frame controller dependent on UI states, returns true if changed
 
+   unsigned int NextFrame(const unsigned int uiFrame);
+   // Returns the next available frame from current to the specified
+
    void ButtonControl(unsigned int &uiFrame);
    // Update the button states when UI event happens
 
@@ -186,13 +189,13 @@ protected:
       void SetSize(const unsigned int uiW, const unsigned int uiH);
       // Set the size of the slider
 
-      void SetLimitI(const int iLow, const int iHigh);
+      void SetLimitI(const int iLow, const int iHigh, const int iVal);
       // Set the int limits
 
-      void SetLimitUI(const unsigned uiLow, const unsigned int uiHigh);
+      void SetLimitUI(const unsigned uiLow, const unsigned int uiHigh, const unsigned int uiVal);
       // Set the unsigned int limits
 
-      void SetLimitF(const float fLow, const float fHigh);
+      void SetLimitF(const float fLow, const float fHigh, const float fVal);
       // Set the float limits
 
       void SetSteps(const unsigned int uiSteps);
@@ -245,9 +248,15 @@ protected:
    bool m_bStep;                             // Single step indicator
    bool m_bStressColour;                     // Stress colouring indicator
    unsigned int m_uiUITab;                   // UI tab marker
+   float m_fXScale, m_fYScale, m_fZScale;    // Scale vars
+   unsigned int m_uiAnimSpeed;               // Animation speed (5 = fast, 1 = slow);
 
    // Slider vars
    CSlider m_oSFrame;                        // Frame counter slider
+   CSlider m_oSXScale;                       // X scale slider
+   CSlider m_oSYScale;                       // Y scale slider
+   CSlider m_oSZScale;                       // Z scale slider
+   CSlider m_oSAnimSpeed;                    // Animation speed slider
 
    // Render buffers
    CBitmap m_oBackBuffer;                    // Screen back buffer

@@ -7,7 +7,7 @@
 // SimDataPath.cpp
 // 19/03/2002 - Warren Moore
 //
-// $Id: SimDataPath.cpp,v 1.8 2002/03/27 02:55:21 vap-warren Exp $
+// $Id: SimDataPath.cpp,v 1.9 2002/03/27 11:45:14 vap-warren Exp $
 
 #include "stdafx.h"
 #include "vtstrucvis.h"
@@ -109,6 +109,8 @@ bool CSimDataPath::ShowFrame(const unsigned int uiFrame,
                              const unsigned int uiSeek,
                              const unsigned int uiLength) {
    bool bDefer = true;
+   // Reset the referred frame info
+   m_uiFrameSeek = m_uiFrameLength = 0;
    // Do we have enough data?
    if (m_uiDataRead > uiSeek + uiLength) {
       // Allocate the memory
@@ -119,13 +121,11 @@ bool CSimDataPath::ShowFrame(const unsigned int uiFrame,
          // Read in the data
          unsigned int uiRead = Read((void*) pucData, uiLength);
          if (uiRead == uiLength) {
-            ((CVTStrucVisCtl*)GetControl())->ShowFrame(uiFrame, pucData, m_uiFrameLength);
+            ((CVTStrucVisCtl*)GetControl())->ShowFrame(uiFrame, pucData, uiLength);
             bDefer = false;
          }
          // Delete the data
          delete [] pucData;
-         // Reset the frame info
-         m_uiFrameSeek = m_uiFrameLength = 0;
       }
    }
    // Otherwise defer until it's arrived
@@ -137,4 +137,7 @@ bool CSimDataPath::ShowFrame(const unsigned int uiFrame,
    return bDefer;
 }
 
+bool CSimDataPath::Available(const unsigned int uiSeek, const unsigned int uiLength) const {
+   return (m_uiDataRead > uiSeek + uiLength);
+}
 
