@@ -7,7 +7,7 @@
 // SGAToHalfLife.cpp - 12/06/2000 - Warren Moore
 //	SGA Avatar to Half Life converter wrapper 
 //
-// $Id: SgatoHalfLife.cpp,v 1.8 2000/10/06 13:05:31 waz Exp $
+// $Id: SgatoHalfLife.cpp,v 1.9 2000/10/10 17:50:56 waz Exp $
 //
 
 #include "StdAfx.h"
@@ -176,7 +176,7 @@ VARESULT CSGAToHalfLife::Export() {
 	}
 
 // Check for time limit validation
-//	CTimeLimit oTimeLimit;
+//	CTimeLimit oTimeLimit(6, 10, 2000, 14);
 //	if (!oTimeLimit.Valid()) {
 //		return (m_eResult = VA_TIME_EXPIRED);
 //	}
