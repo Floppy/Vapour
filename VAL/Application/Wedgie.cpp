@@ -7,7 +7,7 @@
 // Wedgie.cpp - 02/07/2000 - Warren Moore
 //	Creation and reading of compressed Wedgie files
 //
-// $Id: Wedgie.cpp,v 1.12 2000/12/03 13:25:12 warren Exp $
+// $Id: Wedgie.cpp,v 1.13 2000/12/03 18:31:17 warren Exp $
 //
 
 #include "StdAfx.h"
@@ -32,17 +32,19 @@ static char THIS_FILE[] = __FILE__;
 ////////////
 // CWedgie
 
-CWedgie::CWedgie() : m_cVerHigh(WJE_VER_HIGH), m_cVerLow(WJE_VER_LOW) {
+CWedgie::CWedgie() : 
+	m_cVerHigh(WJE_VER_HIGH),
+	m_cVerLow(WJE_VER_LOW),
+	m_pcBaseDir(NULL),
+	m_iBaseLength(0),
+	m_poFile(NULL),
+	m_bCreate(false),
+	m_uFiles(0),
+	m_psTable(NULL),
+	m_uCurrentVer(0) {
 	// TODO: Remove this hack and add proper handle for different pos sizes
 	ASSERT(WJE_POS_SIZE == 4);
 	ASSERT(sizeof(unsigned int) == 4);
-	m_pcBaseDir = NULL;
-	m_iBaseLength = 0;
-	m_poFile = NULL;
-	m_bCreate = false;
-	m_uFiles = 0;
-	m_psTable = NULL;
-	m_uCurrentVer = 0;
 } // Constructor
 
 CWedgie::~CWedgie() {
@@ -777,7 +779,7 @@ WJERESULT CWedgie::FillTable(const char *pcDir, int &iIndex) {
 				CString strName = oFind.GetFilePath();
 				// File size
 				ifstream oFile(strName, ios::in|ios::binary|ios::ate|ios::nocreate);
-				if (!oFile.bad()) {
+				if (!oFile.fail()) {
 					m_psTable[iIndex].m_uOrigSize = oFile.tellg();
 					m_uTotalSize += m_psTable[iIndex].m_uOrigSize;
 					oFile.close();
