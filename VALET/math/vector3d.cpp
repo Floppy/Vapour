@@ -11,7 +11,7 @@
 //! author 		= "James Smith"
 //! date 		= "01/10/2001"
 //! lib 		= libVALETmath
-//! rcsid 		= "$Id: vector3d.cpp,v 1.2 2001/10/02 14:35:14 vap-james Exp $"
+//! rcsid 		= "$Id: vector3d.cpp,v 1.3 2001/10/02 15:34:41 vap-james Exp $"
 //! userlevel 	        = Normal
 //! docentry 	        = "VALET.Math.Geometry"
 
@@ -52,17 +52,11 @@ namespace VALET {
 	} //~CVector3D()
 	
 	CVector3D CVector3D::operator *(const double dScalar) const {
-	  double dX = m_pComponents[0] * dScalar;
-	  double dY = m_pComponents[1] * dScalar;
-	  double dZ = m_pComponents[2] * dScalar;
-	  return CVector3D(dX,dY,dZ);
+	  return CVector3D(*this) *= dScalar;
 	} //operator *(const double dScalar) const
 	
 	CVector3D CVector3D::operator *(const CVector3D & oVec) const {
-	  double dX = m_pComponents[0] * oVec.m_pComponents[0];
-	  double dY = m_pComponents[1] * oVec.m_pComponents[1];
-	  double dZ = m_pComponents[2] * oVec.m_pComponents[2];
-	  return CVector3D(dX,dY,dZ);
+	  return CVector3D(*this) *= oVec;
 	} //operator *(const CVector3D & oVec) const
 	
 	CVector3D& CVector3D::operator *=(const double dScalar) {
@@ -80,17 +74,11 @@ namespace VALET {
 	} //operator *=(const CVector3D & oVec)
 	
 	CVector3D CVector3D::operator /(const double dScalar) const {
-	  double dX = m_pComponents[0] / dScalar;
-	  double dY = m_pComponents[1] / dScalar;
-	  double dZ = m_pComponents[2] / dScalar;
-	  return CVector3D(dX,dY,dZ);	
+	  return CVector3D(*this) /= dScalar;
 	} //operator /(const double dScalar) const
 	
 	CVector3D CVector3D::operator /(const CVector3D & oVec) const {
-	  double dX = m_pComponents[0] / oVec.m_pComponents[0];
-	  double dY = m_pComponents[1] / oVec.m_pComponents[1];
-	  double dZ = m_pComponents[2] / oVec.m_pComponents[2];
-	  return CVector3D(dX,dY,dZ);	
+	  return CVector3D(*this) /= oVec;
 	} //operator /(const CVector3D & oVec) const
 	
 	CVector3D& CVector3D::operator /=(const double dScalar) {
@@ -108,10 +96,7 @@ namespace VALET {
 	} //operator /=(const CVector3D & oVec)
 	
 	CVector3D CVector3D::operator +(const CVector3D & oVec) const {
-	  double dX = m_pComponents[0] + oVec.m_pComponents[0];
-	  double dY = m_pComponents[1] + oVec.m_pComponents[1];
-	  double dZ = m_pComponents[2] + oVec.m_pComponents[2];
-	  return CVector3D(dX,dY,dZ);	
+	  return CVector3D(*this) += oVec;
 	} //operator +(const CVector3D & vec) const
 	
 	CVector3D& CVector3D::operator +=(const CVector3D & oVec) {
@@ -122,10 +107,7 @@ namespace VALET {
 	} //operator +=(const CVector3D & oVec)
 	
 	CVector3D CVector3D::operator -(const CVector3D & oVec) const {
-	  double dX = m_pComponents[0] - oVec.m_pComponents[0];
-	  double dY = m_pComponents[1] - oVec.m_pComponents[1];
-	  double dZ = m_pComponents[2] - oVec.m_pComponents[2];
-	  return CVector3D(dX,dY,dZ);	
+	  return CVector3D(*this) -= oVec;
 	} //operator -(const CVector3D & oVec) const
 	
 	CVector3D& CVector3D::operator -=(const CVector3D & oVec) {
@@ -136,7 +118,7 @@ namespace VALET {
 	} //operator -=(const CVector3D & oVec)
 	
 	CVector3D CVector3D::operator -(void) const {
-	  return CVector3D(-m_pComponents[0],-m_pComponents[1],-m_pComponents[2]);
+	  return CVector3D(*this).Invert();
 	} //operator -(void) const
 	
 	CVector3D& CVector3D::Invert() {
