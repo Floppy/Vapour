@@ -131,6 +131,10 @@ SOURCE=.\BeamElement.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\Category.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\Chunk.cpp
 # End Source File
 # Begin Source File
@@ -185,6 +189,10 @@ SOURCE=.\UIDataPath.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\Util.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\Viewpoint.cpp
 # End Source File
 # Begin Source File
@@ -218,6 +226,10 @@ SOURCE=.\VTStrucVisPpg.cpp
 # Begin Source File
 
 SOURCE=.\BeamElement.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\Category.h
 # End Source File
 # Begin Source File
 
@@ -274,6 +286,10 @@ SOURCE=.\StdAfx.h
 # Begin Source File
 
 SOURCE=.\UIDataPath.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\Util.h
 # End Source File
 # Begin Source File
 
