@@ -7,7 +7,7 @@
 // Chunk.cpp
 // 19/03/2002 - James Smith
 //
-// $Id: Chunk.h,v 1.3 2002/03/28 18:03:49 vap-james Exp $
+// $Id: Chunk.h,v 1.4 2002/03/31 17:26:02 vap-james Exp $
 
 #ifndef __VTSTRUCVIS_CHUNK__
 #define __VTSTRUCVIS_CHUNK__
@@ -91,6 +91,15 @@ public:
 
    bool CreateStressChunk(CInputData& oInput);
    // Creates a stress range chunk using the input data
+
+   void AddDisplacements(float* pfDisplacements);
+   // Adds the passed displacements onto the displacements stored in the chunk.
+   // Only works on CHUNK_NODEDISP chunks.
+   // After the addition, the resultant data is stored in pfDisplacements.
+
+   unsigned int NumNodes(void) const;
+   // How many nodes are there in the chunk?
+   // Only works on CHUNK_NODES chunks
 
 private:
 

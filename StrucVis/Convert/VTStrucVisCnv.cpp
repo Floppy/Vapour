@@ -7,7 +7,7 @@
 // StrucVisCnv.cpp
 // 19/03/2002 - James Smith
 //
-// $Id: VTStrucVisCnv.cpp,v 1.5 2002/03/31 16:54:31 vap-james Exp $
+// $Id: VTStrucVisCnv.cpp,v 1.6 2002/03/31 17:26:02 vap-james Exp $
 
 #include <iostream>
 #include <vector>
@@ -64,10 +64,6 @@ int main(int argc, char* argv[]) {
    else delete pChunk;
 
    cout << "Read " << oInput.GetNumBeams() << " Beams and "<< oInput.GetNumSlabs() << " Slabs." << endl;
-
-   // Convert node displacement chunks from incremental to absolute displacements.
-
-
 
    // Create frame chunks
    vector<CChunk*> oFrames;
@@ -135,6 +131,20 @@ int main(int argc, char* argv[]) {
    }
 
    cout << iNumChunks << " setup chunks created." << endl;
+
+   // Convert node displacement chunks from incremental to absolute displacements.
+   // Create displacement data
+   int iSize = oSetup.SubChunk(CHUNK_NODES)->NumNodes() * 3;
+   float* pfDisplacements = new float[iSize];
+   memset(pfDisplacements,0,iSize * sizeof(float));
+   // Propogate displacements across frames
+   for (pIter = oFrames.begin(); pIter != oFrames.end(); pIter++) {
+      const CChunk* pNodeDisp = (*pIter)->SubChunk(CHUNK_NODEDISP);
+      if (pNodeDisp != NULL) {
+         const_cast<CChunk*>(pNodeDisp)->AddDisplacements(pfDisplacements);
+      }
+   }
+   delete [] pfDisplacements;
 
    // Create root chunk
    CChunk oRoot(CHUNK_ROOT);
