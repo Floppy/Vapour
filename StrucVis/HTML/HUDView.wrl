@@ -7,14 +7,14 @@
 # HUDView.wrl
 # 19/03/2002 - James Smith
 #
-# $Id: HUDView.wrl,v 1.2 2002/03/22 19:08:36 vap-james Exp $
+# $Id: HUDView.wrl,v 1.3 2002/03/25 12:37:18 vap-james Exp $
 
 PROTO HUDView [
    eventIn      SFBool set_bind
    eventIn      MFString set_description
    exposedField SFVec3f position 0 0 10
    exposedField SFRotation orientation 0 1 0 0
-   exposedField SFVec3f textPosition -0.12 -0.05 -0.2
+   exposedField SFVec3f textPosition -0.105 -0.06 -0.2
    exposedField SFBool jump TRUE
 ]
 {
