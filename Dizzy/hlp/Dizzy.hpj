@@ -60,4 +60,4 @@ AFX_HIDP_FAILED_TO_AUTO_REGISTER  = AFX_HIDP_default
 
 [MAP]
 #include <Dizzy.hm>
-#include ..\..\..\..\..\Program Files\Microsoft Visual Studio\VC98\MFC\Include\Afxhelp.hm
+#include ..\..\..\..\Include\Afxhelp.hm
