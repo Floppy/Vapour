@@ -1,4 +1,4 @@
-#!/usr/bin/perl -w
+#!/usr/bin/perl
 
 # bring in the environment vars
 use strict;
@@ -14,7 +14,8 @@ if (not $VALET_SRCROOT or not $VALET_DOCROOT) {
 `mkdir eht`;
 
 # move the eht files into the dir
-my $find_results = `find $VALET_SRCROOT -name '*.eht' -printf "%p "`;
+my $find_results = `find $VALET_SRCROOT -name '*.eht'`;
+$find_results =~ s/\n//;
 if ($find_results) {
 	`cp $find_results eht`;
 }
