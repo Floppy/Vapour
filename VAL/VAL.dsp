@@ -145,6 +145,11 @@ SOURCE=.\Avatar\BodyPart.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\Application\CGI.cpp
+# SUBTRACT CPP /YX /Yc /Yu
+# End Source File
+# Begin Source File
+
 SOURCE=.\Render\Colour.cpp
 # End Source File
 # Begin Source File
@@ -399,6 +404,10 @@ SOURCE=.\Avatar\BodyPart.h
 # Begin Source File
 
 SOURCE=.\Image\boxfilter.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\Application\CGI.h
 # End Source File
 # Begin Source File
 
