@@ -6,7 +6,7 @@
 // Element.h
 // 19/03/2002 - James Smith
 //
-// $Id: Element.h,v 1.11 2002/03/22 19:06:30 vap-james Exp $
+// $Id: Element.h,v 1.12 2002/03/23 11:22:00 vap-james Exp $
 
 #ifndef __ELEMENT__
 #define __ELEMENT__
@@ -101,10 +101,8 @@ public:
    void SetGroup(unsigned int iGroup) {m_iGroup = iGroup;}
    // Set group membership.
 
-   void SetColour(float fRed, float fGreen, float fBlue) const {
-      m_pfColour[0] = fRed;
-      m_pfColour[1] = fGreen;
-      m_pfColour[2] = fBlue;
+   void SetColour(const float* pfColour) const {
+      memcpy(m_pfColour,pfColour,3*sizeof(float));
    }
    // Manually set a solid colour for the element
 
