@@ -14,7 +14,7 @@
 //! author 		= "Warren Moore"
 //! date 		= "23/09/2001"
 //! lib 			= libVALETcore
-//! rcsid 		= "$Id: logmanager.h,v 1.1 2001/09/26 13:10:10 vap-warren Exp $"
+//! rcsid 		= "$Id: logmanager.h,v 1.2 2001/10/02 14:32:23 vap-warren Exp $"
 //! userlevel 	= Develop
 //! docentry 	= "VALET.Core.Log"
 //! example 	= VALET/core/log.test.cpp
@@ -38,11 +38,12 @@ namespace VALET {
 
 	class CLogManager {
 	public:
-		// Constructor - bLog is the global logging option
 		CLogManager(bool bLog = false);
+      //: Constructor
+		//!param: bLog = Global logging option
 
-		// Destructor
 		~CLogManager();
+      //: Destructor
 
 		//:------
 		//: Log management
