@@ -7,12 +7,14 @@
 // VTStructVisCtl.cpp
 // 05/03/2002 - Warren Moore
 //
-// $Id: VTStrucVisCtl.cpp,v 1.20 2002/04/02 00:16:10 vap-warren Exp $
+// $Id: VTStrucVisCtl.cpp,v 1.21 2002/04/02 10:52:35 vap-warren Exp $
 
 #include "stdafx.h"
 #include "VTStrucVis.h"
 #include "VTStrucVisCtl.h"
 #include "VTStrucVisPpg.h"
+
+#include <math.h>
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -247,12 +249,16 @@ float CVTStrucVisCtl::CSlider::GetPosition() const {
 
 int CVTStrucVisCtl::CSlider::GetInt() {
    const int fStep = (float)(m_iHigh - m_iLow);
-   return (int)((fStep * m_fPos) + (float)m_iLow);
+   const float fVal = (fStep * m_fPos) + (float)m_uiLow;
+   double dInt = 0;
+   return (int)(modf((double)fVal, &dInt) >= 0.5 ? ceil((double)fVal) : floor((double)fVal));
 }
 
 unsigned int CVTStrucVisCtl::CSlider::GetUnsignedInt() {
    const int fStep = (float)(m_uiHigh - m_uiLow);
-   return (unsigned int)((fStep * m_fPos) + (float)m_uiLow);
+   const float fVal = (fStep * m_fPos) + (float)m_uiLow;
+   double dInt = 0;
+   return (unsigned int)(modf((double)fVal, &dInt) >= 0.5 ? ceil((double)fVal) : floor((double)fVal));
 }
 
 float CVTStrucVisCtl::CSlider::GetFloat() {
@@ -847,7 +853,7 @@ void CVTStrucVisCtl::DrawUI(CDC *pDC, const CRect &rcBounds, bool bRun) {
    if (uiFrames > 0) {
       const int iStep = 180 / (uiFrames - 1);
       // Copy the bar
-      oDCBuffer.BitBlt(0, 40, iStep * m_uiFrame, 10, &oDCRemote, 180, 40, SRCCOPY);
+      oDCBuffer.BitBlt(0, 40, iStep * m_oSFrame.GetUnsignedInt(), 10, &oDCRemote, 180, 40, SRCCOPY);
    }
 
    //#===--- Tabs
@@ -932,7 +938,7 @@ void CVTStrucVisCtl::DrawUI(CDC *pDC, const CRect &rcBounds, bool bRun) {
    CFont *poBufferFont = oDCBuffer.SelectObject(&oCountFont);
    // Create the font text
    CString oText("");
-   oText.Format("%d/%d", m_uiFrame + 1, uiFrames);
+   oText.Format("%d/%d", m_oSFrame.GetUnsignedInt() + 1, uiFrames);
    // Set the coords
    TEXTMETRIC sTM;
    oDCBuffer.GetTextMetrics(&sTM);
@@ -998,7 +1004,7 @@ void CVTStrucVisCtl::DrawUI(CDC *pDC, const CRect &rcBounds, bool bRun) {
    // Scale Tab
    if (m_uiUITab == 1) {
       // X Scale
-      oText.Format("%.3f", m_fXScale);
+      oText.Format("%.3f", m_oSXScale.GetFloat());
       // Set the coords
       oDCBuffer.GetTextMetrics(&sTM);
       oTextSize = oDCBuffer.GetTextExtent(oText);
@@ -1010,7 +1016,7 @@ void CVTStrucVisCtl::DrawUI(CDC *pDC, const CRect &rcBounds, bool bRun) {
       // Output the font
       oDCBuffer.TextOut(oDevSize.cx, oDevSize.cy, oText);
       // Y Scale
-      oText.Format("%.3f", m_fYScale);
+      oText.Format("%.3f", m_oSYScale.GetFloat());
       // Set the coords
       oDCBuffer.GetTextMetrics(&sTM);
       oTextSize = oDCBuffer.GetTextExtent(oText);
@@ -1022,7 +1028,7 @@ void CVTStrucVisCtl::DrawUI(CDC *pDC, const CRect &rcBounds, bool bRun) {
       // Output the font
       oDCBuffer.TextOut(oDevSize.cx, oDevSize.cy, oText);
       // Z Scale
-      oText.Format("%.3f", m_fZScale);
+      oText.Format("%.3f", m_oSZScale.GetFloat());
       // Set the coords
       oDCBuffer.GetTextMetrics(&sTM);
       oTextSize = oDCBuffer.GetTextExtent(oText);
@@ -1038,7 +1044,7 @@ void CVTStrucVisCtl::DrawUI(CDC *pDC, const CRect &rcBounds, bool bRun) {
    // Animation Tab
    if (m_uiUITab == 2) {
       // Animation speed
-      switch (m_uiAnimSpeed) {
+      switch (m_oSAnimSpeed.GetUnsignedInt()) {
          case 1:
             oText = "Slowest";
             break;
@@ -1326,6 +1332,100 @@ bool CVTStrucVisCtl::Running() {
    return (AmbientUserMode() && !AmbientUIDead());
 }
 
+bool CVTStrucVisCtl::CheckSliders(const CPoint oPoint) {
+   // Don't bother if the mouse isn't down
+   if (!m_bLButtonDown)
+      return false;
+
+   bool bModified = false;
+
+   // Check the frame slider
+   bModified |= m_oSFrame.GetPosition(oPoint);
+
+   // Tabs
+   switch (m_uiUITab) {
+      // Scale tab
+      case 1:
+          bModified |= m_oSXScale.GetPosition(oPoint);
+          bModified |= m_oSYScale.GetPosition(oPoint);
+          bModified |= m_oSYScale.GetPosition(oPoint);
+         break;
+      // Animation tab
+      case 2:
+         bModified |= m_oSAnimSpeed.GetPosition(oPoint);
+         break;
+      default:
+         break;
+   }
+
+   return bModified;
+}
+
+bool CVTStrucVisCtl::UpdateSliders(unsigned int &uiFrame) {
+   bool bModified = false;
+
+   // Check the frame
+   uiFrame = m_oSFrame.GetUnsignedInt();
+   if (uiFrame != m_uiFrame) {
+      // Check the new frame is available
+      unsigned int uiSeek = 0, uiLength = 0;
+      m_poScene->FrameInfo(uiFrame, uiSeek, uiLength);
+      // It's available
+      if (uiLength > 0 && m_oSimData.Available(uiSeek, uiLength)) {
+         bModified = true;
+      }
+      // Don't go there!
+      else
+         uiFrame = m_uiFrame;
+   }
+
+   // Scale Tab
+   if (m_uiUITab == 1) {
+      bool bScaleModified = false;
+      float fVal = 0.0f;
+      // X Scale
+      fVal = m_oSXScale.GetFloat();
+      if (fVal != m_fXScale) {
+         m_fXScale = fVal;
+         bScaleModified = true;
+      }
+      // Y Scale
+      fVal = m_oSYScale.GetFloat();
+      if (fVal != m_fYScale) {
+         m_fYScale = fVal;
+         bScaleModified = true;
+      }
+      // Z Scale
+      fVal = m_oSZScale.GetFloat();
+      if (fVal != m_fZScale) {
+         m_fZScale = fVal;
+         bScaleModified = true;
+      }
+      // Update the scale factor
+      if (bScaleModified) {
+         m_oCortona.Freeze(true);
+         m_poScene->SetScaleFactor(m_fXScale, m_fYScale, m_fZScale);
+         m_oCortona.Freeze(false);
+         bModified = true;
+      }
+   }
+
+   // Animation tab
+   if (m_uiUITab == 2) {
+      m_uiAnimSpeed = m_oSAnimSpeed.GetUnsignedInt();
+      // Stop the timer, if it's running
+      if (m_bRunning) {
+         KillTimer(TI_ANIMATE);
+      }
+      // Restart the timer with the new animation speed
+      SetTimer(TI_ANIMATE, m_piAnimSpeed[m_uiAnimSpeed], NULL);
+      m_bRunning = true;
+   } 
+
+   return bModified;
+}
+
+/*
 bool CVTStrucVisCtl::CheckSliders(const CPoint oPoint, unsigned int &uiFrame) {
    uiFrame = m_uiFrame;
    // Don't bother if the mouse is down
@@ -1406,6 +1506,7 @@ bool CVTStrucVisCtl::CheckSliders(const CPoint oPoint, unsigned int &uiFrame) {
 
    return bModified;
 }
+*/
 
 void CVTStrucVisCtl::UILoading() {
    // Set the async data flags
@@ -1628,12 +1729,9 @@ void CVTStrucVisCtl::OnLButtonDown(UINT nFlags, CPoint point) {
    m_bLButtonDown = true;
 
    // Check the sliders
-   unsigned int uiFrame = m_uiFrame;
-   CheckSliders(point, uiFrame);
-   if (uiFrame != m_uiFrame)
-      ShowFrame(uiFrame);
+   CheckSliders(point);
 
-   // Refresh the display
+   // Mouse may be in a different zone, so update anyway
    InvalidateControl();
 
    COleControl::OnLButtonDown(nFlags, point);
@@ -1662,8 +1760,10 @@ void CVTStrucVisCtl::OnLButtonUp(UINT nFlags, CPoint point) {
       }
 
       // Check the sliders
+      CheckSliders(point);
       uiFrame = m_uiFrame;
-      CheckSliders(point, uiFrame);
+      // Update if the frame has changed
+      UpdateSliders(uiFrame);
       if (uiFrame != m_uiFrame)
          ShowFrame(uiFrame);
 
@@ -1689,7 +1789,7 @@ void CVTStrucVisCtl::OnLButtonUp(UINT nFlags, CPoint point) {
       }
    }
 
-   // Refresh the display
+   // Operational zone may have changed, so update anyway
    InvalidateControl();
 
 	COleControl::OnLButtonUp(nFlags, point);
@@ -1712,10 +1812,7 @@ void CVTStrucVisCtl::OnMouseMove(UINT nFlags, CPoint point) {
       m_iUIZone = iUIZone;
 
       // Check the sliders
-      unsigned int uiFrame = m_uiFrame;
-      bModified |= CheckSliders(point, uiFrame);
-      if (uiFrame != m_uiFrame)
-         ShowFrame(uiFrame);
+      bModified |= CheckSliders(point);
 
       // Repaint if necessary
       if (bModified)
@@ -1752,6 +1849,11 @@ void CVTStrucVisCtl::OnTimer(UINT nIDEvent) {
          m_bLButtonDown = false;
          // Redraw the control
          InvalidateControl();
+         // Check the frame for updates
+         unsigned int uiFrame = m_uiFrame;
+         UpdateSliders(uiFrame);
+         if (uiFrame != m_uiFrame)
+            ShowFrame(uiFrame);
       }
    }
 

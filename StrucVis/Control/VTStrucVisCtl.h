@@ -7,7 +7,7 @@
 // VTStructVisCtl.cpp
 // 05/03/2002 - Warren Moore
 //
-// $Id: VTStrucVisCtl.h,v 1.18 2002/03/27 16:28:58 vap-warren Exp $
+// $Id: VTStrucVisCtl.h,v 1.19 2002/04/02 10:52:35 vap-warren Exp $
 
 #ifndef __VTSTRUCTVIS_CONTROL__
 #define __VTSTRUCTVIS_CONTROL__
@@ -130,8 +130,11 @@ protected:
    bool Running();
    // Check whether we are in run or dev mode, returns true if running
 
-   bool CheckSliders(const CPoint oPoint, unsigned int &uiFrame);
+   bool CheckSliders(const CPoint oPoint);
    // Checks the sliders for activation, returns true if a slider was set
+
+   bool UpdateSliders(unsigned int &uiFrame);
+   // Updates the UI values with the slider values, returning true if a value has changed
 
 //#===--- Private Data Types
 protected:
