@@ -7,7 +7,7 @@
 // SFX.h - 10/07/2000 - Warren Moore
 //	Class for self-management of self-extracting wedgies
 //
-// $Id: SFX.cpp,v 1.4 2000/07/11 15:07:40 waz Exp $
+// $Id: SFX.cpp,v 1.5 2000/11/27 20:32:40 waz Exp $
 //
 
 #include "StdAfx.h"
@@ -39,13 +39,14 @@ bool CSFX::EndSet() {
 	return (m_pcMagic[3] != 0);
 } // EndSet
 
-bool CSFX::SetEnd() {
+bool CSFX::SetEnd(const char *pcEXEName) {
 	// Check it hasn't been done already
-	if (m_pcMagic[3] != 0)
+	if ((!pcEXEName) && (m_pcMagic[3] != 0))
 		return true;
 	// Get the app name
 	ASSERT(g_poVAL);
-	const char *pcAppName = g_poVAL->GetAppName();
+	// Are we running on ourself, or another file
+	const char *pcAppName = pcEXEName ? pcEXEName : g_poVAL->GetAppName();
 	if (!pcAppName)
 		return false;
 	// Open the application
@@ -66,16 +67,9 @@ bool CSFX::SetEnd() {
 
 	//#===--- TODO: Get this to open the app while running
 	oFile.open(pcAppName, ios::in|ios::out|ios::binary|ios::nocreate, filebuf::sh_write);
-	if (oFile.fail()) {
-		//#=== TODO: Remove this once file open works ok
-		CString strAddress;
-		strAddress.Format("Pos address : 0x%08X - End pos : 0x%08X", uPos, uEnd);
-		AfxMessageBox(strAddress, MB_OK);
-
-		oFile.close();
-		//#===--- TODO: Don't forget to set this to false when corrected
-		return true;
-	}
+	if (oFile.fail())
+		return false;
+//	printf ("Pos address : 0x%08X - End pos : 0x%08X\n", uPos, uEnd);
 	// Seek to the position of the flag
 	oFile.seekp(uPos - 1, ios::beg);
 	// Write the flag
@@ -88,9 +82,11 @@ bool CSFX::SetEnd() {
 	}
 	oFile.close();
 
-	// Set the object variables
-	m_pcMagic[3] = 0xFF;
-	m_uWJEPos = uPos;
+	// Set the object variables, if we set ourselves
+	if (!pcEXEName) {
+		m_pcMagic[3] = 0xFF;
+		m_uWJEPos = uPos;
+	}
 
 	return true;
 } // SetEnd
