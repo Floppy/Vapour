@@ -1,4 +1,4 @@
-//====---
+/====---
 // VAL
 //----
 // Vapour Technology All-Purpose Library
@@ -7,7 +7,7 @@
 // Avatar.cpp - 17/06/2000 - James Smith
 //	Avatar class implementation
 //
-// $Id: Avatar.cpp,v 1.13 2000/11/22 00:44:11 waz Exp $
+// $Id: Avatar.cpp,v 1.14 2000/11/30 11:25:36 warren Exp $
 //
 
 #include "stdafx.h"
@@ -17,7 +17,6 @@
 #include "Avatar.h"
 #include "AvatarPose.h"
 #include "EulerRotation.h"
-#include "MathConstants.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -61,49 +60,16 @@ CAvatar::CAvatar(int iNumVertices, int iNumFaces) :
       // Set the status to say that we have not managed to allocate memory
 		m_eStatus = AV_NOALLOC;
 	}
-   if (m_pBodyParts) {
-      //initialise pointers and joint limits in body parts
-	   for (int i=0; i<TOTAL_NUMBER_BODYPARTS; i++) {
-         m_pBodyParts[i].m_bDirtyAngle = false;
-		   m_pBodyParts[i].m_bDirtyShape = false;
-		   m_pBodyParts[i].m_iNumVertices = 0;
-         m_pBodyParts[i].m_pliVertices = NULL;
-		   m_pBodyParts[i].m_piVertices = NULL;
-		   m_pBodyParts[i].m_iNumFaces = 0;
-         m_pBodyParts[i].m_pliFaces = NULL;
-		   m_pBodyParts[i].m_piFaces = NULL;
-		   m_pBodyParts[i].m_dMaxX = V_PI;
-		   m_pBodyParts[i].m_dMaxY = V_PI;
-		   m_pBodyParts[i].m_dMaxZ = V_PI;
-		   m_pBodyParts[i].m_dMinX = V_MINUS_PI;
-		   m_pBodyParts[i].m_dMinY = V_MINUS_PI;
-		   m_pBodyParts[i].m_dMinZ = V_MINUS_PI;
-		   m_pBodyParts[i].m_dDampX = 1;
-		   m_pBodyParts[i].m_dDampY = 1;
-		   m_pBodyParts[i].m_dDampZ = 1;
-         m_pBodyParts[i].m_bpChildren[0] = unknown;
-         m_pBodyParts[i].m_bpChildren[1] = unknown;
-         m_pBodyParts[i].m_bpChildren[2] = unknown;
-         m_pBodyParts[i].m_bpParent = unknown;
-      }
-   }
    return;
 } //CAvatar()
 
 CAvatar::~CAvatar() {
-   // Delete body parts
-	if (m_pBodyParts) {
-		for (int i=0; i<TOTAL_NUMBER_BODYPARTS; i++) {
-			if (m_pBodyParts[i].m_piVertices != NULL) delete [] m_pBodyParts[i].m_piVertices;
-			if (m_pBodyParts[i].m_piFaces != NULL) delete [] m_pBodyParts[i].m_piFaces;
-		}
-		delete [] m_pBodyParts;
-	}
    // Dump pose stack
    while (m_oPoseStack.Length() > 0) {
       delete m_oPoseStack.RemoveBack();
    }
    // Delete model data
+	if (m_pBodyParts)          delete [] m_pBodyParts;
 	if (m_pDefaultVertices)    delete [] m_pDefaultVertices;
 	if (m_piPartPerFaceMap)    delete [] m_piPartPerFaceMap;
 	if (m_piPartPerVertexMap)  delete [] m_piPartPerVertexMap;
