@@ -4,12 +4,12 @@
 // ActiveX Control for structure visualisation
 // Copyright 2002 Vapour Technology Ltd.
 //
-//! docentry  = "Visualisation Control.Scene Management"
+//! docentry  = "VTStrucVis.Visualisation Control.Scene Management"
 //! userlevel =  Normal
 //! file      = "Control/NodeSet.h"
 //! author    = "James Smith"
 //! date      = "19/3/2002"
-//! rcsid     = "$Id: NodeSet.h,v 1.9 2002/04/03 16:20:02 vap-james Exp $"
+//! rcsid     = "$Id: NodeSet.h,v 1.10 2002/04/04 11:01:36 vap-warren Exp $"
 
 #ifndef __VTSTRUCVIS_NODESET__
 #define __VTSTRUCVIS_NODESET__

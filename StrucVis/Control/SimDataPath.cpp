@@ -4,12 +4,12 @@
 // ActiveX Control for structure visualisation
 // Copyright 2002 Vapour Technology Ltd.
 //
-//! docentry  = "Visualisation Control.ActiveX Control"
+//! docentry  = "VTStrucVis.Visualisation Control.ActiveX Control"
 //! userlevel =  Normal
 //! file      = "Control/SimDataPath.cpp"
 //! author    = "Warren Moore"
 //! date      = "27/3/2002"
-//! rcsid     = "$Id: SimDataPath.cpp,v 1.12 2002/04/03 15:57:10 vap-warren Exp $"
+//! rcsid     = "$Id: SimDataPath.cpp,v 1.13 2002/04/04 11:01:36 vap-warren Exp $"
 
 #include "stdafx.h"
 #include "vtstrucvis.h"

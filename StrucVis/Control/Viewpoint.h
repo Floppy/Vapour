@@ -4,12 +4,12 @@
 // ActiveX Control for structure visualisation
 // Copyright 2002 Vapour Technology Ltd.
 //
-//! docentry  = "Visualisation Control.Scene Management.VRML Interface"
+//! docentry  = "VTStrucVis.Visualisation Control.Scene Management.VRML Interface"
 //! userlevel =  Normal
 //! file      = "Control/Viewpoint.h"
 //! author    = "James Smith"
 //! date      = "19/3/2002"
-//! rcsid     = "$Id: Viewpoint.h,v 1.12 2002/04/04 00:03:55 vap-james Exp $"
+//! rcsid     = "$Id: Viewpoint.h,v 1.13 2002/04/04 11:01:39 vap-warren Exp $"
 
 #ifndef __VTSTRUCVIS_VIEWPOINT__
 #define __VTSTRUCVIS_VIEWPOINT__

@@ -4,12 +4,12 @@
 // ActiveX Control for structure visualisation
 // Copyright 2002 Vapour Technology Ltd.
 //
-//! docentry  = "Visualisation Control.Scene Management"
+//! docentry  = "VTStrucVis.Visualisation Control.Scene Management"
 //! userlevel =  Normal
 //! file      = "Control/SceneManager.h"
 //! author    = "James Smith"
 //! date      = "19/3/2002"
-//! rcsid     = "$Id: SceneManager.h,v 1.16 2002/04/04 00:03:55 vap-james Exp $"
+//! rcsid     = "$Id: SceneManager.h,v 1.17 2002/04/04 11:01:36 vap-warren Exp $"
 
 #ifndef __VTSTRUCVIS_SCENEMANAGER__
 #define __VTSTRUCVIS_SCENEMANAGER__
