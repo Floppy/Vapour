@@ -7,7 +7,7 @@
 // Saver.h - 26/11/2000 - Warren Moore
 //	  Main screen saver Windows source
 //
-// $Id: Saver.h,v 1.2 2000/11/30 11:03:21 warren Exp $
+// $Id: Saver.h,v 1.3 2000/12/02 07:38:38 warren Exp $
 //
 
 #ifndef _SAVER_WINMAIN_
@@ -25,6 +25,10 @@
 #pragma hdrstop
 
 #include "resource.h"
+
+//#===--- Saver Defines
+
+#define SAVER_SCENE	CSceneTestSaver
 
 //#===--- Functions
 

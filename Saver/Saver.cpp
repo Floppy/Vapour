@@ -7,7 +7,7 @@
 // Saver.cpp - 26/11/2000 - Warren Moore
 //	  Main screen saver Windows source
 //
-// $Id: Saver.cpp,v 1.2 2000/11/30 11:04:16 warren Exp $
+// $Id: Saver.cpp,v 1.3 2000/12/02 07:38:38 warren Exp $
 //
 
 #include "Saver.h"
@@ -18,7 +18,7 @@
 #include "VALWin32.h"
 
 #include "SaverSettings.h"
-#include "SceneAvatarSaver.h"
+#include "SceneTestSaver.h"
 #include "SFX.h"
 #include <fstream.h>
 #include "Wedgie.h"
@@ -35,7 +35,7 @@ CVAL *g_poVAL = NULL;
 // The screen saver settings object
 CSaverSettings g_oSettings;
 // The screen saver display manager
-CSceneAvatarSaver *g_poScene = NULL;
+SAVER_SCENE *g_poScene = NULL;
 // The selected avatar
 CAvatar *g_poAvatar = NULL;
 
@@ -80,6 +80,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int) {
 
 void StartSaver() {
 	// Set the screen saver window properties
+	// NOTE: Must be called before CreateScene, as HWND required to create render context
 	WNDCLASS wc;
 	wc.style = CS_HREDRAW | CS_VREDRAW;
 	wc.lpfnWndProc = SaverWindowProc;
@@ -142,7 +143,7 @@ void StartSaver() {
 										 g_oSettings.GetInstance(),
 										 NULL);
 	}
-	// Check it was created OK
+	// Make sure we have a window
 	if (hNewWND == NULL)
 		return;
 
@@ -164,11 +165,11 @@ void StartSaver() {
 		if (g_oSettings.GetMode() == SA_SAVER)
 			SystemParametersInfo(SPI_SCREENSAVERRUNNING, 0, &uParam, 0);
 	}
+	// Clean up the windows
+	UnregisterClass("SaverClass", g_oSettings.GetInstance());
 
 	// Clean up the scene
 	DestroyScene();
-
-	return;
 } // StartSaver
 
 void CreateScene() {
@@ -215,7 +216,7 @@ void CreateScene() {
 	}
 	// Create the scene
 	if (g_poAvatar) {
-		g_poScene = (CSceneAvatarSaver*) new CSceneAvatarSaver(&g_oSettings);
+		g_poScene = (CSceneTestSaver*) new CSceneTestSaver(&g_oSettings);
 		if (g_poScene) {
 			g_poScene->Create();
 			g_poScene->ImportAvatar(g_poAvatar, false);
@@ -305,7 +306,7 @@ LRESULT CALLBACK SaverWindowProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 			g_oSettings.StartTimer();
 			break;
 		case WM_TIMER:
-			// Get the screen size
+			// Set the screen size
 			RECT sRect;
 			GetClientRect(hwnd, &sRect); 
 			g_poScene->SetSize(sRect.right, sRect.bottom);
