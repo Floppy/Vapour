@@ -7,7 +7,7 @@
 // SGAToHalfLife.cpp - 06/07/2000 - Warren Moore
 //	SGA Avatar to Half Life converter wrapper 
 //
-// $Id: SgatoHalfLife.cpp,v 1.3 2000/07/15 10:41:23 waz Exp $
+// $Id: SgatoHalfLife.cpp,v 1.4 2000/07/16 12:28:32 waz Exp $
 //
 
 #include "StdAfx.h"
@@ -22,7 +22,7 @@
 #include "TimeLimit.h"
 #include "Wedgie.h"
 
-///////////////
+///////////////////
 // CSGAToHalfLife
 
 const char *CSGAToHalfLife::m_pcError[] = {
