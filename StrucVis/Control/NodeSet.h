@@ -6,7 +6,7 @@
 // NodeSet.h
 // 19/03/2002 - James Smith
 //
-// $Id: NodeSet.h,v 1.2 2002/03/21 18:18:12 vap-james Exp $
+// $Id: NodeSet.h,v 1.3 2002/03/21 19:00:06 vap-james Exp $
 
 #ifndef __NODESET__
 #define __NODESET__
@@ -27,10 +27,19 @@ public:
 
 //#===--- Member Functions
 
-   void Set(float* pfNodePositions);
-   // The nodes are overwritten with the passed data.
+   void SetDefault(float* pfNodePositions);
+   // The default nodes are overwritten with the passed data.
    // (NumNodes * 3) floats are assumed.
    // This also overwrites current positions.
+
+   void Displace(float* pfDisplacements) const;
+   // Adds the passed array of displacements onto the default nodes
+   // to create a new current node list.
+   // Displacements are multiplied by the scale factor.
+   // (NumNodes * 3) floats are assumed in the displacement list.
+   
+   void SetScaleFactor(float fX, float fY, float fZ) const;
+   // Sets the displacement scale factor.
 
    const float* Node(unsigned int iIndex) const;
    // Gets a pointer to a particular CURRENT node position.
@@ -41,8 +50,14 @@ protected:
    unsigned int m_iNumNodes;
    // How many nodes are there?
 
-   mutable float* m_pfNodePositions;
-   // Node positions
+   mutable float* m_pfCurrentNodePositions;
+   // Current node positions
+   
+   float* m_pfDefaultNodePositions;
+   // Default node positions
+
+   mutable float m_pfScale[3];
+   // Displacement scale factor
 
 };
 
