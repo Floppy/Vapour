@@ -7,7 +7,7 @@
 # SlabElement.wrl
 # 19/03/2002 - James Smith
 #
-# $Id: SlabElement.wrl,v 1.11 2002/03/26 23:45:11 vap-james Exp $
+# $Id: SlabElement.wrl,v 1.12 2002/03/27 15:01:24 vap-james Exp $
 
 PROTO SlabElement [
    eventIn MFColor  set_colours
@@ -17,7 +17,7 @@ PROTO SlabElement [
    field   MFColor  colours     [ 1 1 1, 1 1 1, 1 1 1, 1 1 1, 1 1 1, 1 1 1, 1 1 1, 1 1 1, 1 1 1]
    field   MFInt32  cracks      [ 0 0 0 0 0 0 0 0 0 ]
    field   MFString description ["ID:" "Group:" "Temperature:"]
-   field   MFVec3f  nodes       [ 0.5 0 0.5, 0 0 0.5, -0.5 0 0.5, -0.5 0 0, -0.5 0 -0.5, 0 0 -0.5, 0.5 0 -0.5, , 0.5 0 0, 0 0 0]
+   field   MFVec3f  nodes       [ 0.5 0 0.5, -0.5 0 0.5, -0.5 0 -0.5, 0.5 0 -0.5, 0 0 0.5, -0.5 0 0, 0 0 -0.5, 0.5 0 0, 0 0 0]
    field   SFFloat  thickness   1
    eventOut MFString description_changed
 ]
@@ -81,33 +81,35 @@ PROTO SlabElement [
             geometry IndexedFaceSet {
                coord DEF COORDS Coordinate {}
                color DEF COLOURS Color {}
+               ccw FALSE
                colorPerVertex TRUE
-               solid FALSE
+               solid TRUE
                coordIndex [
-                  0 28 32 4 -1
-                  4 32 12 8 -1
-                  32 20 16 12 -1
-                  28 24 20 32 -1
-                  3 7 35 31 -1
-                  7 11 15 35 -1
-                  35 15 19 23 -1
-                  31 35 23 27 -1
-                  0 4 5 1 -1
-                  2 6 7 3 -1
-                  4 8 9 5 -1
-                  6 10 11 7 -1
-                  8 12 13 9 -1
-                  10 14 15 11 -1
-                  12 16 17 13 -1
-                  14 18 19 15 -1
-                  16 20 21 17 -1
-                  18 22 23 19 -1
-                  20 24 25 21 -1
-                  22 26 27 23 -1
-                  24 28 29 25 -1
-                  26 30 31 27 -1
+                  0 16 17 1 -1
+                  16 4 5 17 -1
+                  4 20 21 5 -1
+                  20 8 9 21 -1
+                  8 24 25 9 -1
+                  24 12 13 25 -1
+                  12 28 29 13 -1
                   28 0 1 29 -1
+                  2 18 19 3 -1
+                  18 6 7 19 -1
+                  6 22 23 7 -1
+                  22 10 11 23 -1
+                  10 26 27 11 -1
+                  26 14 15 27 -1
+                  14 30 31 15 -1
                   30 2 3 31 -1
+                  0 28 32 16 -1
+                  4 28 32 16 -1
+                  16 32 20 4 -1
+                  32 24 8 20 -1
+                  28 12 24 32 -1
+                  3 19 35 31 -1
+                  19 7 23 35 -1
+                  35 23 11 27 -1
+                  31 35 27 15 -1
                ]
             }
          }
@@ -122,25 +124,18 @@ PROTO SlabElement [
                coord USE COORDS
                #color USE COLOURS
                #colorPerVertex TRUE
+               ccw FALSE
                solid TRUE
                coordIndex [
-                  #1 29 33 5 -1
-                  #5 33 13 9 -1
-                  #33 21 17 13 -1
-                  #29 25 21 33 -1
-                  #2 6 34 30 -1
-                  #6 10 14 34 -1
-                  #34 14 18 22 -1
-                  #30 34 22 26 -1
-                  1 5 6 2 -1
-                  5 9 10 6 -1
-                  9 13 14 10 -1
-                  13 17 18 14 -1
-                  17 21 22 18 -1
-                  21 25 26 22 -1
-                  25 29 30 26 -1
+                  1 17 18 2 -1
+                  17 5 6 18 -1
+                  5 21 22 6 -1
+                  21 9 10 22 -1
+                  9 25 26 10 -1
+                  25 13 14 26 -1
+                  13 29 30 14 -1
                   29 1 2 30 -1
-               ]
+               ]  
             }
          }
          Group {
