@@ -4,10 +4,12 @@
 // File converter for structure visualisation
 // Copyright 2002 Vapour Technology Ltd.
 //
-// Chunk.cpp
-// 19/03/2002 - James Smith
-//
-// $Id: Chunk.cpp,v 1.7 2002/04/02 22:57:17 vap-james Exp $
+//! docentry  = "File Converter.VSV File IO"
+//! userlevel =  Normal
+//! file      = "Convert/Chunk.cpp"
+//! author    = "James Smith"
+//! date      = "19/3/2002"
+//! rcsid     = "$Id: Chunk.cpp,v 1.8 2002/04/03 11:15:11 vap-james Exp $"
 
 #include "Chunk.h"
 

@@ -4,10 +4,12 @@
 // File converter for structure visualisation
 // Copyright 2002 Vapour Technology Ltd.
 //
-// InputData.cpp
-// 19/03/2002 - James Smith
-//
-// $Id: InputData.h,v 1.1 2002/03/26 00:51:54 vap-james Exp $
+//! docentry  = "File Converter.Arup File IO"
+//! userlevel =  Normal
+//! file      = "Convert/InputData.h"
+//! author    = "James Smith"
+//! date      = "19/3/2002"
+//! rcsid     = "$Id: InputData.h,v 1.2 2002/04/03 11:15:11 vap-james Exp $"
 
 #ifndef __VTSTRUCVIS_INPUTDATA__
 #define __VTSTRUCVIS_INPUTDATA__

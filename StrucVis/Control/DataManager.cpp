@@ -4,10 +4,12 @@
 // ActiveX Control for structure visualisation
 // Copyright 2000 Vapour Technology Ltd.
 //
-// DataManager.cpp
-// 19/03/2002 - James Smith
-//
-// $Id: DataManager.cpp,v 1.17 2002/03/28 13:31:42 vap-james Exp $
+//! docentry  = "Visualisation Control.Scene Management.VSV File IO"
+//! userlevel =  Normal
+//! file      = "Control/DataManager.cpp"
+//! author    = "James Smith"
+//! date      = "19/3/2002"
+//! rcsid     = "$Id: DataManager.cpp,v 1.18 2002/04/03 11:14:29 vap-james Exp $"
 
 #include "stdafx.h"
 #include "DataManager.h"

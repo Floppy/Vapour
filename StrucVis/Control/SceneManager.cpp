@@ -4,10 +4,12 @@
 // ActiveX Control for structure visualisation
 // Copyright 2000 Vapour Technology Ltd.
 //
-// SceneManager.cpp
-// 19/03/2002 - James Smith
-//
-// $Id: SceneManager.cpp,v 1.30 2002/03/28 13:18:30 vap-james Exp $
+//! docentry  = "Visualisation Control.Scene Management"
+//! userlevel =  Normal
+//! file      = "Control/SceneManager.cpp"
+//! author    = "James Smith"
+//! date      = "19/3/2002"
+//! rcsid     = "$Id: SceneManager.cpp,v 1.31 2002/04/03 11:14:30 vap-james Exp $"
 
 #include "stdafx.h"
 #include "SceneManager.h"

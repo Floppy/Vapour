@@ -4,10 +4,12 @@
 // ActiveX Control for structure visualisation
 // Copyright 2000 Vapour Technology Ltd.
 //
-// VTStructVisCtl.cpp
-// 05/03/2002 - Warren Moore
-//
-// $Id: VTStrucVisCtl.cpp,v 1.24 2002/04/02 23:04:29 vap-warren Exp $
+//! docentry  = "Visualisation Control.ActiveX Control"
+//! userlevel =  Normal
+//! file      = "Control/VTStrucVisCtl.cpp"
+//! author    = "Warren Moore"
+//! date      = "5/3/2002"
+//! rcsid     = "$Id: VTStrucVisCtl.cpp,v 1.25 2002/04/03 11:14:32 vap-james Exp $"
 
 #include "stdafx.h"
 #include "VTStrucVis.h"

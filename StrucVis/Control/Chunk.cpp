@@ -4,10 +4,12 @@
 // ActiveX Control for structure visualisation
 // Copyright 2000 Vapour Technology Ltd.
 //
-// Chunk.cpp
-// 19/03/2002 - James Smith
-//
-// $Id: Chunk.cpp,v 1.10 2002/03/27 16:40:02 vap-james Exp $
+//! docentry  = "Visualisation Control.Scene Management.VSV File IO"
+//! userlevel =  Normal
+//! file      = "Control/Chunk.cpp"
+//! author    = "James Smith"
+//! date      = "19/3/2002"
+//! rcsid     = "$Id: Chunk.cpp,v 1.11 2002/04/03 11:14:28 vap-james Exp $"
 
 #include "stdafx.h"
 #include "Chunk.h"

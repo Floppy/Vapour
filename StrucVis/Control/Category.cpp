@@ -4,10 +4,12 @@
 // ActiveX Control for structure visualisation
 // Copyright 2000 Vapour Technology Ltd.
 //
-// Category.cpp
-// 27/03/2002 - Warren Moore
-//
-// $Id: Category.cpp,v 1.1 2002/04/02 22:34:39 vap-warren Exp $
+//! docentry  = "Visualisation Control.ActiveX Control"
+//! userlevel =  Normal
+//! file      = "Control/Category.cpp"
+//! author    = "Warren Moore"
+//! date      = "27/3/2002"
+//! rcsid     = "$Id: Category.cpp,v 1.2 2002/04/03 11:14:27 vap-james Exp $"
 
 #include "stdafx.h"
 

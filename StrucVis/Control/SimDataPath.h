@@ -4,10 +4,12 @@
 // ActiveX Control for structure visualisation
 // Copyright 2000 Vapour Technology Ltd.
 //
-// SimDataPath.h
-// 19/03/2002 - Warren Moore
-//
-// $Id: SimDataPath.h,v 1.7 2002/03/27 11:45:14 vap-warren Exp $
+//! docentry  = "Visualisation Control.ActiveX Control"
+//! userlevel =  Normal
+//! file      = "Control/SimDataPath.h"
+//! author    = "Warren Moore"
+//! date      = "27/3/2002"
+//! rcsid     = "$Id: SimDataPath.h,v 1.8 2002/04/03 11:14:31 vap-james Exp $"
 
 #ifndef __VTSTUCVIS_SIMDATAPATH__
 #define __VTSTUCVIS_SIMDATAPATH__

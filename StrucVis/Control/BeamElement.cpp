@@ -4,10 +4,12 @@
 // ActiveX Control for structure visualisation
 // Copyright 2000 Vapour Technology Ltd.
 //
-// BeamElement.cpp
-// 19/03/2002 - James Smith
-//
-// $Id: BeamElement.cpp,v 1.28 2002/03/28 13:06:16 vap-james Exp $
+//! docentry  = "Visualisation Control.Scene Management.VRML Interface"
+//! userlevel =  Normal
+//! file      = "Control/BeamElement.cpp
+//! author    = "James Smith"
+//! date      = "19/3/2002"
+//! rcsid     = "$Id: BeamElement.cpp,v 1.29 2002/04/03 11:14:27 vap-james Exp $"
 
 #include "stdafx.h"
 #include "BeamElement.h"

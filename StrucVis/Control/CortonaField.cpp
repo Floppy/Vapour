@@ -4,10 +4,12 @@
 // ActiveX Control for structure visualisation
 // Copyright 2000 Vapour Technology Ltd.
 //
-// CortonaField.cpp
-// 07/03/2002 - Warren Moore
-//
-// $Id: CortonaField.cpp,v 1.14 2002/03/26 19:21:43 vap-warren Exp $
+//! docentry  = "Visualisation Control.Cortona Interface"
+//! userlevel =  Normal
+//! file      = "Control/CortonaField.cpp"
+//! author    = "Warren Moore"
+//! date      = "7/3/2002"
+//! rcsid     = "$Id: CortonaField.cpp,v 1.15 2002/04/03 11:14:28 vap-james Exp $"
 
 #include "stdafx.h"
 

@@ -4,10 +4,12 @@
 // ActiveX Control for structure visualisation
 // Copyright 2000 Vapour Technology Ltd.
 //
-// UIDataPath.cpp
-// 19/03/2002 - Warren Moore
-//
-// $Id: UIDataPath.cpp,v 1.2 2002/03/24 01:55:46 vap-warren Exp $
+//! docentry  = "Visualisation Control.ActiveX Control"
+//! userlevel =  Normal
+//! file      = "Control/UIDataPath.cpp"
+//! author    = "Warren Moore"
+//! date      = "27/3/2002"
+//! rcsid     = "$Id: UIDataPath.cpp,v 1.3 2002/04/03 11:14:31 vap-james Exp $"
 
 #include "stdafx.h"
 #include "vtstrucvis.h"

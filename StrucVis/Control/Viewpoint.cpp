@@ -4,10 +4,12 @@
 // ActiveX Control for structure visualisation
 // Copyright 2000 Vapour Technology Ltd.
 //
-// Viewpoint.cpp
-// 19/03/2002 - James Smith
-//
-// $Id: Viewpoint.cpp,v 1.9 2002/03/27 17:54:59 vap-james Exp $
+//! docentry  = "Visualisation Control.Scene Management.VRML Interface"
+//! userlevel =  Normal
+//! file      = "Control/Viewpoint.cpp"
+//! author    = "James Smith"
+//! date      = "19/3/2002"
+//! rcsid     = "$Id: Viewpoint.cpp,v 1.10 2002/04/03 11:14:33 vap-james Exp $"
 
 #include "stdafx.h"
 #include "Viewpoint.h"

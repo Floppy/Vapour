@@ -4,10 +4,12 @@
 // File converter for structure visualisation
 // Copyright 2002 Vapour Technology Ltd.
 //
-// StrucVisCnv.cpp
-// 19/03/2002 - James Smith
-//
-// $Id: VTStrucVisCnv.cpp,v 1.7 2002/04/02 22:57:17 vap-james Exp $
+//! docentry  = "File Converter"
+//! userlevel =  Normal
+//! file      = "Convert/VTStrucVisCnv.cpp"
+//! author    = "James Smith"
+//! date      = "19/3/2002"
+//! rcsid     = "$Id: VTStrucVisCnv.cpp,v 1.8 2002/04/03 11:15:11 vap-james Exp $"
 
 #include <iostream>
 #include <vector>

@@ -4,10 +4,12 @@
 // ActiveX Control for structure visualisation
 // Copyright 2000 Vapour Technology Ltd.
 //
-// NodeSet.cpp
-// 19/03/2002 - James Smith
-//
-// $Id: NodeSet.cpp,v 1.8 2002/03/27 15:08:40 vap-james Exp $
+//! docentry  = "Visualisation Control.Scene Management"
+//! userlevel =  Normal
+//! file      = "Control/NodeSet.cpp"
+//! author    = "James Smith"
+//! date      = "19/3/2002"
+//! rcsid     = "$Id: NodeSet.cpp,v 1.9 2002/04/03 11:14:30 vap-james Exp $"
 
 #include "stdafx.h"
 #include "NodeSet.h"

@@ -4,10 +4,12 @@
 // ActiveX Control for structure visualisation
 // Copyright 2000 Vapour Technology Ltd.
 //
-// SlabElement.cpp
-// 19/03/2002 - James Smith
-//
-// $Id: SlabElement.cpp,v 1.28 2002/03/28 13:06:16 vap-james Exp $
+//! docentry  = "Visualisation Control.Scene Management.VRML Interface"
+//! userlevel =  Normal
+//! file      = "Control/SlabElement.cpp"
+//! author    = "James Smith"
+//! date      = "19/3/2002"
+//! rcsid     = "$Id: SlabElement.cpp,v 1.29 2002/04/03 11:14:31 vap-james Exp $"
 
 #include "stdafx.h"
 #include "SlabElement.h"
