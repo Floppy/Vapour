@@ -7,11 +7,12 @@
 // Scalar.cpp - 18/05/2000 - James Smith
 //	Scalar value class implementation
 //
-// $Id: NumericEdit.cpp,v 1.0 2000/08/13 11:02:48 waz Exp $
+// $Id: NumericEdit.cpp,v 1.1 2000/08/13 11:05:43 waz Exp $
 //
 
 // Windows includes/defines
 #include "stdafx.h"
+
 #ifdef _DEBUG
 #undef THIS_FILE
 static char THIS_FILE[]=__FILE__;
@@ -27,12 +28,8 @@ static char THIS_FILE[]=__FILE__;
 // VAL includes
 #include "NumericEdit.h"
 
-//////////////
+/////////////////
 // CNumericEdit
-
-//////////////////////////////////////////////////////////////////////
-// Construction/Destruction
-//////////////////////////////////////////////////////////////////////
 
 CNumericEdit::CNumericEdit() {
 	iNumEntries = 1;
@@ -41,10 +38,7 @@ CNumericEdit::CNumericEdit() {
 CNumericEdit::~CNumericEdit() {
 } //~CNumericEdit()
 
-
-//////////////////////////////////////////////////////////////////////
-// Message Map
-//////////////////////////////////////////////////////////////////////
+//#===--- MFC Message Handling
 
 BEGIN_MESSAGE_MAP(CNumericEdit, CEdit)
 	//{{AFX_MSG_MAP(CNumericEdit)
@@ -52,10 +46,6 @@ BEGIN_MESSAGE_MAP(CNumericEdit, CEdit)
 	//}}AFX_MSG_MAP
     ON_MESSAGE(WM_PASTE, OnPaste)
 END_MESSAGE_MAP()
-
-//////////////////////////////////////////////////////////////////////
-// Message Handlers
-//////////////////////////////////////////////////////////////////////
 
 void CNumericEdit::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags) {
 	if (validChar(nChar)) {
@@ -89,10 +79,6 @@ LRESULT CNumericEdit::OnPaste(WPARAM Wparam, LPARAM LParam) {
 	}
 	return 1;
 } //OnPaste(WPARAM Wparam, LPARAM LParam)
-
-//////////////////////////////////////////////////////////////////////
-// Other Functions
-//////////////////////////////////////////////////////////////////////
 
 bool CNumericEdit::validChar(char cInput) {
 	bool bReturn = false;

@@ -7,7 +7,7 @@
 // NumericEdit.h - 13/01/2000 - Warren Moore
 //	Numeric Edit control definition
 //
-// $Id: NumericEdit.h,v 1.0 2000/08/13 11:02:48 waz Exp $
+// $Id: NumericEdit.h,v 1.1 2000/08/13 11:05:43 waz Exp $
 //
 
 #ifndef _VAL_NUMERICEDIT_
@@ -23,29 +23,16 @@
 // Use this classes SubClassDlgItem() to dynamically subclass
 // the CEdit control.
 
-class CNumericEdit : public CEdit
-{
-// Construction
+class CNumericEdit : public CEdit {
 public:
 	CNumericEdit();
 
-// Attributes
-public:
-
-// Operations
-public:
-
-// Overrides
-	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CNumericEdit)
 	//}}AFX_VIRTUAL
 
-// Implementation
-public:
 	void setNumEntries(int num);
 	virtual ~CNumericEdit();
 
-	// Generated message map functions
 protected:
 	int iNumEntries;
 	bool validChar(char cInput);
@@ -57,9 +44,6 @@ protected:
 	DECLARE_MESSAGE_MAP()
 };
 
-/////////////////////////////////////////////////////////////////////////////
-
 //{{AFX_INSERT_LOCATION}}
-// Microsoft Visual C++ will insert additional declarations immediately before the previous line.
 
 #endif // _VAL_NUMERICEDIT_
