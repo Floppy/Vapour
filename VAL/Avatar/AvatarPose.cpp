@@ -7,7 +7,7 @@
 // AvatarPose.cpp - 21/2/2000 - James Smith
 //	Avatar pose class implementation
 //
-// $Id: AvatarPose.cpp,v 1.2 2000/08/10 22:44:40 waz Exp $
+// $Id: AvatarPose.cpp,v 1.3 2000/08/21 17:01:03 waz Exp $
 //
 
 
@@ -58,6 +58,17 @@ CAvatarPose::CAvatarPose(const char* pszFilename) {
    m_pTargetQuats = NULL;
    m_pTargetTranslation = NULL;
    Load(pszFilename);
+   return;
+}
+
+// Loads a pose directly from a wedgie
+CAvatarPose::CAvatarPose(const char* pszFilename, CWedgie &oWedgie) {
+   m_iNumJoints = 0;
+   m_pJointRotations = NULL;
+   m_pSourceQuats = NULL;
+   m_pTargetQuats = NULL;
+   m_pTargetTranslation = NULL;
+   Load(pszFilename, oWedgie);
    return;
 }
 
@@ -112,7 +123,7 @@ CAxisRotation CAvatarPose::GetJointRotation(int iJoint) {
 
 int CAvatarPose::InitInterpolation(const CAvatarPose& poTarget, bool bAccel) const {
    // Check number of joints
-   if (m_iNumJoints == poTarget.m_iNumJoints) return 0;
+   if (m_iNumJoints != poTarget.m_iNumJoints) return 0;
    // Make sure we're ready to start a new interpolation
    if ((m_pSourceQuats != NULL) || (m_pTargetQuats != NULL) || (m_pTargetTranslation != NULL)) {
       // A previous interpolation was not stopped - so stop it
@@ -139,19 +150,8 @@ int CAvatarPose::InitInterpolation(const CAvatarPose& poTarget, bool bAccel) con
 CAvatarPose CAvatarPose::CalcInterpolationFrame(double dAmount) const {
    // Create result storage
    CAvatarPose poResult(m_iNumJoints);
-   // Make sure we're ready to go
-   if ((m_pSourceQuats == NULL) || (m_pTargetQuats == NULL)) return poResult;
-   // If we're accelerating, account for it
-   if (m_bAccel) dAmount = AddAcceleration(dAmount);
-   // Work out inverse of amount
-   double dCoeff = 1.0 - dAmount;
-   //  Interpolate translation
-   poResult.m_vecRootTranslation = (m_vecRootTranslation * dCoeff) + (*m_pTargetTranslation * dAmount);
-   // Interpolate joint rotations
-   for (int i=0; i<m_iNumJoints; i++) {
-      CQuaternion qResult = m_pSourceQuats[i].SlerpTo(m_pTargetQuats[i],dAmount);
-      poResult.m_pJointRotations[i] = CAxisRotation(qResult);
-   }
+   // Use the pointer-based version of this function
+   CalcInterpolationFrame(dAmount,&poResult);
    // Done!
    return poResult;
 } //CalcInterpolationFrame(double dAmount) const
@@ -214,7 +214,7 @@ CAvatarPose CAvatarPose::InterpolateToZero(double dAmount, bool bAccel) const {
 
 double CAvatarPose::AddAcceleration(double dAmount) const {
 	// Simple cosine-based acceleration. This may be a bit much - we shall see...
-	return 1.0 - cos(V_2PI*dAmount);	
+	return 0.5 - cos(V_PI*dAmount)/2;
 } //AddAcceleration(double dAmount) const
 
 //////////////////////////////////////////////////////////////////////
@@ -226,12 +226,71 @@ double CAvatarPose::AddAcceleration(double dAmount) const {
 int CAvatarPose::Load(const char* pszFilename) {
 	int iRetVal = 0;
    ifstream isInputStream(pszFilename);
-	if (isInputStream.good()) {
+	if (!isInputStream.fail()) {
 		iRetVal = Load(isInputStream);
 	}
 	isInputStream.close();
 	return iRetVal;
 } //Load(const char* pszFilename)
+
+bool CAvatarPose::Load(const char *pcFilename, CWedgie &oWedgie) {
+	// Find the file in the wedgie, return if failed
+	int iHandle = oWedgie.Open(pcFilename);
+	if (iHandle == -1)
+		return false;
+	// Load the pose
+   unsigned char pcBuffer[3072];
+	unsigned char *pcTemp = pcBuffer + 4;
+   oWedgie.Read(iHandle, pcBuffer, 3072);
+   if ((pcBuffer[0] == 'V') && (pcBuffer[1] == 'P') && (pcBuffer[2] == 'O')) {
+      // Test version number
+      long int iNewNumJoints = 0;
+      double dX = 0;
+      double dY = 0;
+      double dZ = 0;
+      double dR = 0;
+      long int i = 0;
+      switch (pcBuffer[3]) {
+         case 1:
+            // Read number of joints
+            iNewNumJoints = *((long int*)pcTemp);
+				pcTemp += 4;
+            // Allocate memory if necessary
+            if (iNewNumJoints != m_iNumJoints) {
+               m_iNumJoints = iNewNumJoints;
+               if (m_pJointRotations != NULL) delete [] m_pJointRotations;
+               m_pJointRotations = new CAxisRotation[m_iNumJoints];
+            }
+            // Read root translation
+            dX = *((double*)pcTemp);
+				pcTemp += 8;
+            dY = *((double*)pcBuffer);
+				pcTemp += 8;
+            dZ = *((double*)pcBuffer);
+				pcTemp += 8;
+            m_vecRootTranslation.FromDouble(dX,dY,dZ);
+            // Read joint rotations
+            for (i=0; i<m_iNumJoints; i++) {
+               dX = *((double*)pcTemp);
+					pcTemp += 8;
+               dY = *((double*)pcTemp);
+					pcTemp += 8;
+               dZ = *((double*)pcTemp);
+					pcTemp += 8;
+               dR = *((double*)pcTemp);
+					pcTemp += 8;
+               m_pJointRotations[i].FromDouble(dX,dY,dZ,dR);
+            }
+            break;
+			default:
+				ASSERT(false);
+      }
+   }
+	// Close the wedgie
+	oWedgie.Close(iHandle);
+	// Return ok
+	return true;
+} // Load (from Wedgie)
 
 int CAvatarPose::Load(ifstream& isInputStream) {
 	int iRetVal = 0;
@@ -277,6 +336,8 @@ int CAvatarPose::Load(ifstream& isInputStream) {
                m_pJointRotations[i].FromDouble(dX,dY,dZ,dR);
             }
             break;
+			default:
+				ASSERT(false);
       }
    }
 	return iRetVal;

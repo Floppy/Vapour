@@ -7,7 +7,7 @@
 // AvatarPose.h - 21/2/2000 - James Smith
 //	Avatar pose class header
 //
-// $Id: AvatarPose.h,v 1.3 2000/08/10 22:44:39 waz Exp $
+// $Id: AvatarPose.h,v 1.4 2000/08/21 17:01:02 waz Exp $
 //
 
 #ifndef _VAL_AVATARPOSE_
@@ -23,6 +23,7 @@ class CAvatarPose;
 //libVapour includes
 #include "AxisRotation.h"
 #include "Vector3D.h"
+#include "Wedgie.h"
 
 // DLL import/export definitions
 #ifndef DLL_IMP_EXP
@@ -49,10 +50,13 @@ public:
    CAvatarPose(const CAvatarPose& apOtherPose);
 
    // Creates a default pose
-   CAvatarPose(int iNumJoints);
+   CAvatarPose(int iNumJoints = 0);
 
 	// Loads a pose directly from a file
    CAvatarPose(const char* pszFilename);
+
+	// Loads a pose directly from a file
+   CAvatarPose(const char* pszFilename, CWedgie &oWedgie);
 
 	// Loads a pose directly from a stream
    CAvatarPose(ifstream& isInputStream);
@@ -82,6 +86,7 @@ public:
    
    // Load functions return 1 if successful, 0 if not
 	int Load(const char* pszFilename);
+	bool Load(const char *pcFilename, CWedgie &oWedgie);
 	int Load(ifstream& isInputStream);
 
    // Save functions return 1 if successful, 0 if not
