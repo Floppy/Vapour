@@ -7,7 +7,7 @@
 // ImageFileBMP.cpp - 21/12/1999 - Warren Moore
 //	BMP file format image implementation
 //
-// $Id: ImageFileBMP.cpp,v 1.2 2000/07/11 15:07:40 waz Exp $
+// $Id: ImageFileBMP.cpp,v 1.3 2000/07/31 14:45:02 waz Exp $
 //
 
 #include "stdafx.h"
@@ -57,19 +57,19 @@ FRESULT CImageFileBMP::LoadHeaders() {
 	m_oFile.read((char*)&bmfh, sizeof(bmfh));
 // File error checking
 	if (m_oFile.bad())
-		return F_FILEERROR;
+		return F_FILE_ERROR;
 // Check bitmap type
 	if (bmfh.bfType != 0x4d42) // 'BM'
-		return F_WRONGFILETYPE;
+		return F_WRONG_FILE_TYPE;
 	if ((bmfh.bfReserved1 != 0) || (bmfh.bfReserved2 != 0))
-		return F_WRONGFILETYPE;
+		return F_WRONG_FILE_TYPE;
 
 // Check the bitmap info header
 	BITMAPINFOHEADER bmih;
 	m_oFile.read((char*)&bmih, sizeof(bmih));
 // File error checking
 	if (m_oFile.bad())
-		return F_FILEERROR;
+		return F_FILE_ERROR;
 // Get resolution & orientation
 	m_iWidth = bmih.biWidth;
 	m_iHeight = abs(bmih.biHeight);
@@ -77,19 +77,19 @@ FRESULT CImageFileBMP::LoadHeaders() {
 
 // Check the colour depth = 1 bit planes, 24 bpp
 	if ((bmih.biPlanes != 1) || (bmih.biBitCount != 24)) 
-		return F_WRONGIMAGETYPE;
+		return F_WRONG_IMAGE_TYPE;
 // No compression
 	if (bmih.biCompression != BI_RGB)
-		return F_WRONGIMAGETYPE;
+		return F_WRONG_IMAGE_TYPE;
 // No colour table, must be a packed bitmap
 	if ((bmih.biClrUsed != 0) || (bmih.biClrImportant != 0))
-		return F_WRONGIMAGETYPE;
+		return F_WRONG_IMAGE_TYPE;
 
 // Set the read pointer to the beginning of the data
 	m_oFile.seekg(bmfh.bfOffBits, ios::beg);
 // File error checking
 	if (m_oFile.bad())
-		return F_FILEERROR;
+		return F_FILE_ERROR;
 
 	return F_OK;
 } // LoadHeader
@@ -98,7 +98,7 @@ FRESULT CImageFileBMP::GetImageType(const char *pFname, IMAGETYPE &eImgType) {
 // Open the file, don't create if it doesn't exist
 	m_oFile.open(pFname, ios::in | ios::binary | ios::nocreate);
 	if (m_oFile.fail())
-		return F_DOESNOTEXIST;
+		return F_DOES_NOT_EXIST;
 
 // Check the bitmap headers for image type
 	FRESULT eFResult = F_OK;
@@ -115,7 +115,7 @@ FRESULT CImageFileBMP::Load(const char *pFname, int &x, int &y, unsigned char *&
 // Open the file, don't create if it doesn't exist
 	m_oFile.open(pFname, ios::in | ios::binary | ios::nocreate);
 	if (m_oFile.fail())
-		return F_DOESNOTEXIST;
+		return F_DOES_NOT_EXIST;
 
 // Check the bitmap headers
 	FRESULT fResult = F_OK;
@@ -176,7 +176,7 @@ FRESULT CImageFileBMP::Load(const char *pFname, int &x, int &y, unsigned char *&
 				delete [] pInputData;
 			if (pTemp)
 				delete [] pTemp;
-			fResult = F_OUTOFMEMORY;
+			fResult = F_OUT_OF_MEMORY;
 		}
 	}
 
@@ -214,12 +214,12 @@ FRESULT CImageFileBMP::Save(const char *pFname, const int x, const int y,
 														 const unsigned char *pData) const {
 // Check for valid image save type
 	if ((m_eSaveType != IT_RGB) && (m_eSaveType != IT_PALETTE))
-		return F_WRONGIMAGETYPE;
+		return F_WRONG_IMAGE_TYPE;
 
 // Open the file, destroy the previous file contents
 	ofstream oFile(pFname, ios::out | ios::binary | ios::trunc);
 	if (!oFile)
-		return F_FILEERROR;
+		return F_FILE_ERROR;
 
 // Calculate the image parameters
 	UINT iWidth = x;
@@ -263,14 +263,14 @@ FRESULT CImageFileBMP::Save(const char *pFname, const int x, const int y,
 // File error checking
 	if (m_oFile.bad()) {
 		oFile.close();
-		return F_FILEERROR;
+		return F_FILE_ERROR;
 	}
 // Write the info header
 	oFile.write((unsigned char*)&bmih, sizeof(bmih));
 // File error checking
 	if (m_oFile.bad()) {
 		oFile.close();
-		return F_FILEERROR;
+		return F_FILE_ERROR;
 	}
 
 // Write if the palette (if necessary);

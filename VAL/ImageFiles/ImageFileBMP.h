@@ -7,11 +7,11 @@
 // ImageFileBMP.h - 21/12/1999 - Warren Moore
 //	BMP file format image
 //
-// $Id: ImageFileBMP.h,v 1.3 2000/07/11 15:07:41 waz Exp $
+// $Id: ImageFileBMP.h,v 1.4 2000/07/31 14:45:03 waz Exp $
 //
 
-#ifndef _VAL_IMAGEFILEJPEG_
-#define _VAL_IMAGEFILEJPEG_
+#ifndef _VAL_IMAGEFILEBMP_
+#define _VAL_IMAGEFILEBMP_
 
 #pragma once
 
@@ -62,4 +62,4 @@ public:
 
 };
 
-#endif // _VAL_IMAGEFILEJPEG_
+#endif // _VAL_IMAGEFILEBMP_

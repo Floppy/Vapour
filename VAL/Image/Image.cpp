@@ -7,7 +7,7 @@
 // Image.h - 21/12/1999 - Warren Moore
 //	Image implementation
 //
-// $Id: Image.cpp,v 1.8 2000/07/30 20:56:46 waz Exp $
+// $Id: Image.cpp,v 1.9 2000/07/31 14:45:02 waz Exp $
 //
 
 #include "stdafx.h"
@@ -1099,7 +1099,7 @@ FRESULT CImage::Save(const char *pFname, CImageFile *pImageFile) const {
 
 	// Check if CImage contains an image
 	if ((!m_iWidth) || (!m_iHeight))
-		return F_NODATATOSAVE;
+		return F_NO_DATA_TO_SAVE;
 
 	// If exists, set palette
 	if ((m_eImageType == IT_PALETTE) && m_poPalette)

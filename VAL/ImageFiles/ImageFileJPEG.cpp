@@ -7,7 +7,7 @@
 // ImageFileJPEG.cpp - 21/12/1999 - Warren Moore
 //	JPEG file format image implementation
 //
-// $Id: ImageFileJPEG.cpp,v 1.3 2000/06/17 11:40:27 waz Exp $
+// $Id: ImageFileJPEG.cpp,v 1.4 2000/07/31 14:45:01 waz Exp $
 //
 
 #include "stdafx.h"
@@ -50,7 +50,7 @@ FRESULT CImageFileJPEG::GetImageType(const char *pFname, IMAGETYPE &eImgType) {
 // Open the file, don't create if it doesn't exist
 	FILE *pFile =	fopen(pFname, "rb");
 	if (!pFile)
-		return F_DOESNOTEXIST;
+		return F_DOES_NOT_EXIST;
 
 // jpeg lib structures
   struct jpeg_decompress_struct cinfo;
@@ -76,7 +76,7 @@ FRESULT CImageFileJPEG::GetImageType(const char *pFname, IMAGETYPE &eImgType) {
 		if (cinfo.num_components == 3)
 			eImgType = IT_RGB;
 		else
-			eFResult = F_WRONGIMAGETYPE;
+			eFResult = F_WRONG_IMAGE_TYPE;
 
 // Destroy the decompression object
   jpeg_destroy_decompress(&cinfo);
@@ -91,7 +91,7 @@ FRESULT CImageFileJPEG::Load(const char *pFname, int &x, int &y, unsigned char *
 // Check the file exists
 	FILE *pFile = fopen(pFname, "rb");
 	if (!pFile)
-		return F_DOESNOTEXIST;
+		return F_DOES_NOT_EXIST;
 
 // jpeg lib structures
   struct jpeg_decompress_struct cinfo;
@@ -153,7 +153,7 @@ FRESULT CImageFileJPEG::Load(const char *pFname, int &x, int &y, unsigned char *
 		y = iHeight;
 	} 
 	else {
-		eFResult = F_OUTOFMEMORY;
+		eFResult = F_OUT_OF_MEMORY;
 	}
 
 // Finish decompression
@@ -185,12 +185,12 @@ FRESULT CImageFileJPEG::Save(const char *pFname, const int x, const int y,
 														 const unsigned char *pData) const {
 // Check the save type
 	if ((m_eSaveType != IT_GREY) && (m_eSaveType != IT_RGB)) 
-		return F_WRONGIMAGETYPE;
+		return F_WRONG_IMAGE_TYPE;
 
 // Open the save type
 	FILE *pFile = fopen(pFname, "wb");
 	if (!pFile)
-		return F_FILEERROR;
+		return F_FILE_ERROR;
 
 // jpeg lib structures
   struct jpeg_compress_struct cinfo;

@@ -7,7 +7,7 @@
 // AvatarFileHalflife.cpp - 16/2/2000 - James Smith
 //	Halflife export filter implementation
 //
-// $Id: AvatarFileHalflife.cpp,v 1.7 2000/07/23 15:50:12 waz Exp $
+// $Id: AvatarFileHalflife.cpp,v 1.8 2000/07/31 14:45:03 waz Exp $
 //
 
 
@@ -154,7 +154,6 @@ int CAvatarFileHalflife::Save(const char* pszFilename, CAvatar* pAvatar) const {
    // Create thumbnail
    g_poVAL->StepProgress("HLSave");
    g_poVAL->SetProgressText("HLSave", "Rendering thumbnail");
-   CImage imThumbnail(IT_PALETTE,164,200,256);
 
    // Write thumbnail
    g_poVAL->StepProgress("HLSave");
@@ -163,6 +162,12 @@ int CAvatarFileHalflife::Save(const char* pszFilename, CAvatar* pAvatar) const {
    strcpy(pszBaseFilename+iBaseFilenameLength,".bmp");
    // Create filter and save
    CImageFile* pThumbFilter = g_oImageFileStore.CreateByExtension("bmp");
+
+	//#===--- Edit here
+   CImage imThumbnail(IT_RGB,164,200);
+	 imThumbnail.Load("e:\\stuff\\waz.bmp", pThumbFilter);
+	 imThumbnail.Convert(IT_PALETTE, 256);
+
    imThumbnail.Save(pszBaseFilename,pThumbFilter);
    // Tidy up
    delete pThumbFilter;
@@ -173,7 +178,7 @@ int CAvatarFileHalflife::Save(const char* pszFilename, CAvatar* pAvatar) const {
    delete [] pszBaseFilename;
    free(m_pszModelname);
    m_pszModelname = NULL;
-   // DOne
+   // Done
    return iRetVal;
 } // Save(const char* pszFilename, CAvatar* pAvatar)
 
