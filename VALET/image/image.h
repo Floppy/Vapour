@@ -14,7 +14,7 @@
 //! author 		= "Warren Moore"
 //! date 		= "17/10/2001"
 //! lib 			= libVALETimage
-//! rcsid 		= "$Id: image.h,v 1.3 2001/10/21 14:43:24 vap-warren Exp $"
+//! rcsid 		= "$Id: image.h,v 1.4 2001/10/21 14:58:31 vap-warren Exp $"
 //! userlevel 	= Normal
 //! docentry 	= "VALET.Image"
 //! example 	= VALET/image/image.test.cpp
@@ -25,14 +25,9 @@
 
 namespace NValet {
 
-   //#===--- Pre-declared classes
+   /*#===--- Pre-declared classes */
    class CImageFile;
 
-   //#===--- Image types
-   // IT_GREY     = Greyscale             - 1 x 8-bit plane
-   // IT_PALETTE  = Palette based         - 1 x 8-bit plane + colour palette
-   // IT_RGB      = True colour           - 3 x 8-bit planes
-   // IT_RGBA     = True colour + alpha   - 4 x 8-bit planes
    enum IMAGE_TYPE {
       IT_UNKNOWN = 0,
       IT_GREY = 1,
@@ -40,14 +35,12 @@ namespace NValet {
       IT_RGB = 3,
       IT_RGBA = 4
    };
+   //: Image types
+   // IT_GREY     = Greyscale             - 1 x 8-bit plane
+   // IT_PALETTE  = Palette based         - 1 x 8-bit plane + colour palette
+   // IT_RGB      = True colour           - 3 x 8-bit planes
+   // IT_RGBA     = True colour + alpha   - 4 x 8-bit planes
 
-   //#===--- Image planes
-   // Referenced against m_pucPlaneNum
-   // IP_GREY     = Plane 0
-   // IP_RED      = Plane 0
-   // IP_GREEN    = Plane 1
-   // IP_BLUE     = Plane 2
-   // IP_ALPHA    = Plane 3
    enum IMAGE_PLANE {
       IP_GREY = 0,
       IP_RED = 1,
@@ -55,8 +48,14 @@ namespace NValet {
       IP_BLUE = 3,
       IP_ALPHA = 4
    };      
+   //: Image planes
+   // Referenced against m_pucPlaneNum
+   // IP_GREY     = Plane 0
+   // IP_RED      = Plane 0
+   // IP_GREEN    = Plane 1
+   // IP_BLUE     = Plane 2
+   // IP_ALPHA    = Plane 3
 
-   //#===--- Image result codes
    enum IMAGE_RESULT {
       IR_OK = 0,
       IR_OUT_OF_RANGE,
@@ -69,15 +68,16 @@ namespace NValet {
       IR_NO_DATA,
       IR_ERROR,
    };
+   //: Image result codes
    
-   //#===--- Image scaling filter type
-   // Must be implemented, defined in VALET/image/filter.h
-   // IF_BOX      = Box filter, blocky pixel resize filter
-   // IT_BILINEAR = Bilinear filter, smooth resampling filter
    enum IMAGE_FILTER {
       IF_BOX = 0,
       IF_BILINEAR,
    };
+   //: Image scaling filter type
+   // Must be implemented, defined in VALET/image/filter.h
+   // IF_BOX      = Box filter, blocky pixel resize filter
+   // IT_BILINEAR = Bilinear filter, smooth resampling filter
 
    //#===--- CImage
    //: Image Class

@@ -14,7 +14,7 @@
 //! author 		= "Warren Moore"
 //! date 		= "23/09/2001"
 //! lib 			= libVALETcore
-//! rcsid 		= "$Id: logmanager.h,v 1.7 2001/10/21 14:38:33 vap-warren Exp $"
+//! rcsid 		= "$Id: logmanager.h,v 1.8 2001/10/21 15:01:29 vap-warren Exp $"
 //! userlevel 	= Develop
 //! docentry 	= "VALET.Core.Log"
 //! example 	= VALET/core/log.test.cpp
@@ -27,13 +27,6 @@ namespace NValet {
 	//#===--- Predeclared Classes
 	class CLogHandle;
 
-   //#===--- Log level enum
-   // LL_ALL         = Complete verbose logging
-   // LL_FUNCTION    = Logging of function calls and below
-   // LL_OBJECT      = Logging of object creation/destruction and below
-   // LL_BLOCK       = Logging of block level operations and below
-   //	LL_ERROR       = Logging of errors only
-   // LL_CRITICAL    = Logging of fatal errors only
    enum LOG_LEVEL {
       LL_ALL = 0,
       LL_FUNCTION = 1,
@@ -42,6 +35,13 @@ namespace NValet {
       LL_ERROR = 4,
       LL_CRITICAL = 5
    };
+   //: Log level enum
+   // LL_ALL         = Complete verbose logging
+   // LL_FUNCTION    = Logging of function calls and below
+   // LL_OBJECT      = Logging of object creation/destruction and below
+   // LL_BLOCK       = Logging of block level operations and below
+   //	LL_ERROR       = Logging of errors only
+   // LL_CRITICAL    = Logging of fatal errors only
    
 	//#===--- CLogManager
 	//: Central manager for log output
