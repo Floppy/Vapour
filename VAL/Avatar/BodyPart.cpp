@@ -7,7 +7,7 @@
 // BodyPart.cpp - 12/06/2000 - James Smith
 //	Body Part information structures and types
 //
-// $Id: BodyPart.cpp,v 1.2 2000/11/30 11:26:59 warren Exp $
+// $Id: BodyPart.cpp,v 1.3 2000/12/02 07:32:17 warren Exp $
 //
 
 #include "stdafx.h"
@@ -39,7 +39,8 @@ SBodyPart::SBodyPart() :
 	m_dDampX(1),
 	m_dDampY(1),
 	m_dDampZ(1),
-   m_bpParent(unknown)
+   m_bpParent(unknown),
+	m_iMaterialIndex(-1)
 {
    m_bpChildren[0] = unknown;
    m_bpChildren[1] = unknown;
