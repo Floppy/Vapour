@@ -1,0 +1,32 @@
+#VRML V2.0 utf8
+#===================================---
+# VT Structure Visualisation Control
+#-----------------------------------
+# ActiveX Control for structure visualisation
+# Copyright 2002 Vapour Technology Ltd.
+#
+# NodeSet.wrl
+# 22/04/2002 - James Smith
+#
+# $Id: NodeSet.wrl,v 1.1 2002/04/23 11:28:57 vap-james Exp $
+
+PROTO NodeSet [
+   exposedField MFVec3f point [ 0.5 0 0.5, -0.5 0 0.5, -0.5 0 -0.5, 0.5 0 -0.5, 0 0 0.5, -0.5 0 0, 0 0 -0.5, 0.5 0 0, 0 0 0 ]
+]
+{
+   #Shape {
+   #   appearance Appearance {
+   #      material Material {
+   #         emissiveColor 1 0 0
+   #      }
+   #   }
+   #   geometry PointSet {
+   #      coord DEF COORD 
+         Coordinate {
+            point IS point
+         }
+   #   }
+   #}
+}
+
+NodeSet{}

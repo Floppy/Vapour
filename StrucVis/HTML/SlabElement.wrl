@@ -8,7 +8,7 @@
 # SlabElement.wrl
 # 19/03/2002 - James Smith
 #
-# $Id: SlabElement.wrl,v 1.16 2002/03/31 17:31:10 vap-james Exp $
+# $Id: SlabElement.wrl,v 1.17 2002/04/23 11:28:57 vap-james Exp $
 
 PROTO SlabElement [
    eventIn MFColor  set_colours
@@ -19,6 +19,7 @@ PROTO SlabElement [
    field   MFInt32  cracks      [ 0 0 0 0 0 0 0 0 0 ]
    field   MFString description ["ID:" "Group:" "Temperature:"]
    field   MFVec3f  nodes       [ 0.5 0 0.5, -0.5 0 0.5, -0.5 0 -0.5, 0.5 0 -0.5, 0 0 0.5, -0.5 0 0, 0 0 -0.5, 0.5 0 0, 0 0 0]
+   field   MFInt32  nodeIndex   [ 0 1 2 3 4 5 6 7 8 ]
    field   SFFloat  thickness   1
    eventOut MFString description_changed
 ]
@@ -170,6 +171,7 @@ PROTO SlabElement [
       field MFString description IS description
       field SFFloat thickness IS thickness
       field MFVec3f nodes  IS nodes
+      field MFInt32 nodeIndex IS nodeIndex
       field MFVec3f points []
       field SFNode  coordNode USE COORDS
       field SFNode  colourNode USE COLOURS
@@ -214,7 +216,7 @@ PROTO SlabElement [
             // Set node locations
             for (i=0; i<9; i++) {
                for (j=0; j<4; j++) {
-                  coordNode.point[(i*4) + j] = nodeset[i].add(points[j]);
+                  coordNode.point[(i*4) + j] = nodeset[nodeIndex[i]].add(points[j]);
                }
             }
             // Set crack locations

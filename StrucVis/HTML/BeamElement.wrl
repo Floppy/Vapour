@@ -8,7 +8,7 @@
 # BeamElement.wrl
 # 19/03/2002 - James Smith
 #
-# $Id: BeamElement.wrl,v 1.9 2002/03/28 13:31:05 vap-james Exp $
+# $Id: BeamElement.wrl,v 1.10 2002/04/23 11:28:57 vap-james Exp $
 
 PROTO BeamElement [
    eventIn MFColor  set_colours
@@ -21,6 +21,7 @@ PROTO BeamElement [
    field   SFFloat  web         0.1
    field   SFFloat  width       1
    field   MFVec3f  nodes       [ 0 0 0.5, 0 0 -0.5]
+   field   MFInt32  nodeIndex   [ 0 1 ]
    eventOut MFString description_changed
 ]
 {
@@ -94,6 +95,7 @@ PROTO BeamElement [
       field SFFloat web    IS web
       field SFFloat width  IS width
       field MFVec3f nodes  IS nodes
+      field MFInt32 nodeIndex IS nodeIndex
       field MFVec3f crossSection []
       field SFNode  beam USE BEAM
       field SFNode  material USE MATERIAL
@@ -156,10 +158,10 @@ PROTO BeamElement [
          }
          function update_nodes(nodeset) {
             for (i=0; i<12; i++) {
-               beam.coord.point[i] = nodeset[0].add(crossSection[i]);
+               beam.coord.point[i] = nodeset[nodeIndex[0]].add(crossSection[i]);
             }
             for (i=0; i<12; i++) {
-               beam.coord.point[i+12] = nodeset[1].add(crossSection[i]);
+               beam.coord.point[i+12] = nodeset[nodeIndex[1]].add(crossSection[i]);
             }
          }
          function set_visible(value,time) {
