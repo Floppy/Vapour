@@ -330,11 +330,19 @@ SOURCE=.\AvatarFiles\AvatarFileSims.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\AvatarFiles\AvatarFileSimsOptions.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\Avatar\AvatarFileStore.h
 # End Source File
 # Begin Source File
 
 SOURCE=.\AvatarFiles\AvatarFileUnreal.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\AvatarFiles\AvatarFileUnrealOptions.h
 # End Source File
 # Begin Source File
 
