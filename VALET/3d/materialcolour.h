@@ -14,7 +14,7 @@
 //! author 		= "James Smith"
 //! date 		= "09/10/2001"
 //! lib 		= libVALET3d
-//! rcsid 		= "$Id: materialcolour.h,v 1.4 2001/10/17 14:44:53 vap-warren Exp $"
+//! rcsid 		= "$Id: materialcolour.h,v 1.5 2001/10/18 12:40:17 vap-james Exp $"
 //! userlevel 	        = Normal
 //! docentry 	        = "VALET.3D.Surface Materials"
 
@@ -36,8 +36,8 @@ namespace NValet {
 
   public:    
     
-    //:------------------------
-    //: Contruction/Destruction
+    //:-------------------------
+    //: Construction/Destruction
 
     CMaterialColour();
     //: Default Constructor

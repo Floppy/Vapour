@@ -13,7 +13,7 @@
 //! author 		= "James Smith"
 //! date 		= "10/10/2001"
 //! lib 			= libVALET3d
-//! rcsid 		= "$Id: trimodel.h,v 1.2 2001/10/17 14:44:54 vap-warren Exp $"
+//! rcsid 		= "$Id: trimodel.h,v 1.3 2001/10/18 12:40:17 vap-james Exp $"
 //! userlevel 	= Normal
 //! docentry 	= "VALET.3D.Surface Representations"
 
@@ -38,8 +38,8 @@ namespace NValet {
 
   public:    
     
-    //:------------------------
-    //: Contruction/Destruction
+    //:-------------------------
+    //: Construction/Destruction
 
     CTriModel();
     //: Default Constructor

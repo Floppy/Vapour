@@ -13,7 +13,7 @@
 //! author 		= "James Smith"
 //! date 		= "15/10/2001"
 //! lib 		= libVALET3d
-//! rcsid 		= "$Id: mesh.h,v 1.8 2001/10/18 12:24:18 vap-james Exp $"
+//! rcsid 		= "$Id: mesh.h,v 1.9 2001/10/18 12:40:17 vap-james Exp $"
 //! userlevel 	        = Normal
 //! docentry 	        = "VALET.3D.Surface Representations"
 
@@ -95,8 +95,8 @@ namespace NValet {
       
    public:
       
-      //:------------------------
-      //: Contruction/Destruction
+      //:-------------------------
+      //: Construction/Destruction
       
       CMesh();
       //: Default Constructor
