@@ -54,8 +54,8 @@ END
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 1,0,0,1
- PRODUCTVERSION 1,0,0,1
+ FILEVERSION 1,0,1,1
+ PRODUCTVERSION 1,0,1,1
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -73,15 +73,15 @@ BEGIN
             VALUE "Comments", "\0"
             VALUE "CompanyName", "Vapour Technology Ltd.\0"
             VALUE "FileDescription", "VT Structure Vis ActiveX Control Module\0"
-            VALUE "FileVersion", "1, 0, 0, 1\0"
+            VALUE "FileVersion", "1, 0, 1, 1\0"
             VALUE "InternalName", "VTStrucVis\0"
-            VALUE "LegalCopyright", "Copyright (C) 2002\0"
+            VALUE "LegalCopyright", "Copyright (C) 2002 Vapour Technology Ltd.\0"
             VALUE "LegalTrademarks", "\0"
             VALUE "OLESelfRegister", "\0"
             VALUE "OriginalFilename", "VTStrucVis.OCX\0"
             VALUE "PrivateBuild", "\0"
             VALUE "ProductName", "VT Structure Vis ActiveX Control Module\0"
-            VALUE "ProductVersion", "1, 0, 0, 1\0"
+            VALUE "ProductVersion", "1, 0, 1, 1\0"
             VALUE "SpecialBuild", "\0"
         END
     END
