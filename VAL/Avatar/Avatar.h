@@ -7,7 +7,7 @@
 // Avatar.h - 16/06/2000 - James Smith
 //	Avatar class header
 //
-// $Id: Avatar.h,v 1.12 2000/11/22 00:44:11 waz Exp $
+// $Id: Avatar.h,v 1.13 2000/11/29 21:16:02 james Exp $
 //
 
 #ifndef _VAL_AVATAR_
@@ -54,7 +54,8 @@ public:
   	// Enumerated type for status flag
    enum AV_STATUS {
 		AV_OK = 0,
-		AV_NOALLOC
+		AV_NOALLOC,
+      AV_BADDATA
 	};
 
    enum AV_SEX {
@@ -83,6 +84,9 @@ public:
    // Loading Functions //////////////////////////////////////////////////
    ///////////////////////////////////////////////////////////////////////
    
+	// Sets the error status of the avatar
+	void SetStatus(AV_STATUS eStatus) {m_eStatus = eStatus;}
+
    // Adds the specified number of vertices
    // Returns true if addition is successful
    // Do not use this too much - it is very expensive.
