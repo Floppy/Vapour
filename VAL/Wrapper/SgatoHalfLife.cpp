@@ -7,7 +7,7 @@
 // SGAToHalfLife.cpp - 06/07/2000 - Warren Moore
 //	SGA Avatar to Half Life converter wrapper 
 //
-// $Id: SgatoHalfLife.cpp,v 1.2 2000/07/11 17:41:38 waz Exp $
+// $Id: SgatoHalfLife.cpp,v 1.3 2000/07/15 10:41:23 waz Exp $
 //
 
 #include "StdAfx.h"
@@ -258,7 +258,7 @@ VARESULT CSGAToHalfLife::Compress(const char *pcDir, const char *pcSFXName) {
 		oWJEFile.close();
 		return VA_SFX_ERROR;
 	}
-	if (oWJE.Extract(0, pcSFXName) != WJE_OK) {
+	if (oWJE.Extract("hlsfx.exe", pcSFXName) != WJE_OK) {
 		oWJEFile.close();
 		return VA_SFX_ERROR;
 	}
