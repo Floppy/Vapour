@@ -14,14 +14,14 @@
 //! author 		= "Warren Moore"
 //! date 		= "17/10/2001"
 //! lib 			= libVALETimage
-//! rcsid 		= "$Id: palette.h,v 1.10 2001/10/24 17:37:19 vap-warren Exp $"
+//! rcsid 		= "$Id: palette.h,v 1.11 2001/10/24 23:39:26 vap-warren Exp $"
 //! userlevel 	= Advanced
 //! docentry 	= "VALET.Image.Palette"
 
 //#===--- Includes
 #include "VALET/valet.h"
 
-namespace NValet {
+namespace NVALET {
 
    #define IPL_MAX_ENTRIES			256
    // Max size of palette

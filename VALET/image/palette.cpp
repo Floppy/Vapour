@@ -11,7 +11,7 @@
 //! author		= "Warren Moore"
 //! date			= "17/10/2001"
 //! lib 			= libVALETimage
-//! rcsid		= "$Id: palette.cpp,v 1.3 2001/10/24 17:10:22 vap-warren Exp $"
+//! rcsid		= "$Id: palette.cpp,v 1.4 2001/10/24 23:39:26 vap-warren Exp $"
 
 //#===--- Includes
 #include "palette.h"
@@ -20,7 +20,7 @@
 #include <string.h>
 #include <stdlib.h>
 
-namespace NValet {
+namespace NVALET {
 
    // Cache defines
    #define IPL_CACHE_SIZE           50

@@ -15,7 +15,7 @@
 //! author		= "Warren Moore"
 //! date			= "17/10/2001"
 //! lib 			= libVALETimage
-//! rcsid		= "$Id: image.cpp,v 1.4 2001/10/24 22:02:00 vap-warren Exp $"
+//! rcsid		= "$Id: image.cpp,v 1.5 2001/10/24 23:39:26 vap-warren Exp $"
 
 namespace NVALET {
 
@@ -42,7 +42,7 @@ namespace NVALET {
       }
    } // CImage::Constructor
 
-   CImage::CImage(IMAGE_TYPE eType) :
+   CImage::CImage(EImageType eType) :
       m_eImageType(eType),
       m_uiWidth(0),
       m_uiHeight(0),
@@ -59,7 +59,7 @@ namespace NVALET {
       }
    } // CImage::Constructor
 
-   CImage::CImage(IMAGE_TYPE eType, unsigned int uiWidth, unsigned int uiHeight) :
+   CImage::CImage(EImageType eType, unsigned int uiWidth, unsigned int uiHeight) :
       m_eImageType(eType),
       m_uiWidth(uiWidth),
       m_uiHeight(uiHeight),
@@ -83,7 +83,7 @@ namespace NVALET {
       DeleteImage();
    } // CImage::Destructor
 
-   IMAGE_RESULT CImage::SetSize(unsigned int uiWidth, unsigned int uiHeight) {
+   EImageResult CImage::SetSize(unsigned int uiWidth, unsigned int uiHeight) {
       CLog oLog("image", "CImage::SetSize");
       
       // Delete the image
@@ -94,12 +94,12 @@ namespace NVALET {
       m_uiHeight = uiHeight;
 
       // Allocate the new image memory
-      IMAGE_RESULT eResult = CreateImage();
+      EImageResult eResult = CreateImage();
 
       return eResult;
    } // CImage::SetSize
 
-   void CImage::SetClearColour(IMAGE_PLANE ePlane, unsigned char ucCol) {
+   void CImage::SetClearColour(EImagePlane ePlane, unsigned char ucCol) {
       CLog oLog("image", "CImage::SetClearCol");
       // Set the new clear colour
       m_pucClearCol[m_pucPlaneNum[ePlane]] = ucCol;
@@ -118,10 +118,10 @@ namespace NVALET {
       }
    }
    
-   IMAGE_RESULT CImage::CreateImage() {
+   EImageResult CImage::CreateImage() {
       CLog oLog("image", "CImage::CreateImage");
       ASSERT(m_uiDataSize == 0);
-      IMAGE_RESULT eResult = IR_OK;
+      EImageResult eResult = IR_OK;
 
       // Check the image size
       if (m_eImageType == IT_UNKNOWN || m_uiWidth == 0 || m_uiHeight == 0) {
@@ -197,7 +197,7 @@ namespace NVALET {
       }
    }
 
-   IMAGE_RESULT CImage::ImportRawRGB(unsigned char *pcRaw, bool bWordAlign = false,
+   EImageResult CImage::ImportRawRGB(unsigned char *pcRaw, bool bWordAlign = false,
                                      bool bReversePixels = false, bool bFlip = false) {
       ASSERT(pcRaw);
       CLog oLog("image", "CImage::ImportRawRGB");

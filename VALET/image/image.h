@@ -14,7 +14,7 @@
 //! author 		= "Warren Moore"
 //! date 		= "17/10/2001"
 //! lib 			= libVALETimage
-//! rcsid 		= "$Id: image.h,v 1.6 2001/10/24 22:02:00 vap-warren Exp $"
+//! rcsid 		= "$Id: image.h,v 1.7 2001/10/24 23:39:26 vap-warren Exp $"
 //! userlevel 	= Normal
 //! docentry 	= "VALET.Image"
 //! example 	= VALET/image/image.test.cpp
@@ -25,7 +25,7 @@
 
 namespace NVALET {
 
-   enum IMAGE_TYPE {
+   enum EImageType {
       IT_UNKNOWN = 0,
       IT_GREY = 1,
       IT_PALETTE = 2,
@@ -38,7 +38,7 @@ namespace NVALET {
    // IT_RGB      = True colour           - 3 x 8-bit planes
    // IT_RGBA     = True colour + alpha   - 4 x 8-bit planes
 
-   enum IMAGE_PLANE {
+   enum EImagePlane {
       IP_GREY = 0,
       IP_RED = 1,
       IP_GREEN = 2,
@@ -53,7 +53,7 @@ namespace NVALET {
    // IP_BLUE     = Plane 2
    // IP_ALPHA    = Plane 3
 
-   enum IMAGE_RESULT {
+   enum EImageResult {
       IR_OK = 0,
       IR_OUT_OF_RANGE,
       IR_INVALID_PARAM,
@@ -67,7 +67,7 @@ namespace NVALET {
    };
    //: Image result codes
    
-   enum IMAGE_FILTER {
+   enum EImageFilter {
       IF_BOX = 0,
       IF_BILINEAR,
    };
@@ -92,9 +92,9 @@ namespace NVALET {
 
       explicit CImage();
       //: Empty constructor
-      explicit CImage(IMAGE_TYPE eType);
+      explicit CImage(EImageType eType);
       //: Empty typed constructor
-      explicit CImage(IMAGE_TYPE eType = IT_UNKNOWN, unsigned int uiWidth = 0,
+      explicit CImage(EImageType eType = IT_UNKNOWN, unsigned int uiWidth = 0,
              unsigned int uiHeight = 0);
       //: Allocating constructor
       CImage(const CImage &oCopy);
@@ -105,7 +105,7 @@ namespace NVALET {
 	//:------ 
    //: Manipulation Functions
 
-      IMAGE_TYPE GetType() const {
+      EImageType GetType() const {
          return m_eImageType;
       }
       // Returns the current image type
@@ -113,10 +113,10 @@ namespace NVALET {
          uiWidth = m_uiWidth; uiHeight = m_uiHeight;
       }
       // Returns the image size
-      IMAGE_RESULT SetSize(unsigned int uiWidth, unsigned int uiHeight);
+      EImageResult SetSize(unsigned int uiWidth, unsigned int uiHeight);
       // Change the size of the image (reallocating memory if necessary)
       //!todo: Copy over previous image contents
-      void SetClearColour(IMAGE_PLANE ePlane, unsigned char ucCol);
+      void SetClearColour(EImagePlane ePlane, unsigned char ucCol);
       // Sets the clear colour for a plane
       void Clear();
       // Clears the image using the table of plane clear colours
@@ -124,7 +124,7 @@ namespace NVALET {
 	//:------
    //:  Image Importing
 
-      IMAGE_RESULT ImportRawRGB(unsigned char *pcRaw, bool bWordAlign = false,
+      EImageResult ImportRawRGB(unsigned char *pcRaw, bool bWordAlign = false,
                                 bool bReversePixels = false, bool bFlip = false);
       // Import raw RGB888 image data
       // Image must already be created with the correct size
@@ -154,7 +154,7 @@ namespace NVALET {
    //:------
    //: Internal Functions
  
-      IMAGE_RESULT CreateImage();
+      EImageResult CreateImage();
       // Image memory allocation
       void DeleteImage();
       // Deletes image memory and set member vars appropriately
@@ -163,17 +163,17 @@ namespace NVALET {
 
       const static unsigned int m_uiMaxWidth = 1600;     // Maximum image width
       const static unsigned int m_uiMaxHeight = 1200;    // Maximum image height
-      const static unsigned int m_uiNumTypes = 5;        // Number of IMAGE_TYPES's 
+      const static unsigned int m_uiNumTypes = 5;        // Number of EImageTypeS's 
       const static unsigned int m_uiNumPlanes = 4;       // Number of allocated planes
-      const static unsigned int m_uiNumPlaneTypes = 5;   // Number of IMAGE_PLANE's
+      const static unsigned int m_uiNumPlaneTypes = 5;   // Number of EImagePlane's
       const static unsigned char m_pucPlaneUse[m_uiNumTypes];
       // Number of planes used for each image type
       const static unsigned char m_pucPlaneNum[m_uiNumPlaneTypes];
-      // Index of plane names (in IMAGE_PLANE) to plane number
+      // Index of plane names (in EImagePlane) to plane number
       const static unsigned char m_pucDefClearCol[m_uiNumPlanes];
       // Table of default clear colours
 
-      IMAGE_TYPE m_eImageType;                     // Image type
+      EImageType m_eImageType;                     // Image type
       unsigned int m_uiWidth, m_uiHeight;          // Dimensions
       unsigned int m_uiDataSize;                   // Size of image data (in 4 byte blocks)
       unsigned int m_uiLineSize;                   // Size of a scan line (in 4 byte blocks)
