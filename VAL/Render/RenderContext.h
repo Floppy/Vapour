@@ -7,7 +7,7 @@
 // RenderContext.h - 23/07/2000 - Warren Moore
 //	Base class for render contexts
 //
-// $Id: RenderContext.h,v 1.8 2000/11/25 22:35:05 waz Exp $
+// $Id: RenderContext.h,v 1.9 2000/11/26 17:06:58 waz Exp $
 //
 
 #ifndef _VAL_RENDERCONTEXT_
@@ -90,6 +90,7 @@ enum RCRESULT {
 	RC_NO_TEXTURE,
 	RC_WRONG_BUFFER,
 	RC_UNSUPPORTED_PROJECTION,
+	RC_UNSUPPORTED_FUNCTION,
 	RC_ERROR,
 };
 
@@ -114,6 +115,7 @@ enum RCRESULT {
 	"Texture does not exist", \
 	"An incorrect buffer has been specified", \
 	"Specified projection method not supported", \
+	"Renderer does not support this function", \
 	"Unknown error", \
 
 // DLL import/export definitions
