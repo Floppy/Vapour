@@ -3,12 +3,12 @@
 
 <UL>
 <LI><B>Speed</B><BR>
-Given that Automation is the Windows system that allows different languages, such as C++, Visual Basic and
-Delphi, to inter-operate, rigid type-checking (marshalling) is performed by Windows for Automation function calls.
+Given that Automation is the Windows system that allows different languages such as C++, Visual Basic and
+Delphi to inter-operate, rigid type-checking (marshalling) is performed by Windows for Automation function calls.
 Cortona's Automation functions pass values individually, even for multiple value fields, and this introduces
 a lot of redundant type-checking immensely slowing down VRML scenes with significant amounts of dynamic data.
 <P>Use of an undocument Cortona function capable of passing an entire set of values has improved the speed
-of these calls. The VRML management of the scene geometry has been modified to demonstrate the speed increase.
+of these calls. The VRML management of scene geometry has been modified to demonstrate the speed increase.
 Similar redesign of the management of crack information and stress colours would significantly improve animation speed.
 <LI><B>Cortona Feedback</B><BR>
 The Cortona control does provide feedback via Automation for VRML events and therefore it is be possible for the
