@@ -7,7 +7,7 @@
 // Wedgie.cpp - 02/07/2000 - Warren Moore
 //	Creation and reading of compressed Wedgie files
 //
-// $Id: Wedgie.cpp,v 1.10 2000/07/22 23:23:31 waz Exp $
+// $Id: Wedgie.cpp,v 1.11 2000/08/21 23:06:12 waz Exp $
 //
 
 #include "StdAfx.h"
@@ -482,7 +482,7 @@ int CWedgie::Open(unsigned int uEntry) {
 		return -1;
 
 	// Set the handle
-	m_psHandle[iCount].m_uEntry = uEntry;
+	m_psHandle[iCount].m_uEntry = uEntry + 1;
 	// Return the handle
 	return iCount;
 } // Open (Index)
@@ -517,7 +517,7 @@ int CWedgie::Open(const char *pcEntryName) {
 		return -1;
 
 	// Set the handle
-	m_psHandle[iCount].m_uEntry = uEntry;
+	m_psHandle[iCount].m_uEntry = uEntry + 1;
 	// Return the handle
 	return iCount;
 } // Open (Filename)
@@ -537,6 +537,9 @@ unsigned int CWedgie::Read(int iHandle, unsigned char *pcData, unsigned int uSiz
 	unsigned int uEntry = m_psHandle[iHandle].m_uEntry;
 	if (uEntry == 0)
 		return 0;
+
+	// Get the correct entry
+	uEntry--;
 
 	// Get the data size
 	SFileData &sEntry = m_psTable[uEntry];
