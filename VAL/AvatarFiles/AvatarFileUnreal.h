@@ -1,35 +1,28 @@
-//=======---
-// Avanew
-//-------
-// Avatar editor and exporter
+//====---
+// VAL
+//----
+// Vapour Technology All-Purpose Library
 // Copyright 2000 Vapour Technology Ltd.
 //
 // AvatarFileUnreal.h - 5/4/2000 - James Smith
 //	Unreal export filter header
 //
-// $Id:
+// $Id: AvatarFileUnreal.h,v 1.2 2000/07/16 12:28:04 waz Exp $
 //
 
 #pragma once
 
-#ifndef _VAPOUR_AVATARFILEUNREAL_
-#define _VAPOUR_AVATARFILEUNREAL_
+#ifndef _VAL_AVATARFILEUNREAL_
+#define _VAL_AVATARFILEUNREAL_
 
 #include "AvatarFileStore.h"
-#include "ProgressDialog.h"
 
 #include <fstream.h>
 
-//////////////////
+//////////////////////
 // CAvatarFileUnreal
 
 class CAvatarFileUnreal : public CAvatarFile {
-
-/////////////////////
-// Member Variables
-private:
-
-   mutable CProgressDialog* m_pProgressDlg;
 
 /////////////////////
 // Member Functions
@@ -66,4 +59,4 @@ private:
 
 };
 
-#endif // _VAPOUR_AVATARFILEUNREAL_
+#endif // _VAL_AVATARFILEUNREAL_

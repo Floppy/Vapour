@@ -109,6 +109,10 @@ SOURCE=.\Avatar\AvatarFileStore.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\AvatarFiles\AvatarFileUnreal.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\Avatar\AvatarPose.cpp
 # End Source File
 # Begin Source File
@@ -193,6 +197,10 @@ SOURCE=.\Wrapper\SgatoSims.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\Wrapper\SgatoUnrealTournament.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\StdAfx.cpp
 # ADD CPP /Yc"stdafx.h"
 # End Source File
@@ -247,6 +255,10 @@ SOURCE=.\AvatarFiles\AvatarFileSims.h
 # Begin Source File
 
 SOURCE=.\Avatar\AvatarFileStore.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\AvatarFiles\AvatarFileUnreal.h
 # End Source File
 # Begin Source File
 
@@ -371,6 +383,10 @@ SOURCE=.\Wrapper\SgatoHalfLife.h
 # Begin Source File
 
 SOURCE=.\Wrapper\SgatoSims.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\Wrapper\SgatoUnrealTournament.h
 # End Source File
 # Begin Source File
 

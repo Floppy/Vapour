@@ -7,7 +7,7 @@
 // SGAToUnrealTournament.h - 06/07/2000 - Warren Moore
 //	SGA Avatar to Unreal Tournament converter wrapper 
 //
-// $Id: SgatoUnrealTournament.h,v 1.1 2000/07/15 16:48:10 waz Exp $
+// $Id: SgatoUnrealTournament.h,v 1.2 2000/07/16 12:28:05 waz Exp $
 //
 
 #ifndef _WRAP_SGATOUNREALTOURNAMENT_
@@ -30,6 +30,10 @@
 // SIMS_VERBOSE
 #define UT_TRUE		1
 #define UT_FALSE	2
+
+// App defines
+#define SFX_NAME				"utsfx.wje"
+#define VER_DATE				"v1.0 (11/07/2000)"
 
 //#===--- Data types
 
@@ -64,8 +68,8 @@ private:
 //#===--- Internal Data
 private:
 	char *m_pcSGAFilename;												// SGA filename storage
-	char *m_pcUTModelname;												// UT filename storage
-	char *m_pcUTPath;															// UT model directory
+	char *m_pcModelname;													// Filename storage
+	char *m_pcPath;																// Model directory
 
 	bool m_bVerbose;															// Verbose output indicator
 

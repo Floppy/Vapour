@@ -7,17 +7,17 @@
 // SGAToUnrealTournament.cpp - 06/07/2000 - Warren Moore
 //	SGA Avatar to Unreal Tournament converter wrapper 
 //
-// $Id: SgatoUnrealTournament.cpp,v 1.1 2000/07/15 16:48:09 waz Exp $
+// $Id: SgatoUnrealTournament.cpp,v 1.2 2000/07/16 12:28:05 waz Exp $
 //
 
 #include "StdAfx.h"
 
 #include "VAL.h"
-#include "SGAToHalfLife.h"
+#include "SGAToUnrealTournament.h"
 
 #include <iostream.h>
 #include "AvatarFileAME.h"
-#include "AvatarFileUnrealTournament.h"
+#include "AvatarFileUnreal.h"
 #include "Avatar.h"
 #include "TimeLimit.h"
 #include "Wedgie.h"
@@ -33,18 +33,18 @@ CSGAToUnrealTournament::CSGAToUnrealTournament() {
 // Set vars
 	m_eResult = VA_OK;
 	m_pcSGAFilename = NULL;
-	m_pcUTModelname = NULL;
-	m_pcUTPath = NULL;
+	m_pcModelname = NULL;
+	m_pcPath = NULL;
 	m_bVerbose = true;
 } // Contructor
 
 CSGAToUnrealTournament::~CSGAToUnrealTournament() {
 	if (m_pcSGAFilename)
 		delete [] m_pcSGAFilename;
-	if (m_pcUTModelname)
-		delete [] m_pcUTModelname;
-	if (m_pcUTPath)
-		delete [] m_pcUTPath;
+	if (m_pcModelname)
+		delete [] m_pcModelname;
+	if (m_pcPath)
+		delete [] m_pcPath;
 } // Destructor
 
 VARESULT CSGAToUnrealTournament::SetOption(int iOption, int iArgument) {
@@ -89,9 +89,9 @@ VARESULT CSGAToUnrealTournament::SetOption(int iOption, const char *pcString) {
 				pcBuffer = (char*) new char[iLength];
 				if (pcBuffer) {
 					strcpy(pcBuffer, pcString);
-					if (m_pcUTModelname)
-						delete [] m_pcUTModelname;
-					m_pcUTModelname = pcBuffer;
+					if (m_pcModelname)
+						delete [] m_pcModelname;
+					m_pcModelname = pcBuffer;
 				}
 				else
 					m_eResult = VA_OUT_OF_MEMORY;
@@ -112,9 +112,9 @@ VARESULT CSGAToUnrealTournament::SetOption(int iOption, const char *pcString) {
 					strcpy(pcBuffer, pcString);
 					if (bAdd)
 						strcat(pcBuffer, "\\");
-					if (m_pcUTPath)
-						delete [] m_pcUTPath;
-					m_pcUTPath = pcBuffer;
+					if (m_pcPath)
+						delete [] m_pcPath;
+					m_pcPath = pcBuffer;
 				}
 				else
 					m_eResult = VA_OUT_OF_MEMORY;
@@ -147,10 +147,10 @@ const char *CSGAToUnrealTournament::GetOptionString(int iOption) {
 			pcReturn = m_pcSGAFilename;
 			break;
 		case UT_MODELNAME:
-			pcReturn = m_pcUTModelname;
+			pcReturn = m_pcModelname;
 			break;
 		case UT_DIRECTORY:
-			pcReturn = m_pcUTPath;
+			pcReturn = m_pcPath;
 			break;
 		default:
 			m_eResult = VA_INVALID_OPTION;
@@ -161,7 +161,7 @@ const char *CSGAToUnrealTournament::GetOptionString(int iOption) {
 VARESULT CSGAToUnrealTournament::Export() {
 // Show star-up text
 	if (m_bVerbose) {
-		cout << "SGA Avatar To Half Life model converter v1.0 (11/07/2000)" << endl;
+		cout << "SGA Avatar To Unreal Tournament model converter " << VER_DATE << endl;
 		cout << "Copyright 2000 Vapour Technology Ltd." << endl << endl;
 		cout << "Exclusively licensed to AvatarMe Ltd." << endl << endl;
 	}
@@ -174,7 +174,7 @@ VARESULT CSGAToUnrealTournament::Export() {
 	}
 // Check for correct options
 	m_eResult = VA_OK;
-	bool bOk = m_pcSGAFilename && m_pcUTModelname;
+	bool bOk = m_pcSGAFilename && m_pcModelname;
 	if (!bOk)
 		m_eResult = VA_MISSING_FILENAME;
 // Start model export
@@ -182,10 +182,10 @@ VARESULT CSGAToUnrealTournament::Export() {
 		if (m_bVerbose) {
 		// Show startup text
 			cout << "SGA Avatar      : " << m_pcSGAFilename << endl;
-			cout << "Half Life Model : ";
-			if (m_pcUTPath)
-				cout << m_pcUTPath;
-			cout << m_pcUTModelname << endl;
+			cout << "Unreal Model    : ";
+			if (m_pcPath)
+				cout << m_pcPath;
+			cout << m_pcModelname << endl;
 			cout << endl;
 			cout << "Starting model export..." << endl;
 		}
@@ -200,9 +200,9 @@ VARESULT CSGAToUnrealTournament::Export() {
 		}
 
 	// Allocate the complete filename
-		int iLength = strlen(m_pcUTModelname) + 1;
-		if (m_pcUTPath)
-			iLength += strlen(m_pcUTPath);
+		int iLength = strlen(m_pcModelname) + 1;
+		if (m_pcPath)
+			iLength += strlen(m_pcPath);
 		char *pcFilename = NULL;
 		NEWBEGIN
 		pcFilename = (char*) new char[iLength];
@@ -210,15 +210,15 @@ VARESULT CSGAToUnrealTournament::Export() {
 		if (pcFilename) {
 			pcFilename[0] = 0;
 		// Generate the complete filename
-			if (m_pcUTPath)
-				strcpy(pcFilename, m_pcUTPath);
-			strcat(pcFilename, m_pcUTModelname);
+			if (m_pcPath)
+				strcpy(pcFilename, m_pcPath);
+			strcat(pcFilename, m_pcModelname);
 		// Create the exporter
-			CAvatarFileHalflife oHL;
+			CAvatarFileUnreal oUT;
 		// Set the options
 
 		// Save the Sims model
-			if (oHL.Save(pcFilename, poAvatar) == 0)
+			if (oUT.Save(pcFilename, poAvatar) == 0)
 				m_eResult = VA_MODEL_SAVE_ERROR;
 		}
 		else
@@ -242,7 +242,7 @@ VARESULT CSGAToUnrealTournament::Compress(const char *pcDir, const char *pcSFXNa
 	char pcWJEName[STR_SIZE] = "";
 	if (pcAppDir)
 		strcpy(pcWJEName, pcAppDir);
-	strcat(pcWJEName, "hlsfx.wje");
+	strcat(pcWJEName, SFX_NAME);
 	// Open the sfx wedgie
 	fstream oWJEFile;
 	oWJEFile.open(pcWJEName, ios::in|ios::binary|ios::nocreate);
@@ -258,7 +258,7 @@ VARESULT CSGAToUnrealTournament::Compress(const char *pcDir, const char *pcSFXNa
 		oWJEFile.close();
 		return VA_SFX_ERROR;
 	}
-	if (oWJE.Extract("hlsfx.exe", pcSFXName) != WJE_OK) {
+	if (oWJE.Extract(SFX_NAME, pcSFXName) != WJE_OK) {
 		oWJEFile.close();
 		return VA_SFX_ERROR;
 	}

@@ -1,19 +1,24 @@
-//=======---
-// Avanew
-//-------
-// Avatar editor and exporter
+//====---
+// VAL
+//----
+// Vapour Technology All-Purpose Library
 // Copyright 2000 Vapour Technology Ltd.
 //
 // AvatarFileUnreal.cpp - 16/2/2000 - James Smith
 //	Unreal export filter implementation
 //
-// $Id: AvatarFileUnreal.cpp,v 1.1 2000/07/15 16:49:17 waz Exp $
+// $Id: AvatarFileUnreal.cpp,v 1.2 2000/07/16 12:28:05 waz Exp $
 //
 
 #include "stdafx.h"
 
+#include "VAL.h"
+
 #include "AvatarFileUnreal.h"
 #include "AvatarFileProxy.h"
+
+#include "ProgressControl.h"
+extern CProgressControl g_oProgressControl;
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -33,7 +38,6 @@ CAvatarFileProxy<CAvatarFileUnreal> g_oAvatarProxyUnreal;
 // Store Functions
 
 CAvatarFileUnreal::CAvatarFileUnreal() {
-   m_pProgressDlg = NULL;
 } // CAvatarFileUnreal()
 
 float CAvatarFileUnreal::GetFilterVersion() const {
@@ -77,11 +81,10 @@ bool CAvatarFileUnreal::CanFilterLoadBPStream() const {
 
 int CAvatarFileUnreal::Save(const char* pszFilename, CAvatar* pAvatar) const {
 	int iRetVal = 1;
-   // Setup the export progress dialog
-   CProgressDialog dlgProgress;
-   dlgProgress.Setup(IDB_EXPORT,2);
-   dlgProgress.Step();
-   dlgProgress.SetText("Saving Geometry file");
+   // Setup the export progress
+   g_oProgressControl.SetMaxProgress("UTSave", 2);
+   g_oProgressControl.Step("UTSave");
+   g_oProgressControl.SetText("UTSave", "Saving Geometry file");
    // Work out base filename and store it
    char* pszLocalFilename = strdup(pszFilename);
    char* pszTemp = pszLocalFilename;
@@ -193,6 +196,6 @@ int CAvatarFileUnreal::Save(const char* pszFilename, CAvatar* pAvatar) const {
    // Finish up
    pAvatar->ImportPose(poOldPose);
    delete [] pszBasename;
-   dlgProgress.Step();
+   g_oProgressControl.Step("UTSave");
    return iRetVal;
 } // Save(const char* pszFilename, CAvatar* pAvatar)
