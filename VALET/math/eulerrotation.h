@@ -14,7 +14,7 @@
 //! author 		= "James Smith"
 //! date 		= "02/10/2001"
 //! lib 		= libVALETmath
-//! rcsid 		= "$Id: eulerrotation.h,v 1.6 2001/10/24 21:33:25 vap-james Exp $"
+//! rcsid 		= "$Id: eulerrotation.h,v 1.7 2001/10/24 23:03:28 vap-james Exp $"
 //! userlevel 	        = Normal
 //! docentry 	        = "VALET.Math.Geometry"
 
@@ -133,6 +133,13 @@ namespace NVALET {
     //: Constructor from a vector
     //!param: oAngles = the inidividual angles that make up the rotation.
     //!param: tType = the type of the new object
+
+    CEulerRotation(double dAngle0, double dAngle1, double dAngle2, const TEulerType& tType);
+    //: Constructor from a set of doubles
+    //!param: dAngle0 = the first angle in the rotation.
+    //!param: dAngle1 = the second angle in the rotation.
+    //!param: dAngle2 = the third angle in the rotation.
+    //!param: tType = the type of the new object
     
     CEulerRotation(const CQuaternion& oQuat, const TEulerType& tType);
     //: Constructor from a Quaternion
@@ -151,19 +158,21 @@ namespace NVALET {
     //:---------------------
     //: Arithmetic functions
     
-    CEulerRotation& operator *= (const CVector3D& oVec);
+    CEulerRotation& operator *= (const CEulerRotation& oScale);
     //: Scaling
     // Multiplies each angle by the appropriate component of the passed vector.
     // This can be used to damp rotation in certain directions.
-    //!param: oVec = the vector to multiply by
+    // The passed rotation must have the same type as this one.
+    //!param: oScale = the values to multiply by
     //!param: return = a reference to this rotation
     
-    bool Limit(const CVector3D& oMax, const CVector3D& oMin);
+    bool Limit(const CEulerRotation& oMax, const CEulerRotation& oMin);
     //: Limiting function
     // The angles are limited to the maximum and minimum values supplied
     // Returns true if the angle was clipped to the limits.
-    //!param: oMax = the maximum values for each component.
-    //!param: oMin = the minimum values for each component.
+    // The passed rotations must have the same type as this one.
+    //!param: oMax = the maximum rotation values..
+    //!param: oMin = the minimum rotation values.
     //!param: return = true if the angle was modified.
 
     //:-----------------

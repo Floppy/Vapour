@@ -11,7 +11,7 @@
 //! author 	= "James Smith"
 //! date	= "02/10/2001"
 //! lib 	= libVALETmath
-//! rcsid 	= "$Id: eulerrotation.cpp,v 1.3 2001/10/24 21:33:25 vap-james Exp $"
+//! rcsid 	= "$Id: eulerrotation.cpp,v 1.4 2001/10/24 23:03:27 vap-james Exp $"
 //! userlevel	= Normal
 //! docentry	= "VALET.Math.Geometry"
 
@@ -49,6 +49,14 @@ namespace NVALET {
       CLog("math","CEulerRotation::Constructor (CVector3D,TEulerType)",LL_OBJECT);
    } //CEulerRotation(const CVector3D& oAngles, const TEulerType& tType)
   
+   CEulerRotation::CEulerRotation(double dAngle0, double dAngle1, double dAngle2, const TEulerType& tType) :
+      m_oAngles(dAngle0,dAngle1,dAngle2),
+      m_tType(tType)
+   {
+      CLog("math","CEulerRotation::Constructor (doubles, TEulerType)",LL_OBJECT);
+   } //CEulerRotation(double dAngle0, double dAngle1, double dAngle2, const TEulerType& tType)
+
+
    CEulerRotation::CEulerRotation(const CHomTransform & oTransform, const TEulerType& tType) : 
       m_tType(tType)
    {
@@ -103,37 +111,39 @@ namespace NVALET {
       CLog("math","CEulerRotation::Destructor",LL_OBJECT);
    } //~CEulerRotation()
   
-   CEulerRotation& CEulerRotation::operator*=(const CVector3D& oVec) {
+   CEulerRotation& CEulerRotation::operator*=(const CEulerRotation& oScale) {
       CLog("math","CEulerRotation::operator*=",LL_FUNCTION);
-      m_oAngles *= oVec;
+      if (m_tType.m_eID == oScale.m_tType.m_eID)
+         m_oAngles *= oScale.m_oAngles;
       return *this;
    } //operator*=(const CVector3D& oVec)
   
-   bool CEulerRotation::Limit(const CVector3D& oMax, const CVector3D& oMin) {
+   bool CEulerRotation::Limit(const CEulerRotation& oMax, const CEulerRotation& oMin) {
       CLog("math","CEulerRotation::Limit",LL_FUNCTION);
+      if ((m_tType.m_eID != oMax.m_tType.m_eID) || (m_tType.m_eID != oMin.m_tType.m_eID)) return false;
       bool bReturn = false;
-      if (m_oAngles.X() > oMax.X()) {
-         m_oAngles.X() = oMax.X(); 
+      if (m_oAngles.X() > oMax.m_oAngles.X()) {
+         m_oAngles.X() = oMax.m_oAngles.X(); 
          bReturn = true;
       }
-      else if (m_oAngles.X() < oMin.X()) {
-         m_oAngles.X() = oMin.X();
+      else if (m_oAngles.X() < oMin.m_oAngles.X()) {
+         m_oAngles.X() = oMin.m_oAngles.X();
          bReturn = true;
       }
-      if (m_oAngles.Y() > oMax.Y()) {
-         m_oAngles.Y() = oMax.Y();
+      if (m_oAngles.Y() > oMax.m_oAngles.Y()) {
+         m_oAngles.Y() = oMax.m_oAngles.Y();
          bReturn = true;
       }
-      else if (m_oAngles.Y() < oMin.Y()) {
-         m_oAngles.Y() = oMin.Y();
+      else if (m_oAngles.Y() < oMin.m_oAngles.Y()) {
+         m_oAngles.Y() = oMin.m_oAngles.Y();
          bReturn = true;
       }
-      if (m_oAngles.Z() > oMax.Z()) {
-         m_oAngles.Z() = oMax.Z();
+      if (m_oAngles.Z() > oMax.m_oAngles.Z()) {
+         m_oAngles.Z() = oMax.m_oAngles.Z();
          bReturn = true;
       }
-      else if (m_oAngles.Z() < oMin.Z()) {
-         m_oAngles.Z() = oMin.Z();
+      else if (m_oAngles.Z() < oMin.m_oAngles.Z()) {
+         m_oAngles.Z() = oMin.m_oAngles.Z();
          bReturn = true;
       }
       return bReturn;
