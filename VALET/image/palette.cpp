@@ -11,14 +11,21 @@
 //! author		= "Warren Moore"
 //! date			= "17/10/2001"
 //! lib 			= libVALETimage
-//! rcsid		= "$Id: palette.cpp,v 1.1 2001/10/17 22:05:33 vap-warren Exp $"
+//! rcsid		= "$Id: palette.cpp,v 1.2 2001/10/18 10:42:01 vap-warren Exp $"
 
 //#===--- Includes
 #include "palette.h"
 
+// These are needed for C++ linking of KOS stdlib functions
+#ifdef __cplusplus
+extern "C" {
+#endif
 #include <math.h>
 #include <string.h>
 #include <stdlib.h>
+#ifdef __cplusplus
+}
+#endif
 
 namespace NValet {
 
