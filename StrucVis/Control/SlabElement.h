@@ -9,7 +9,7 @@
 //! file      = "Control/SlabElement.h"
 //! author    = "James Smith"
 //! date      = "19/3/2002"
-//! rcsid     = "$Id: SlabElement.h,v 1.20 2002/04/24 14:56:34 vap-warren Exp $"
+//! rcsid     = "$Id: SlabElement.h,v 1.21 2002/04/24 15:16:47 vap-james Exp $"
 
 #ifndef __VTSTRUCVIS_SLABELEMENT__
 #define __VTSTRUCVIS_SLABELEMENT__
@@ -104,6 +104,10 @@ protected:
    mutable CCortonaField *m_ppoField[4];
    //: Field value caches
    // Positions, cracks, colours, visible
+
+   mutable bool m_bDirtyCracks;
+   //: Have the cracks changed?
+
 };
 
 #endif // __VTSTRUCVIS_SLABELEMENT__

@@ -9,7 +9,7 @@
 //! file      = "Control/SlabElement.cpp"
 //! author    = "James Smith"
 //! date      = "19/3/2002"
-//! rcsid     = "$Id: SlabElement.cpp,v 1.35 2002/04/24 14:56:34 vap-warren Exp $"
+//! rcsid     = "$Id: SlabElement.cpp,v 1.36 2002/04/24 15:16:47 vap-james Exp $"
 
 #include "stdafx.h"
 #include "SlabElement.h"
@@ -29,7 +29,8 @@ static char THIS_FILE[] = __FILE__;
 
 CSlabElement::CSlabElement(CCortonaUtil *poCortona, CNodeSet* poNodeSet) : 
    CElement(poCortona, poNodeSet),
-   m_fThickness(1)
+   m_fThickness(1),
+   m_bDirtyCracks(true)
 {
    memset(m_pfStresses, 0, 9*sizeof(float));
    memset(m_piNodes, 0, 9*sizeof(unsigned int));
@@ -133,17 +134,20 @@ bool CSlabElement::Display(const char* pcURL) const {
       bool bOK = true;
 
       //#===--- Update cracks
-      // Set values
-      if (m_ppoField[1]) {
-         bOK = m_ppoField[1]->SetMFInt32(m_plCracks, 9);
-         // Send event
-         if (bOK && !m_poNodePtr->AssignEventIn("set_cracks", *(m_ppoField[1])))
-            bOK = false;
+      if (m_bDirtyCracks) {
+         // Set values
+         if (m_ppoField[1]) {
+            bOK = m_ppoField[1]->SetMFInt32(m_plCracks, 9);
+            // Send event
+            if (bOK && !m_poNodePtr->AssignEventIn("set_cracks", *(m_ppoField[1])))
+               bOK = false;
+         }
+         m_bDirtyCracks = false;
       }
 
       //#===--- Update colours
-      // Set values
       if (m_bDirtyColour) {
+         // Set values
          if (m_ppoField[2]) {
             bOK = m_ppoField[2]->SetMFColor(pfColours, 9);
             // Send event
@@ -165,9 +169,11 @@ void CSlabElement::SetNodes(const unsigned int* piNodes) {
 
 void CSlabElement::SetCracks(unsigned int iLayer, const unsigned char* pcCracks) const {
    for (int i = 0; i < 9; i++) {
-      m_plCracks[i] = static_cast<long>(pcCracks[i]);
+      if (m_plCracks[i] != static_cast<long>(pcCracks[i])) {
+         m_bDirtyCracks = true;
+         m_plCracks[i] = static_cast<long>(pcCracks[i]);
+      }
    }
-//   memcpy(m_pcCracks, pcCracks, 9*sizeof(char));
    return;
 }
 
