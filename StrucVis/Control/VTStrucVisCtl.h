@@ -7,7 +7,7 @@
 // VTStructVisCtl.cpp
 // 05/03/2002 - Warren Moore
 //
-// $Id: VTStrucVisCtl.h,v 1.5 2002/03/23 21:18:36 vap-warren Exp $
+// $Id: VTStrucVisCtl.h,v 1.6 2002/03/23 21:41:19 vap-warren Exp $
 
 #ifndef __VTSTRUCTVIS_CONTROL__
 #define __VTSTRUCTVIS_CONTROL__
@@ -147,8 +147,8 @@ protected:
 public:
 	enum {
 	//{{AFX_DISP_ID(CVTStrucVisCtl)
-	dispidSimData = 1L,
-	dispidUIData = 2L,
+   dispidSimData = 1L,
+   dispidUIData = 2L,
 	//}}AFX_DISP_ID
 	};
 };

@@ -7,7 +7,7 @@
 // VTStructVis.odl
 // 05/03/2002 - Warren Moore
 //
-// $Id: VTStrucVis.odl,v 1.3 2002/03/23 21:18:35 vap-warren Exp $
+// $Id: VTStrucVis.odl,v 1.4 2002/03/23 21:41:18 vap-warren Exp $
 
 // Type library
 //    Processed by the Make Type Library (mktyplib) tool to generate
@@ -35,12 +35,12 @@ library VTSTRUCVISLib
 			// NOTE - ClassWizard will maintain property information here.
 			//    Use extreme caution when editing this section.
 			//{{AFX_ODL_PROP(CVTStrucVisCtrl)
-			[id(DISPID_READYSTATE), readonly] long ReadyState;
-			[id(DISPID_BACKCOLOR), bindable, requestedit] OLE_COLOR BackColor;
-			[id(DISPID_FORECOLOR), bindable, requestedit] OLE_COLOR ForeColor;
-			[id(DISPID_CAPTION), bindable, requestedit] BSTR Caption;
-			[id(1)] BSTR SimData;
-			[id(2)] BSTR UIData;
+ 			[id(DISPID_READYSTATE), readonly] long ReadyState;
+ 			[id(DISPID_BACKCOLOR), bindable, requestedit] OLE_COLOR BackColor;
+ 			[id(DISPID_FORECOLOR), bindable, requestedit] OLE_COLOR ForeColor;
+ 			[id(DISPID_CAPTION), bindable, requestedit] BSTR Caption;
+ 			[id(1)] BSTR SimData;
+ 			[id(2)] BSTR UIData;
 			//}}AFX_ODL_PROP
 
 		methods:
@@ -66,7 +66,6 @@ library VTSTRUCVISLib
 			// NOTE - ClassWizard will maintain event information here.
 			//    Use extreme caution when editing this section.
 			//{{AFX_ODL_EVENT(CVTStrucVisCtrl)
-			[id(DISPID_READYSTATECHANGE)] void ReadyStateChange();
 			//}}AFX_ODL_EVENT
 	};
 

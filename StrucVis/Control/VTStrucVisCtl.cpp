@@ -7,7 +7,7 @@
 // VTStructVisCtl.cpp
 // 05/03/2002 - Warren Moore
 //
-// $Id: VTStrucVisCtl.cpp,v 1.5 2002/03/23 21:18:36 vap-warren Exp $
+// $Id: VTStrucVisCtl.cpp,v 1.6 2002/03/23 21:41:19 vap-warren Exp $
 
 #include "stdafx.h"
 #include "VTStrucVis.h"
@@ -173,6 +173,7 @@ BEGIN_DISPATCH_MAP(CVTStrucVisCtl, COleControl)
 	DISP_STOCKPROP_BACKCOLOR()
 	DISP_STOCKPROP_FORECOLOR()
 	DISP_STOCKPROP_CAPTION()
+	DISP_STOCKPROP_ENABLED()
 	//}}AFX_DISPATCH_MAP
 	DISP_FUNCTION_ID(CVTStrucVisCtl, "AboutBox", DISPID_ABOUTBOX, AboutBox, VT_EMPTY, VTS_NONE)
 END_DISPATCH_MAP()
@@ -458,6 +459,10 @@ void CVTStrucVisCtl::DrawPlaceholder(CDC* pDC, const CRect& rcBounds, bool bRun)
       // Display the error text
       pDC->SetTextColor(TranslateColor(GetEnabled() ? RGB(0xFF, 0x00, 0x00): RGB(0xFF, 0xC0, 0xC0)));
       pDC->DrawText(oStr, oTextRect, DT_CENTER | DT_WORDBREAK);
+   }
+   // Display the caption text
+   else {
+      pDC->DrawText(InternalGetText(), oTextRect, DT_CENTER | DT_WORDBREAK);
    }
    // Restore the old font
    pDC->SelectObject(pOldFont);
