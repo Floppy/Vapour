@@ -23,6 +23,10 @@ Project: "VALWin32"=..\VALWin32\VALWin32.dsp - Package Owner=<4>
 
 Package=<5>
 {{{
+    begin source code control
+    VALWin32
+    ..\valwin32
+    end source code control
 }}}
 
 Package=<4>
@@ -35,6 +39,10 @@ Project: "WJESFX"=.\WJESFX.dsp - Package Owner=<4>
 
 Package=<5>
 {{{
+    begin source code control
+    WJESFX
+    .
+    end source code control
 }}}
 
 Package=<4>
