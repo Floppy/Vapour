@@ -13,7 +13,7 @@
 //! author 		= "James Smith"
 //! date 		= "15/10/2001"
 //! lib 		= libVALET3d
-//! rcsid 		= "$Id: mesh.h,v 1.3 2001/10/15 16:52:52 vap-james Exp $"
+//! rcsid 		= "$Id: mesh.h,v 1.4 2001/10/15 19:51:38 vap-james Exp $"
 //! userlevel 	        = Normal
 //! docentry 	        = "VALET.3D.Surface Representations"
 
@@ -32,10 +32,47 @@ namespace NValet {
 
   protected:
 
+    // Predeclare CEdge for the next two classes to use.
+    class CEdge;
+
+    //: A face in a winged-edge mesh
+    class CFace {
+      CEdge* m_pEdge;
+      //: The first incident edge on this face
+    };
+    
+    //: A vertex in a winged-edge mesh
+    class CVertex {
+      int m_iIndex;
+      //: Vertex index
+      CEdge* m_pEdge;
+      //: The first incident edge on this vertex
+    };
+
+    //: An edge in a winged-edge mesh
+    class CEdge {
+      CVertex* m_pStart;
+      //: The starting vertex
+      CVertex* m_pEnd;
+      //: The ending vertex
+      CFace*   m_pLeft;
+      //: The left face
+      CFace*   m_pRight;
+      //: The right face
+      CEdge*   m_pPrevLeft;
+      //: The previous edge in a left traverse
+      CEdge*   m_pNextLeft;
+      //: The next edge in a left traverse
+      CEdge*   m_pPrevRight;
+      //: The previous edge in a right traverse
+      CEdge*   m_pNextRight;
+      //: The next edge in a right traverse
+    };
+
     CMaterial m_oMaterial;
     //: Surface material
 
-  public:    
+  public:
     
     //:------------------------
     //: Contruction/Destruction
