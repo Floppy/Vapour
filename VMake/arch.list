@@ -1,0 +1,17 @@
+# arch.list
+#
+# List of supported architectures
+# Format: <name> <description>
+# <name> must be a single word, all lower case
+# <description> can be any valid string
+#
+# 09/09/2001 - Warren Moore
+# $Id: arch.list,v 1.1 2001/09/14 09:39:49 vap-warren Exp $
+# Copyright 2001 Vapour Technology Ltd.
+
+noarch		Default
+linux		Linux
+freebsd		FreeBSD
+win32		Windows
+palm		PalmOS
+dc		DreamCast
