@@ -7,7 +7,7 @@
 // Chunk.cpp
 // 19/03/2002 - James Smith
 //
-// $Id: Chunk.cpp,v 1.4 2002/03/27 10:21:32 vap-james Exp $
+// $Id: Chunk.cpp,v 1.5 2002/03/27 11:02:17 vap-james Exp $
 
 #include "stdafx.h"
 #include "Chunk.h"
@@ -26,6 +26,7 @@ static char THIS_FILE[] = __FILE__;
 CChunk::CChunk() :
    m_iBufferLength(0),
    m_iDataSize(0),
+   m_iDataProcessed(0),
    m_pcBuffer(NULL),
    m_oType(NONE),
    m_pTempSubChunk(NULL)
@@ -59,7 +60,8 @@ bool CChunk::CreateChunk(const unsigned char* pcData, unsigned int iLength, unsi
       // Append data to buffer
       memcpy(m_pcBuffer+m_iDataSize,pcData,iLength);
       m_iDataSize += iLength;
-   
+      iUsed = iLength;
+
       // Read type from data chunk
       if (m_iDataSize < 1) return false;
       m_oType = static_cast<TChunkType>(m_pcBuffer[0]);
@@ -105,21 +107,23 @@ bool CChunk::CreateChunk(const unsigned char* pcData, unsigned int iLength, unsi
             m_oTOC.push_back(oEntry);
          }
       }
+      m_iDataProcessed = iTOCLength;
    }
 
    // Load subchunks if necessary
-   if (bLoadSubChunks) {      
+   if (bLoadSubChunks) {
+      unsigned int iSize = *reinterpret_cast<unsigned int*>(m_pcBuffer+1);
       // Update data pointers
       pcData += iUsed;
       iLength -= iUsed;
       // While we have data
-      while (iLength != 0) {
+      while (iLength != 0 && m_iDataProcessed < iSize) {
          // Create new subchunk if we don't have one
          if (m_pTempSubChunk == NULL) {
             m_pTempSubChunk = new CChunk;
          }
          // Add data to subchunk
-         if (m_pTempSubChunk->CreateChunk(pcData,iLength,iUsed) ) {
+         if (m_pTempSubChunk->CreateChunk(pcData,iLength,iUsed)) {
             // Store chunk if it's finished loading
             for (std::vector<CTOCEntry>::iterator pEntry=m_oTOC.begin(); pEntry!=m_oTOC.end(); pEntry++) {
                if (pEntry->m_pSubChunk == NULL) {
@@ -132,7 +136,9 @@ bool CChunk::CreateChunk(const unsigned char* pcData, unsigned int iLength, unsi
          // Update data pointers
          pcData += iUsed;
          iLength -= iUsed;
+         m_iDataProcessed += iUsed;
       }
+      if (m_iDataProcessed < iSize) return false;
    }
 
    // Done
@@ -167,6 +173,7 @@ void CRootChunk::Reset(void) {
    m_pcBuffer = NULL;
    m_iDataSize = 0;
    m_iBufferLength = 0;
+   m_iDataProcessed = 0;
    // Empty TOC
    m_oTOC.empty();
    return;

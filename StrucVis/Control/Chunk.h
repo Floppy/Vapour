@@ -7,7 +7,7 @@
 // Chunk.h
 // 19/03/2002 - James Smith
 //
-// $Id: Chunk.h,v 1.4 2002/03/27 10:21:32 vap-james Exp $
+// $Id: Chunk.h,v 1.5 2002/03/27 11:02:16 vap-james Exp $
 
 #ifndef __VTSTRUCVIS_CHUNK__
 #define __VTSTRUCVIS_CHUNK__
@@ -94,6 +94,9 @@ protected:
 
    unsigned int m_iDataSize;
    // The amount of data in the buffer
+
+   unsigned int m_iDataProcessed;
+   // The length of data that has been processed
 
    TChunkType m_oType;
    // The type of the chunk
