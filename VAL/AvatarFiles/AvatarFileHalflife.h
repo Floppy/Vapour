@@ -7,7 +7,7 @@
 // AvatarFileHalflife.h - 16/2/2000 - James Smith
 //	Halflife MDL export filter header
 //
-// $Id: AvatarFileHalflife.h,v 1.4 2000/07/31 17:41:58 waz Exp $
+// $Id: AvatarFileHalflife.h,v 1.5 2000/08/02 18:05:06 waz Exp $
 //
 
 #pragma once
@@ -16,15 +16,13 @@
 #define _VAL_AVATARFILEHALFLIFE_
 
 #include "AvatarFileStore.h"
+#include "AvatarPose.h"
 #include "BodyPart.h"
+#include "Wedgie.h"
+#include "HalflifeMDL.h"
 
 #include <fstream.h>
 #include <vector>
-
-typedef std::vector<int> vTriStrip;
-
-#define AFHL_LOGO_WIDTH			90
-#define AFHL_LOGO_HEIGHT		23
 
 ////////////////////////
 // CAvatarFileHalflife
@@ -35,9 +33,24 @@ class CAvatarFileHalflife : public CAvatarFile {
 // Member Variables
 private:
 
+   // Data used for export
    mutable char* m_pszModelname;
    mutable std::vector<int> m_vCompressedSkeletonMap;
    mutable int m_pReverseCompressedSkeletonMap[TOTAL_NUMBER_BODYPARTS];
+   mutable char* m_pcTextureDataChunk;
+   mutable char* m_pcTextureIndexChunk;
+   mutable SHalflifeMDLTexture* m_pTextureHeaderChunk;
+   mutable char* m_pcMeshDataChunk;
+   mutable SHalflifeMDLMesh* m_pMeshHeaderChunk;
+   mutable char* m_pcModelDataChunk;
+   mutable SHalflifeMDLSeqGroup* m_pSeqGroupsChunk;
+   mutable SHalflifeMDLHitbox* m_pHitboxChunk;
+   mutable SHalflifeMDLAttachment* m_pAttachmentChunk;
+   mutable SHalflifeMDLBoneController* m_pBoneControllerChunk;
+   mutable SHalflifeMDLBone* m_pBoneChunk;
+   mutable fstream m_fsDataWJE;
+   mutable CWedgie m_oWedgie;
+   mutable CAvatarPose* m_pPose;
 
    static const char* m_pszJointNames[];
 
@@ -57,8 +70,8 @@ public:
    bool CanFilterLoadBPFile() const;
    bool CanFilterLoadBPStream() const;
 
-	int Save(const char* pszFilename, CAvatar* pAvatar) const;
-	int Save(ofstream& osOutputStream, CAvatar* pAvatar) const;	
+	FRESULT Save(const char* pszFilename, CAvatar* pAvatar) const;
+	FRESULT Save(ofstream& osOutputStream, CAvatar* pAvatar) const;	
 
    // AvatarFileProxy Functions
 	static float GetVersion() {return 0.2F;}
@@ -74,9 +87,11 @@ public:
 private:
 
    void CompressSkeleton(const BodyPart bpBodyPart, CAvatar* pAvatar) const;
-   std::vector<vTriStrip> CompressSubMesh(std::vector<STriFace>& vSubMesh) const;
 
-	 void SaveThumbnail(const char *pcBitmap, CAvatar *poAvatar) const;
+   void SaveThumbnail(const char *pcBitmap, CAvatar *poAvatar) const;
+
+   void Cleanup(CAvatar* pAvatar) const;
+   // Deletes memory used during output, closes streams, and restores avatar pose
 };
 
 #endif // _VAL_AVATARFILEHALFLIFE_

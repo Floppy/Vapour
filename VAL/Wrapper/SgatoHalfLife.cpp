@@ -7,7 +7,7 @@
 // SGAToHalfLife.cpp - 12/06/2000 - Warren Moore
 //	SGA Avatar to Half Life converter wrapper 
 //
-// $Id: SgatoHalfLife.cpp,v 1.6 2000/07/21 16:30:47 waz Exp $
+// $Id: SgatoHalfLife.cpp,v 1.7 2000/08/02 18:05:04 waz Exp $
 //
 
 #include "StdAfx.h"
@@ -227,7 +227,7 @@ VARESULT CSGAToHalfLife::Export() {
 		// Set the options
 
 		// Save the model
-			if (oAvatarFile.Save(pcFilename, poAvatar) == 0)
+			if (oAvatarFile.Save(pcFilename, poAvatar) != F_OK)
 				m_eResult = VA_MODEL_SAVE_ERROR;
 		}
 		else

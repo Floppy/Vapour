@@ -7,7 +7,7 @@
 // AvatarFileSims.cpp - 16/2/2000 - James Smith
 //	Sims export filter implementation
 //
-// $Id: AvatarFileSims.cpp,v 1.3 2000/07/19 08:51:31 waz Exp $
+// $Id: AvatarFileSims.cpp,v 1.4 2000/08/02 18:05:05 waz Exp $
 //
 
 
@@ -87,10 +87,10 @@ bool CAvatarFileSims::CanFilterLoadBPStream() const {
 ////////////////////////
 // AvatarFile Functions
 
-int CAvatarFileSims::Save(const char* pszFilename, CAvatar* pAvatar) const {
-	if (pAvatar == NULL) return 0;
+FRESULT CAvatarFileSims::Save(const char* pszFilename, CAvatar* pAvatar) const {
+	if (pAvatar == NULL) return F_NO_DATA_TO_SAVE;
    
-   int iRetVal = 1;
+   FRESULT eResult = F_OK;
 
    // Setup the export progress dialog
 	g_poVAL->SetProgressMax("SimsSave", 10);
@@ -223,13 +223,13 @@ int CAvatarFileSims::Save(const char* pszFilename, CAvatar* pAvatar) const {
    int iResult = _mkdir(pszTempFilename);
    if ((iResult == -1) && (errno != EEXIST)) {
       TRACE("Couldn't create cmx3 directory!\n");
-      iRetVal = 0;
+      eResult = F_DIR_ERROR;
    }
    strcpy(pszTempFilename+iDirLength+5,pszMeshName);
    strcpy(pszTempFilename+iDirLength+5+iTempLength,".cmx");
    ofstream osCraniumCMXStream(pszTempFilename);
    delete [] pszTempFilename;
-   if (osCraniumCMXStream.good()) {
+   if (!osCraniumCMXStream.fail()) {
       // Write file
       osCraniumCMXStream << "// Character File. Copyright 1997, Maxis Inc." << endl;
       osCraniumCMXStream << "version 300" << endl;
@@ -246,7 +246,7 @@ int CAvatarFileSims::Save(const char* pszFilename, CAvatar* pAvatar) const {
       osCraniumCMXStream << "0" << endl;
       osCraniumCMXStream.close();
    }
-   else iRetVal = 0;
+   else eResult = F_FILE_ERROR;
 
    // Save cranium texture
    g_poVAL->StepProgress("SimsSave");
@@ -266,7 +266,7 @@ int CAvatarFileSims::Save(const char* pszFilename, CAvatar* pAvatar) const {
    iResult = _mkdir(pszTempFilename);
    if ((iResult == -1) && (errno != EEXIST)) {
       TRACE("Couldn't create skins directory!\n");
-      iRetVal = 0;
+      eResult = F_DIR_ERROR;
    }
    strcpy(pszTempFilename+iDirLength+6,pszTextureName);
    strcpy(pszTempFilename+iDirLength+6+iTempLength,".bmp");
@@ -285,7 +285,7 @@ int CAvatarFileSims::Save(const char* pszFilename, CAvatar* pAvatar) const {
    strcpy(pszTempFilename+iDirLength+5+iTempLength,".skn");
    ofstream osCraniumSKNStream(pszTempFilename);
    delete [] pszTempFilename;
-   if (osCraniumSKNStream.good()) {
+   if (!osCraniumSKNStream.fail()) {
       // Create head submesh
 	   // Create the new face list
       int iNumFaces = pAvatar->NumFaces();
@@ -353,7 +353,7 @@ int CAvatarFileSims::Save(const char* pszFilename, CAvatar* pAvatar) const {
       }
       osCraniumSKNStream.close();
    }
-   else iRetVal = 0;
+   else eResult = F_ERROR;
 
    ////////////////////////////////////////////////////////////////////
    // BODY ////////////////////////////////////////////////////////////
@@ -393,7 +393,7 @@ int CAvatarFileSims::Save(const char* pszFilename, CAvatar* pAvatar) const {
    strcpy(pszTempFilename+iDirLength+5+iTempLength,".cmx");
    ofstream osBodyCMXStream(pszTempFilename);
    delete [] pszTempFilename;
-   if (osBodyCMXStream.good()) {
+   if (!osBodyCMXStream.fail()) {
       // Write file
       osBodyCMXStream << "// Character File. Copyright 1997, Maxis Inc." << endl;
       osBodyCMXStream << "version 300" << endl;
@@ -410,7 +410,7 @@ int CAvatarFileSims::Save(const char* pszFilename, CAvatar* pAvatar) const {
       osBodyCMXStream << "0" << endl;
       osBodyCMXStream.close();
    }
-   else iRetVal = 0;
+   else eResult = F_ERROR;
 
    // Save body texture
    g_poVAL->StepProgress("SimsSave");
@@ -510,7 +510,7 @@ int CAvatarFileSims::Save(const char* pszFilename, CAvatar* pAvatar) const {
    strcpy(pszTempFilename+iDirLength+5+iTempLength,".skn");
    ofstream osBodySKNStream(pszTempFilename);
    delete [] pszTempFilename;
-   if (osBodySKNStream.good()) {
+   if (!osBodySKNStream.fail()) {
 
       // Write file info
       osBodySKNStream << pszSkinName << endl;
@@ -762,7 +762,7 @@ int CAvatarFileSims::Save(const char* pszFilename, CAvatar* pAvatar) const {
       // Close stream
       osBodySKNStream.close();
    }
-   else iRetVal = 0;
+   else eResult = F_ERROR;
 
    // Done!
    g_poVAL->StepProgress("SimsSave");
@@ -778,7 +778,7 @@ int CAvatarFileSims::Save(const char* pszFilename, CAvatar* pAvatar) const {
    // Restore old pose
    pAvatar->ImportPose(poOld);
    pAvatar->UpdateModel();
-   return iRetVal;
+   return eResult;
 
 } // Save(const char* pszFilename, CAvatar* pAvatar)
 

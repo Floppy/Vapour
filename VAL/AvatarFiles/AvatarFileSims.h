@@ -7,7 +7,7 @@
 // AvatarFileSims.h - 5/4/2000 - James Smith
 //	Sims export filter header
 //
-// $Id: AvatarFileSims.h,v 1.3 2000/07/10 09:14:49 waz Exp $
+// $Id: AvatarFileSims.h,v 1.4 2000/08/02 18:05:07 waz Exp $
 //
 
 #pragma once
@@ -53,7 +53,7 @@ public:
    bool CanFilterLoadBPFile() const;
    bool CanFilterLoadBPStream() const;
 
-	int Save(const char* pszFilename, CAvatar* pAvatar) const;
+	FRESULT Save(const char* pszFilename, CAvatar* pAvatar) const;
 
    void SetOption(int iOption, int iData) const;
 

@@ -7,7 +7,7 @@
 // AvatarFileUnreal.h - 5/4/2000 - James Smith
 //	Unreal export filter header
 //
-// $Id: AvatarFileUnreal.h,v 1.3 2000/07/21 17:00:09 waz Exp $
+// $Id: AvatarFileUnreal.h,v 1.4 2000/08/02 18:05:06 waz Exp $
 //
 
 #pragma once
@@ -40,7 +40,7 @@ public:
    bool CanFilterLoadBPFile() const;
    bool CanFilterLoadBPStream() const;
 
-   int Save(const char* pszFilename, CAvatar* pAvatar) const;
+   FRESULT Save(const char* pszFilename, CAvatar* pAvatar) const;
 
    // AvatarFileProxy Functions
    static float GetVersion() {return 1.0F;}

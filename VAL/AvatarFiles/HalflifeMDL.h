@@ -7,14 +7,17 @@
 // HalflifeMDL.h - 16/02/2000 - James Smith
 //	Structures and definitions for halflife MDL export
 //
-// $Id: HalflifeMDL.h,v 1.5 2000/07/21 17:00:08 waz Exp $
+// $Id: HalflifeMDL.h,v 1.6 2000/08/02 18:05:06 waz Exp $
 //
 
 #ifndef _VAL_HALFLIFEMDL_
 #define _VAL_HALFLIFEMDL_
 
-#define HLMDLMAGIC        (('T'<<24)+('S'<<16)+('D'<<8)+'I')
-#define HLMDLVERSION      0xA
+#define HL_MDL_MAGIC        (('T'<<24)+('S'<<16)+('D'<<8)+'I')
+#define HL_MDL_VERSION      0xA
+
+#define HL_LOGO_WIDTH       90
+#define HL_LOGO_HEIGHT      23
 
 typedef float HalflifeMDLVector[3];
 

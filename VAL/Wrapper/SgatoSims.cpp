@@ -7,7 +7,7 @@
 // SGAToSims.cpp - 12/06/2000 - Warren Moore
 //	SGA Avatar to The Sims converter wrapper 
 //
-// $Id: SgatoSims.cpp,v 1.7 2000/07/21 16:30:48 waz Exp $
+// $Id: SgatoSims.cpp,v 1.8 2000/08/02 18:05:04 waz Exp $
 //
 
 #include "StdAfx.h"
@@ -300,7 +300,7 @@ VARESULT CSGAToSims::Export() {
 			oAvatarFile.SetOption(SIMS_SKINTONE, m_iSkinTone);
 			oAvatarFile.SetOption(SIMS_BUILD, m_iBuild);
 		// Save the model
-			if (oAvatarFile.Save(pcFilename, poAvatar) == 0)
+			if (oAvatarFile.Save(pcFilename, poAvatar) != F_OK)
 				m_eResult = VA_MODEL_SAVE_ERROR;
 		}
 		else

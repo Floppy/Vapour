@@ -7,7 +7,7 @@
 // AvatarFileUnreal.cpp - 16/2/2000 - James Smith
 //	Unreal export filter implementation
 //
-// $Id: AvatarFileUnreal.cpp,v 1.4 2000/07/21 17:00:10 waz Exp $
+// $Id: AvatarFileUnreal.cpp,v 1.5 2000/08/02 18:05:05 waz Exp $
 //
 
 #include "stdafx.h"
@@ -80,10 +80,10 @@ bool CAvatarFileUnreal::CanFilterLoadBPStream() const {
 ////////////////////////
 // AvatarFile Functions
 
-int CAvatarFileUnreal::Save(const char* pszFilename, CAvatar* pAvatar) const {
-   if (pAvatar == NULL) return 0;
+FRESULT CAvatarFileUnreal::Save(const char* pszFilename, CAvatar* pAvatar) const {
+	if (pAvatar == NULL) return F_NO_DATA_TO_SAVE;
 
-   int iRetVal = 1;
+   FRESULT eResult = F_OK;
    
    const int iNumTextures = pAvatar->NumTextures();
 
@@ -134,21 +134,21 @@ int CAvatarFileUnreal::Save(const char* pszFilename, CAvatar* pAvatar) const {
    int iResult = _mkdir(pszTempFilename);
    if ((iResult == -1) && (errno != EEXIST)) {
       TRACE("Couldn't create System directory!\n");
-      iRetVal = 0;
+      return F_DIR_ERROR;
    }
    // Create output system directory
    strcpy(pszTempFilename+iDirLength,"Textures\\");
    iResult = _mkdir(pszTempFilename);
    if ((iResult == -1) && (errno != EEXIST)) {
       TRACE("Couldn't create Textures directory!\n");
-      iRetVal = 0;
+      return F_DIR_ERROR;
    }
 
    // Save geometry file
    // This is documented on the nervedamage.com unreal page
    sprintf(pszTempFilename+iDirLength,"%s_d.3d",pszName);
    ofstream osGeometryStream(pszTempFilename,ios::binary|ios::out);
-	if (osGeometryStream.good()) {
+	if (!osGeometryStream.fail()) {
       // Write header
       short iNumFaces = pAvatar->NumFaces();
       short iNumVertices = pAvatar->NumVertices();
@@ -194,14 +194,14 @@ int CAvatarFileUnreal::Save(const char* pszFilename, CAvatar* pAvatar) const {
       osGeometryStream.close();
 	}
    else {
-      iRetVal = 0;
+      return F_ERROR;
    }
 
    // Save frame file
    // This is documented on the nervedamage.com unreal page
    sprintf(pszTempFilename+iDirLength,"%s_a.3d",pszName);
    ofstream osFrameStream(pszTempFilename,ios::binary|ios::out);
-	if (osFrameStream.good()) {
+	if (!osFrameStream.fail()) {
       // Setup sizes & offsets etc
       SPoint3D pntMin, pntMax;
       pAvatar->BoundingBox(unknown,pntMax,pntMin);
@@ -241,7 +241,7 @@ int CAvatarFileUnreal::Save(const char* pszFilename, CAvatar* pAvatar) const {
       osFrameStream.close();
 	}
    else {
-      iRetVal = 0;
+      return F_ERROR;
    }
 
    ofstream osOutputStream; // Create one output stream that is used over and over
@@ -253,7 +253,7 @@ int CAvatarFileUnreal::Save(const char* pszFilename, CAvatar* pAvatar) const {
    // As you can see, this writes a header and not much else.
    sprintf(pszTempFilename+iDirLength,"System\\%s.u",pszName);
    osOutputStream.open(pszTempFilename,ios::binary|ios::out);
-	if (osOutputStream.good()) {
+	if (!osOutputStream.fail()) {
       int iOffset = 0;
       // Save avatar pose
       CAvatarPose poOldPose = pAvatar->ExportPose();
@@ -303,7 +303,7 @@ int CAvatarFileUnreal::Save(const char* pszFilename, CAvatar* pAvatar) const {
       osOutputStream.close();
    }
    else {
-      iRetVal = 0;
+      return F_ERROR;
    }
 
    g_poVAL->StepProgress("UTSave");
@@ -314,7 +314,7 @@ int CAvatarFileUnreal::Save(const char* pszFilename, CAvatar* pAvatar) const {
    // You can ignore this.
    sprintf(pszTempFilename+iDirLength,"System\\%s.int",pszName);
    osOutputStream.open(pszTempFilename,ios::binary|ios::out);
-	if (osOutputStream.good()) {      
+	if (!osOutputStream.fail()) {
       // Write public declaration
       osOutputStream << "[Public]\n";
       // Write player declaration
@@ -331,7 +331,7 @@ int CAvatarFileUnreal::Save(const char* pszFilename, CAvatar* pAvatar) const {
       osOutputStream.close();
    }
    else {
-      iRetVal = 0;
+      return F_ERROR;
    }
 
    g_poVAL->StepProgress("UTSave");
@@ -340,7 +340,7 @@ int CAvatarFileUnreal::Save(const char* pszFilename, CAvatar* pAvatar) const {
    // Save texture UTX file
    sprintf(pszTempFilename+iDirLength,"Textures\\%s.utx",pszTexPackageName);
    osOutputStream.open(pszTempFilename,ios::binary|ios::out);
-	if (osOutputStream.good()) {
+	if (!osOutputStream.fail()) {
       int t; // loop counter
       int iOffset; // file position counter
       // Resize and convert textures
@@ -559,7 +559,7 @@ int CAvatarFileUnreal::Save(const char* pszFilename, CAvatar* pAvatar) const {
       osOutputStream.close();
    }
    else {
-      iRetVal = 0;
+      return F_ERROR;
    }
    
    g_poVAL->StepProgress("UTSave");
@@ -568,7 +568,7 @@ int CAvatarFileUnreal::Save(const char* pszFilename, CAvatar* pAvatar) const {
    // Save texture INT file
    sprintf(pszTempFilename+iDirLength,"System\\%s.int",pszTexPackageName);
    osOutputStream.open(pszTempFilename,ios::out);
-	if (osOutputStream.good()) {
+	if (!osOutputStream.fail()) {
       // Write public declaration
       osOutputStream << "[public]\n";
       // Write a line for each texture
@@ -581,7 +581,7 @@ int CAvatarFileUnreal::Save(const char* pszFilename, CAvatar* pAvatar) const {
       osOutputStream.close();
    }
    else {
-      iRetVal = 0;
+      return F_ERROR;
    }
 
    // Finish up
@@ -589,5 +589,5 @@ int CAvatarFileUnreal::Save(const char* pszFilename, CAvatar* pAvatar) const {
    delete [] pszTgtDir;
    delete [] pszTexPackageName;
    g_poVAL->StepProgress("UTSave");
-   return iRetVal;
+   return eResult;
 } // Save(const char* pszFilename, CAvatar* pAvatar)

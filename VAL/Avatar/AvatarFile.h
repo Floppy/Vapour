@@ -7,7 +7,7 @@
 // AvatarFile.h - 18/05/2000 - James Smith
 //	Import/Export filter base class header
 //
-// $Id: AvatarFile.h,v 1.2 2000/06/17 10:42:11 waz Exp $
+// $Id: AvatarFile.h,v 1.3 2000/08/02 18:05:07 waz Exp $
 //
 
 #pragma once
@@ -58,8 +58,8 @@ public:
    virtual CAvatar* LoadSections(const char* pszFilename, int bsSections) const {return NULL;}
    virtual CAvatar* LoadSections(ifstream& isInputStream, int bsSections) const {return NULL;}
    // Save functions return 1 if successful, 0 if not
-   virtual int Save(const char* pszFilename, CAvatar* pAvatar) const {return 0;}
-   virtual int Save(ofstream& osOutputStream, CAvatar* pAvatar) const {return 0;}
+   virtual FRESULT Save(const char* pszFilename, CAvatar* pAvatar) const {return F_INVALID_OPERATION;}
+   virtual FRESULT Save(ofstream& osOutputStream, CAvatar* pAvatar) const {return F_INVALID_OPERATION;}
 
    // Option functions
    virtual void SetOption(int iOption, int iData) const {return;}
