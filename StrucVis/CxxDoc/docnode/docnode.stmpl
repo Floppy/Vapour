@@ -104,7 +104,7 @@ $(ifany:docleaf,$userlevel=Default:
 )
 
 $(if:$author!="" | $date != "":
-	<BR><P>Written
+	<BR><P>Created 
 	$(ifset:author:by <B>$(author)</B>)
 	$(ifset:date:on <B>$(date)</B>)
 	</P>
