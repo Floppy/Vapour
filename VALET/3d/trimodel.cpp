@@ -7,13 +7,13 @@
 // Add confidentiality notice
 
 ////////////////
-//! file 		= "VALET/3d/trimodel.cpp"
-//! author 		= "James Smith"
-//! date 		= "10/10/2001"
-//! lib 		= libVALET3d
-//! rcsid 		= "$Id: trimodel.cpp,v 1.2 2001/10/18 12:23:05 vap-james Exp $"
-//! userlevel 	        = Normal
-//! docentry 	        = "VALET.3D.Surface Representations"
+//! file       = "VALET/3d/trimodel.cpp"
+//! author     = "James Smith"
+//! date       = "10/10/2001"
+//! lib        = libVALET3d
+//! rcsid      = "$Id: trimodel.cpp,v 1.3 2001/10/24 22:01:43 vap-james Exp $"
+//! userlevel  = Normal
+//! docentry   = "VALET.3D.Surface Representations"
 
 #include "VALET/trimodel.h"
 
@@ -21,7 +21,7 @@
 
 // Standard includes
 
-namespace NValet {
+namespace NVALET {
   
   CTriModel::CTriModel() {
   }

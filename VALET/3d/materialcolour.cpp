@@ -11,7 +11,7 @@
 //! author 		= "James Smith"
 //! date 		= "09/10/2001"
 //! lib 		= libVALET3d
-//! rcsid 		= "$Id: materialcolour.cpp,v 1.5 2001/10/18 15:12:08 vap-james Exp $"
+//! rcsid 		= "$Id: materialcolour.cpp,v 1.6 2001/10/24 22:01:42 vap-james Exp $"
 //! userlevel 	        = Normal
 //! docentry 	        = "VALET.3D.Surface Materials"
 
@@ -21,7 +21,7 @@
 
 // Standard includes
 
-namespace NValet {
+namespace NVALET {
 
   CMaterialColour::CMaterialColour() {
     m_pComponents[0] = 1.0;

@@ -14,7 +14,7 @@
 //! author 		= "James Smith"
 //! date 		= "09/10/2001"
 //! lib 		= libVALET3d
-//! rcsid 		= "$Id: material.h,v 1.6 2001/10/18 13:07:00 vap-james Exp $"
+//! rcsid 		= "$Id: material.h,v 1.7 2001/10/24 22:01:42 vap-james Exp $"
 //! userlevel 	        = Normal
 //! docentry 	        = "VALET.3D.Surface Materials"
 
@@ -22,7 +22,7 @@
 #include "VALET/valet.h"
 #include "VALET/materialcolour.h"
 
-namespace NValet {
+namespace NVALET {
 
   //: Surface Material
   // A class containing a description of a surface material for an object.

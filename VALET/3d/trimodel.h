@@ -9,13 +9,13 @@
 #define _VALET_3D_TRIMODEL_
 
 ////////////////
-//! file 		= "VALET/3d/trimodel.h"
-//! author 		= "James Smith"
-//! date 		= "10/10/2001"
-//! lib 			= libVALET3d
-//! rcsid 		= "$Id: trimodel.h,v 1.5 2001/10/23 22:42:14 vap-james Exp $"
-//! userlevel 	= Normal
-//! docentry 	= "VALET.3D.Surface Representations"
+//! file       = "VALET/3d/trimodel.h"
+//! author     = "James Smith"
+//! date       = "10/10/2001"
+//! lib        = libVALET3d
+//! rcsid      = "$Id: trimodel.h,v 1.6 2001/10/24 22:01:43 vap-james Exp $"
+//! userlevel  = Normal
+//! docentry   = "VALET.3D.Surface Representations"
 
 //#===--- Includes
 #include "VALET/valet.h"
@@ -26,7 +26,7 @@
 #include <vector>
 using namespace std;
 
-namespace NValet {
+namespace NVALET {
 
   //: A triangle-mesh-based 3d model.
   // A description of a 3d mesh, containing only triangular elements.

@@ -13,7 +13,7 @@
 //! author 		= "James Smith"
 //! date 		= "10/10/2001"
 //! lib 		= libVALET3d
-//! rcsid 		= "$Id: heightfield.h,v 1.4 2001/10/18 15:12:32 vap-james Exp $"
+//! rcsid 		= "$Id: heightfield.h,v 1.5 2001/10/24 22:01:41 vap-james Exp $"
 //! userlevel 	        = Normal
 //! docentry 	        = "VALET.3D.Surface Representations"
 
@@ -23,7 +23,7 @@
 #include "VALET/vector3d.h"
 #include "VALET/material.h"
 
-namespace NValet {
+namespace NVALET {
 
    //: A Heightfield, or elevation grid.
    // The HeightField is defined as a set of heights rows*cols, with spacings as

@@ -11,7 +11,7 @@
 //! author 		= "James Smith"
 //! date 		= "18/10/2001"
 //! lib 		= libVALET3d
-//! rcsid 		= "$Id: joint.cpp,v 1.3 2001/10/23 22:42:13 vap-james Exp $"
+//! rcsid 		= "$Id: joint.cpp,v 1.4 2001/10/24 22:01:42 vap-james Exp $"
 //! userlevel 	        = Normal
 //! docentry 	        = "VALET.3D.Animation"
 
@@ -23,7 +23,7 @@
 // Standard includes
 #include <math.h>
 
-namespace NValet {
+namespace NVALET {
 
    CJoint::CJoint(CVector3D vecCentre, JointPtr pParent) :
       m_vecCentre(vecCentre),
@@ -41,10 +41,10 @@ namespace NValet {
 
    const CAxisRotation& CJoint::Rotate(const CAxisRotation& oRot, bool bLimit, bool bDamp) {
       // Devolve to Euler rotation
-      CEulerRotation::UEulerType uType;
-      uType.m_eID = CEulerRotation::XYZs;
+      CEulerRotation::TEulerType tType;
+      tType.m_eID = CEulerRotation::XYZS;
       CHomTransform htTemp(oRot);
-      CEulerRotation rotEulerRotation(htTemp, uType);
+      CEulerRotation rotEulerRotation(htTemp, tType);
       // Damp if enabled
       if (bDamp) rotEulerRotation *= m_vecDamping;
       // Convert back to axis/angle
@@ -58,10 +58,10 @@ namespace NValet {
    const CAxisRotation& CJoint::RotateAbs(const CAxisRotation& oRot, bool bLimit, bool bDamp) {
       if (bLimit) {
          // Devolve to Euler rotation
-         CEulerRotation::UEulerType uType;
-         uType.m_eID = CEulerRotation::XYZs;
+         CEulerRotation::TEulerType tType;
+         tType.m_eID = CEulerRotation::XYZS;
          CHomTransform htTemp(oRot);
-         CEulerRotation rotEulerRotation(htTemp, uType);
+         CEulerRotation rotEulerRotation(htTemp, tType);
          // Damp if enabled
          if (bDamp) rotEulerRotation *= m_vecDamping;
          // Limit

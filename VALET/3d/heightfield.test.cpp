@@ -10,7 +10,7 @@
 //! file 		= "VALET/3D/heightfield.test.cpp"
 //! author 		= "James Smith"
 //! date 		= "18/10/2001"
-//! rcsid 		= "$Id: heightfield.test.cpp,v 1.5 2001/10/24 19:55:44 vap-james Exp $"
+//! rcsid 		= "$Id: heightfield.test.cpp,v 1.6 2001/10/24 22:01:41 vap-james Exp $"
 
 //#===--- Includes
 #include "VALET/valet.h"
@@ -21,7 +21,7 @@
 #include <math.h>
 
 //#===--- Namespaces
-using namespace NValet;
+using namespace NVALET;
 
 int main(int argc, char *argv[]) {
  

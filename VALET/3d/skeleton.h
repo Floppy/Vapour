@@ -9,13 +9,13 @@
 #define _VALET_3D_SKELETON_
 
 ////////////////
-//! file 		= "VALET/3d/skeleton.h"
-//! author 		= "James Smith"
-//! date 		= "18/10/2001"
-//! lib 		= libVALET3d
-//! rcsid 		= "$Id: skeleton.h,v 1.3 2001/10/23 22:42:14 vap-james Exp $"
-//! userlevel 	        = Normal
-//! docentry 	        = "VALET.3D.Animation"
+//! file       = "VALET/3d/skeleton.h"
+//! author     = "James Smith"
+//! date       = "18/10/2001"
+//! lib        = libVALET3d
+//! rcsid      = "$Id: skeleton.h,v 1.4 2001/10/24 22:01:43 vap-james Exp $"
+//! userlevel  = Normal
+//! docentry   = "VALET.3D.Animation"
 
 //#===--- Includes
 #include "VALET/valet.h"
@@ -24,7 +24,7 @@
 #include <vector>
 using namespace std;
 
-namespace NValet {
+namespace NVALET {
 
    //: A Skeleton
    // Basically a collection of joints.

@@ -13,7 +13,7 @@
 //! author 		= "James Smith"
 //! date 		= "15/10/2001"
 //! lib 		= libVALET3d
-//! rcsid 		= "$Id: mesh.h,v 1.11 2001/10/23 22:42:14 vap-james Exp $"
+//! rcsid 		= "$Id: mesh.h,v 1.12 2001/10/24 22:01:43 vap-james Exp $"
 //! userlevel 	        = Normal
 //! docentry 	        = "VALET.3D.Surface Representations"
 
@@ -26,7 +26,7 @@
 #include <map>
 using namespace std;
 
-namespace NValet {
+namespace NVALET {
 
    //: Polygon Mesh
    // This class describes the topology of a mesh surface. Geometry info is provided by

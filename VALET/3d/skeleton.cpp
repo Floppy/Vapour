@@ -7,13 +7,13 @@
 // Add confidentiality notice
 
 ////////////////
-//! file 		= "VALET/3d/skeleton.cpp"
-//! author 		= "James Smith"
-//! date 		= "18/10/2001"
-//! lib 		= libVALET3d
-//! rcsid 		= "$Id: skeleton.cpp,v 1.1 2001/10/18 15:45:17 vap-james Exp $"
-//! userlevel 	        = Normal
-//! docentry 	        = "VALET.3D.Animation"
+//! file       = "VALET/3d/skeleton.cpp"
+//! author     = "James Smith"
+//! date       = "18/10/2001"
+//! lib        = libVALET3d
+//! rcsid      = "$Id: skeleton.cpp,v 1.2 2001/10/24 22:01:43 vap-james Exp $"
+//! userlevel  = Normal
+//! docentry   = "VALET.3D.Animation"
 
 #include "VALET/skeleton.h"
 
@@ -21,7 +21,7 @@
 
 // Standard includes
 
-namespace NValet {
+namespace NVALET {
 
    CSkeleton::CSkeleton() {
    }

@@ -10,13 +10,13 @@
 #define _VALET_3D_SURFACE_
 
 ////////////////
-//! file 		= "VALET/3d/surface.h"
-//! author 		= "James Smith"
-//! date 		= "12/10/2001"
-//! lib 		= libVALET3d
-//! rcsid 		= "$Id: surface.h,v 1.7 2001/10/23 22:42:14 vap-james Exp $"
-//! userlevel 	        = Normal
-//! docentry 	        = "VALET.3D.Surface Representations"
+//! file       = "VALET/3d/surface.h"
+//! author     = "James Smith"
+//! date       = "12/10/2001"
+//! lib        = libVALET3d
+//! rcsid      = "$Id: surface.h,v 1.8 2001/10/24 22:01:43 vap-james Exp $"
+//! userlevel  = Normal
+//! docentry   = "VALET.3D.Surface Representations"
 
 //#===--- Includes
 #include "VALET/valet.h"
@@ -24,7 +24,7 @@
 #include <vector>
 using namespace std;
 
-namespace NValet {
+namespace NVALET {
   
   //: A templated base class for a 3D surface
   // The class T is the type of the vertices/control points for the surface.

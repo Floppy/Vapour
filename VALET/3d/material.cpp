@@ -11,7 +11,7 @@
 //! author 		= "James Smith"
 //! date 		= "09/10/2001"
 //! lib 		= libVALET3d
-//! rcsid 		= "$Id: material.cpp,v 1.4 2001/10/18 12:23:05 vap-james Exp $"
+//! rcsid 		= "$Id: material.cpp,v 1.5 2001/10/24 22:01:42 vap-james Exp $"
 //! userlevel 	        = Normal
 //! docentry 	        = "VALET.3D.Surface Materials"
 
@@ -21,7 +21,7 @@
 
 // Standard includes
 
-namespace NValet {
+namespace NVALET {
   
   // Creates a surface material
   CMaterial::CMaterial() :

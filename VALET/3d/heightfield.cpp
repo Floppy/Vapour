@@ -11,7 +11,7 @@
 //! author 		= "James Smith"
 //! date 		= "18/10/2001"
 //! lib 		= libVALET3d
-//! rcsid 		= "$Id: heightfield.cpp,v 1.3 2001/10/18 15:12:32 vap-james Exp $"
+//! rcsid 		= "$Id: heightfield.cpp,v 1.4 2001/10/24 22:01:41 vap-james Exp $"
 //! userlevel 	        = Normal
 //! docentry 	        = "VALET.3D.Surface Representations"
 
@@ -21,7 +21,7 @@
 
 // Standard includes
 
-namespace NValet {
+namespace NVALET {
    
    CHeightField::CHeightField(int iRows, int iCols) : 
       CSurface<float>(iRows*iCols),
