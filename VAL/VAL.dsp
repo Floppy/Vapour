@@ -41,7 +41,7 @@ RSC=rc.exe
 # PROP Intermediate_Dir "Release"
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_MBCS" /D "_LIB" /Yu"stdafx.h" /FD /c
-# ADD CPP /nologo /MT /W3 /GX /O2 /I "Application" /I "Avatar" /I "AvatarFiles" /I "DataTypes" /I "Image" /I "ImageFiles" /I "Wrapper" /I "Render" /I "Model" /D "WIN32" /D "NDEBUG" /D "_MBCS" /D "_LIB" /D "VAL_BUILD" /Yu"stdafx.h" /FD /c
+# ADD CPP /nologo /MT /W3 /GX /O2 /I "Application" /I "Avatar" /I "AvatarFiles" /I "DataTypes" /I "Image" /I "ImageFiles" /I "Wrapper" /I "Render" /I "Model" /I "Scene" /D "WIN32" /D "NDEBUG" /D "_MBCS" /D "_LIB" /D "VAL_BUILD" /Yu"stdafx.h" /FD /c
 # ADD BASE RSC /l 0x809 /d "NDEBUG"
 # ADD RSC /l 0x809 /d "NDEBUG"
 BSC32=bscmake.exe
@@ -64,7 +64,7 @@ LIB32=link.exe -lib
 # PROP Intermediate_Dir "Debug"
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_MBCS" /D "_LIB" /Yu"stdafx.h" /FD /GZ /c
-# ADD CPP /nologo /MDd /W3 /Gm /GX /ZI /Od /I "Application" /I "Avatar" /I "AvatarFiles" /I "DataTypes" /I "Image" /I "ImageFiles" /I "Wrapper" /I "Render" /I "Model" /D "WIN32" /D "_DEBUG" /D "_MBCS" /D "_LIB" /D "VAL_BUILD" /Yu"stdafx.h" /FD /GZ /c
+# ADD CPP /nologo /MDd /W3 /Gm /GX /ZI /Od /I "Application" /I "Avatar" /I "AvatarFiles" /I "DataTypes" /I "Image" /I "ImageFiles" /I "Wrapper" /I "Render" /I "Model" /I "Scene" /D "WIN32" /D "_DEBUG" /D "_MBCS" /D "_LIB" /D "VAL_BUILD" /Yu"stdafx.h" /FD /GZ /c
 # ADD BASE RSC /l 0x809 /d "_DEBUG"
 # ADD RSC /l 0x809 /d "_DEBUG" /d "_AFXDLL"
 BSC32=bscmake.exe
@@ -105,7 +105,7 @@ SOURCE=.\AvatarFiles\AvatarFileDXF.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\AvatarFiles\avatarfilegeneric.cpp
+SOURCE=.\AvatarFiles\AvatarFileGeneric.cpp
 # End Source File
 # Begin Source File
 
@@ -142,6 +142,10 @@ SOURCE=.\DataTypes\AxisRotation.cpp
 # Begin Source File
 
 SOURCE=.\Avatar\BodyPart.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\Render\Colour.cpp
 # End Source File
 # Begin Source File
 
@@ -241,19 +245,19 @@ SOURCE=.\DataTypes\Scalar.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\Render\Scene.cpp
+SOURCE=.\Scene\Scene.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\Render\SceneAvatarPose.cpp
+SOURCE=.\Scene\SceneAvatarPose.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\Render\SceneAvatarSaver.cpp
+SOURCE=.\Scene\SceneHLThumbnail.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\Render\SceneHLThumbnail.cpp
+SOURCE=.\Scene\SceneTestSaver.cpp
 # End Source File
 # Begin Source File
 
@@ -398,6 +402,10 @@ SOURCE=.\Image\boxfilter.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\Render\Colour.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\Image\ColourOctree.h
 # End Source File
 # Begin Source File
@@ -530,19 +538,19 @@ SOURCE=.\DataTypes\Scalar.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\Render\Scene.h
+SOURCE=.\Scene\Scene.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\Render\SceneAvatarPose.h
+SOURCE=.\Scene\SceneAvatarPose.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\Render\SceneAvatarSaver.h
+SOURCE=.\Scene\SceneHLThumbnail.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\Render\SceneHLThumbnail.h
+SOURCE=.\Scene\SceneTestSaver.h
 # End Source File
 # Begin Source File
 
