@@ -4,12 +4,12 @@
 // File converter for structure visualisation
 // Copyright 2002 Vapour Technology Ltd.
 //
-//! docentry  = "File Converter.VSV File IO"
+//! docentry  = "VTStrucVis.File Converter.VSV File IO"
 //! userlevel =  Normal
 //! file      = "Convert/OChunk.cpp"
 //! author    = "James Smith"
 //! date      = "19/3/2002"
-//! rcsid     = "$Id: OChunk.cpp,v 1.2 2002/04/04 10:20:25 vap-warren Exp $"
+//! rcsid     = "$Id: OChunk.cpp,v 1.3 2002/04/04 11:18:18 vap-warren Exp $"
 
 #include "OChunk.h"
 
