@@ -14,7 +14,7 @@
 //! author 		= "James Smith"
 //! date 		= "01/10/2001"
 //! lib 		= libVALETmath
-//! rcsid 		= "$Id: scalar.h,v 1.4 2001/10/18 13:07:01 vap-james Exp $"
+//! rcsid 		= "$Id: scalar.h,v 1.5 2001/10/24 19:57:53 vap-james Exp $"
 //! userlevel 	        = Normal
 //! docentry 	        = "VALET.Math.Geometry"
 
@@ -42,7 +42,7 @@ namespace NValet {
     //: Default constructor.
     // Creates a scalar with a value of 0.
 
-    CScalar(const CScalar & oScl);
+    CScalar(const CScalar& oScl);
     //: Copy constructor.
     //!param: oScl = scalar to be copied.
 
@@ -63,7 +63,7 @@ namespace NValet {
     //:----------------
     //: Input functions
 
-    bool ParseString(const char* strInput, int* used = NULL);
+    bool ParseString(const char* pcInput, int* piUsed = NULL);
     //: Load values from a string
     //!todo: Document this properly - don't have time now, I can't remember
     //!todo: what the return and parameters mean. Oops!
@@ -71,7 +71,7 @@ namespace NValet {
     //:-----------------
     //: Output functions
 
-    char* ToString(int precision) const;
+    char* ToString(int iPrecision) const;
     //: Print to a string
     // Writes the components in the order X Y Z to a string.
     //!param: iPrecision = maximum number of digits to print after the decimal point.
@@ -80,7 +80,7 @@ namespace NValet {
     //!todo: Change this so that it returns a C++ string or something, so that
     //!todo: we don't have to worry about freeing up memory that's been allocated.
     
-    double ToDouble() const;
+    double ToDouble(void) const;
     //: Convert to double.
     //!param: return = the value of the scalar.
     
