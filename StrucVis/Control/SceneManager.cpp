@@ -7,7 +7,7 @@
 // SceneManager.cpp
 // 19/03/2002 - James Smith
 //
-// $Id: SceneManager.cpp,v 1.20 2002/03/24 13:52:01 vap-warren Exp $
+// $Id: SceneManager.cpp,v 1.21 2002/03/24 23:01:08 vap-james Exp $
 
 #include "stdafx.h"
 #include "SceneManager.h"
@@ -51,10 +51,16 @@ bool CSceneManager::Setup(const unsigned char* pcData, unsigned int iLength) {
 }
 
 void CSceneManager::Empty(void) {
+   // Empty VRML scene
+   m_poCortona->Clear();
+   // Delete elements
    for (elemIter pElem = m_oElements.begin(); pElem != m_oElements.end(); pElem++) {
       delete *pElem;
    }
+   // Clear element list
    m_oElements.clear();
+   // Redisplay viewpoint geometry, in case we're not closing down completely
+   m_oViewpoint.Redisplay();
 }
 
 void CSceneManager::Load(void) {
