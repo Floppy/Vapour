@@ -6,7 +6,7 @@
 // SceneManager.h
 // 19/03/2002 - James Smith
 //
-// $Id: SceneManager.h,v 1.6 2002/03/22 17:04:37 vap-james Exp $
+// $Id: SceneManager.h,v 1.7 2002/03/23 11:00:13 vap-james Exp $
 
 #ifndef __SCENEMANAGER__
 #define __SCENEMANAGER__
@@ -83,6 +83,9 @@ private:
       float m_pfColour[3];
    };
    // Group information type
+   
+   void Empty(void);
+   // Deletes all information from the scene
 
    void Load(void);
    // Load initial data from data manager
@@ -113,6 +116,9 @@ protected:
 
    TColourScheme m_tColourScheme;
    // The current colouring scheme
+
+   bool m_bLoading;
+   // Is a load in progress?
 
 };
 

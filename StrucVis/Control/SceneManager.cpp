@@ -6,7 +6,7 @@
 // SceneManager.cpp
 // 19/03/2002 - James Smith
 //
-// $Id: SceneManager.cpp,v 1.17 2002/03/22 19:07:07 vap-james Exp $
+// $Id: SceneManager.cpp,v 1.18 2002/03/23 11:00:14 vap-james Exp $
 
 #include "stdafx.h"
 #include "SceneManager.h"
@@ -28,22 +28,33 @@ typedef std::vector<CSceneManager::CGroup>::iterator grpIter;
 
 CSceneManager::CSceneManager(CCortonaUtil *poCortona) :
    m_poCortona(poCortona),
-   m_oViewpoint(poCortona)
+   m_oViewpoint(poCortona),
+   m_bLoading(false)
 {
 }
    
 CSceneManager::~CSceneManager() {
-   for (elemIter pElem = m_oElements.begin(); pElem != m_oElements.end(); pElem++) {
-      delete *pElem;
-   }
+   Empty();
 }
 
 bool CSceneManager::Setup(const unsigned char* pcData, unsigned int iLength) {
+   if (!m_bLoading) {
+      Empty();
+      m_bLoading = true;
+   }
    if (m_oDataMgr.Setup(pcData,iLength)) {
       Load();
+      m_bLoading = false;
       return true;
    }
    else return false;
+}
+
+void CSceneManager::Empty(void) {
+   for (elemIter pElem = m_oElements.begin(); pElem != m_oElements.end(); pElem++) {
+      delete *pElem;
+   }
+   m_oElements.clear();
 }
 
 void CSceneManager::Load(void) {
