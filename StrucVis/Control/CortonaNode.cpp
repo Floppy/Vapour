@@ -9,7 +9,7 @@
 //! file      = "Control/CortonaNode.cpp"
 //! author    = "Warren Moore"
 //! date      = "10/3/2002"
-//! rcsid     = "$Id: CortonaNode.cpp,v 1.8 2002/04/22 11:35:59 vap-warren Exp $"
+//! rcsid     = "$Id: CortonaNode.cpp,v 1.9 2002/04/23 11:29:53 vap-james Exp $"
 
 #include "stdafx.h"
 
@@ -87,7 +87,7 @@ bool CCortonaNode::AssignEventIn(const char *pcField, const CCortonaField &oValu
    if (SUCCEEDED(hResult)) {
       FCategory eCategory;
       pFieldObject->get_Category(&eCategory);
-      if (eCategory == cEventIn) {
+      if (eCategory == cEventIn || eCategory == cExposedField) {
          // If it is an EventIn, check the field types are compatible
          FTYPE eType;
          pFieldObject->get_Type(&eType);
