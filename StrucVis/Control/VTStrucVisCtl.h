@@ -7,7 +7,7 @@
 // VTStructVisCtl.cpp
 // 05/03/2002 - Warren Moore
 //
-// $Id: VTStrucVisCtl.h,v 1.10 2002/03/24 18:51:31 vap-warren Exp $
+// $Id: VTStrucVisCtl.h,v 1.11 2002/03/24 21:55:52 vap-warren Exp $
 
 #ifndef __VTSTRUCTVIS_CONTROL__
 #define __VTSTRUCTVIS_CONTROL__
@@ -117,7 +117,7 @@ protected:
       UI_NOTSET,                    // No UI data path is set
       UI_NOTLOADED,                 // The UI data has not finished loading
       UI_DATAERROR,                 // Error loading the UI data
-      UI_INCORRECTFORMAT,           // UI data is not a bitmap
+      UI_NOTBITMAP,                 // UI data is not a bitmap
       UI_WRONGDEPTH,                // The bitmap is of an incompatible colour depth
       UI_WRONGTYPE,                 // The bitmap is of an incompatible compression type
       UI_WRONGFORMAT,               // Bitmap must be packed and not have a colour table

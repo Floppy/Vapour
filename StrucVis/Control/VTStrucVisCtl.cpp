@@ -7,7 +7,7 @@
 // VTStructVisCtl.cpp
 // 05/03/2002 - Warren Moore
 //
-// $Id: VTStrucVisCtl.cpp,v 1.11 2002/03/24 18:51:31 vap-warren Exp $
+// $Id: VTStrucVisCtl.cpp,v 1.12 2002/03/24 21:55:51 vap-warren Exp $
 
 #include "stdafx.h"
 #include "VTStrucVis.h"
@@ -491,6 +491,27 @@ void CVTStrucVisCtl::DrawPlaceholder(CDC *pDC, const CRect &rcBounds, bool bRun)
          else
             // Has an error condition been reached?
             switch (m_eUIResult) {
+               case UI_NOTSET:
+                  oStr += "UIData param not set\n";
+                  break;
+               case UI_NOTLOADED:
+                  oStr += "UI data not loaded\n";
+                  break;
+               case UI_DATAERROR:
+                  oStr += "Error loading UI data\n";
+                  break;
+               case UI_NOTBITMAP:
+                  oStr += "UI data not a Windows bitmap\n";
+                  break;
+               case UI_WRONGDEPTH:
+                  oStr += "UI data not 24 bits per pixel\n";
+                  break;
+               case UI_WRONGTYPE:
+                  oStr += "Wrong UI data image type\n";
+                  break;
+               case UI_WRONGFORMAT:
+                  oStr += "Wrong UI data image format\n";
+                  break;
                // Result OK or unknown yet
                case UI_UNKNOWN:
                case UI_OK:
@@ -534,9 +555,20 @@ void CVTStrucVisCtl::DrawPlaceholder(CDC *pDC, const CRect &rcBounds, bool bRun)
 }
 
 void CVTStrucVisCtl::DrawUI(CDC *pDC, const CRect &rcBounds) {
-   // Check the UI is ok
-   // Get the UI state
-   // Render the UI
+   // Set the background to the background colour
+   CBrush oBrush;
+   oBrush.CreateSolidBrush(TranslateColor(GetBackColor()));
+   pDC->FillRect(rcBounds, &oBrush);
+
+   //#===------ Render the UI image
+   // Get the bitmap params
+	BITMAP sBitmap;
+	m_oUIBitmap.GetBitmap(&sBitmap);
+   // Load and display
+	CDC oDCMem;
+	oDCMem.CreateCompatibleDC(pDC);
+	oDCMem.SelectObject(&m_oUIBitmap);
+	pDC->BitBlt(0, 0, sBitmap.bmWidth, sBitmap.bmHeight, &oDCMem, 0, 0, SRCCOPY);
 }
 
 bool CVTStrucVisCtl::LoadBitmap() {
@@ -551,6 +583,8 @@ bool CVTStrucVisCtl::LoadBitmap() {
    }
    // Try loading the object
    m_eUIResult = UI_UNKNOWN;
+   // Seek to the beginning of the file
+   m_oUIData.Seek(0L, CFile::begin);
    // Check the bitmap file header
 	BITMAPFILEHEADER bmfh;
    unsigned int uiRead = m_oUIData.Read((void*)&bmfh, sizeof(bmfh));
@@ -561,52 +595,65 @@ bool CVTStrucVisCtl::LoadBitmap() {
    }
    // Check bitmap type
    if (bmfh.bfType != 0x4d42) { // 'BM'
-		m_eUIResult = UI_INCORRECTFORMAT;
+		m_eUIResult = UI_NOTBITMAP;
       return false;
    }
    if ((bmfh.bfReserved1 != 0) || (bmfh.bfReserved2 != 0)) {
-		m_eUIResult = UI_INCORRECTFORMAT;
+		m_eUIResult = UI_NOTBITMAP;
       return false;
    }
-
-   // Check the bitmap info header
-	BITMAPINFOHEADER bmih;
-	uiRead = m_oUIData.Read((void*)&bmih, sizeof(bmih));
-   // File error checking
-   if (uiRead != sizeof(bmih)) {
-		m_eUIResult = UI_DATAERROR;
+   // Read in the rest of the file
+   unsigned int uiLength = m_oUIData.GetLength() - sizeof(bmfh);
+   unsigned char *pucData = (unsigned char*) new unsigned char[uiLength];
+   if (!pucData) {
+      m_eUIResult = UI_DATAERROR;
       return false;
    }
+   uiRead = m_oUIData.Read((void*)pucData, uiLength);
+   // Get the bitmap structures
+   BITMAPINFOHEADER &sBMIHeader = *(LPBITMAPINFOHEADER)pucData;
+	BITMAPINFO &sBMInfo = *(LPBITMAPINFO)pucData;
    // Get resolution & orientation
-	unsigned int uiWidth = bmih.biWidth;
-	unsigned int uiHeight = abs(bmih.biHeight);
-	bool bTopDown = (bmih.biHeight < 0);
-
+	unsigned int uiWidth = sBMIHeader.biWidth;
+	unsigned int uiHeight = abs(sBMIHeader.biHeight);
+	bool bTopDown = (sBMIHeader.biHeight < 0);
    // Check the colour depth = 1 bit planes, 24 bpp
-   if ((bmih.biPlanes != 1) || (bmih.biBitCount != 24)) {
+   unsigned int uiPlanes = sBMIHeader.biPlanes;
+   unsigned int uiBPP = sBMIHeader.biBitCount;
+   if ((uiPlanes != 1) || (uiBPP != 24)) {
       m_eUIResult = UI_WRONGDEPTH;
       return false;
    }
    // No compression
-   if (bmih.biCompression != BI_RGB) {
+   if (sBMIHeader.biCompression != BI_RGB) {
       m_eUIResult = UI_WRONGTYPE;
       return false;
    }
    // No colour table, must be a packed bitmap
-   if ((bmih.biClrUsed != 0) || (bmih.biClrImportant != 0)) {
+   if ((sBMIHeader.biClrUsed != 0) || (sBMIHeader.biClrImportant != 0)) {
       m_eUIResult = UI_WRONGFORMAT;
       return false;
    }
-
-   // Set the read pointer to the beginning of the data
-	uiRead = m_oUIData.Seek(bmfh.bfOffBits, CFile::begin);
-   // File error checking
-   if (uiRead != bmfh.bfOffBits) {
-      m_eUIResult = UI_DATAERROR;
-      return false;
+   // Set the data pointer
+   LPVOID lpDIBBits = (LPVOID)sBMInfo.bmiColors;
+   // Create the dib
+   CClientDC oDC(NULL);
+	HBITMAP hBmp = CreateDIBitmap(oDC.GetSafeHdc(),    // Device context
+                                 &sBMIHeader,         // Pointer to bitmap size and format data 
+                                 CBM_INIT,            // Initialization flag 
+                                 lpDIBBits,           // Pointer to initialization data 
+                                 &sBMInfo,            // Pointer to bitmap colour format data 
+                                 DIB_RGB_COLORS);     // Colour data usage
+   // Check we have a bitmap
+   if (hBmp) {
+      m_eUIResult = UI_OK;
+      // Attach the bitmap
+   	m_oUIBitmap.Attach(hBmp);
    }
-   // All OK
-   m_eUIResult = UI_OK;
+   else 
+      m_eUIResult = UI_DATAERROR;
+   // Delete the loaded file
+   delete [] pucData;
 
 	return true;
 }
@@ -651,8 +698,9 @@ void CVTStrucVisCtl::SimLoaded() {
 }
 
 void CVTStrucVisCtl::GoInteractive() {
-   // Set the control interactive
-   InternalSetReadyState(READYSTATE_INTERACTIVE);
+   // Set the control interactive if we have all the properties available
+   if (GetReadyState() == READYSTATE_LOADED)
+      InternalSetReadyState(READYSTATE_INTERACTIVE);
    // Refresh the control
    InvalidateControl();
 }
@@ -666,7 +714,9 @@ void CVTStrucVisCtl::OnDraw(CDC* pdc, const CRect& rcBounds, const CRect& rcInva
    bool bRun = AmbientUserMode() && !AmbientUIDead();
    // If we're in run mode, the UI is loaded and the ready state is marked interactive
    // render the full-on interface
-   if (bRun && (m_eUIResult == UI_OK) && (GetReadyState() == READYSTATE_INTERACTIVE)) {
+   if (bRun && 
+      (m_eUIResult == UI_OK) && 
+      ((GetReadyState() == READYSTATE_INTERACTIVE) || (GetReadyState() == READYSTATE_COMPLETE))) {
       // Draw the full-on interface
       DrawUI(pdc, rcBounds);
    }
@@ -691,24 +741,20 @@ void CVTStrucVisCtl::DoPropExchange(CPropExchange* pPX) {
 
    // Reset the async data flags if loading
    if (pPX->IsLoading()) {
+      // Indicate that the synchronous data has been loaded
+      InternalSetReadyState(READYSTATE_LOADED);
+      // Set the asynchronous data flags
       m_uiAsyncFlags = AD_EMPTY;
       m_eUIResult = UI_UNKNOWN;
       m_eSimResult = SD_UNKNOWN;
+      // If we are operating in run mode, init Cortona
+      if (AmbientUserMode() && !AmbientUIDead())
+         InitCortona();
    }
 
    // Mark the other persistant properties with PX_ calls
    PX_DataPath(pPX, _T("UIData"), m_oUIData);
    PX_DataPath(pPX, _T("SimData"), m_oSimData);
-
-   // If it's loading the property data, set the ready state to loaded
-   // to indicate that all the synchronous data is in
-   // and initialise the control
-   if(pPX->IsLoading()) {
-      InternalSetReadyState(READYSTATE_LOADED);
-      // Check if we are in run or dev operating mode
-      if (AmbientUserMode() && !AmbientUIDead())
-         InitCortona();
-   }
 }
 
 // Reset control to default state
