@@ -7,7 +7,7 @@
 // AvatarFileUnreal.cpp - 16/2/2000 - James Smith
 //	Unreal export filter implementation
 //
-// $Id: AvatarFileUnreal.cpp,v 1.14 2000/10/06 13:16:59 waz Exp $
+// $Id: AvatarFileUnreal.cpp,v 1.15 2000/10/23 13:39:41 waz Exp $
 //
 
 #include "stdafx.h"
@@ -493,8 +493,10 @@ FRESULT CAvatarFileUnreal::SaveTextureUTX(const char* pszFilename, const CAvatar
       g_poVAL->SetProgressText("UTSave", "Converting head texture");
       // Copy texture out
       CImage imgFace(*(pAvatar->Texture(uFaceTexIndex)));
-      // Scale
+      // Scale...
       imgFace.Scale(UNREAL_TEXTURE_WIDTH,UNREAL_TEXTURE_HEIGHT);
+      // flip...
+      imgFace.Flip();
       // and convert to palette!
       CImage* imgNewFace;
       NEWBEGIN
@@ -556,6 +558,8 @@ FRESULT CAvatarFileUnreal::SaveTextureUTX(const char* pszFilename, const CAvatar
             else if (iHeight > iWidth/4) iHeight = iWidth/4;
             // Scale image to new size
             pSmallerImage->Scale(iWidth,iHeight);
+            // Flip
+            pSmallerImage->Flip();
             // Store image data
             m_puFirstPixel[t] = m_uTotalHeight;
             m_puImageHeight[t] = iHeight;
@@ -1720,7 +1724,7 @@ FRESULT CAvatarFileUnreal::SaveMeshU(const char* pszFilename, CAvatar* pAvatar) 
             for (int tc=3; tc--!=0; ) {
                // Get tex coords
                double dU = pFace->m_sVertices[tc].m_sTexCoord.dU;
-               double dV = pFace->m_sVertices[tc].m_sTexCoord.dV;
+               double dV = 1-pFace->m_sVertices[tc].m_sTexCoord.dV;
                // Clamp to 0..1
                if (dU > 1) dU = 1;
                else if (dU < 0) dU = 0;
@@ -2801,7 +2805,7 @@ FRESULT CAvatarFileUnreal::SaveMeshU(const char* pszFilename, CAvatar* pAvatar) 
             for (int tc=3; tc--!=0; ) {
                // Get tex coords
                double dU = pFaces[f].m_sVertices[tc].m_sTexCoord.dU;
-               double dV = pFaces[f].m_sVertices[tc].m_sTexCoord.dV;
+               double dV = 1-pFaces[f].m_sVertices[tc].m_sTexCoord.dV;
                // Clamp to 0..1
                if (dU > 1) dU = 1;
                else if (dU < 0) dU = 0;
@@ -3325,7 +3329,7 @@ FRESULT CAvatarFileUnreal::SaveMeshD3D(const char* pszFilename, CAvatar* pAvatar
          for (int tc=3; tc--!=0; ) {
             // Get tex coords
             double dU = pFaces[i].m_sVertices[tc].m_sTexCoord.dU;
-            double dV = pFaces[i].m_sVertices[tc].m_sTexCoord.dV;
+            double dV = 1-pFaces[i].m_sVertices[tc].m_sTexCoord.dV;
             // Clamp to 0..1
             if (dU > 1) dU = 1;
             else if (dU < 0) dU = 0;
@@ -3452,7 +3456,7 @@ FRESULT CAvatarFileUnreal::SaveSelectionMeshD3D(const char* pszFilename, CAvatar
          for (int tc=3; tc--!=0; ) {
             // Get tex coords
             double dU = pFaces[i].m_sVertices[tc].m_sTexCoord.dU;
-            double dV = pFaces[i].m_sVertices[tc].m_sTexCoord.dV;
+            double dV = 1-pFaces[i].m_sVertices[tc].m_sTexCoord.dV;
             // Clamp to 0..1
             if (dU > 1) dU = 1;
             else if (dU < 0) dU = 0;
