@@ -7,7 +7,7 @@
 // CompressDeflate.cpp - 12/06/2000 - Warren Moore
 //	Compress implementation for Deflate algorithm using zlib
 //
-// $Id: CompressDeflate.cpp,v 1.1 2000/06/16 21:57:44 waz Exp $
+// $Id: CompressDeflate.cpp,v 1.2 2000/07/10 01:27:59 waz Exp $
 //
 
 #include "stdafx.h"
@@ -140,11 +140,11 @@ int CCompressDeflate::Input(unsigned char *pData, int iSize) {
 			bDone = (m_sZStream.avail_in == 0);
 		// If data output, save the memory to the output queue
 			if (m_sZStream.avail_out < m_iBlockSize) {
+				// There may be more data to output, so go again if necessary
+				bDone &= (m_sZStream.avail_out > 0);
 				StoreData(m_pBlock, m_iBlockSize - m_sZStream.avail_out);
 				m_sZStream.next_out = m_pBlock;
 				m_sZStream.avail_out = m_iBlockSize;
-			// There may be more data to output, so go again
-				bDone &= false;
 			}
 		// If no data to output, stop
 			else {
@@ -175,6 +175,8 @@ int CCompressDeflate::End() {
 	// If data output, save the memory to the output queue
 		if (((iZResult == Z_OK) || (iZResult == Z_STREAM_END)) && (m_sZStream.avail_out < m_iBlockSize)) {
 			StoreData(m_pBlock, m_iBlockSize - m_sZStream.avail_out);
+			m_sZStream.next_out = m_pBlock;
+			m_sZStream.avail_out = m_iBlockSize;
 		}
 		bDone = (iZResult == Z_STREAM_END) || (iZResult != Z_OK);
 	} while (!bDone);
