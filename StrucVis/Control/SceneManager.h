@@ -6,7 +6,7 @@
 // SceneManager.h
 // 19/03/2002 - James Smith
 //
-// $Id: SceneManager.h,v 1.5 2002/03/22 15:59:10 vap-james Exp $
+// $Id: SceneManager.h,v 1.6 2002/03/22 17:04:37 vap-james Exp $
 
 #ifndef __SCENEMANAGER__
 #define __SCENEMANAGER__
@@ -32,12 +32,18 @@ public:
 
 //#===--- Member Functions
 
-   void Load(void);
-   // Load a dataset
-   // The old dataset is destroyed
+   bool Setup(const unsigned char* pcData, unsigned int iLength);
+   // Load initial parts of a dataset
+   // Any old dataset is destroyed
+   // When setup is complete (i.e. enough data has been sent in, the data is loaded 
+   // and Setup() will return true.
    
    unsigned int NumFrames(void) {return m_oDataMgr.NumFrames();}
    // The number of frames
+
+   void FrameInfo(unsigned int iFrame, unsigned int& iOffset, unsigned int& iLength);
+   // Gets frame location information
+   // Frame offset and length for iFrame are returned in the parameters.
 
    unsigned int NumGroups(void);
    // How many groups are there?
@@ -64,8 +70,9 @@ public:
    void SetColourScheme(TColourScheme oColour);
    // Set the colouring scheme
 
-   void ShowFrame(unsigned int iFrame);
-   // Show frame
+   bool ShowFrame(const unsigned char* pcData, unsigned int iLength);
+   // Show the frame represented by the passed data
+   // Returns true if display is successful
 
 private:
 
@@ -76,6 +83,9 @@ private:
       float m_pfColour[3];
    };
    // Group information type
+
+   void Load(void);
+   // Load initial data from data manager
 
    void Update(void);
    // Updates the display of all elements

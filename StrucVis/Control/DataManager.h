@@ -6,7 +6,7 @@
 // DataManager.h
 // 19/03/2002 - James Smith
 //
-// $Id: DataManager.h,v 1.3 2002/03/22 15:59:42 vap-james Exp $
+// $Id: DataManager.h,v 1.4 2002/03/22 17:04:37 vap-james Exp $
 
 #ifndef __DATAMANAGER__
 #define __DATAMANAGER__
@@ -34,8 +34,12 @@ public:
    // Returns true if setup is complete.
    // NO other data will be available until Setup returns true.
 
-   bool LoadFrame(unsigned int iFrame);
-   // Loads data for the specified frame
+   void FrameInfo(unsigned int iFrame, unsigned int& iOffset, unsigned int& iLength);
+   // Gets frame location information
+   // Frame offset and length for iFrame are returned in the parameters.
+
+   bool LoadFrame(const unsigned char* pcData, unsigned int iLength);
+   // Loads frame data from the passed memory chunk
    // Returns true if load was successful
 
 //#===--- Data Access
@@ -113,7 +117,7 @@ protected:
    // The number of frames in the sequence
 
    unsigned int m_iCurrentFrame;
-   // The currently loaded frame
+   // Current frame (temporary hack for testing)
 
 };
 

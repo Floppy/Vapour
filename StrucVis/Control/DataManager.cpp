@@ -6,7 +6,7 @@
 // DataManager.cpp
 // 19/03/2002 - James Smith
 //
-// $Id: DataManager.cpp,v 1.2 2002/03/22 15:59:42 vap-james Exp $
+// $Id: DataManager.cpp,v 1.3 2002/03/22 17:04:37 vap-james Exp $
 
 #include "stdafx.h"
 #include "DataManager.h"
@@ -264,13 +264,30 @@ CDataManager::~CDataManager() {
    if (m_pcBuffer) delete [] m_pcBuffer;
 }
 
-bool CDataManager::LoadFrame(unsigned int iFrame) {
-   m_iCurrentFrame = iFrame;
+bool CDataManager::Setup(const unsigned char* pcData, unsigned int iLength) {
+   // Read in setup data
+   // Initialise frame counters.
+   m_iNumFrames = g_iNumFrames;
    return true;
 }
 
+void CDataManager::FrameInfo(unsigned int iFrame, unsigned int& iOffset, unsigned int& iLength) {
+   iOffset = 0;
+   iLength = 0;
+   m_iCurrentFrame = iFrame;
+}
+
+bool CDataManager::LoadFrame(const unsigned char* pcData, unsigned int iLength) {
+   if (true) {
+      // Load frame data from passed memory chunk
+      // Done
+      return true;
+   }
+   else return false;
+}
+
 unsigned int CDataManager::NumFrames(void) {
-   return g_iNumFrames;
+   return m_iNumFrames;
 }
 
 unsigned int CDataManager::NumNodes(void) {

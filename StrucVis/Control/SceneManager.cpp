@@ -6,7 +6,7 @@
 // SceneManager.cpp
 // 19/03/2002 - James Smith
 //
-// $Id: SceneManager.cpp,v 1.15 2002/03/22 16:07:08 vap-james Exp $
+// $Id: SceneManager.cpp,v 1.16 2002/03/22 17:04:37 vap-james Exp $
 
 #include "stdafx.h"
 #include "SceneManager.h"
@@ -36,6 +36,14 @@ CSceneManager::~CSceneManager() {
    for (elemIter pElem = m_oElements.begin(); pElem != m_oElements.end(); pElem++) {
       delete *pElem;
    }
+}
+
+bool CSceneManager::Setup(const unsigned char* pcData, unsigned int iLength) {
+   if (m_oDataMgr.Setup(pcData,iLength)) {
+      Load();
+      return true;
+   }
+   else return false;
 }
 
 void CSceneManager::Load(void) {
@@ -104,10 +112,13 @@ void CSceneManager::Load(void) {
       // Add to list      
       m_oElements.push_back(pSlab);
    }
+   
+   Update();
 
-   // Done
-   ShowFrame(0);
+}
 
+void CSceneManager::FrameInfo(unsigned int iFrame, unsigned int& iOffset, unsigned int& iLength) {
+   m_oDataMgr.FrameInfo(iFrame,iOffset,iLength);
 }
 
 unsigned int CSceneManager::NumGroups(void) {
@@ -156,9 +167,10 @@ void CSceneManager::SetColourScheme(TColourScheme oColour) {
    Update();
 }
 
-void CSceneManager::ShowFrame(unsigned int iFrame) {
-   // Load frame into data manager
-   m_oDataMgr.LoadFrame(iFrame);
+bool CSceneManager::ShowFrame(const unsigned char* pcData, unsigned int iLength) {
+   if (!m_oDataMgr.LoadFrame(pcData,iLength)) {
+      return false;
+   }
    // Load temperatures into groups
    for (int g=0; g<m_oGroups.size(); g++) {
       m_oGroups[g].m_fTemperature = m_oDataMgr.GroupTemp(g);
@@ -188,6 +200,8 @@ void CSceneManager::ShowFrame(unsigned int iFrame) {
    }
    // Render
    Update();
+   // Done
+   return true;
 }
 
 void CSceneManager::Update(void) {   
