@@ -11,9 +11,9 @@
 //! author 		= "James Smith"
 //! date 		= "09/10/2001"
 //! lib 		= libVALET3d
-//! rcsid 		= "$Id: material.cpp,v 1.1 2001/10/09 23:19:54 vap-james Exp $"
+//! rcsid 		= "$Id: material.cpp,v 1.2 2001/10/09 23:22:33 vap-james Exp $"
 //! userlevel 	        = Normal
-//! docentry 	        = "VALET.3d"
+//! docentry 	        = "VALET.3d.Surface Materials"
 
 #include "material.h"
 
