@@ -14,7 +14,7 @@
 //! author     = "James Smith"
 //! date       = "12/10/2001"
 //! lib        = libVALET3d
-//! rcsid      = "$Id: surface.h,v 1.8 2001/10/24 22:01:43 vap-james Exp $"
+//! rcsid      = "$Id: surface.h,v 1.9 2001/10/24 23:18:57 vap-james Exp $"
 //! userlevel  = Normal
 //! docentry   = "VALET.3D.Surface Representations"
 
@@ -26,57 +26,57 @@ using namespace std;
 
 namespace NVALET {
   
-  //: A templated base class for a 3D surface
-  // The class T is the type of the vertices/control points for the surface.
+   //: A templated base class for a 3D surface
+   // The class T is the type of the vertices/control points for the surface.
 
-  template<class T> class CSurface {
+   template<class T> class CSurface {
     
-  protected:
+   protected:
 	
-    vector<T> m_lVertices;
-    //: The vertices themselves
+      vector<T> m_oVertices;
+      //: The vertices themselves
     
-  public:
+   public:
     
-    //:-------------------------
-    //: Construction/Destruction
+      //:-------------------------
+      //: Construction/Destruction
 
-    CSurface();
-    //: Creates an empty surface
-    // i.e. 0 vertices.
+      CSurface();
+      //: Creates an empty surface
+      // i.e. 0 vertices.
    
-    CSurface(int iNumVertices);
-    //: Creates a surface with the specified number of vertices.
-    // All the vertices will be their default value.
-    //!param: iNumVertices = the number of vertices to create.
+      CSurface(int iNumVertices);
+      //: Creates a surface with the specified number of vertices.
+      // All the vertices will be their default value.
+      //!param: iNumVertices = the number of vertices to create.
     
-    virtual ~CSurface();
+      virtual ~CSurface();
     
-    //:-------------------------
-    //: Other functions
+      //:-------------------------
+      //: Other functions
 
-    virtual bool AddVertices(int iNumVertices);
-    //: Adds the specified number of vertices
-    // Returns true if addition is successful. The new vertices will be set to their default value.
-    //!param: iNumVertices = the number of vertices to add.
-    //!param: return = true if succesful.
+      virtual bool AddVertices(int iNumVertices);
+      //: Adds the specified number of vertices
+      // Returns true if addition is successful. The new vertices will be set to their default value.
+      //!param: iNumVertices = the number of vertices to add.
+      //!param: return = true if succesful.
     
-    const T& Vertex(int iVertex) const {return m_lVertices[iVertex];}
-    //: Access to a particular vertex
-    //!param: iVertex = the index of the vertex to access.
-    //!param: return = a reference to the requested vertex.
+      const T& Vertex(int iVertex) const;
+      //: Access to a particular vertex
+      //!param: iVertex = the index of the vertex to access.
+      //!param: return = a reference to the requested vertex.
 
-    T& Vertex(int iVertex) {return m_lVertices[iVertex];}
-    //: Non-const access to a particular vertex
-    // This can be used to set vertex information.
-    //!param: iVertex = the index of the vertex to access.
-    //!param: return = a reference to the requested vertex.
+      T& Vertex(int iVertex);
+      //: Non-const access to a particular vertex
+      // This can be used to set vertex information.
+      //!param: iVertex = the index of the vertex to access.
+      //!param: return = a reference to the requested vertex.
 
-    int NumVertices(void) const {return m_lVertices.size();}
-    //: The number of vertices in the model.
-    //!param: return = the number of vertices.
+      int NumVertices(void) const;
+      //: The number of vertices in the model.
+      //!param: return = the number of vertices.
     
-  };
+   };
 
 }  
 
