@@ -9,7 +9,7 @@
 //! file      = "Control/SceneManager.h"
 //! author    = "James Smith"
 //! date      = "19/3/2002"
-//! rcsid     = "$Id: SceneManager.h,v 1.17 2002/04/04 11:01:36 vap-warren Exp $"
+//! rcsid     = "$Id: SceneManager.h,v 1.18 2002/04/04 13:59:15 vap-warren Exp $"
 
 #ifndef __VTSTRUCVIS_SCENEMANAGER__
 #define __VTSTRUCVIS_SCENEMANAGER__
@@ -49,14 +49,14 @@ public:
    // NO other data will be available until Setup returns true.
    //!param: pcData - raw input data
    //!param: iLength - length of pcData
-   //!param: return - true if setup is complete, false if more data is required.
+   //!return: true if setup is complete, false if more data is required.
    
    bool FrameInfo(unsigned int iFrame, unsigned int& iOffset, unsigned int& iLength);
    //: Frame location information
    //!param: iFrame - the requested frame - between 0 and NumFrames-1.
    //!param: iOffset - the offset of the frame data is placed here.
    //!param: iLength - the length of the frame data is placed here.
-   //!param: return - false if an invalid frame is requested, true otherwise.
+   //!return: false if an invalid frame is requested, true otherwise.
 
    bool ShowFrame(const unsigned char* pcData, unsigned int iLength);
    //: Loads frame data from the passed memory chunk
@@ -116,12 +116,12 @@ public:
    const char* GetCurrentPosition(void) {return m_oViewpoint.GetCurrentPosition();}
    //: Gets the current viewpoint position as a string
    // It is the client's responsibility to delete the memory returned from this function, using delete [].
-   //!param: return - NULL on failure, otherwise a pointer to a string.
+   //!return: NULL on failure, otherwise a pointer to a string.
    
    const char* GetCurrentOrientation(void)  {return m_oViewpoint.GetCurrentOrientation();}
    //: Gets the current viewpoint orientation as a string
    // It is the client's responsibility to delete the memory returned from this function, using delete [].
-   //!param: return - NULL on failure, otherwise a pointer to a string.
+   //!return: NULL on failure, otherwise a pointer to a string.
 
 private:
 

@@ -9,7 +9,7 @@
 //! file      = "Control/IChunk.h"
 //! author    = "James Smith"
 //! date      = "19/3/2002"
-//! rcsid     = "$Id: Chunk.h,v 1.16 2002/04/04 11:28:08 vap-warren Exp $"
+//! rcsid     = "$Id: Chunk.h,v 1.17 2002/04/04 13:59:15 vap-warren Exp $"
 
 #ifndef __VTSTRUCVIS_ICHUNK__
 #define __VTSTRUCVIS_ICHUNK__
@@ -71,7 +71,7 @@ public:
    //!param: iLength - length of pcData
    //!param: iUsed - amount of data used is returned in this parameter
    //!param: bLoadSubChunks - if true, subchunks are loaded
-   //!param: return - true if the chunk is complete, false if more data is required
+   //!return: true if the chunk is complete, false if more data is required
 
    TIChunkType Type(void) {return m_oType;}
    //: The type of the chunk
@@ -153,7 +153,7 @@ public:
    //!param: iFrame - the requested frame - between 0 and NumFrames-1.
    //!param: iOffset - the offset of the frame data is placed here.
    //!param: iLength - the length of the frame data is placed here.
-   //!param: return - false if an invalid frame is requested, true otherwise.
+   //!return: false if an invalid frame is requested, true otherwise.
 
    unsigned int NumFrames(void);
    //: The number of frame chunks in the file

@@ -9,7 +9,7 @@
 //! file      = "Convert/InputData.h"
 //! author    = "James Smith"
 //! date      = "19/3/2002"
-//! rcsid     = "$Id: InputData.h,v 1.5 2002/04/04 11:53:43 vap-warren Exp $"
+//! rcsid     = "$Id: InputData.h,v 1.6 2002/04/04 13:59:16 vap-warren Exp $"
 
 #ifndef __VTSTRUCVIS_INPUTDATA__
 #define __VTSTRUCVIS_INPUTDATA__
@@ -32,16 +32,16 @@ public:
 
    bool NextSection(void);
    //: Advances to the next section of the file
-   //!param: return - false if the end of the file has been reached.
+   //!return: false if the end of the file has been reached.
 
    const char* SectionType(void);
    //: Get the section name
-   //!param: return - a string containing the name of the section
+   //!return: a string containing the name of the section
 
    unsigned int LoadIncr(void);
    //: Frame number / load increment
    // Is there a load increment (frame number) associated with this section?
-   //!param: return - 0 if not, or the number if so.
+   //!return: 0 if not, or the number if so.
 
    float GetFloat(void);
    //: Fetch a floating-point value from the stream

@@ -9,7 +9,7 @@
 //! file      = "Control/BeamElement.h"
 //! author    = "James Smith"
 //! date      = "19/3/2002"
-//! rcsid     = "$Id: BeamElement.h,v 1.19 2002/04/04 11:01:31 vap-warren Exp $"
+//! rcsid     = "$Id: BeamElement.h,v 1.20 2002/04/04 13:59:15 vap-warren Exp $"
 
 #ifndef __VTSTRUCVIS_BEAMELEMENT__
 #define __VTSTRUCVIS_BEAMELEMENT__
@@ -52,11 +52,11 @@ public:
    //: Updates all information and displays the object
    // If the object is not already displayed, it is created.
    //!param: pcURL - a URL for the directory containing BeamElement.wrl (i.e. excluding the filename).
-   //!param: return - true if successful, false otherwise.
+   //!return: true if successful, false otherwise.
 
    bool SetVisible(bool bVisible) const;
    //: Set whether the beam is visible or not.
-   //!param: return - true if successful, false otherwise.
+   //!return: true if successful, false otherwise.
 
    void SetTemp(float fTemp) const;
    //: Set the temperature of the element

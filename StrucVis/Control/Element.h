@@ -9,7 +9,7 @@
 //! file      = "Control/Element.h"
 //! author    = "James Smith"
 //! date      = "19/3/2002"
-//! rcsid     = "$Id: Element.h,v 1.19 2002/04/04 11:01:35 vap-warren Exp $"
+//! rcsid     = "$Id: Element.h,v 1.20 2002/04/04 13:59:15 vap-warren Exp $"
 
 #ifndef __VTSTRUCVIS_ELEMENT__
 #define __VTSTRUCVIS_ELEMENT__
@@ -88,7 +88,7 @@ public:
    //: Updates all information and displays the object
    // If the object is not already displayed, it is created.
    //!param: pcURL - a URL for the directory containing auxiliary VRML files.
-   //!param: return - true if successful, false otherwise.
+   //!return: true if successful, false otherwise.
 
    void SetStressRange(float fMin, float fMax) const {
       m_fMinStress = fMin;
@@ -101,7 +101,7 @@ public:
    
    virtual bool SetVisible(bool bVisible) const = 0;
    //: Set whether the element is visible or not.
-   //!param: return - true if successful, false otherwise.
+   //!return: true if successful, false otherwise.
 
    virtual void SetTemp(float fTemp) const = 0;
    //: Set the temperature of the element

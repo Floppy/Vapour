@@ -9,7 +9,7 @@
 //! file      = "Convert/OChunk.h"
 //! author    = "James Smith"
 //! date      = "19/3/2002"
-//! rcsid     = "$Id: OChunk.h,v 1.5 2002/04/04 11:53:43 vap-warren Exp $"
+//! rcsid     = "$Id: OChunk.h,v 1.6 2002/04/04 13:59:16 vap-warren Exp $"
 
 #ifndef __VTSTRUCVIS_OCHUNK__
 #define __VTSTRUCVIS_OCHUNK__
@@ -85,7 +85,7 @@ public:
    bool AddSubChunk(const COChunk* pSubChunk);
    //: Add a subchunk.
    //!param: pSubChunk - the subchunk to add
-   //!param: return - true if successful
+   //!return: true if successful
 
    const COChunk* SubChunk(TOChunkType oType) const;
    //: Get a subchunk with the specified type

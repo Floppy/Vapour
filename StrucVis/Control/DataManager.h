@@ -9,7 +9,7 @@
 //! file      = "Control/DataManager.h"
 //! author    = "James Smith"
 //! date      = "19/3/2002"
-//! rcsid     = "$Id: DataManager.h,v 1.14 2002/04/04 11:01:34 vap-warren Exp $"
+//! rcsid     = "$Id: DataManager.h,v 1.15 2002/04/04 13:59:15 vap-warren Exp $"
 
 #ifndef __VTSTRUCVIS_DATAMANAGER__
 #define __VTSTRUCVIS_DATAMANAGER__
@@ -48,14 +48,14 @@ public:
    // NO other data will be available until Setup returns true.
    //!param: pcData - raw input data
    //!param: iLength - length of pcData
-   //!param: return - true if setup is complete, false if more data is required.
+   //!return: true if setup is complete, false if more data is required.
 
    bool FrameInfo(unsigned int iFrame, unsigned int& iOffset, unsigned int& iLength);
    //: Frame location information
    //!param: iFrame - the requested frame - between 0 and NumFrames-1.
    //!param: iOffset - the offset of the frame data is placed here.
    //!param: iLength - the length of the frame data is placed here.
-   //!param: return - false if an invalid frame is requested, true otherwise.
+   //!return: false if an invalid frame is requested, true otherwise.
 
    bool LoadFrame(const unsigned char* pcData, unsigned int iLength);
    //: Loads frame data from the passed memory chunk
@@ -75,12 +75,12 @@ public:
    const float* NodePositions(void);
    //: Default node positions
    // This is only usable after Setup() is complete, and before LoadFrame() is used.
-   //!param: return - A flat array of 3 floats per node, in order X Y Z.
+   //!return: A flat array of 3 floats per node, in order X Y Z.
    
    const float* NodeDisplacements(void);
    //: Current node displacements
    // This is only usable after LoadFrame() is used successfully.
-   //!param: return - A flat array of 3 floats per node, in order X Y Z.
+   //!return: A flat array of 3 floats per node, in order X Y Z.
 
    unsigned int NumGroups(void);
    //: The number of groups (temperature profiles).
@@ -108,12 +108,12 @@ public:
    const unsigned int* BeamNodes(int iBeam);
    //: Returns the controlling nodes for a particular beam
    //!param: iBeam - a value between 1 and NumBeams
-   //!param: return - an array of 2 unsigned integers.
+   //!return: an array of 2 unsigned integers.
 
    unsigned int BeamGroup(int iBeam);
    // Returns the group ID for a particular beam
    //!param: iBeam - a value between 1 and NumBeams
-   //!param: return - the group number of the beam
+   //!return: the group number of the beam
 
    void BeamSizes(int iGroup, float& fHeight, float& fWidth, float& fFlange, float& fWeb);
    // Returns the beam sizes for a partcular beam group
@@ -126,7 +126,7 @@ public:
    const float* BeamStresses(unsigned int iBeam);
    // Returns a pointer to an array of node stresses for the current frame and specified beam
    //!param: iBeam - a value between 1 and NumBeams
-   //!param: return - A flat array of 3 floats per node, in order X Y Z.
+   //!return: A flat array of 3 floats per node, in order X Y Z.
 
    unsigned int NumSlabs(void);
    //: How many slab elements in the dataset?
@@ -134,12 +134,12 @@ public:
    const unsigned int* SlabNodes(int iSlab);
    //: Returns the controlling nodes for a particular slab
    //!param: iSlab - a value between 1 and NumSlabs
-   //!param: return - an array of 9 unsigned integers.
+   //!return: an array of 9 unsigned integers.
 
    unsigned int SlabGroup(int iSlab);
    // Returns the group ID for a particular slab
    //!param: iSlab - a value between 1 and NumSlabs
-   //!param: return - the group number of the slab
+   //!return: the group number of the slab
 
    void SlabSizes(int iGroup, float& fThickness);
    // Returns the slab size for a partcular slab group
@@ -149,12 +149,12 @@ public:
    const float* SlabStresses(unsigned int iSlab);
    // Returns a pointer to an array of node stresses for the current frame and specified slab
    //!param: iSlab - a value between 1 and NumSlabs
-   //!param: return - A flat array of 3 floats per node, in order X Y Z.
+   //!return: A flat array of 3 floats per node, in order X Y Z.
 
    const unsigned char* SlabCracks(unsigned int iSlab, unsigned int iLayer);
    // Returns a pointer to an array of node cracks for the specified slab, layer and current frame
    //!param: iSlab - a value between 1 and NumSlabs
-   //!param: return - A flat array of 1 unsigned char per node
+   //!return: A flat array of 1 unsigned char per node
 
 
 //#===--- Member Variables
