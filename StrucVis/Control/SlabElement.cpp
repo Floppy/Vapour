@@ -6,7 +6,7 @@
 // SlabElement.cpp
 // 19/03/2002 - James Smith
 //
-// $Id: SlabElement.cpp,v 1.15 2002/03/22 12:48:35 vap-james Exp $
+// $Id: SlabElement.cpp,v 1.16 2002/03/22 15:59:09 vap-james Exp $
 
 #include "stdafx.h"
 #include "SlabElement.h"
@@ -112,7 +112,7 @@ bool CSlabElement::Display(void) const {
       delete pField;
 
       // Update colours
-      pField = m_poCortona->CreateField("MFColor");
+      /*pField = m_poCortona->CreateField("MFColor");
       if (pField==NULL) return false;
       // Set values
       for (i=0; i<9 && bOK; i++) {
@@ -124,7 +124,7 @@ bool CSlabElement::Display(void) const {
          bOK = false;
       // Delete field
       pField->Release();
-      delete pField;
+      delete pField;*/
 
       // Update cracks
       pField = m_poCortona->CreateField("MFInt32");
@@ -167,7 +167,7 @@ void CSlabElement::SetSize(float fThickness) {
 
 void CSlabElement::CalculateColours(float* pfColours) const {
    switch (m_oColourScheme) {
-   case SOLID:
+   case GROUP:
       {
          for (int i=0; i<9; i++) {
             pfColours[(i*3) + 0] = m_pfColour[0];

@@ -6,7 +6,7 @@
 // SceneManager.cpp
 // 19/03/2002 - James Smith
 //
-// $Id: SceneManager.cpp,v 1.13 2002/03/22 14:56:26 vap-james Exp $
+// $Id: SceneManager.cpp,v 1.14 2002/03/22 15:59:10 vap-james Exp $
 
 #include "stdafx.h"
 #include "SceneManager.h"
@@ -49,6 +49,9 @@ void CSceneManager::Load(void) {
       CGroup oGroup;
       oGroup.m_fTemperature = 0;
       oGroup.m_oType = m_oDataMgr.GroupType(i);
+      oGroup.m_pfColour[0] = (float)rand() / (float)RAND_MAX;
+      oGroup.m_pfColour[1] = (float)rand() / (float)RAND_MAX;
+      oGroup.m_pfColour[2] = (float)rand() / (float)RAND_MAX;
       m_oGroups.push_back(oGroup);
    }
 
@@ -58,7 +61,7 @@ void CSceneManager::Load(void) {
       CBeamElement* pBeam = new CBeamElement(m_poCortona,&m_oNodeSet);
       // Set info
       pBeam->SetID(i);
-      pBeam->SetGroup(m_oDataMgr.BeamGroup(pBeam->ID()));
+      pBeam->SetGroup(m_oDataMgr.BeamGroup(pBeam->ID())-1);
       // Set sizes
       float fHeight, fWidth, fFlange, fWeb;
       m_oDataMgr.BeamSizes(pBeam->Group(),fHeight, fWidth, fFlange, fWeb);
@@ -66,8 +69,13 @@ void CSceneManager::Load(void) {
       // Set nodes
       pBeam->SetNodes(m_oDataMgr.BeamNodes(pBeam->ID()));
       // Set other info
-      pBeam->SetColourScheme(STRESS);
-      pBeam->SetStressRange(0,100);
+      pBeam->SetColourScheme(m_tColourScheme);
+      pBeam->SetColour(m_oGroups[pBeam->Group()].m_pfColour[0],
+                       m_oGroups[pBeam->Group()].m_pfColour[1],
+                       m_oGroups[pBeam->Group()].m_pfColour[2]);
+      float fMin,fMax;
+      m_oDataMgr.StressRange(fMin,fMax);
+      pBeam->SetStressRange(fMin,fMax);
       // Add to list      
       m_oElements.push_back(pBeam);   
    }
@@ -78,7 +86,7 @@ void CSceneManager::Load(void) {
       CSlabElement* pSlab = new CSlabElement(m_poCortona,&m_oNodeSet);
       // Set info
       pSlab->SetID(i);
-      pSlab->SetGroup(m_oDataMgr.SlabGroup(pSlab->ID()));
+      pSlab->SetGroup(m_oDataMgr.SlabGroup(pSlab->ID())-1);
       // Set sizes
       float fThickness;
       m_oDataMgr.SlabSizes(pSlab->Group(),fThickness);
@@ -86,8 +94,13 @@ void CSceneManager::Load(void) {
       // Set nodes
       pSlab->SetNodes(m_oDataMgr.SlabNodes(pSlab->ID()));
       // Set other info
-      pSlab->SetColourScheme(STRESS);
-      pSlab->SetStressRange(0,100);
+      pSlab->SetColourScheme(m_tColourScheme);
+      pSlab->SetColour(m_oGroups[pSlab->Group()].m_pfColour[0],
+                       m_oGroups[pSlab->Group()].m_pfColour[1],
+                       m_oGroups[pSlab->Group()].m_pfColour[2]);
+      float fMin,fMax;
+      m_oDataMgr.StressRange(fMin,fMax);
+      pSlab->SetStressRange(fMin,fMax);
       // Add to list      
       m_oElements.push_back(pSlab);
    }
@@ -133,6 +146,13 @@ void CSceneManager::SetScaleFactor(float fX, float fY, float fZ) {
 
 void CSceneManager::SetViewpoint(float pfPosition[3], float pfRotation[4]) {
    m_oViewpoint.Set(pfPosition,pfRotation);
+}
+
+void CSceneManager::SetColourScheme(TColourScheme oColour) {
+   m_tColourScheme = oColour;
+   for (elemIter pElem = m_oElements.begin(); pElem != m_oElements.end(); pElem++) {
+      (*pElem)->SetColourScheme(m_tColourScheme);
+   }   
 }
 
 void CSceneManager::ShowFrame(unsigned int iFrame) {

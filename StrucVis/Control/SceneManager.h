@@ -6,7 +6,7 @@
 // SceneManager.h
 // 19/03/2002 - James Smith
 //
-// $Id: SceneManager.h,v 1.4 2002/03/22 14:56:25 vap-james Exp $
+// $Id: SceneManager.h,v 1.5 2002/03/22 15:59:10 vap-james Exp $
 
 #ifndef __SCENEMANAGER__
 #define __SCENEMANAGER__
@@ -61,6 +61,9 @@ public:
    void SetViewpoint(float pfPosition[3], float pfRotation[4]);
    // Set the camera position
 
+   void SetColourScheme(TColourScheme oColour);
+   // Set the colouring scheme
+
    void ShowFrame(unsigned int iFrame);
    // Show frame
 
@@ -70,6 +73,7 @@ private:
    public:
       TElementType m_oType;
       float m_fTemperature;
+      float m_pfColour[3];
    };
    // Group information type
 
@@ -96,6 +100,9 @@ protected:
 
    CViewpoint m_oViewpoint;
    // The virtual camera
+
+   TColourScheme m_tColourScheme;
+   // The current colouring scheme
 
 };
 

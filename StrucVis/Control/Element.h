@@ -6,7 +6,7 @@
 // Element.h
 // 19/03/2002 - James Smith
 //
-// $Id: Element.h,v 1.9 2002/03/21 23:35:31 vap-james Exp $
+// $Id: Element.h,v 1.10 2002/03/22 15:59:10 vap-james Exp $
 
 #ifndef __ELEMENT__
 #define __ELEMENT__
@@ -24,7 +24,7 @@ enum TElementType {
 };
 
 enum TColourScheme {
-   SOLID,
+   GROUP,
    STRESS
 };
 
@@ -40,7 +40,7 @@ public:
       m_iGroup(0),
       m_fMinStress(0.0f),
       m_fMaxStress(1000000.0f),
-      m_oColourScheme(SOLID)
+      m_oColourScheme(GROUP)
    {
          m_pfColour[0] = m_pfColour[1] = m_pfColour[2] = 0.5;
    }
