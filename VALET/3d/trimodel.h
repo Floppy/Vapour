@@ -13,7 +13,7 @@
 //! author     = "James Smith"
 //! date       = "10/10/2001"
 //! lib        = libVALET3d
-//! rcsid      = "$Id: trimodel.h,v 1.7 2001/10/24 23:30:36 vap-james Exp $"
+//! rcsid      = "$Id: trimodel.h,v 1.8 2001/11/04 15:48:41 vap-warren Exp $"
 //! userlevel  = Normal
 //! docentry   = "VALET.3D.Surface Representations"
 
@@ -24,49 +24,50 @@
 #include "VALET/mesh.h"
 
 #include <vector>
-using namespace std;
 
 namespace NVALET {
 
-  //: A triangle-mesh-based 3d model.
-  // A description of a 3d mesh, containing only triangular elements.
+   using namespace std;
+   
+   //: A triangle-mesh-based 3d model.
+   // A description of a 3d mesh, containing only triangular elements.
 
-  class CTriModel : public CSurface<CVector3D> {
+   class CTriModel : public CSurface<CVector3D> {
 
-  protected:
+   protected:
 
-    vector<CMesh> m_oMeshes;
+      vector<CMesh> m_oMeshes;
 
-  public:    
+   public:    
     
-    //:-------------------------
-    //: Construction/Destruction
+   //:-------------------------
+   //: Construction/Destruction
 
-    CTriModel();
-    //: Default Constructor
-    // Creates an empty model.
+      CTriModel();
+      //: Default Constructor
+      // Creates an empty model.
     
-    ~CTriModel();
-    //: Destructor
+      ~CTriModel();
+      //: Destructor
     
-    //:-----------------
-    //: Access functions
+   //:-----------------
+   //: Access functions
 
-    int NumMeshes(void) const;
-    //: Number of meshes
-    //!param: return = how many meshes are in this model?
+      int NumMeshes(void) const;
+      //: Number of meshes
+      //!param: return = how many meshes are in this model?
 
-    const CMesh& Mesh(int iMesh) const;
-    //: Access a particular mesh
-    //!param: iMesh = which mesh to access?
-    //!param: return = constant reference to a mesh.
+      const CMesh& Mesh(int iMesh) const;
+      //: Access a particular mesh
+      //!param: iMesh = which mesh to access?
+      //!param: return = constant reference to a mesh.
 
-    CMesh& Mesh(int iMesh);
-    //: Non-const access to a particular mesh
-    //!param: iMesh = which mesh to access?
-    //!param: return = reference to the mesh.
+      CMesh& Mesh(int iMesh);
+      //: Non-const access to a particular mesh
+      //!param: iMesh = which mesh to access?
+      //!param: return = reference to the mesh.
 
-  }; 
+   }; 
 
 }
 
