@@ -7,7 +7,7 @@
 // Chunk.cpp
 // 19/03/2002 - James Smith
 //
-// $Id: Chunk.cpp,v 1.2 2002/03/27 15:00:35 vap-james Exp $
+// $Id: Chunk.cpp,v 1.3 2002/03/27 16:38:56 vap-james Exp $
 
 #include "Chunk.h"
 
@@ -29,7 +29,7 @@ CChunk::~CChunk() {
 
 bool CChunk::Read(CInputData& oInput) {
    // Check that there isn't already data in this chunk.
-   if (m_oType != NONE) 
+   if (m_oType != CHUNK_NONE) 
       return false;
 
    // Read frame number
@@ -37,26 +37,26 @@ bool CChunk::Read(CInputData& oInput) {
 
    // Process chunk
    switch (TranslateType(oInput.SectionType())) {
-   case NONE:
+   case CHUNK_NONE:
       return false;
-   case NODES:
+   case CHUNK_NODES:
       return ReadNodes(oInput);
-   case BEAMSIZE:
+   case CHUNK_BEAMSIZE:
       return ReadBeamSizes(oInput);
-   case SLABSIZE:
+   case CHUNK_SLABSIZE:
       return ReadSlabSizes(oInput);
-   case BEAMS:
+   case CHUNK_BEAMS:
       if (oInput.Beginning()) return ReadBeams(oInput);
       else return ReadSlabs(oInput);
-   case TEMP:
+   case CHUNK_TEMP:
       return ReadTemps(oInput);
-   case NODEDISP:
+   case CHUNK_NODEDISP:
       return ReadNodeDisplacements(oInput);
-   case BEAMFORC:
+   case CHUNK_BEAMFORC:
       return ReadBeamForces(oInput);
-   case SLABFORC:
+   case CHUNK_SLABFORC:
       return ReadSlabForces(oInput);
-   case CRACKS:
+   case CHUNK_CRACKS:
       return ReadCracks(oInput);
    default:
       return false;
@@ -65,22 +65,22 @@ bool CChunk::Read(CInputData& oInput) {
 }
 
 TChunkType CChunk::TranslateType(const char* pcType) {
-   if (strcmp(pcType,"HEADER")                            == 0) return NONE;
-   if (strcmp(pcType,"NODAL GEOMETRY")                    == 0) return NODES;
-   if (strcmp(pcType,"SECTION SIZES")                     == 0) return BEAMSIZE;
-   if (strcmp(pcType,"MATERIAL PROPERTIES")               == 0) return NONE;
-   if (strcmp(pcType,"RESIDUAL STRESSES")                 == 0) return NONE;
-   if (strcmp(pcType,"LAYERED SLAB")                      == 0) return SLABSIZE;
-   if (strcmp(pcType,"MEMBER DATA")                       == 0) return BEAMS;
-   if (strcmp(pcType,"BOUNDARY CONDITIONS")               == 0) return NONE;
-   if (strcmp(pcType,"JOINT LOADS")                       == 0) return NONE;
-   if (strcmp(pcType,"TEMPERATURES")                      == 0) return TEMP;
-   if (strcmp(pcType,"SLAB TEMPERATURES")                 == 0) return TEMP;
-   if (strcmp(pcType,"NODAL DISPLACEMENTS")               == 0) return NODEDISP;
-   if (strcmp(pcType,"INTERNAL FORCES")                   == 0) return BEAMFORC;
-   if (strcmp(pcType,"9_NODED_SLAB_CRACKS")               == 0) return CRACKS;
-   if (strcmp(pcType,"9_NODED_PRINCIPAL_MEMBRANE_FORCES") == 0) return SLABFORC;
-   return NONE;
+   if (strcmp(pcType,"HEADER")                            == 0) return CHUNK_NONE;
+   if (strcmp(pcType,"NODAL GEOMETRY")                    == 0) return CHUNK_NODES;
+   if (strcmp(pcType,"SECTION SIZES")                     == 0) return CHUNK_BEAMSIZE;
+   if (strcmp(pcType,"MATERIAL PROPERTIES")               == 0) return CHUNK_NONE;
+   if (strcmp(pcType,"RESIDUAL STRESSES")                 == 0) return CHUNK_NONE;
+   if (strcmp(pcType,"LAYERED SLAB")                      == 0) return CHUNK_SLABSIZE;
+   if (strcmp(pcType,"MEMBER DATA")                       == 0) return CHUNK_BEAMS;
+   if (strcmp(pcType,"BOUNDARY CONDITIONS")               == 0) return CHUNK_NONE;
+   if (strcmp(pcType,"JOINT LOADS")                       == 0) return CHUNK_NONE;
+   if (strcmp(pcType,"TEMPERATURES")                      == 0) return CHUNK_TEMP;
+   if (strcmp(pcType,"SLAB TEMPERATURES")                 == 0) return CHUNK_TEMP;
+   if (strcmp(pcType,"NODAL DISPLACEMENTS")               == 0) return CHUNK_NODEDISP;
+   if (strcmp(pcType,"INTERNAL FORCES")                   == 0) return CHUNK_BEAMFORC;
+   if (strcmp(pcType,"9_NODED_SLAB_CRACKS")               == 0) return CHUNK_CRACKS;
+   if (strcmp(pcType,"9_NODED_PRINCIPAL_MEMBRANE_FORCES") == 0) return CHUNK_SLABFORC;
+   return CHUNK_NONE;
 }
 
 bool CChunk::ReadNodes(CInputData& oInput) {   
@@ -107,7 +107,7 @@ bool CChunk::ReadNodes(CInputData& oInput) {
    if (m_pcData == NULL) return false;
    unsigned char* pcCurrent = m_pcData;
    // Set chunk type
-   *pcCurrent++ = static_cast<unsigned char>(NODES);
+   *pcCurrent++ = static_cast<unsigned char>(CHUNK_NODES);
    // Set length
    *reinterpret_cast<unsigned int*>(pcCurrent) = m_iLength;
    pcCurrent += sizeof(unsigned int);
@@ -130,7 +130,7 @@ bool CChunk::ReadNodes(CInputData& oInput) {
    }
    oList.empty();
    // Done
-   m_oType = NODES;
+   m_oType = CHUNK_NODES;
    return true;
 }
 
@@ -159,7 +159,7 @@ bool CChunk::ReadBeamSizes(CInputData& oInput) {
    if (m_pcData == NULL) return false;
    unsigned char* pcCurrent = m_pcData;
    // Set chunk type
-   *pcCurrent++ = static_cast<unsigned char>(BEAMSIZE);
+   *pcCurrent++ = static_cast<unsigned char>(CHUNK_BEAMSIZE);
    // Set length
    *reinterpret_cast<unsigned int*>(pcCurrent) = m_iLength;
    pcCurrent += sizeof(unsigned int);
@@ -183,7 +183,7 @@ bool CChunk::ReadBeamSizes(CInputData& oInput) {
    }
    oList.empty();
    // Done
-   m_oType = BEAMSIZE;
+   m_oType = CHUNK_BEAMSIZE;
    return true;
 }
 
@@ -218,7 +218,7 @@ bool CChunk::ReadSlabSizes(CInputData& oInput) {
    if (m_pcData == NULL) return false;
    unsigned char* pcCurrent = m_pcData;
    // Set chunk type
-   *pcCurrent++ = static_cast<unsigned char>(SLABSIZE);
+   *pcCurrent++ = static_cast<unsigned char>(CHUNK_SLABSIZE);
    // Set length
    *reinterpret_cast<unsigned int*>(pcCurrent) = m_iLength;
    pcCurrent += sizeof(unsigned int);
@@ -239,7 +239,7 @@ bool CChunk::ReadSlabSizes(CInputData& oInput) {
    }
    oList.empty();
    // Done
-   m_oType = SLABSIZE;
+   m_oType = CHUNK_SLABSIZE;
    return true;
 }
 
@@ -288,7 +288,7 @@ bool CChunk::ReadBeams(CInputData& oInput) {
    if (m_pcData == NULL) return false;
    unsigned char* pcCurrent = m_pcData;
    // Set chunk type
-   *pcCurrent++ = static_cast<unsigned char>(BEAMS);
+   *pcCurrent++ = static_cast<unsigned char>(CHUNK_BEAMS);
    // Set length
    *reinterpret_cast<unsigned int*>(pcCurrent) = m_iLength;
    pcCurrent += sizeof(unsigned int);
@@ -311,7 +311,7 @@ bool CChunk::ReadBeams(CInputData& oInput) {
    }
    oList.empty();
    // Done
-   m_oType = BEAMS;
+   m_oType = CHUNK_BEAMS;
    return true;
 }
 
@@ -350,7 +350,7 @@ bool CChunk::ReadSlabs(CInputData& oInput) {
    if (m_pcData == NULL) return false;
    unsigned char* pcCurrent = m_pcData;
    // Set chunk type
-   *pcCurrent++ = static_cast<unsigned char>(SLABS);
+   *pcCurrent++ = static_cast<unsigned char>(CHUNK_SLABS);
    // Set length
    *reinterpret_cast<unsigned int*>(pcCurrent) = m_iLength;
    pcCurrent += sizeof(unsigned int);
@@ -372,7 +372,7 @@ bool CChunk::ReadSlabs(CInputData& oInput) {
    }
    oList.empty();
    // Done
-   m_oType = SLABS;
+   m_oType = CHUNK_SLABS;
    return true;
 }
 
@@ -390,7 +390,7 @@ bool CChunk::ReadTemps(CInputData& oInput) {
       for (int i=0; i<12; i++) oInput.GetFloat();
    }
    oInput.NextSection();
-   if (TranslateType(oInput.SectionType()) != TEMP) return false;
+   if (TranslateType(oInput.SectionType()) != CHUNK_TEMP) return false;
    // Get slab group data
    iCount = 0;
    while (oInput.DataReady() && iCount++ < oInput.GetNumSlabGroups()) {
@@ -408,7 +408,7 @@ bool CChunk::ReadTemps(CInputData& oInput) {
    if (m_pcData == NULL) return false;
    unsigned char* pcCurrent = m_pcData;
    // Set chunk type
-   *pcCurrent++ = static_cast<unsigned char>(TEMP);
+   *pcCurrent++ = static_cast<unsigned char>(CHUNK_TEMP);
    // Set length
    *reinterpret_cast<unsigned int*>(pcCurrent) = m_iLength;
    pcCurrent += sizeof(unsigned int);
@@ -424,7 +424,7 @@ bool CChunk::ReadTemps(CInputData& oInput) {
    }
 
    // Done
-   m_oType = TEMP;
+   m_oType = CHUNK_TEMP;
    return true;
 }
 
@@ -454,7 +454,7 @@ bool CChunk::ReadNodeDisplacements(CInputData& oInput) {
    if (m_pcData == NULL) return false;
    unsigned char* pcCurrent = m_pcData;
    // Set chunk type
-   *pcCurrent++ = static_cast<unsigned char>(NODEDISP);
+   *pcCurrent++ = static_cast<unsigned char>(CHUNK_NODEDISP);
    // Set length
    *reinterpret_cast<unsigned int*>(pcCurrent) = m_iLength;
    pcCurrent += sizeof(unsigned int);
@@ -477,7 +477,7 @@ bool CChunk::ReadNodeDisplacements(CInputData& oInput) {
    }
    oList.empty();
    // Done
-   m_oType = NODEDISP;
+   m_oType = CHUNK_NODEDISP;
    return true;
 }
 
@@ -517,7 +517,7 @@ bool CChunk::ReadBeamForces(CInputData& oInput) {
    if (m_pcData == NULL) return false;
    unsigned char* pcCurrent = m_pcData;
    // Set chunk type
-   *pcCurrent++ = static_cast<unsigned char>(BEAMFORC);
+   *pcCurrent++ = static_cast<unsigned char>(CHUNK_BEAMFORC);
    // Set length
    *reinterpret_cast<unsigned int*>(pcCurrent) = m_iLength;
    pcCurrent += sizeof(unsigned int);
@@ -539,7 +539,7 @@ bool CChunk::ReadBeamForces(CInputData& oInput) {
    }
    oList.empty();
    // Done
-   m_oType = BEAMFORC;
+   m_oType = CHUNK_BEAMFORC;
    return true;
 }
 
@@ -569,7 +569,7 @@ bool CChunk::ReadSlabForces(CInputData& oInput) {
    if (m_pcData == NULL) return false;
    unsigned char* pcCurrent = m_pcData;
    // Set chunk type
-   *pcCurrent++ = static_cast<unsigned char>(SLABFORC);
+   *pcCurrent++ = static_cast<unsigned char>(CHUNK_SLABFORC);
    // Set length
    *reinterpret_cast<unsigned int*>(pcCurrent) = m_iLength;
    pcCurrent += sizeof(unsigned int);
@@ -591,7 +591,7 @@ bool CChunk::ReadSlabForces(CInputData& oInput) {
    }
    oList.empty();
    // Done
-   m_oType = SLABFORC;
+   m_oType = CHUNK_SLABFORC;
    return true;
 }
 
@@ -626,7 +626,7 @@ bool CChunk::ReadCracks(CInputData& oInput) {
    if (m_pcData == NULL) return false;
    unsigned char* pcCurrent = m_pcData;
    // Set chunk type
-   *pcCurrent++ = static_cast<unsigned char>(CRACKS);
+   *pcCurrent++ = static_cast<unsigned char>(CHUNK_CRACKS);
    // Set length
    *reinterpret_cast<unsigned int*>(pcCurrent) = m_iLength;
    pcCurrent += sizeof(unsigned int);
@@ -647,7 +647,7 @@ bool CChunk::ReadCracks(CInputData& oInput) {
    }
    oList.empty();
    // Done
-   m_oType = CRACKS;
+   m_oType = CHUNK_CRACKS;
    return true;
 }
 
@@ -658,7 +658,7 @@ bool CChunk::CreateFrameInfoChunk(CInputData& oInput) {
    if (m_pcData == NULL) return false;
    unsigned char* pcCurrent = m_pcData;
    // Set chunk type
-   *pcCurrent++ = static_cast<unsigned char>(FRAMEINF);
+   *pcCurrent++ = static_cast<unsigned char>(CHUNK_FRAMEINF);
    // Set length
    *reinterpret_cast<unsigned int*>(pcCurrent) = m_iLength;
    pcCurrent += sizeof(unsigned int);
@@ -667,7 +667,7 @@ bool CChunk::CreateFrameInfoChunk(CInputData& oInput) {
    // Set number of frames
    *reinterpret_cast<unsigned int*>(pcCurrent) = oInput.NumFrames();
    // Done
-   m_oType = FRAMEINF;
+   m_oType = CHUNK_FRAMEINF;
    return true;
 }
 
@@ -679,7 +679,7 @@ bool CChunk::CreateGroupChunk(CInputData& oInput) {
    if (m_pcData == NULL) return false;
    unsigned char* pcCurrent = m_pcData;
    // Set chunk type
-   *pcCurrent++ = static_cast<unsigned char>(GROUPS);
+   *pcCurrent++ = static_cast<unsigned char>(CHUNK_GROUPS);
    // Set length
    *reinterpret_cast<unsigned int*>(pcCurrent) = m_iLength;
    pcCurrent += sizeof(unsigned int);
@@ -694,7 +694,7 @@ bool CChunk::CreateGroupChunk(CInputData& oInput) {
    for (i=0; i<oInput.GetNumSlabGroups(); i++)
       *pcCurrent++ = static_cast<unsigned char>(0x01);
    // Done
-   m_oType = GROUPS;
+   m_oType = CHUNK_GROUPS;
    return true;
 }
 
@@ -705,7 +705,7 @@ bool CChunk::CreateStressChunk(CInputData& oInput) {
    if (m_pcData == NULL) return false;
    unsigned char* pcCurrent = m_pcData;
    // Set chunk type
-   *pcCurrent++ = static_cast<unsigned char>(STRESSR);
+   *pcCurrent++ = static_cast<unsigned char>(CHUNK_STRESSR);
    // Set length
    *reinterpret_cast<unsigned int*>(pcCurrent) = m_iLength;
    pcCurrent += sizeof(unsigned int);
@@ -717,7 +717,7 @@ bool CChunk::CreateStressChunk(CInputData& oInput) {
    // Set maximum
    *reinterpret_cast<float*>(pcCurrent) = oInput.GetMaxStress();
    // Done
-   m_oType = STRESSR;
+   m_oType = CHUNK_STRESSR;
    return true;
 }
 

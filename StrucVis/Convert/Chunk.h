@@ -7,7 +7,7 @@
 // Chunk.cpp
 // 19/03/2002 - James Smith
 //
-// $Id: Chunk.h,v 1.1 2002/03/26 00:51:54 vap-james Exp $
+// $Id: Chunk.h,v 1.2 2002/03/27 16:38:55 vap-james Exp $
 
 #ifndef __VTSTRUCVIS_CHUNK__
 #define __VTSTRUCVIS_CHUNK__
@@ -19,35 +19,35 @@
 using namespace std;
 
 enum TChunkType {
-   NONE     = 0xFF,
-   ROOT     = 0x00,
+   CHUNK_NONE     = 0xFF,
+   CHUNK_ROOT     = 0x00,
    //-------------
    // Setup Data
-   SETUP    = 0x10,
-   NODES    = 0x11,
-   GROUPS   = 0x12,
-   BEAMSIZE = 0x13,
-   SLABSIZE = 0x14,
-   BEAMS    = 0x15,
-   SLABS    = 0x16,
-   STRESSR  = 0x17,
-   FRAMEINF = 0x18,
+   CHUNK_SETUP    = 0x10,
+   CHUNK_NODES    = 0x11,
+   CHUNK_GROUPS   = 0x12,
+   CHUNK_BEAMSIZE = 0x13,
+   CHUNK_SLABSIZE = 0x14,
+   CHUNK_BEAMS    = 0x15,
+   CHUNK_SLABS    = 0x16,
+   CHUNK_STRESSR  = 0x17,
+   CHUNK_FRAMEINF = 0x18,
    //-------------
    // Frame Data
-   FRAME    = 0x20,
-   TEMP     = 0x21,
-   TIME     = 0x22,
-   NODEDISP = 0x23,
-   BEAMFORC = 0x24,
-   SLABFORC = 0x25,
-   CRACKS   = 0x26,
+   CHUNK_FRAME    = 0x20,
+   CHUNK_TEMP     = 0x21,
+   CHUNK_TIME     = 0x22,
+   CHUNK_NODEDISP = 0x23,
+   CHUNK_BEAMFORC = 0x24,
+   CHUNK_SLABFORC = 0x25,
+   CHUNK_CRACKS   = 0x26,
 };
 
 class CChunk {
 
 public:
 
-   CChunk(TChunkType oType = NONE);
+   CChunk(TChunkType oType = CHUNK_NONE);
    // Constructor
    // If type is specified, a chunk of that type is created.
    // Otherwise, the chunk will take on the type of the 

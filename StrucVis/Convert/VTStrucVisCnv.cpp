@@ -7,7 +7,7 @@
 // StrucVisCnv.cpp
 // 19/03/2002 - James Smith
 //
-// $Id: VTStrucVisCnv.cpp,v 1.2 2002/03/27 15:30:33 vap-james Exp $
+// $Id: VTStrucVisCnv.cpp,v 1.3 2002/03/27 16:38:55 vap-james Exp $
 
 #include <iostream>
 #include <vector>
@@ -38,7 +38,7 @@ int main(int argc, char* argv[]) {
       cout << oInput.SectionType() << ", Frame " << oInput.LoadIncr() << " ";
       if (pChunk->Read(oInput)) {
          oChunkList.push_back(pChunk);
-         if (pChunk->Type() == BEAMS) {
+         if (pChunk->Type() == CHUNK_BEAMS) {
             pChunk = new CChunk;
             if (pChunk->Read(oInput)) {
                oChunkList.push_back(pChunk);
@@ -72,7 +72,7 @@ int main(int argc, char* argv[]) {
    do {
       bOK = false;
       iFrame++;
-      CChunk* pChunk = new CChunk(FRAME);
+      CChunk* pChunk = new CChunk(CHUNK_FRAME);
       for (std::vector<CChunk*>::iterator pIter = oChunkList.begin(); pIter != oChunkList.end(); pIter++) {
          if ((*pIter)->Frame() == iFrame) {
             pChunk->AddSubChunk(*pIter);
@@ -91,13 +91,13 @@ int main(int argc, char* argv[]) {
    cout << oChunkList.size() << " chunks created." << endl;
 
    // Create setup chunk
-   CChunk oSetup(SETUP);
+   CChunk oSetup(CHUNK_SETUP);
    for (std::vector<CChunk*>::iterator pIter = oChunkList.begin(); pIter != oChunkList.end(); pIter++) {
-      if ((*pIter)->Type() < FRAME) oSetup.AddSubChunk(*pIter);
+      if ((*pIter)->Type() < CHUNK_FRAME) oSetup.AddSubChunk(*pIter);
    }
 
    // Create root chunk
-   CChunk oRoot(ROOT);
+   CChunk oRoot(CHUNK_ROOT);
    // Add subchunks to root   
    oRoot.AddSubChunk(&oSetup);
    for (pIter = oFrames.begin(); pIter != oFrames.end(); pIter++)
