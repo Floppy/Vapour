@@ -7,7 +7,7 @@
 // Chunk.cpp
 // 19/03/2002 - James Smith
 //
-// $Id: Chunk.cpp,v 1.8 2002/03/27 15:07:49 vap-james Exp $
+// $Id: Chunk.cpp,v 1.9 2002/03/27 16:01:03 vap-james Exp $
 
 #include "stdafx.h"
 #include "Chunk.h"
@@ -101,7 +101,7 @@ bool CChunk::CreateChunk(const unsigned char* pcData, unsigned int iLength, unsi
             pcCurrent += sizeof(unsigned int);
             if (i > 0) {
                m_oTOC.back().m_iLength = oEntry.m_iOffset - m_oTOC.back().m_iOffset;
-               if (i < m_pcBuffer[5]-1) {
+               if (i == m_pcBuffer[5]-1) {
                   oEntry.m_iLength = *reinterpret_cast<unsigned int*>(m_pcBuffer+1) - oEntry.m_iOffset;
                }
             }
