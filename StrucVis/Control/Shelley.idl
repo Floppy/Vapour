@@ -1,0 +1,1073 @@
+////////////////////////////////////////////////////
+//	Shelley.idl : VRML Automation interfaces
+//	Version 3.0
+//	Copyright (c) Parallel Graphics, 1997-1999 
+//  
+//
+
+import "oaidl.idl";
+import "ocidl.idl";
+
+//forwards
+interface IEngine;
+interface IBADriver;
+interface INodeObject;
+interface IProtoObject;
+interface IInternalObject;
+interface IDetacher;
+interface IEngineCallback;
+interface INodesCollection;
+interface IProtosCollection;
+interface IFieldsCollection;
+interface IProtoFieldsCollection;
+interface IProtoFieldObject;
+interface IFieldObject;
+interface ISFieldObject;
+interface IMFieldObject;
+interface ISFBoolObject;
+interface ISFColorObject;
+interface ISFFloatObject;
+interface ISFImageObject;
+interface ISFInt32Object;
+interface ISFNodeObject;
+interface ISFRotationObject;
+interface ISFStringObject;
+interface ISFVec2fObject;
+interface ISFVec3fObject;
+interface ISFTimeObject;
+interface IMFColorObject;
+interface IMFFloatObject;
+interface IMFTimeObject;
+interface IMFInt32Object;
+interface IMFNodeObject;
+interface IMFRotationObject;
+interface IMFStringObject;
+interface IMFVec2fObject;
+interface IMFVec3fObject;
+interface IVRMLEventCallback;
+
+//pointers
+typedef IEngine* LPENGINE;
+typedef IBADriver* LPBADRIVER;
+typedef INodeObject* LPNODEOBJECT;
+typedef IProtoObject* LPPROTOOBJECT;
+typedef IInternalObject* LPINTERNALOBJECT;
+typedef IDetacher* LPDETACHER;
+typedef IEngineCallback* LPENGINECALLBACK;
+typedef INodesCollection* LPNODESCOLLECTION;
+typedef IProtosCollection* LPPROTOSCOLLECTION;
+typedef IFieldsCollection* LPFIELDSCOLLECTION;
+typedef IProtoFieldsCollection* LPPROTOFIELDSCOLLECTION;
+typedef IProtoFieldObject* LPPROTOFIELDOBJECT;
+typedef IFieldObject* LPFIELDOBJECT;
+typedef ISFieldObject* LPSFIELDOBJECT;
+typedef IMFieldObject* LPMFIELDOBJECT;
+typedef ISFBoolObject* LPSFBOOLOBJECT;
+typedef ISFColorObject* LPSFCOLOROBJECT;
+typedef ISFFloatObject* LPSFFLOETOBJECT;
+typedef ISFImageObject* LPSFIMAGEOBJECT;
+typedef ISFInt32Object* LPSFINT32OBJECT;
+typedef ISFNodeObject* LPSFNODEOBJECT;
+typedef ISFRotationObject* LPSFROTATIONOBJECT;
+typedef ISFStringObject* LPSFSTRINGOBJECT;
+typedef ISFVec2fObject* LPSFVEC2FOBJECT;
+typedef ISFVec3fObject* LPSFVEC3FOBJECT;
+typedef ISFTimeObject* LPSFTIMEOBJECT;
+typedef IMFColorObject* LPMFCOLOROBJECT;
+typedef IMFFloatObject* LPMFFLOATOBJECT;
+typedef IMFTimeObject* LPMFTIMEOBJECT;
+typedef IMFInt32Object* LPMFINT32OBJECT;
+typedef IMFNodeObject* LPMFNODEOBJECT;
+typedef IMFRotationObject* LPMFROTATIONOBJECT;
+typedef IMFStringObject* LPMFSTRINGOBJECT;
+typedef IMFVec2fObject* LPMFVEC2FOBJECT;
+typedef IMFVec3fObject* LPMFVEC3FOBJECT;
+typedef IVRMLEventCallback* LPEVENTCALLBACK;
+
+//errors
+cpp_quote("#define VRML_E_FIRST						MAKE_HRESULT(SEVERITY_ERROR, FACILITY_ITF, 0x1000)")
+cpp_quote("#define VRML_E_ALREADYATTACHED			(VRML_E_FIRST + 0)")
+cpp_quote("#define VRML_E_NOTATTACHED				(VRML_E_FIRST + 1)")
+cpp_quote("#define VRML_E_INVALIDCONTEXT			(VRML_E_FIRST + 2)")
+cpp_quote("#define VRML_E_INVALIDSCENE				(VRML_E_FIRST + 3)")
+cpp_quote("#define VRML_E_INVALIDVIEW				(VRML_E_FIRST + 4)")
+cpp_quote("#define VRML_E_INCOMPLETEFIELD			(VRML_E_FIRST + 5)")
+cpp_quote("#define VRML_E_ENGINEFAIL				(VRML_E_FIRST + 6)")
+cpp_quote("#define VRML_E_OUTSIDEPROTOINSTANCE		(VRML_E_FIRST + 7)")
+cpp_quote("#define VRML_E_FIELDNOTFOUND				(VRML_E_FIRST + 8)")
+cpp_quote("#define VRML_E_FIELDTYPEMISMATCH			(VRML_E_FIRST + 9)")
+cpp_quote("#define VRML_E_INVALIDCATEGORY			(VRML_E_FIRST + 10)")
+cpp_quote("#define VRML_E_INDEXOUTOFRANGE			(VRML_E_FIRST + 11)")
+cpp_quote("#define VRML_E_INVALIDNODE				(VRML_E_FIRST + 12)")
+cpp_quote("#define VRML_E_READONLYCOLLECTION		(VRML_E_FIRST + 13)")
+cpp_quote("#define VRML_E_NODENOTFOUND				(VRML_E_FIRST + 14)")
+cpp_quote("#define VRML_E_UNKNOWNNODETYPE			(VRML_E_FIRST + 15)")
+cpp_quote("#define VRML_E_INVALIDSYNTAX				(VRML_E_FIRST + 16)")
+cpp_quote("#define VRML_E_TOOMANYNODES 				(VRML_E_FIRST + 17)")
+cpp_quote("#define VRML_E_INVALIDSTREAM				(VRML_E_FIRST + 18)")
+cpp_quote("#define VRML_E_INVALIDROUTE				(VRML_E_FIRST + 19)")
+cpp_quote("#define VRML_E_UNKNOWNFIELDTYPE			(VRML_E_FIRST + 20)")
+cpp_quote("#define VRML_E_NODENOTPROTOINSTANCE		(VRML_E_FIRST + 21)")
+cpp_quote("#define VRML_E_NOTSUPPORTED				(VRML_E_FIRST + 22)")
+cpp_quote("#define VRML_E_PROTOALREADYDEFINED		(VRML_E_FIRST + 23)")
+cpp_quote("#define VRML_E_PROTONOTFOUND				(VRML_E_FIRST + 24)")
+cpp_quote("#define VRML_E_NODENOTFACESET     		(VRML_E_FIRST + 25)")
+cpp_quote("#define VRML_E_NODENOTBINDABLE     		(VRML_E_FIRST + 26)")
+
+//enums
+typedef enum FCategory
+{
+ cField,
+ cEventIn,
+ cEventOut,
+ cExposedField,
+} FCATEGORY;
+typedef FCATEGORY* LPFCATEGORY;
+
+typedef enum FType
+{
+ tSFBool     = 202,
+ tSFColor    = 203,
+ tSFFloat    = 205,
+ tSFImage    = 206,
+ tSFInt32    = 207,
+ tSFNode     = 209,
+ tSFRotation = 210,
+ tSFString   = 211,
+ tSFVec2f    = 212,
+ tSFVec3f    = 213,
+ tSFTime     = 215,
+ tMFColor    = 216,
+ tMFFloat    = 217,
+ tMFTime     = 218,
+ tMFInt32    = 219,
+ tMFNode     = 220,
+ tMFRotation = 221,
+ tMFString   = 222,
+ tMFVec2f    = 223,
+ tMFVec3f    = 224,
+} FTYPE;
+typedef FTYPE* LPFTYPE;
+
+typedef enum NodeAttribute
+{
+	naSIMPLENODE    = 0x000000,
+	naPROTOINSTANCE = 0x000002,
+	naINLINE        = 0x000004
+} NODEATTRIBUTE;
+typedef NODEATTRIBUTE* LPNODEATTRIBUTE;
+
+typedef enum EngineFlag
+{
+	efDisableScripts       = 0x000001,
+	efDisableRoutes        = 0x000002,
+	efDisableRendering     = 0x000004,
+	efUseLocalTransport    = 0x000008,
+	efZeroBasedCollections = 0x000010,
+	efSupportMultilevelIs  = 0x000020,
+	efNotMergeProtos       = 0x000040
+} ENGINEFLAG;
+typedef ENGINEFLAG* LPENGINEFLAG;
+
+//low-level structures
+typedef struct _VECTAG { float x, y, z; } _VEC;
+typedef struct _POSTAG { _VEC orig, ortx, orty, ortz; } _POS;
+
+	[
+		object,
+		hidden,
+		uuid(F3796820-B63C-11D4-8EDD-00600818EDB1),
+		helpstring("IVariable Interface"),
+		pointer_default(unique),
+		restricted
+	]
+	interface IVariable : IUnknown
+	{
+     [propget, helpstring("MFVec3F Contents")] 
+	 HRESULT Contents([out, retval] VARIANT* value);
+     [propput, helpstring("MFVec3F Contents")] 
+	 HRESULT Contents([in, ref] const VARIANT* value);
+	};
+
+	[
+		object,
+		uuid(86A88968-7A20-11d2-8EDA-00600818EDB1),
+		helpstring("IBADriver Interface"),
+		pointer_default(unique),
+		restricted
+	]
+	interface IBADriver : IUnknown
+	{
+	 HRESULT AttachEngine([in] LPUNKNOWN pContext, [in] LPUNKNOWN pScene, [in] LPUNKNOWN pView);
+	 HRESULT DetachEngine();
+	 HRESULT RegisterEngineCallback([in] LPENGINECALLBACK pCallback);
+	 HRESULT UnRegisterEngineCallback([in] LPENGINECALLBACK pCallback);
+	 HRESULT IsAttached();
+	};
+
+	[
+		object,
+		uuid(9843A951-FE0E-11d2-812F-00A0C94C695A),
+		helpstring("IBADriver2 Interface"),
+		pointer_default(unique),
+		restricted
+	]
+	interface IBADriver2 : IBADriver
+	{
+		 [helpstring("Set current View")] HRESULT SetCurrentView([in] LPUNKNOWN pView);
+		 [helpstring("Get current View")] HRESULT GetCurrentView([out] LPUNKNOWN* ppView);
+	};
+
+	[
+		object,
+		uuid(11DD74D3-9025-11D2-BA48-00A0C94C695A),
+		dual,
+		helpstring("IEngine Interface"),
+		pointer_default(unique)
+	]
+	interface IEngine : IDispatch
+	{
+	 [propget, id(DISPID_VALUE), helpstring("Collection of Named Nodes")] 
+	 HRESULT Nodes([out, retval] LPNODESCOLLECTION* Collection);
+	 [propget, id(1), helpstring("Collection of Root Nodes")] 
+	 HRESULT RootNodes([out, retval] LPNODESCOLLECTION* Collection);
+	 [id(2), helpstring("Get 3D Point from 2D Point. Distance - distance from camera (Z coordinate)")] 
+	 HRESULT PointTo3D([in] long X, [in] long Y, [in] float Distance, [out, retval] VARIANT* Point3D);
+	 [id(3), helpstring("Create Node by Type Name.")] 
+	 HRESULT CreateNode([in] BSTR NodeType, [in] BSTR NodeName, [out, retval] LPNODEOBJECT* Node);
+	 [id(4), helpstring("Create Node from VRML syntax. VRML header (#VRML...) not necessary.")] 
+	 HRESULT CreateNodeFromString([in] BSTR VrmlSyntax, [out, retval] LPNODEOBJECT* Node);
+	 [id(5), helpstring("Create MFNode from VRML syntax. VRML header (#VRML...) not necessary.")] 
+	 HRESULT CreateVrmlFromString([in] BSTR VrmlSyntax, [out, retval] LPMFNODEOBJECT* Nodes);
+	 [id(6), helpstring("Advise EventOut handler")] 
+	 HRESULT AdviseEventOut([in] BSTR NodeName, [in] BSTR EventOutName);
+     [id(7), helpstring("Unadvise EventOut handler")] 
+	 HRESULT UnAdviseEventOut([in] BSTR NodeName, [in] BSTR EventOutName);
+     [id(8), helpstring("Add ROUTE to scene")] 
+	 HRESULT AddRoute([in] LPNODEOBJECT NodeFrom, [in] BSTR FromFieldName, [in] LPNODEOBJECT NodeTo, [in] BSTR ToFieldName);
+     [id(9), helpstring("Remove ROUTE from scene")] 
+	 HRESULT RemoveRoute([in] LPNODEOBJECT NodeFrom, [in] BSTR FromFieldName, [in] LPNODEOBJECT NodeTo, [in] BSTR ToFieldName);
+     [id(10), helpstring("Pick from point")] 
+	 HRESULT Pick([in] long X, [in] long Y, [out, retval] LPMFNODEOBJECT* Nodes);
+     [propget, id(11), helpstring("Collider touch point (after Pick)")] 
+	 HRESULT TouchPoint([out, retval] VARIANT* Point);
+     [propget, id(12), helpstring("Get Scene bounds and recalc nodes bound boxes")] 
+	 HRESULT Bounds([out, retval] VARIANT* Bounds);
+     [id(13), helpstring("Create Field object")] 
+	 HRESULT CreateField([in] BSTR TypeName, [out, retval] LPFIELDOBJECT* Field);
+     [propput, id(14), helpstring("AutoRefresh fields after changes")] 
+	 HRESULT AutoRefresh([in] BOOL Value);
+     [propget, id(14), helpstring("AutoRefresh fields after changes")] 
+	 HRESULT AutoRefresh([out, retval] BOOL* Value);
+     [id(15), helpstring("Create MFNode from Url. Callback may have a default function with prototype OnLoad(Url As String, Nodes As MFNode, Protos As VRMLProtosCollection, Error As String) or may provide ICreateVrmlFromUrlCallback interface")] 
+	 HRESULT CreateVrmlFromUrl([in] BSTR Url, [in] LPDISPATCH Callback);
+     [id(16), helpstring("Save Vrml file")] 
+	 HRESULT SaveVrml([in] BSTR FileName, [in, optional] VARIANT* Flags);
+     [id(17), helpstring("Add node that will be skipped in pick time")] 
+	 HRESULT AddSkipNode([in] LPNODEOBJECT Node);
+     [id(18), helpstring("Clear nodes that will be skipped in pick time")] 
+	 HRESULT ClearSkipNodes();
+     [propget, id(19), helpstring("Collider picked normal (after Pick)")] 
+	 HRESULT TouchNormal([out, retval] VARIANT* Vector);
+     [propput, id(20), helpstring("Current viewpoint position")] 
+	 HRESULT ViewpointPosition([in] VARIANT* Position);
+     [propget, id(20), helpstring("Current viewpoint position")] 
+	 HRESULT ViewpointPosition([out, retval] VARIANT* Position);
+     [propget, id(21), helpstring("Minimum viewing angle from current viewpoint in radians")] 
+	 HRESULT FieldOfView([out, retval] float* Angle);
+     [id(22), helpstring("Refresh engine")] 
+	 HRESULT Refresh();
+     [id(23), helpstring("Distance along")] 
+	 HRESULT DistanceAlong([in] VARIANT* FromPoint, [in] VARIANT* Ray, [out, retval] float* Distance);
+	 [id(24), helpstring("Create MFNode from VRML syntax in IStream. VRML header (#VRML...) not necessary.")] 
+	 HRESULT CreateVrmlFromStream([in] IUnknown* Stream, [out, retval] LPMFNODEOBJECT* Nodes);
+     [propget, id(25), helpstring("Collection of PROTO's")] 
+	 HRESULT Protos([out, retval] LPPROTOSCOLLECTION* Collection);
+     [id(26), helpstring("Create PROTO definition.VRML header (#VRML...) not necessary.")]
+	 HRESULT CreateProtoFromString([in] BSTR VrmlSyntax, [out, retval] LPPROTOOBJECT* Proto);
+     [id(27), helpstring("Create PROTO definition from IStream. VRML header (#VRML...) not necessary.")]
+	 HRESULT CreateProtoFromStream([in] IUnknown* Stream, [out, retval] LPPROTOOBJECT* Proto);
+     [propput, id(28), helpstring("Validate node after field value change")] 
+	 HRESULT ValidateNodes([in] BOOL Value);
+     [propget, id(28), helpstring("Validate node after field value change")] 
+	 HRESULT ValidateNodes([out, retval] BOOL* Value);
+     [id(29), helpstring("Go to specified position")] 
+	 HRESULT GoToPosition([in] VARIANT* Pos, [in, optional] VARIANT* Duration);
+	 //Bindables support
+     [propget, id(30), helpstring("Viewpoints collection")] 
+	 HRESULT Viewpoints([out, retval] LPNODESCOLLECTION* Viewpoints);
+     [propget, id(31), helpstring("Current Viewpoint")] 
+	 HRESULT Viewpoint([out, retval] LPNODEOBJECT* Viewpoint);
+     [propput, id(31), helpstring("Current Viewpoint")] 
+	 HRESULT Viewpoint([in] LPNODEOBJECT Viewpoint);
+     [propget, id(32), helpstring("Backgrounds collection")] 
+	 HRESULT Backgrounds([out, retval] LPNODESCOLLECTION* Backgrounds);
+     [propget, id(33), helpstring("Current Viewpoint")] 
+	 HRESULT Background([out, retval] LPNODEOBJECT* Background);
+     [propput, id(33), helpstring("Current Background")] 
+	 HRESULT Background([in] LPNODEOBJECT Background);
+     [propget, id(34), helpstring("NavigationInfos collection")] 
+	 HRESULT NavigationInfos([out, retval] LPNODESCOLLECTION* NavigationInfos);
+     [propget, id(35), helpstring("Current NavigationInfo")] 
+	 HRESULT NavigationInfo([out, retval] LPNODEOBJECT* NavigationInfo);
+     [propput, id(35), helpstring("Current NavigationInfo")] 
+	 HRESULT NavigationInfo([in] LPNODEOBJECT NavigationInfo);
+     [propget, id(36), helpstring("Fogs collection")] 
+	 HRESULT Fogs([out, retval] LPNODESCOLLECTION* Fogs);
+     [propget, id(37), helpstring("Current Fog")] 
+	 HRESULT Fog([out, retval] LPNODEOBJECT* Fog);
+     [propput, id(37), helpstring("Current Fog")] 
+	 HRESULT Fog([in] LPNODEOBJECT Fog);
+	 //Flags 
+     [propget, id(38), helpstring("Flags property")] 
+	 HRESULT Flags([out, retval] long* Flags);
+     [propput, id(38), helpstring("Flags property")] 
+	 HRESULT Flags([in] long Flags);
+	 [propget, id(39), helpstring("Collider picked nodes (after Pick or DistanceAlong)")] 
+	 HRESULT TouchNodes([out, retval] LPMFNODEOBJECT* Nodes);
+     [propput, id(21), helpstring("Minimum viewing angle from current viewpoint in radians")] 
+	 HRESULT FieldOfView([in] float Angle);
+     [propget, id(40), helpstring("property BasePath - for resolving relative urls")] 
+	 HRESULT SceneBasePath([out, retval] BSTR *pVal);
+     [propput, id(40), helpstring("property BasePath - for resolving relative urls")] 
+	 HRESULT SceneBasePath([in] BSTR newVal);
+	};
+
+	[
+		object,
+		uuid(86A8896E-7A20-11d2-8EDA-00600818EDB1),
+		pointer_default(unique),
+		restricted
+	]
+	interface IEngineCallback : IUnknown
+	{
+	  HRESULT OnEvent([in] LPDISPATCH pObj, [in] BSTR szNodeName, [in] BSTR szEventOutName, [in] double dTimeStamp);
+	};
+
+	[
+		uuid(39C340C1-B6A7-11d2-BA5B-00A0C94C695A),
+		helpstring("IVRMLGeneralCallback Interface"),
+		pointer_default(unique)
+	]
+	interface IVRMLGeneralCallback : IUnknown
+	{
+		[helpstring("Camera moved method")] HRESULT OnCameraMoved();
+		[helpstring("Scene changed")] HRESULT OnSceneChanged();
+		[helpstring("Frame callback")] HRESULT OnFrame();
+	};
+
+	[
+		object,
+		uuid(404070E3-2F2D-11D1-BE30-00A0C944C22C),
+		dual,
+		helpstring("INodeObject Interface"),
+		pointer_default(unique)
+	]
+	interface INodeObject : IDispatch
+	{
+		[propget, id(1), helpstring("Node name (DEF). May be empty.")] 
+		HRESULT Name([out, retval] BSTR* Name);
+		[propput, id(1), helpstring("Node name (DEF). May be empty.")] 
+		HRESULT Name([in] BSTR Name);
+		[propget, id(2), helpstring("Node Type name or PROTO name")] 
+		HRESULT TypeName([out, retval] BSTR* TypeName);
+		[propget, id(3), helpstring("Node attributes")] 
+		HRESULT Attributes([out, retval] long* Attributes);
+		[propget, id(DISPID_VALUE), helpstring("Node Fields collection")] 
+		HRESULT Fields([out, retval] LPFIELDSCOLLECTION *Collection);
+	    [propget, id(4), helpstring("Get Node bounds and recalc child nodes bound boxes")] 
+   	    HRESULT Bounds([in, optional] VARIANT* IncludeChildren, [out, retval] VARIANT* Bounds);
+	    [propget, id(5), helpstring("Inside Named Nodes for PROTOINSTANCE or Inline")] 
+   	    HRESULT Nodes([out, retval] LPNODESCOLLECTION* Nodes);
+	    [propget, id(6), helpstring("Inside Root Nodes for PROTOINSTANCE or Inline")] 
+   	    HRESULT RootNodes([out, retval] LPNODESCOLLECTION* Nodes);
+	    [propget, id(7), helpstring("Proto definition node for proto instance node")] 
+   	    HRESULT Proto([out, retval] LPPROTOOBJECT* Proto);
+	    [propget, id(8), helpstring("Proto instance (or Inline) node for node inside proto instance (or Inline)")] 
+   	    HRESULT Holder([out, retval] LPNODEOBJECT* Node);
+		[propget, id(9), helpstring("Collection of nested PROTO's")] 
+		HRESULT Protos([out, retval] LPPROTOSCOLLECTION* Collection);
+		[id(10), helpstring("Validate Node")] 
+		HRESULT Validate();
+		//FaceSet
+		[propget, id(11), helpstring("Coordinates name")] 
+	    HRESULT Coord([out, retval] LPMFVEC3FOBJECT* Coords);
+		[propget, id(12), helpstring("Coordinates Indexes name")] 
+	    HRESULT CoordIndex([out, retval] LPMFINT32OBJECT* Indexes);
+		[propget, id(13), helpstring("Texture Coordinates name")] 
+	    HRESULT TexCoord([out, retval] LPMFVEC2FOBJECT* Coords);
+		[propget, id(14), helpstring("Texture Coordinates Indexes name")] 
+	    HRESULT CoordTexIndex([out, retval] LPMFINT32OBJECT* Indexes);
+	};
+
+	[
+		object,
+		uuid(E0A2FEF1-9F13-11d2-BA4D-00A0C94C695A),
+		dual,
+		helpstring("IProtoObject Interface"),
+		pointer_default(unique)
+	]
+	interface IProtoObject : IDispatch
+	{
+		[propget, id(1), helpstring("PROTO name")] 
+		HRESULT Name([out, retval] BSTR* Name);
+	    [id(2), helpstring("Create PROTO instance")] 
+   	    HRESULT CreateInstance([out, retval] LPNODEOBJECT* Instance);
+	    [id(3), helpstring("PROTO text")] 
+   	    HRESULT ToString([out, retval] BSTR* Text);
+		[propget, id(DISPID_VALUE), helpstring("PROTO Fields collection")] 
+		HRESULT Fields([out, retval] LPPROTOFIELDSCOLLECTION *Collection);
+	};
+
+	[
+		object,
+		uuid(CBAF3F41-33FF-11d1-BE32-00A0C944C22C),
+		pointer_default(unique),
+		restricted
+	]
+	interface IInternalObject : IUnknown
+	{
+	  HRESULT GetObject([out, retval] LPUNKNOWN* pObj);
+	};
+
+	[
+		object,
+		uuid(27213E01-EE56-11d1-A1CC-00A0C94C695A),
+		pointer_default(unique),
+		restricted
+	]
+	interface IContextItem : IUnknown
+	{
+	  HRESULT GetContext([out, retval] LPUNKNOWN* pContext);
+	};
+
+	[
+		object,
+		uuid(41A27C10-461C-11d1-BE45-00A0C944C22C),
+		pointer_default(unique),
+		restricted
+	]
+	interface IDetacher : IUnknown
+	{
+	  HRESULT Detach();	 
+	};
+
+	[
+		object,
+		uuid(204AE464-2D95-11D1-BE2F-00A0C944C22C),
+		dual,
+		helpstring("INodesCollection Interface"),
+		pointer_default(unique)
+	]
+	interface INodesCollection : IDispatch
+	{
+		[propget, id(1), helpstring("Returns number of items in collection.")] 
+		HRESULT Count([out, retval] long* Count);
+	    
+		[id(2), helpstring("Add VrmlNode or MFNode to collection")] 
+		HRESULT Add([in] LPDISPATCH Nodes, [in, optional] VARIANT* Before);
+		
+		[propget, id(DISPID_VALUE), helpstring("Given an index, returns an item in the collection.")]
+		HRESULT Item([in] VARIANT* Name, [out, retval] LPNODEOBJECT* Node);
+
+	    [propget, restricted, id(DISPID_NEWENUM),
+		helpstring("Returns an enumerator for the collection.")]
+		HRESULT _NewEnum([out, retval] IUnknown** pVal);	
+
+		[id(3), helpstring("Remove element")] 
+		HRESULT Remove([in] VARIANT* IndexOrName);
+
+		[id(4), helpstring("Clear all elements")] 
+		HRESULT Clear();
+	};
+
+	[
+		object,
+		uuid(6CBFA8A1-9F15-11d2-BA4D-00A0C94C695A),
+		dual,
+		helpstring("IProtosCollection Interface"),
+		pointer_default(unique)
+	]
+	interface IProtosCollection : IDispatch
+	{
+		[propget, id(1), helpstring("Returns number of items in collection.")] 
+		HRESULT Count([out, retval] long* Count);
+	    
+		[propget, id(DISPID_VALUE), helpstring("Given an index, returns an item in the collection.")]
+		HRESULT Item([in] VARIANT* Name, [out, retval] LPPROTOOBJECT* Proto);
+
+	    [propget, restricted, id(DISPID_NEWENUM),
+		helpstring("Returns an enumerator for the collection.")]
+		HRESULT _NewEnum([out, retval] IUnknown** pVal);	
+
+		[id(2), helpstring("Clear all protos from scene")] 
+		HRESULT Clear();
+
+		[id(3), helpstring("Add Proto or another collection to this collection implicitly")] 
+		HRESULT Add([in] LPDISPATCH Protos);
+		
+		[id(4), helpstring("Remove proto from collection")] 
+		HRESULT Remove([in] VARIANT* NameOrDisp);
+	};
+
+	[
+		object,
+		uuid(404070E7-2F2D-11D1-BE30-00A0C944C22C),
+		dual,
+		helpstring("IFieldsCollection Interface"),
+		pointer_default(unique)
+	]
+	interface IFieldsCollection : IDispatch
+	{
+		[propget, id(1), helpstring("Returns number of items in collection.")] 
+		HRESULT Count([out, retval] long* Count);
+	    
+		[propget, id(DISPID_VALUE), helpstring("Given an index, returns an item in the collection.")]
+		HRESULT Item([in] VARIANT* Name, [out, retval] LPFIELDOBJECT* Field);
+
+	    [propget, restricted, id(DISPID_NEWENUM),
+		helpstring("Returns an enumerator for the collection.")]	// Must be propget. 
+		HRESULT _NewEnum([out, retval] IUnknown** pVal);	
+	};
+
+	[
+		object,
+		uuid(EDAA4E11-9F1B-11d2-BA4D-00A0C94C695A),
+		dual,
+		helpstring("IProtoFieldsCollection Interface"),
+		pointer_default(unique)
+	]
+	interface IProtoFieldsCollection : IDispatch
+	{
+		[propget, id(1), helpstring("Returns number of items in collection.")] 
+		HRESULT Count([out, retval] long* Count);
+	    
+		[propget, id(DISPID_VALUE), helpstring("Given an index, returns an item in the collection.")]
+		HRESULT Item([in] VARIANT* Name, [out, retval] LPPROTOFIELDOBJECT* Field);
+
+	    [propget, restricted, id(DISPID_NEWENUM),
+		helpstring("Returns an enumerator for the collection.")]	// Must be propget. 
+		HRESULT _NewEnum([out, retval] IUnknown** pVal);	
+	};
+
+	[
+		object,
+		uuid(AE84C981-9F1B-11d2-BA4D-00A0C94C695A),
+		dual,
+		helpstring("IProtoFieldObject Interface"),
+		pointer_default(unique)
+	]
+	interface IProtoFieldObject : IDispatch
+	{
+		[propget, id(1), helpstring("Field name")] HRESULT Name([out, retval] BSTR* Name);
+        [propget, id(2), helpstring("Field type")] HRESULT Type([out, retval] LPFTYPE Type);
+		[propget, id(3), helpstring("Field type name")] HRESULT TypeName([out, retval] BSTR* TypeName);
+		[propget, id(4), helpstring("Field category")] HRESULT Category([out, retval] LPFCATEGORY Category);
+		[propget, id(5), helpstring("Field category name")] HRESULT CategoryName([out, retval] BSTR* CategoryName);
+	};
+
+	[
+		object,
+		uuid(B52C0BC1-903C-11d2-BA48-00A0C94C695A),
+		dual,
+		helpstring("IFieldObject Interface"),
+		pointer_default(unique)
+	]
+	interface IFieldObject : IProtoFieldObject
+	{
+		[propget, id(6), helpstring("Is field fixed?")] HRESULT Fixed([out, retval] BOOL* Fixed);
+		[propget, id(7), helpstring("Node")] HRESULT Node([out, retval] LPNODEOBJECT* Node);
+		[propget, id(8), helpstring("InRoutes")] HRESULT InRoutes([out, retval] LPFIELDSCOLLECTION* Collection);
+        [propget, id(9), helpstring("OutRoutes")] HRESULT OutRoutes([out, retval] LPFIELDSCOLLECTION* Collection);
+        [id(10), helpstring("Assign Value from Field object")] HRESULT Assign([in] LPFIELDOBJECT Field);
+        [propget, id(11), helpstring("IS for field")] HRESULT Is([out, retval] LPFIELDOBJECT* Field);
+		//You can pass also IVRMLEventCallback to this methods
+        [id(12), helpstring("Advise event handler")] HRESULT Advise([in] LPDISPATCH Handler, [in, optional] VARIANT* Hint);
+        [id(13), helpstring("UnAdvise event handler")] HRESULT Unadvise([in] LPDISPATCH Handler);
+	};
+
+	[
+		object,
+		uuid(D59A1571-903C-11d2-BA48-00A0C94C695A),
+		dual,
+		helpstring("ISFieldObject Interface"),
+		pointer_default(unique)
+	]
+	interface ISFieldObject : IFieldObject
+	{
+		[propget, id(14), helpstring("Field value (variant)")] HRESULT Variant([out, retval] VARIANT* Value);
+		[propput, id(14), helpstring("Field value (variant)")] HRESULT Variant([in] VARIANT* Value);
+	}
+
+	[
+		object,
+		uuid(220F3622-903D-11d2-BA48-00A0C94C695A),
+		dual,
+		helpstring("IMFieldObject Interface"),
+		pointer_default(unique)
+	]
+	interface IMFieldObject : IFieldObject
+	{
+		[propget, id(14), helpstring("Elements count")] HRESULT Count([out, retval] long* Count);
+		[propput, id(14), helpstring("Elements count")] HRESULT Count([in] long Count);
+		[id(15), helpstring("Remove element")] HRESULT Remove([in] long Index);
+		[id(16), helpstring("Clear all elements")] HRESULT Clear();
+		[propget, id(17), helpstring("Field value (variant)")] HRESULT Variant([in] long Index, [out, retval] VARIANT* Value);
+		[propput, id(17), helpstring("Field value (variant)")] HRESULT Variant([in] long Index, [in] VARIANT* Value);
+		[id(18), helpstring("Add element (variant)")] HRESULT AddVariant([in] VARIANT* Value, [in, optional] VARIANT* Before);
+	}
+
+	[
+		object,
+		uuid(276E4744-3148-11D1-BAD8-444553540000),
+		dual,
+		helpstring("ISFBoolObject Interface"),
+		pointer_default(unique)
+	]
+	interface ISFBoolObject : ISFieldObject
+	{
+		[propget, id(DISPID_VALUE), helpstring("Field value")] HRESULT Value([out, retval] BOOL* Value);
+		[propput, id(DISPID_VALUE), helpstring("Field value")] HRESULT Value([in] BOOL Value);
+	};
+
+	[
+		object,
+		uuid(276E4746-3148-11D1-BAD8-444553540000),
+		dual,
+		helpstring("ISFColorObject Interface"),
+		pointer_default(unique)
+	]
+	interface ISFColorObject : ISFieldObject
+	{
+		[propget, id(15), helpstring("Red component of color")] HRESULT Red([out, retval] float* Red);
+		[propput, id(15), helpstring("Red component of color")] HRESULT Red([in] float Red);
+		[propget, id(16), helpstring("Green component of color")] HRESULT Green([out, retval] float* Red);
+		[propput, id(16), helpstring("Green component of color")] HRESULT Green([in] float Red);
+		[propget, id(17), helpstring("Blue component of color")] HRESULT Blue([out, retval] float* Red);
+		[propput, id(17), helpstring("Blue component of color")] HRESULT Blue([in] float Red);
+		[propget, id(DISPID_VALUE), helpstring("Field Value (array of 3 single)")] HRESULT Value([out, retval] VARIANT* Value);
+		[propputref, id(DISPID_VALUE), helpstring("Field Value (array of 3 single)")] HRESULT Value([in] VARIANT* Value);
+		[propput, id(DISPID_VALUE), helpstring("Field Value (array of 3 single)")] HRESULT Value([in] VARIANT Value);
+	};
+
+	[
+		object,
+		uuid(276E4748-3148-11D1-BAD8-444553540000),
+		dual,
+		helpstring("ISFFloatObject Interface"),
+		pointer_default(unique)
+	]
+	interface ISFFloatObject : ISFieldObject
+	{
+		[propget, id(DISPID_VALUE), helpstring("Field Value")] HRESULT Value([out, retval] float* Value);
+		[propput, id(DISPID_VALUE), helpstring("Field Value")] HRESULT Value([in] float Value);
+	};
+
+	[
+		object,
+		uuid(276E474A-3148-11D1-BAD8-444553540000),
+		dual,
+		helpstring("ISFImageObject Interface"),
+		pointer_default(unique)
+	]
+	interface ISFImageObject : ISFieldObject
+	{
+		[propget, id(15), helpstring("Image Width")] HRESULT Width([out, retval] int* Width);
+		[propget, id(16), helpstring("Image Height")] HRESULT Height([out, retval] int* Height);
+		[propget, id(17), helpstring("Image Components")] HRESULT Components([out, retval] int* Components);
+		[propget, id(DISPID_VALUE), helpstring("Image Pixels")] HRESULT Pixels([out, retval] LPMFINT32OBJECT* Pixels);
+		[id(18), helpstring("method SetValue")] HRESULT SetValue([in] int Width, [in] int Height, [in] int Components, [in] LPMFINT32OBJECT Pixels);
+	};
+
+	[
+		object,
+		uuid(276E474C-3148-11D1-BAD8-444553540000),
+		dual,
+		helpstring("ISFInt32Object Interface"),
+		pointer_default(unique)
+	]
+	interface ISFInt32Object : ISFieldObject
+	{
+		[propget, id(DISPID_VALUE), helpstring("Field Value")] HRESULT Value([out, retval] long* Value);
+		[propput, id(DISPID_VALUE), helpstring("Field Value")] HRESULT Value([in] long Value);
+	};
+
+	[
+		object,
+		uuid(276E474E-3148-11D1-BAD8-444553540000),
+		dual,
+		helpstring("ISFNodeObject Interface"),
+		pointer_default(unique)
+	]
+	interface ISFNodeObject : ISFieldObject
+	{
+		[propget, id(DISPID_VALUE), helpstring("Field Value")] HRESULT Value([out, retval] LPNODEOBJECT* Value);
+		[propput, id(DISPID_VALUE), helpstring("Field Value")] HRESULT Value([in] LPNODEOBJECT Value);
+	};
+
+	[
+		object,
+		uuid(276E4750-3148-11D1-BAD8-444553540000),
+		dual,
+		helpstring("ISFRotationObject Interface"),
+		pointer_default(unique)
+	]
+	interface ISFRotationObject : ISFieldObject
+	{
+		[propget, id(15), helpstring("X coordinate")] HRESULT X([out, retval] float* X);
+		[propput, id(15), helpstring("X coordinate")] HRESULT X([in] float X);
+		[propget, id(16), helpstring("Y coordinate")] HRESULT Y([out, retval] float* Y);
+		[propput, id(16), helpstring("Y coordinate")] HRESULT Y([in] float Y);
+		[propget, id(17), helpstring("Z coordinate")] HRESULT Z([out, retval] float* Z);
+		[propput, id(17), helpstring("Z coordinate")] HRESULT Z([in] float Z);
+		[propget, id(18), helpstring("Angle (in radians)")] HRESULT Angle([out, retval] float* Angle);
+		[propput, id(18), helpstring("Angle (in radians)")] HRESULT Angle([in] float Angle);
+		[propget, id(DISPID_VALUE), helpstring("Field Value (array of 4 single)")] HRESULT Value([out, retval] VARIANT* Value);
+		[propputref, id(DISPID_VALUE), helpstring("Field Value (array of 4 single)")] HRESULT Value([in] VARIANT* Value);
+		[propput, id(DISPID_VALUE), helpstring("Field Value (array of 4 single)")] HRESULT Value([in] VARIANT Value);
+	};
+
+	[
+		object,
+		uuid(276E4752-3148-11D1-BAD8-444553540000),
+		dual,
+		helpstring("ISFStringObject Interface"),
+		pointer_default(unique)
+	]
+	interface ISFStringObject : ISFieldObject
+	{
+		[propget, id(DISPID_VALUE), helpstring("Field Value")] HRESULT Value([out, retval] BSTR* Value);
+		[propput, id(DISPID_VALUE), helpstring("Field Value")] HRESULT Value([in] BSTR Value);
+	};
+
+	[
+		object,
+		uuid(276E4754-3148-11D1-BAD8-444553540000),
+		dual,
+		helpstring("ISFVec2fObject Interface"),
+		pointer_default(unique)
+	]
+	interface ISFVec2fObject : ISFieldObject
+	{
+		[propget, id(15), helpstring("X coordinate")] HRESULT X([out, retval] float* X);
+		[propput, id(15), helpstring("X coordinate")] HRESULT X([in] float X);
+		[propget, id(16), helpstring("Y coordinate")] HRESULT Y([out, retval] float* Y);
+		[propput, id(16), helpstring("Y coordinate")] HRESULT Y([in] float Y);
+		[propget, id(DISPID_VALUE), helpstring("Field Value (array of 2 single)")] HRESULT Value([out, retval] VARIANT* Value);
+		[propputref, id(DISPID_VALUE), helpstring("Field Value (array of 2 single)")] HRESULT Value([in] VARIANT* Value);
+		[propput, id(DISPID_VALUE), helpstring("Field Value (array of 2 single)")] HRESULT Value([in] VARIANT Value);
+	};
+
+	[
+		object,
+		uuid(276E4756-3148-11D1-BAD8-444553540000),
+		dual,
+		helpstring("ISFVec3fObject Interface"),
+		pointer_default(unique)
+	]
+	interface ISFVec3fObject : ISFieldObject
+	{
+		[propget, id(15), helpstring("X coordinate")] HRESULT X([out, retval] float* X);
+		[propput, id(15), helpstring("X coordinate")] HRESULT X([in] float X);
+		[propget, id(16), helpstring("Y coordinate")] HRESULT Y([out, retval] float* Y);
+		[propput, id(16), helpstring("Y coordinate")] HRESULT Y([in] float Y);
+		[propget, id(17), helpstring("Z coordinate")] HRESULT Z([out, retval] float* Z);
+		[propput, id(17), helpstring("Z coordinate")] HRESULT Z([in] float Z);
+		[propget, id(DISPID_VALUE), helpstring("Field Value (array of 3 single)")] HRESULT Value([out, retval] VARIANT* Value);
+		[propputref, id(DISPID_VALUE), helpstring("Field Value (array of 3 single)")] HRESULT Value([in] VARIANT* Value);
+		[propput, id(DISPID_VALUE), helpstring("Field Value (array of 3 single)")] HRESULT Value([in] VARIANT Value);
+	};
+
+	[
+		object,
+		uuid(276E4758-3148-11D1-BAD8-444553540000),
+		dual,
+		helpstring("ISFTimeObject Interface"),
+		pointer_default(unique)
+	]
+	interface ISFTimeObject : ISFieldObject
+	{
+		[propget, id(DISPID_VALUE), helpstring("Field Value")] HRESULT Value([out, retval] double* Value);
+		[propput, id(DISPID_VALUE), helpstring("Field Value")] HRESULT Value([in] double Value);
+	};
+
+	[
+		object,
+		uuid(276E475A-3148-11D1-BAD8-444553540000),
+		dual,
+		helpstring("IMFColorObject Interface"),
+		pointer_default(unique)
+	]
+	interface IMFColorObject : IMFieldObject
+	{
+		[propget, id(19), helpstring("Red component")] HRESULT Red([in] long Index, [out, retval] float* Value);
+		[propput, id(19), helpstring("Red component")] HRESULT Red([in] long Index, [in] float Value);
+		[propget, id(20), helpstring("Green component")] HRESULT Green([in] long lIndex, [out, retval] float* Value);
+		[propput, id(20), helpstring("Green component")] HRESULT Green([in] long lIndex, [in] float Value);
+		[propget, id(21), helpstring("Blue component")] HRESULT Blue([in] long lIndex, [out, retval] float* Value);
+		[propput, id(21), helpstring("Blue component")] HRESULT Blue([in] long lIndex, [in] float Value);
+		[id(22), helpstring("Add element")] HRESULT Add([in] VARIANT* Value, [in, optional] VARIANT* Before);
+		[propget, id(DISPID_VALUE), helpstring("Field Value")] HRESULT Value([in] long Index, [out, retval] VARIANT* Value);
+		[propputref, id(DISPID_VALUE), helpstring("Field Value")] HRESULT Value([in] long Index, [in] VARIANT* Value);
+		[propput, id(DISPID_VALUE), helpstring("Field Value")] HRESULT Value([in] long Index, [in] VARIANT Value);
+	};
+
+	[
+		object,
+		uuid(276E475C-3148-11D1-BAD8-444553540000),
+		dual,
+		helpstring("IMFFloatObject Interface"),
+		pointer_default(unique)
+	]
+	interface IMFFloatObject : IMFieldObject
+	{
+		[id(19), helpstring("Add element")] HRESULT Add([in] float Value, [in, optional] VARIANT* Before);
+		[propget, id(DISPID_VALUE), helpstring("Field Value")] HRESULT Value([in] long Index, [out, retval] float* Value);
+		[propput, id(DISPID_VALUE), helpstring("Field Value")] HRESULT Value([in] long Index, [in] float Value);
+	};
+
+	[
+		object,
+		uuid(276E475E-3148-11D1-BAD8-444553540000),
+		dual,
+		helpstring("IMFTimeObject Interface"),
+		pointer_default(unique)
+	]
+	interface IMFTimeObject : IMFieldObject
+	{
+		[id(19), helpstring("Add element")] HRESULT Add([in] double Value, [in, optional] VARIANT* Before);
+		[propget, id(DISPID_VALUE), helpstring("Field Value")] HRESULT Value([in] long Index, [out, retval] double* Value);
+		[propput, id(DISPID_VALUE), helpstring("Field Value")] HRESULT Value([in] long Index, [in] double Value);
+	};
+
+	[
+		object,
+		uuid(276E4760-3148-11D1-BAD8-444553540000),
+		dual,
+		helpstring("IMFInt32Object Interface"),
+		pointer_default(unique)
+	]
+	interface IMFInt32Object : IMFieldObject
+	{
+		[id(19), helpstring("Add element")] HRESULT Add([in] long Value, [in, optional] VARIANT* Before);
+		[propget, id(DISPID_VALUE), helpstring("Fields Value")] HRESULT Value([in] long Index, [out, retval] long* Value);
+		[propput, id(DISPID_VALUE), helpstring("Fields Value")] HRESULT Value([in] long Index, [in] long Value);
+	};
+
+	[
+		object,
+		uuid(276E4762-3148-11D1-BAD8-444553540000),
+		dual,
+		helpstring("IMFNodeObject Interface"),
+		pointer_default(unique)
+	]
+	interface IMFNodeObject : IMFieldObject
+	{
+		[id(19), helpstring("Add element")] HRESULT Add([in] LPNODEOBJECT Value, [in, optional] VARIANT* Before);
+		[propget, id(DISPID_VALUE), helpstring("Field Value")] HRESULT Value([in] long Index, [out, retval] LPNODEOBJECT* Value);
+		[propput, id(DISPID_VALUE), helpstring("Field Value")] HRESULT Value([in] long Index, [in] LPNODEOBJECT Value);
+	};
+
+	[
+		object,
+		uuid(276E4764-3148-11D1-BAD8-444553540000),
+		dual,
+		helpstring("IMFRotationObject Interface"),
+		pointer_default(unique)
+	]
+	interface IMFRotationObject : IMFieldObject
+	{
+		[id(19), helpstring("Add element (array of 4 single)")] HRESULT Add([in] VARIANT* Value, [in, optional] VARIANT* Before);
+		[propget, id(20), helpstring("X coordinate")] HRESULT X([in] long Index, [out, retval] float* Value);
+		[propput, id(20), helpstring("X coordinate")] HRESULT X([in] long Index, [in] float Value);
+		[propget, id(21), helpstring("Y coordinate")] HRESULT Y([in] long Index, [out, retval] float* Value);
+		[propput, id(21), helpstring("Y coordinate")] HRESULT Y([in] long Index, [in] float Value);
+		[propget, id(22), helpstring("Z coordinate")] HRESULT Z([in] long Index, [out, retval] float* Value);
+		[propput, id(22), helpstring("Z coordinate")] HRESULT Z([in] long Index, [in] float Value);
+		[propget, id(23), helpstring("Angle (in radians)")] HRESULT Angle([in] long Index, [out, retval] float* Value);
+		[propput, id(23), helpstring("Angle (in radians)")] HRESULT Angle([in] long Index, [in] float Value);
+		[propget, id(DISPID_VALUE), helpstring("Field Value (array of 4 single)")] HRESULT Value(long Index, [out, retval] VARIANT* Value);
+		[propputref, id(DISPID_VALUE), helpstring("Field Value (array of 4 single)")] HRESULT Value(long Index, [in] VARIANT* Value);
+		[propput, id(DISPID_VALUE), helpstring("Field Value (array of 4 single)")] HRESULT Value(long Index, [in] VARIANT Value);
+	};
+
+	[
+		object,
+		uuid(276E4766-3148-11D1-BAD8-444553540000),
+		dual,
+		helpstring("IMFStringObject Interface"),
+		pointer_default(unique)
+	]
+	interface IMFStringObject : IMFieldObject
+	{
+		[id(19), helpstring("Add element")] HRESULT Add([in] BSTR Value, [in, optional] VARIANT* Before);
+		[propget, id(DISPID_VALUE), helpstring("Field Value")] HRESULT Value([in] long Index, [out, retval] BSTR* Value);
+		[propput, id(DISPID_VALUE), helpstring("Field Value")] HRESULT Value([in] long Index, [in] BSTR Value);
+	};
+
+	[
+		object,
+		uuid(276E4768-3148-11D1-BAD8-444553540000),
+		dual,
+		helpstring("IMFVec2fObject Interface"),
+		pointer_default(unique)
+	]
+	interface IMFVec2fObject : IMFieldObject
+	{
+		[id(19), helpstring("Add element (array of 2 single)")] HRESULT Add([in] VARIANT* Value, [in, optional] VARIANT* Before);
+		[propget, id(20), helpstring("X coordinate")] HRESULT X([in] long Index, [out, retval] float* Value);
+		[propput, id(20), helpstring("X coordinate")] HRESULT X([in] long Index, [in] float Value);
+		[propget, id(21), helpstring("Y coordinate")] HRESULT Y([in] long Index, [out, retval] float* Value);
+		[propput, id(21), helpstring("Y coordinate")] HRESULT Y([in] long Index, [in] float Value);
+ 		[propget, id(DISPID_VALUE), helpstring("Field Value (array of 2 single)")] HRESULT Value([in] long Index, [out, retval] VARIANT* Value);
+		[propputref, id(DISPID_VALUE), helpstring("Field Value (array of 2 single)")] HRESULT Value([in] long Index, [in] VARIANT* Value);
+		[propput, id(DISPID_VALUE), helpstring("Field Value (array of 2 single)")] HRESULT Value([in] long Index, [in] VARIANT Value);
+	};
+
+	[
+		object,
+		uuid(276E476A-3148-11D1-BAD8-444553540000),
+		dual,
+		helpstring("IMFVec3fObject Interface"),
+		pointer_default(unique)
+	]
+	interface IMFVec3fObject : IMFieldObject
+	{
+		[id(19), helpstring("Add element (array of 3 single)")] HRESULT Add([in] VARIANT* Value, [in, optional] VARIANT* Before);
+		[propget, id(20), helpstring("X coordinate")] HRESULT X([in] long Index, [out, retval] float* Value);
+		[propput, id(20), helpstring("X coordinate")] HRESULT X([in] long Index, [in] float Value);
+		[propget, id(21), helpstring("Y coordinate")] HRESULT Y([in] long Index, [out, retval] float* Value);
+		[propput, id(21), helpstring("Y coordinate")] HRESULT Y([in] long Index, [in] float Value);
+		[propget, id(22), helpstring("Z coordinate")] HRESULT Z([in] long Index, [out, retval] float* Value);
+		[propput, id(22), helpstring("Z coordinate")] HRESULT Z([in] long Index, [in] float Value);
+		[propget, id(DISPID_VALUE), helpstring("Field Value (array of 3 single)")] HRESULT Value([in] long Index, [out, retval] VARIANT* Value);
+		[propputref, id(DISPID_VALUE), helpstring("Field Value (array of 3 single)")] HRESULT Value([in] long Index, [in] VARIANT* Value);
+		[propput, id(DISPID_VALUE), helpstring("Field Value (array of 3 single)")] HRESULT Value([in] long Index, [in] VARIANT Value);
+	};
+
+
+///////////////
+//Services
+cpp_quote("#define SM_E_FIRST MAKE_HRESULT(SEVERITY_ERROR, FACILITY_ITF, 0x1000)")
+cpp_quote("#define SM_E_ALWAYSATTACHED (SM_E_FIRST+0)")
+cpp_quote("#define SM_E_NOSERVICE   (SM_E_FIRST+1)")
+cpp_quote("#define SM_E_NOINTERFACE (SM_E_FIRST+2)")
+	[
+		uuid(A9FFC201-B69C-11d2-BA5B-00A0C94C695A),
+		helpstring("IServiceManager Interface"),
+		pointer_default(unique)
+	]
+	interface IServiceManager : IUnknown
+	{
+		[helpstring("Add service")] HRESULT AddService([in] REFIID guidSrv, [in] REFIID guidIntrf, [in] LPUNKNOWN pSrvc);
+		[helpstring("Remove service")] HRESULT RemoveService([in] REFIID guidSrv, [in] REFIID guidIntrf);
+	};
+
+cpp_quote("#define CM_E_FIRST MAKE_HRESULT(SEVERITY_ERROR, FACILITY_ITF, 0x1000)")
+cpp_quote("#define CM_E_ALWAYSATTACHED (CM_E_FIRST+0)")
+cpp_quote("#define CM_E_NOCALLBACK     (CM_E_FIRST+2)")
+	[
+		uuid(32FD0471-B6A8-11d2-BA5B-00A0C94C695A),
+		helpstring("ICallbackManager Interface"),
+		pointer_default(unique)
+	]
+	interface ICallbackManager : IUnknown
+	{
+		[helpstring("Add callback")] HRESULT AddCallback([in] REFIID guidCB, [in] LPUNKNOWN pCB);
+		[helpstring("Remove callback")] HRESULT RemoveCallback([in] REFIID guidCB, [in] LPUNKNOWN pCB);
+	};
+
+	[
+		uuid(BED05D51-488F-11d2-A20C-00A0C94C695A),
+		helpstring("I3DViewService Interface"),
+		pointer_default(unique)
+	]
+	interface I3DViewService : IUnknown
+	{
+		[helpstring("Returns 3D window's hWnd."), local] HRESULT GetHWND([out] HWND* hWnd);
+		[helpstring("Render")] HRESULT Render();
+        [helpstring("Move camera position")] HRESULT ForceCameraMovingGbl(_POS* pos, long ms);
+	};
+
+	[
+		uuid(27F41901-B9EF-11d2-BA5C-00A0C94C695A),
+		helpstring("I3DViewService2 Interface"),
+		pointer_default(unique)
+	]
+	interface I3DViewService2 : I3DViewService
+	{
+		[helpstring("Get camera position")] HRESULT GetCameraPos(_POS* position);
+		[helpstring("Set camera position")] HRESULT SetCameraPos(_POS* position);
+		//Step return S_FALSE if another Step call needed
+		[helpstring("Step")] HRESULT Step();
+		//If vec == NULL - set 0,0,0
+		[helpstring("Set EXAMINE center")] HRESULT SetExamineCenter(_VEC* vec);
+	};
+
+	[
+		uuid(59217D22-47F0-4d0f-B1B1-B8BE5577A3E3),
+		helpstring("I3DViewService3 Interface"),
+		pointer_default(unique)
+	]
+	interface I3DViewService3 : I3DViewService2
+	{
+		[helpstring("Get renderer buffer"), local] HRESULT GetBuffer(void** buffer, int* line, int* width, int* height, int* bitsPerPixel);
+	};
+
+
+	[
+		uuid(553929F1-4EE2-11d2-A216-00A0C94C695A),
+		helpstring("IAlertService Interface"),
+		pointer_default(unique)
+	]
+	interface IAlertService : IUnknown
+	{
+		[helpstring("Alert user")] HRESULT Alert([in] LPCWSTR szMessage);
+	};
+	
+
+//This for ICreateVrmlFromUrlCallback
+typedef enum ResourceType
+{
+ rtGeneric      = 0x00000000,
+ rtScene	    = 0x00000001,
+ rtTexture	    = 0x00000002,
+ rtEXTERNPROTO  = 0x00000020,
+ rtScript	    = 0x00000040,
+ rtBackground   = 0x00000100,
+ rtInline	    = 0x00000200,
+// rtAudioClip    = 0x00000400,
+ rtMovieTexture = 0x00000800,
+ rtAll          = 0xFFFFFFFF & ~0x00000400 //without AudioClip
+} RESOURCETYPE;
+
+typedef enum CVFUFlags
+{
+ cvfufSynchro   = 0x00000001,
+} CVFUFLAGS;
+
+	[
+		uuid(089F83C1-2D28-11d2-A200-00A0C94C695A),
+		dual,
+		helpstring("ICreateVrmlFromUrlCallback Interface"),
+		pointer_default(unique)
+	]
+	interface ICreateVrmlFromUrlCallback : IDispatch
+	{
+		[id(DISPID_VALUE)] HRESULT Complete([in] BSTR Url, [in] LPMFNODEOBJECT Nodes, [in] LPPROTOSCOLLECTION Protos, [in] BSTR Error);
+		[id(1)] HRESULT GetFlags([in] long* Flags, [in] long* ResourceTypes);
+		[id(2)] HRESULT Progress([in] int Percents);
+	};
+
+	//You can pass this interface to IFieldObject->Advise method
+	[
+		uuid(6BEF46D1-FD35-11d2-812F-00A0C94C695A),
+		helpstring("IVRMLEventCallback Interface"),
+		pointer_default(unique)
+	]
+	interface IVRMLEventCallback : IUnknown
+	{
+		HRESULT OnEvent([in] LPFIELDOBJECT Value, [in] VARIANT* Hint, [in] double TimeStamp);
+	};
+
+
