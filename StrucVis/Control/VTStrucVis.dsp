@@ -197,6 +197,27 @@ SOURCE="$(InputPath)"
 # PROP Default_Filter "cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 # Begin Source File
 
+SOURCE=.\CortonaControl.cpp
+# End Source File
+# Begin Source File
+
+SOURCE="C:\Program Files\ParallelGraphics\Cortona SDK\INCLUDE\Shelley.idl"
+
+!IF  "$(CFG)" == "VTStrucVis - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "VTStrucVis - Win32 Debug"
+
+# SUBTRACT MTL /mktyplib203
+
+!ELSEIF  "$(CFG)" == "VTStrucVis - Win32 Unicode Debug"
+
+!ELSEIF  "$(CFG)" == "VTStrucVis - Win32 Unicode Release"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
 SOURCE=.\StdAfx.cpp
 # ADD CPP /Yc"stdafx.h"
 # End Source File
@@ -228,6 +249,10 @@ SOURCE=.\VTStrucVisPpg.cpp
 # Begin Group "Header Files"
 
 # PROP Default_Filter "h;hpp;hxx;hm;inl"
+# Begin Source File
+
+SOURCE=.\CortonaControl.h
+# End Source File
 # Begin Source File
 
 SOURCE=.\Resource.h

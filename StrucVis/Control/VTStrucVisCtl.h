@@ -7,7 +7,7 @@
 // VTStructVisCtl.cpp
 // 05/03/2002 - Warren Moore
 //
-// $Id: VTStrucVisCtl.h,v 1.2 2002/03/20 02:32:32 vap-warren Exp $
+// $Id: VTStrucVisCtl.h,v 1.3 2002/03/20 13:08:26 vap-warren Exp $
 
 #ifndef __VTSTRUCTVIS_CONTROL__
 #define __VTSTRUCTVIS_CONTROL__
@@ -18,6 +18,8 @@
 
 // For category support
 #include <comcat.h>
+
+#include "CortonaControl.h"
 
 // Category support functions
 HRESULT CreateComponentCategory(CATID catid, WCHAR *catDescription);
@@ -37,10 +39,12 @@ public:
 
 //#===--- Member Functions
    bool GetCortona();
+   // Searches for a Cortona control within the current container
 
 //#===--- Member Variables
 protected:
-   CString m_oDrawText;
+   CString m_oDrawText;                      // Screen text
+   CCortonaControl m_oControl;               // Cortona control manager
 
 //#===--- Windows Mappings
 

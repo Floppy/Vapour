@@ -7,7 +7,7 @@
 // VTStructVisCtl.cpp
 // 05/03/2002 - Warren Moore
 //
-// $Id: VTStrucVisCtl.cpp,v 1.2 2002/03/20 02:32:32 vap-warren Exp $
+// $Id: VTStrucVisCtl.cpp,v 1.3 2002/03/20 13:08:26 vap-warren Exp $
 
 #include "stdafx.h"
 #include "VTStrucVis.h"
@@ -272,7 +272,6 @@ CVTStrucVisCtrl::CVTStrucVisCtrl() {
 
 // Destructor
 CVTStrucVisCtrl::~CVTStrucVisCtrl() {
-	// TODO: Cleanup your control's instance data here.
 }
 
 // Drawing function
@@ -319,7 +318,11 @@ DWORD CVTStrucVisCtrl::GetControlFlags() {
 
 void CVTStrucVisCtrl::OnLButtonDown(UINT nFlags, CPoint point) {
    // Set the draw string to clicked and repaint
-   GetCortona();
+   if (GetCortona()) {
+      // Turn on the Nav nar
+      m_oControl.NavBar(1);
+      m_oDrawText += "Turning on nav bars\n";
+   }
    InvalidateControl();
 	
 	COleControl::OnLButtonDown(nFlags, point);
@@ -352,19 +355,34 @@ bool CVTStrucVisCtrl::GetCortona() {
                CLSID clsid;
                hResult = pOleObject->GetUserClassID(&clsid);
                if (SUCCEEDED(hResult)) {
-                  LPOLESTR pClsid = NULL;
-                  StringFromCLSID(clsid, &pClsid);
-                  m_oDrawText += "Got object: ";
-                  m_oDrawText += pClsid;
-                  m_oDrawText += "\n";
+                  // Check for Cortona
+            		static CLSID const IID_CortonaControl
+			            = { 0x86a88967, 0x7a20, 0x11d2, { 0x8e, 0xda, 0x0, 0x60, 0x8, 0x18, 0xed, 0xb1 } };
+                  if (clsid == IID_CortonaControl) {
+                     // Get the Cortona Engine interface
+                     m_oDrawText += "Found Cortona control\n";
+                     if (m_oControl.Attach(pOleObject)) {
+                        m_oDrawText += "Attached dispatch driver\n";
+                        bNext = false;
+                     }
+                     else
+                        m_oDrawText += "Unable to get dispatch interface\n";
+                  }
+                  else {
+                     LPOLESTR pClsid = NULL;
+                     StringFromCLSID(clsid, &pClsid);
+                     m_oDrawText += "Found control CLSID: ";
+                     m_oDrawText += pClsid;
+                     m_oDrawText += "\n";
+                  }
                }
                else
-                  m_oDrawText += "Got an OLEObject without CLSID\n";
+                  m_oDrawText += "Found a control without CLSID\n";
                // Release the OLE object
                pOleObject->Release();
             }
             else
-               m_oDrawText += "Got one - query failed tho\n";
+               m_oDrawText += "Found control but no OLE object\n";
             pNextControl->Release();
          }
       }
@@ -377,5 +395,6 @@ bool CVTStrucVisCtrl::GetCortona() {
    }
    else
       m_oDrawText = "Failed to get container";
-   return true;
+
+   return m_oControl.Attached();
 }
