@@ -7,7 +7,7 @@
 // SceneManager.cpp
 // 19/03/2002 - James Smith
 //
-// $Id: SceneManager.cpp,v 1.21 2002/03/24 23:01:08 vap-james Exp $
+// $Id: SceneManager.cpp,v 1.22 2002/03/25 14:55:35 vap-james Exp $
 
 #include "stdafx.h"
 #include "SceneManager.h"
@@ -29,12 +29,14 @@ typedef std::vector<CElement*>::iterator elemIter;
 CSceneManager::CSceneManager(CCortonaUtil *poCortona) :
    m_poCortona(poCortona),
    m_oViewpoint(poCortona),
-   m_bLoading(false)
+   m_bLoading(false),
+   m_pcURL(NULL)
 {
 }
    
 CSceneManager::~CSceneManager() {
    Empty();
+   if (m_pcURL != NULL) free(m_pcURL);
 }
 
 bool CSceneManager::Setup(const unsigned char* pcData, unsigned int iLength) {
@@ -163,7 +165,7 @@ void CSceneManager::SetScaleFactor(float fX, float fY, float fZ) {
 }
 
 void CSceneManager::SetViewpoint(float pfPosition[3], float pfRotation[4]) {
-   m_oViewpoint.Set(pfPosition,pfRotation);
+   m_oViewpoint.Set(m_pcURL,pfPosition,pfRotation);
 }
 
 void CSceneManager::SetColourScheme(TColourScheme oColour) {
@@ -214,9 +216,14 @@ void CSceneManager::Update(void) {
    // Freeze rendering if appropriate
    // Update element display
    for (elemIter pElem = m_oElements.begin(); pElem != m_oElements.end(); pElem++) {
-      (*pElem)->Display();
+      (*pElem)->Display(m_pcURL);
    }
    // Start rendering again
    // Done
+   return;
+}
+
+void CSceneManager::SetBaseURL(const char* pcURL) {
+   m_pcURL = strdup(pcURL);
    return;
 }

@@ -7,7 +7,7 @@
 // Element.h
 // 19/03/2002 - James Smith
 //
-// $Id: Element.h,v 1.13 2002/03/24 13:52:00 vap-warren Exp $
+// $Id: Element.h,v 1.14 2002/03/25 14:55:35 vap-james Exp $
 
 #ifndef __VTSTRUCVIS_ELEMENT__
 #define __VTSTRUCVIS_ELEMENT__
@@ -61,10 +61,11 @@ public:
    virtual TElementType Type(void) const = 0;
    // Return the element type (beam or slab).
 
-   virtual bool Display(void) const = 0;
+   virtual bool Display(const char* pcURL) const = 0;
    // Updates all information and displays the object
    // Returns true if successful, false otherwise.
    // If the object is not already displayed, it is created.
+   // Parameter is a URL for the auxiliary VRML files
 
    virtual void SetNodes(const unsigned int* piNodes) = 0;
    // Sets which nodes govern this element

@@ -7,7 +7,7 @@
 // Viewpoint.h
 // 19/03/2002 - James Smith
 //
-// $Id: Viewpoint.h,v 1.6 2002/03/24 23:01:35 vap-james Exp $
+// $Id: Viewpoint.h,v 1.7 2002/03/25 14:55:34 vap-james Exp $
 
 #ifndef __VTSTRUCVIS_VIEWPOINT__
 #define __VTSTRUCVIS_VIEWPOINT__
@@ -41,7 +41,7 @@ public:
    }
    // Destructor
 
-   bool Set(float* pfPosition = NULL, float* pfRotation = NULL);
+   bool Set(const char* pcURL, float* pfPosition = NULL, float* pfRotation = NULL);
    // Set viewpoint position.
    // If NULL pointers are passed, default values are used.
 

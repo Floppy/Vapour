@@ -7,7 +7,7 @@
 // SceneManager.h
 // 19/03/2002 - James Smith
 //
-// $Id: SceneManager.h,v 1.10 2002/03/24 23:00:27 vap-james Exp $
+// $Id: SceneManager.h,v 1.11 2002/03/25 14:55:35 vap-james Exp $
 
 #ifndef __VTSTRUCVIS_SCENEMANAGER__
 #define __VTSTRUCVIS_SCENEMANAGER__
@@ -79,6 +79,9 @@ public:
    // Show the frame represented by the passed data
    // Returns true if display is successful
 
+   void SetBaseURL(const char* pcURL);
+   // Sets the base URL for the auxiliary VRML files
+
 private:
 
    void Load(void);
@@ -110,6 +113,8 @@ protected:
 
    bool m_bLoading;
    // Is a load in progress?
+
+   char* m_pcURL;
 
 };
 

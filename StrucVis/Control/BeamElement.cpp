@@ -7,7 +7,7 @@
 // BeamElement.cpp
 // 19/03/2002 - James Smith
 //
-// $Id: BeamElement.cpp,v 1.21 2002/03/24 22:34:55 vap-james Exp $
+// $Id: BeamElement.cpp,v 1.22 2002/03/25 14:55:36 vap-james Exp $
 
 #include "stdafx.h"
 #include "BeamElement.h"
@@ -50,14 +50,9 @@ const char pcBeamStart[] = " \
       eventOut MFString description_changed \
    ] \
    [ \
-      \"BeamElement.wrl\" \
-      \"file://D:\\Vapour\\Dev\\Src\\Research\\CortonaBase\\BeamElement.wrl\" \
-      \"file://D:\\James\\vapour\\dev.local\\src\\Research\\CortonaBase\\BeamElement.wrl\" \
-   ] \
-   BeamElement { \
-";
+      \"";
 
-bool CBeamElement::Display(void) const {
+bool CBeamElement::Display(const char* pcURL) const {
    // Calculate colours
    float pfColours[6];
    CalculateColours(pfColours);
@@ -73,6 +68,10 @@ bool CBeamElement::Display(void) const {
       ostrstream strBeam(pcBuffer,2048);
       // Add the basic BeamElement syntax
       strBeam << pcBeamStart;
+      // Add the EXTERNPROTO URL
+      if (pcURL != NULL) strBeam << pcURL;
+      // Add the rest of the preamble;
+      strBeam << "BeamElement.wrl\" ] BeamElement { ";
       // Set the description
       strBeam << " description [\"Beam: " << m_iElement << "\" ";
       strBeam << " \"Group: " << m_iGroup << "\" ";

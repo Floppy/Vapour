@@ -7,7 +7,7 @@
 // BeamElement.h
 // 19/03/2002 - James Smith
 //
-// $Id: BeamElement.h,v 1.10 2002/03/24 13:51:59 vap-warren Exp $
+// $Id: BeamElement.h,v 1.11 2002/03/25 14:55:36 vap-james Exp $
 
 #ifndef __VTSTRUCVIS_BEAMELEMENT__
 #define __VTSTRUCVIS_BEAMELEMENT__
@@ -32,10 +32,11 @@ public:
    unsigned int Node(int iIndex) {return m_piNodes[iIndex];}
    // Get the control node with the passed index
 
-   bool Display(void) const;
+   bool Display(const char* pcURL) const;
    // Updates all information and displays the object
    // Returns true if successful, false otherwise.
    // If the object is not already displayed, it is created.
+   // Parameter is a URL for the auxiliary VRML files
 
    bool SetVisible(bool bVisible) const;
    // Set whether the beam is visible or not.

@@ -7,7 +7,7 @@
 // SlabElement.cpp
 // 19/03/2002 - James Smith
 //
-// $Id: SlabElement.cpp,v 1.23 2002/03/24 22:34:55 vap-james Exp $
+// $Id: SlabElement.cpp,v 1.24 2002/03/25 14:55:35 vap-james Exp $
 
 #include "stdafx.h"
 #include "SlabElement.h"
@@ -47,14 +47,9 @@ const char pcSlabStart[] = " \
       eventOut MFString description_changed \
    ] \
    [ \
-      \"SlabElement.wrl\" \
-      \"file://D:\\Vapour\\Dev\\Src\\Research\\CortonaBase\\SlabElement.wrl\" \
-      \"file://D:\\James\\vapour\\dev.local\\src\\Research\\CortonaBase\\SlabElement.wrl\" \
-   ] \
-   SlabElement { \
-";
+      \"";
 
-bool CSlabElement::Display(void) const {
+bool CSlabElement::Display(const char* pcURL) const {
    // Calculate colours
    float pfColours[27];
    CalculateColours(pfColours);
@@ -70,6 +65,10 @@ bool CSlabElement::Display(void) const {
       ostrstream strSlab(pcBuffer, 2048);
       // Add the basic SlabElement syntax
       strSlab << pcSlabStart;
+      // Add the EXTERNPROTO URL
+      if (pcURL != NULL) strSlab << pcURL;
+      // Add the rest of the preamble;
+      strSlab << "SlabElement.wrl\" ] SlabElement { ";
       // Set the description
       strSlab << " description [\"Slab: " << m_iElement << "\" ";
       strSlab << " \"Group: " << m_iGroup << "\" ";

@@ -7,7 +7,7 @@
 // Viewpoint.cpp
 // 19/03/2002 - James Smith
 //
-// $Id: Viewpoint.cpp,v 1.6 2002/03/24 23:01:35 vap-james Exp $
+// $Id: Viewpoint.cpp,v 1.7 2002/03/25 14:55:34 vap-james Exp $
 
 #include "stdafx.h"
 #include "Viewpoint.h"
@@ -34,14 +34,9 @@ const char pcViewStart[] = " \
       exposedField SFBool jump \
    ] \
    [ \
-      \"HUDView.wrl\" \
-      \"file://D:\\Vapour\\Dev\\Src\\Research\\CortonaBase\\HUDView.wrl\" \
-      \"file://D:\\James\\vapour\\dev.local\\src\\Research\\CortonaBase\\HUDView.wrl\" \
-   ] \
-   HUDView { \
-";
+      \"";
 
-bool CViewpoint::Set(float* pfPosition, float* pfRotation) {
+bool CViewpoint::Set(const char* pcURL, float* pfPosition, float* pfRotation) {
    // If the node isn't there yet
    if (m_poNodePtr == NULL) {
 
@@ -52,6 +47,10 @@ bool CViewpoint::Set(float* pfPosition, float* pfRotation) {
       ostrstream strView(pcBuffer, 2048);
       // Add the basic Viewpoint syntax
       strView << pcViewStart;
+      // Add the EXTERNPROTO URL
+      if (pcURL != NULL) strView << pcURL;
+      // Add the rest of the preamble;
+      strView << "HUDView.wrl\" ] HUDView { ";
       // Set animation mode      
       if (m_bAnimate) strView << " jump FALSE ";
       else strView << " jump TRUE ";
