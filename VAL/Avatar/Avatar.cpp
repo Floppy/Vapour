@@ -7,7 +7,7 @@
 // Avatar.cpp - 17/06/2000 - James Smith
 //	Avatar class implementation
 //
-// $Id: Avatar.cpp,v 1.9 2000/08/30 14:09:12 waz Exp $
+// $Id: Avatar.cpp,v 1.10 2000/10/10 17:53:31 waz Exp $
 //
 
 #include "stdafx.h"
@@ -132,16 +132,16 @@ void CAvatar::SetVertex(int iVertex, double dX, double dY, double dZ) {
 
 void CAvatar::SetFace(int iFace, int iVertex0, int iVertex1, int iVertex2, int iTextureIndex, double iVertex0U, double iVertex0V, double iVertex1U, double iVertex1V, double iVertex2U, double iVertex2V) {
    if (m_bLoading) {
-	   m_pFaces[iFace].m_iVertices[0] = iVertex0;
-	   m_pFaces[iFace].m_iVertices[1] = iVertex1;
-	   m_pFaces[iFace].m_iVertices[2] = iVertex2;
+	   m_pFaces[iFace].m_sVertices[0].m_iVertex = iVertex0;
+	   m_pFaces[iFace].m_sVertices[1].m_iVertex = iVertex1;
+	   m_pFaces[iFace].m_sVertices[2].m_iVertex = iVertex2;
       m_pFaces[iFace].m_iTextureNumber = iTextureIndex;
-      m_pFaces[iFace].m_sTexCoords[0].dU = iVertex0U;
-      m_pFaces[iFace].m_sTexCoords[0].dV = iVertex0V;
-      m_pFaces[iFace].m_sTexCoords[1].dU = iVertex1U;
-      m_pFaces[iFace].m_sTexCoords[1].dV = iVertex1V;
-      m_pFaces[iFace].m_sTexCoords[2].dU = iVertex2U;
-      m_pFaces[iFace].m_sTexCoords[2].dV = iVertex2V;
+      m_pFaces[iFace].m_sVertices[0].m_sTexCoord.dU = iVertex0U;
+      m_pFaces[iFace].m_sVertices[0].m_sTexCoord.dV = iVertex0V;
+      m_pFaces[iFace].m_sVertices[1].m_sTexCoord.dU = iVertex1U;
+      m_pFaces[iFace].m_sVertices[1].m_sTexCoord.dV = iVertex1V;
+      m_pFaces[iFace].m_sVertices[2].m_sTexCoord.dU = iVertex2U;
+      m_pFaces[iFace].m_sVertices[2].m_sTexCoord.dV = iVertex2V;
    }
    return;
 } //SetFace(int iFace, int iVertex0, int iVertex1, int iVertex2, int iTextureIndex, double iVertex0U, double iVertex0V, double iVertex1U, double iVertex1V, double iVertex2U, double iVertex2V)
@@ -222,8 +222,8 @@ void CAvatar::SetJointDamping(BodyPart bpPart, double dDampX, double dDampY, dou
    return;
 } //SetJointDamping(BodyPart bpPart, double dDampX, double dDampY, double dDampZ)
 
-void CAvatar::FixAssociations(void) {
-   // Fix vertex and face lists
+void CAvatar::FixVertexAssociations(void) {
+   // Fix vertex lists
 	for (int i=0; i<TOTAL_NUMBER_BODYPARTS; i++) {
       // Convert vertex list
       if (m_pBodyParts[i].m_pliVertices != NULL) {
@@ -231,6 +231,20 @@ void CAvatar::FixAssociations(void) {
          delete m_pBodyParts[i].m_pliVertices;
          m_pBodyParts[i].m_pliVertices = NULL;
       }
+   }
+   // Build part per vertex map
+   for (int p=0; p<TOTAL_NUMBER_BODYPARTS; p++) {
+      int iNumVertices = m_pBodyParts[p].m_iNumVertices;
+      for (int v=0; v<iNumVertices; v++) {
+         m_piPartPerVertexMap[m_pBodyParts[p].m_piVertices[v]] = p;
+      }
+   }
+   return;
+} //FixVertexAssociations(void)
+
+void CAvatar::FixFaceAssociations(void) {
+   // Fix face lists
+	for (int i=0; i<TOTAL_NUMBER_BODYPARTS; i++) {
       // Convert face list
       if (m_pBodyParts[i].m_pliFaces != NULL) {
          m_pBodyParts[i].m_piFaces = m_pBodyParts[i].m_pliFaces->Convert(m_pBodyParts[i].m_iNumFaces);
@@ -238,8 +252,15 @@ void CAvatar::FixAssociations(void) {
          m_pBodyParts[i].m_pliFaces = NULL;
       }
    }
+   // Build part per face map
+   for (int p=0; p<TOTAL_NUMBER_BODYPARTS; p++) {
+      int iNumFaces = m_pBodyParts[p].m_iNumFaces;
+      for (int f=0; f<iNumFaces; f++) {
+         m_piPartPerFaceMap[m_pBodyParts[p].m_piFaces[f]] = p;
+      }
+   }
    return;
-} //FixAssociations(void)
+} //FixFaceAssociations(void)
 
 void CAvatar::FinishLoad(int iMissingParts) {
    // Stop loading functions
@@ -318,7 +339,7 @@ void CAvatar::BoundingBox(BodyPart bpBodyPart, SPoint3D& max, SPoint3D& min) con
       }
    }
    else if (m_pBodyParts[bpBodyPart].m_iNumFaces != 0) {
-      int iCurrentVertex = m_pFaces[m_pBodyParts[bpBodyPart].m_piFaces[0]].m_iVertices[0];
+      int iCurrentVertex = m_pFaces[m_pBodyParts[bpBodyPart].m_piFaces[0]].m_sVertices[0].m_iVertex;
       max.m_dComponents[0] = pVertices[iCurrentVertex].m_dComponents[0];
       max.m_dComponents[1] = pVertices[iCurrentVertex].m_dComponents[1];
       max.m_dComponents[2] = pVertices[iCurrentVertex].m_dComponents[2];
@@ -327,7 +348,7 @@ void CAvatar::BoundingBox(BodyPart bpBodyPart, SPoint3D& max, SPoint3D& min) con
       min.m_dComponents[2] = pVertices[iCurrentVertex].m_dComponents[2];
       for (int i=0; i<m_pBodyParts[bpBodyPart].m_iNumFaces; i++) {
          for (int j=0; j<3; j++) {
-            iCurrentVertex = m_pFaces[m_pBodyParts[bpBodyPart].m_piFaces[i]].m_iVertices[j];
+            iCurrentVertex = m_pFaces[m_pBodyParts[bpBodyPart].m_piFaces[i]].m_sVertices[j].m_iVertex;
             if (pVertices[iCurrentVertex].m_dComponents[0] > max.m_dComponents[0])
                max.m_dComponents[0] = pVertices[iCurrentVertex].m_dComponents[0];
             else if (pVertices[iCurrentVertex].m_dComponents[0] < min.m_dComponents[0])
@@ -405,10 +426,6 @@ void CAvatar::SetRootTranslation(CVector3D& vecNewTranslation) {
    m_bDirtyTranslation = true;
 	return;
 } //SetRootTranslation(CVector3D& vecNewTranslation)
-
-CVector3D CAvatar::GetRootTranslation() const {
-	return m_vecRootTranslation;
-} //GetRootTranslation()
 
 void CAvatar::TargetBodyPart(enum BodyPart bpJoint, CVector3D& vecTarget, bool bLimit) {
    BodyPart bpParent = m_pBodyParts[bpJoint].m_bpParent;
@@ -512,22 +529,6 @@ bool CAvatar::ImportPose(CAvatarPose& apNewPose) {
    }
    return true;
 } //ImportPose(CAvatarPose& apNewPose)
-
-bool CAvatar::ImportPosePart(BodyPart bpJoint, CAvatarPose& apNewPose) {
-   if (apNewPose.m_iNumJoints != TOTAL_NUMBER_BODYPARTS)
-		return false;
-	// Params
-	bool bReturn = true;
-	SBodyPart sPart = m_pBodyParts[bpJoint];
-	// Loop through children
-	for (int i=0; i<3; i++) {
-		if (sPart.m_bpChildren[i] > 0)
-			bReturn = ImportPosePart(sPart.m_bpChildren[i], apNewPose);
-	}
-	// Copy the joint data
-	SetJointAngle((BodyPart)bpJoint, apNewPose.m_pJointRotations[bpJoint], false, false);
-	return bReturn;
-} //ImportPosePart(BodyPart bpJoint, CAvatarPose& apNewPose)
 
 ///////////////////////////////////////////////////////////////////////
 // Post-Load Functions ////////////////////////////////////////////////
@@ -687,8 +688,8 @@ void CAvatar::UpdateShape(enum BodyPart joint, CHomTransform& htTransform, bool 
 void CAvatar::CalculateNormals(bool bVertex) {
    // Calculate face normals
    for (int f=0; f<m_iNumFaces; f++) {
-      CVector3D vectorOne(CVector3D(m_pCurrentVertices[m_pFaces[f].m_iVertices[1]]) - CVector3D(m_pCurrentVertices[m_pFaces[f].m_iVertices[0]]));
-      CVector3D vectorTwo(CVector3D(m_pCurrentVertices[m_pFaces[f].m_iVertices[2]]) - CVector3D(m_pCurrentVertices[m_pFaces[f].m_iVertices[0]]));
+      CVector3D vectorOne(CVector3D(m_pCurrentVertices[m_pFaces[f].m_sVertices[1].m_iVertex]) - CVector3D(m_pCurrentVertices[m_pFaces[f].m_sVertices[0].m_iVertex]));
+      CVector3D vectorTwo(CVector3D(m_pCurrentVertices[m_pFaces[f].m_sVertices[2].m_iVertex]) - CVector3D(m_pCurrentVertices[m_pFaces[f].m_sVertices[0].m_iVertex]));
       CVector3D vecNormal((vectorOne.Cross(vectorTwo)).Normalise());
       vecNormal.ToDouble(m_pFaces[f].m_dNormal[0],m_pFaces[f].m_dNormal[1],m_pFaces[f].m_dNormal[2]);
    }
@@ -718,23 +719,9 @@ void CAvatar::CalculateNormals(bool bVertex) {
 void CAvatar::BuildMaps(void) {
    // Build faces per vertex map
    for (int f=0; f<m_iNumFaces; f++) {
-      m_plFacesPerVertexMap[m_pFaces[f].m_iVertices[0]].AddBack(f);
-      m_plFacesPerVertexMap[m_pFaces[f].m_iVertices[1]].AddBack(f);
-      m_plFacesPerVertexMap[m_pFaces[f].m_iVertices[2]].AddBack(f);
-   }
-   // Build part per face map
-   for (int p=0; p<TOTAL_NUMBER_BODYPARTS; p++) {
-      int iNumFaces = m_pBodyParts[p].m_iNumFaces;
-      for (int f=0; f<iNumFaces; f++) {
-         m_piPartPerFaceMap[m_pBodyParts[p].m_piFaces[f]] = p;
-      }
-   }
-   // Build part per vertex map
-   for (p=0; p<TOTAL_NUMBER_BODYPARTS; p++) {
-      int iNumVertices = m_pBodyParts[p].m_iNumVertices;
-      for (int v=0; v<iNumVertices; v++) {
-         m_piPartPerVertexMap[m_pBodyParts[p].m_piVertices[v]] = p;
-      }
+      m_plFacesPerVertexMap[m_pFaces[f].m_sVertices[0].m_iVertex].AddBack(f);
+      m_plFacesPerVertexMap[m_pFaces[f].m_sVertices[1].m_iVertex].AddBack(f);
+      m_plFacesPerVertexMap[m_pFaces[f].m_sVertices[2].m_iVertex].AddBack(f);
    }
    return;
 } //BuildMaps(void)

@@ -7,7 +7,7 @@
 // Avatar.h - 16/06/2000 - James Smith
 //	Avatar class header
 //
-// $Id: Avatar.h,v 1.8 2000/08/30 14:09:13 waz Exp $
+// $Id: Avatar.h,v 1.9 2000/10/10 17:53:31 waz Exp $
 //
 
 #ifndef _VAL_AVATAR_
@@ -28,7 +28,7 @@
 #include "BodyPart.h"
 #include "AvatarPose.h"
 
-// Avanew includes
+// VAL includes
 #include "Image.h"
 
 // OpenGL includes
@@ -119,10 +119,14 @@ public:
    // Enters joint damping information into a body part
    void SetJointDamping(BodyPart bpPart, double dDampX, double dDampY, double dDampZ);
 
-   // Fixed body part associations - this needs to be done before shape
+   // Fixed body part vertex associations - this needs to be done before shape
    // calculations can be done. It's a bit of a hack at the moment and will be replaced.
-   void FixAssociations(void);
+   void FixVertexAssociations(void);
    
+   // Fixed body part face associations - this needs to be done before shape
+   // calculations can be done. It's a bit of a hack at the moment and will be replaced.
+   void FixFaceAssociations(void);
+
    // Disables the loading functions, and amongst other things calculates normals
    // If any body sections are not complete, they should be passed as parameters here
    void FinishLoad(int iMissingParts = 0);
@@ -222,9 +226,6 @@ public:
 	// This new translation will only take effect when UpdateModel() is called.
    void SetRootTranslation(CVector3D& vecNewTranslation);
 
-	// Gets the translation of the entire model
-	CVector3D GetRootTranslation() const;
-
    // Sets the angle for the joint so that it points as close as possible
 	// towards the target position.
    void TargetBodyPart(BodyPart bpJoint, CVector3D& vecTarget, bool bLimit = true);
@@ -262,10 +263,6 @@ public:
    // Copies in all the rotations and translations from the passed CAvatarPose.
    // returns true if successful, false if not
    bool ImportPose(CAvatarPose& apNewPose);
-
-   // Copies in some of the rotations and translations from the passed CAvatarPose.
-   // returns true if successful, false if not
-   bool ImportPosePart(BodyPart bpJoint, CAvatarPose& apNewPose);
 
    ///////////////////////////////////////////////////////////////////////
    // Post-Load Functions ////////////////////////////////////////////////
