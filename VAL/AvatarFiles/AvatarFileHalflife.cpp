@@ -7,7 +7,7 @@
 // AvatarFileHalflife.cpp - 16/2/2000 - James Smith
 //	Halflife export filter implementation
 //
-// $Id: AvatarFileHalflife.cpp,v 1.16 2000/11/21 16:44:31 waz Exp $
+// $Id: AvatarFileHalflife.cpp,v 1.17 2000/11/25 22:37:17 waz Exp $
 //
 
 #include "stdafx.h"
@@ -1346,6 +1346,8 @@ void CAvatarFileHalflife::SaveThumbnail(const char *pcBitmap, CAvatar *poAvatar)
 		CImage *poImage = &oImage;
 		// Get the snapshot
 		oScene.Snapshot(poImage);
+		// Destroy the scene
+		oScene.Destroy();
 	}
 
 	// Write thumbnail
