@@ -9,7 +9,7 @@
 //! file      = "Control/VTStrucVisCtl.cpp"
 //! author    = "Warren Moore"
 //! date      = "5/3/2002"
-//! rcsid     = "$Id: VTStrucVisCtl.cpp,v 1.31 2002/04/24 16:25:22 vap-warren Exp $"
+//! rcsid     = "$Id: VTStrucVisCtl.cpp,v 1.32 2002/04/26 02:27:05 vap-warren Exp $"
 
 #include "stdafx.h"
 #include "VTStrucVis.h"
@@ -359,7 +359,7 @@ bool CVTStrucVisCtl::InitCortona() {
       m_eCortonaResult = CR_UNKNOWN;
       if (GetCortona()) {
          // Found the control, so initialise it
-         m_oCortona.NavBar(false);
+         //m_oCortona.NavBar(false);
          m_oCortona.ContextMenu(true);
          m_oCortona.Headlight(true);
          m_oCortona.Edit();
@@ -1420,6 +1420,18 @@ void CVTStrucVisCtl::ShowFrame(const unsigned int uiFrame,
    // Check we have a scene manager present
    if (!m_poScene)
       return;
+   /*
+   // Trace the position and orientation
+   CString oPos, oOr;
+   char *pcPos = const_cast<char*>(m_poScene->GetCurrentPosition());
+   oPos.Format("Pos: %s\n", pcPos);
+   char *pcOr = const_cast<char*>(m_poScene->GetCurrentOrientation());
+   oOr.Format("Or: %s\n", pcOr);
+   m_oCortona.Trace(oPos);
+   m_oCortona.Trace(oOr);
+   delete [] pcPos;
+   delete [] pcOr;
+   */
    // Set the current frame
    m_uiFrame = uiFrame;
    // Set the frame count slider
