@@ -1,0 +1,16 @@
+#========---
+#=- VALET Documentation
+#=====---
+Vapour Technology All-Purpose Library
+Copyright 2001 Vapour Technology Ltd.
+
+Add confidentiality notice
+
+29/09/2001 - Warren Moore
+
+This directory contains all the generic info for VALET in Extended Hyper Text
+(eht's used by CxxDoc). All documentation concerning libraries or apps should
+be placed in a 'docs' subdirectory in the library or apps source dir.
+
+Check this link for info on eht's
+http://ravl.sourceforge.net/doc/Auto/Basic/Tree/Ravl.Introduction.Documentation.html
