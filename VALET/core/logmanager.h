@@ -14,13 +14,13 @@
 //! author 		= "Warren Moore"
 //! date 		= "23/09/2001"
 //! lib 			= libVALETcore
-//! rcsid 		= "$Id: logmanager.h,v 1.4 2001/10/17 00:22:47 vap-warren Exp $"
+//! rcsid 		= "$Id: logmanager.h,v 1.5 2001/10/17 14:44:56 vap-warren Exp $"
 //! userlevel 	= Develop
 //! docentry 	= "VALET.Core.Log"
 //! example 	= VALET/core/log.test.cpp
 
 //#===--- Includes
-#include "valet.h"
+#include "VALET/valet.h"
 
 namespace NValet {
 

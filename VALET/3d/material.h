@@ -14,13 +14,13 @@
 //! author 		= "James Smith"
 //! date 		= "09/10/2001"
 //! lib 		= libVALET3d
-//! rcsid 		= "$Id: material.h,v 1.4 2001/10/12 15:20:05 vap-james Exp $"
+//! rcsid 		= "$Id: material.h,v 1.5 2001/10/17 14:44:53 vap-warren Exp $"
 //! userlevel 	        = Normal
 //! docentry 	        = "VALET.3D.Surface Materials"
 
 //#===--- Includes
-#include "../arch/valet.h"
-#include "materialcolour.h"
+#include "VALET/valet.h"
+#include "VALET/materialcolour.h"
 
 namespace NValet {
 

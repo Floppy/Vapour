@@ -14,7 +14,7 @@
 //! author 		= "James Smith"
 //! date 		= "02/10/2001"
 //! lib 		= libVALETmath
-//! rcsid 		= "$Id: homtransform.h,v 1.3 2001/10/09 18:32:30 vap-james Exp $"
+//! rcsid 		= "$Id: homtransform.h,v 1.4 2001/10/17 14:44:56 vap-warren Exp $"
 //! userlevel 	        = Normal
 //! docentry 	        = "VALET.Math.Geometry"
 
@@ -23,10 +23,10 @@ namespace NValet {
 }
 
 //#===--- Includes
-#include "../arch/valet.h"
-#include "vector3d.h"
-#include "quaternion.h"
-#include "axisrotation.h"
+#include "VALET/valet.h"
+#include "VALET/vector3d.h"
+#include "VALET/quaternion.h"
+#include "VALET/axisrotation.h"
 
 namespace NValet {
     

@@ -14,11 +14,11 @@
 //! author 		= "Warren Moore"
 //! date 		= "23/09/2001"
 //! lib 			= libVALET
-//! rcsid 		= "$Id: valet.noarch.h,v 1.1 2001/09/26 13:10:08 vap-warren Exp $"
+//! rcsid 		= "$Id: valet.noarch.h,v 1.2 2001/10/17 14:44:54 vap-warren Exp $"
 //! userlevel 	= Normal
 //! docentry 	= "VALET.Arch"
 
 //#===--- Includes
-#include "valet_common.h"
+#include "VALET/valet_common.h"
 
 #endif // _VALET_NOARCH_

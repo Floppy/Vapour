@@ -13,13 +13,13 @@
 //! author 		= "James Smith"
 //! date 		= "15/10/2001"
 //! lib 		= libVALET3d
-//! rcsid 		= "$Id: mesh.h,v 1.5 2001/10/15 20:08:51 vap-james Exp $"
+//! rcsid 		= "$Id: mesh.h,v 1.6 2001/10/17 14:44:53 vap-warren Exp $"
 //! userlevel 	        = Normal
 //! docentry 	        = "VALET.3D.Surface Representations"
 
 //#===--- Includes
-#include "../arch/valet.h"
-#include "material.h"
+#include "VALET/valet.h"
+#include "VALET/material.h"
 
 #include <vector>
 

@@ -13,12 +13,12 @@
 //! file 		= "VALET/core/log.test.h"
 //! author 		= "Warren Moore"
 //! date 		= "15/10/2001"
-//! rcsid 		= "$Id: log_test.h,v 1.1 2001/10/17 00:22:48 vap-warren Exp $"
+//! rcsid 		= "$Id: log_test.h,v 1.2 2001/10/17 14:44:55 vap-warren Exp $"
 //! userlevel 	= Develop
 //! docentry 	= "VALET.Core.Log"
 
 //#===--- Includes
-#include "valet.h"
+#include "VALET/valet.h"
 
 // This file defines the arch specific functions for testing the log output
 // Each implementation of the log_test.arch.cpp must contain these functions

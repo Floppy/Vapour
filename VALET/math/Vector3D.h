@@ -14,7 +14,7 @@
 //! author 		= "James Smith"
 //! date 		= "01/10/2001"
 //! lib 		= libVALETmath
-//! rcsid 		= "$Id: Vector3D.h,v 1.7 2001/10/09 18:34:46 vap-james Exp $"
+//! rcsid 		= "$Id: Vector3D.h,v 1.8 2001/10/17 14:44:57 vap-warren Exp $"
 //! userlevel 	        = Normal
 //! docentry 	        = "VALET.Math.Geometry"
 
@@ -23,7 +23,7 @@ namespace NValet {
 }
 
 //#===--- Includes
-#include "../arch/valet.h"
+#include "VALET/valet.h"
 
 namespace NValet {
 

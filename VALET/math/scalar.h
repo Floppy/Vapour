@@ -14,12 +14,12 @@
 //! author 		= "James Smith"
 //! date 		= "01/10/2001"
 //! lib 		= libVALETmath
-//! rcsid 		= "$Id: scalar.h,v 1.2 2001/10/09 18:32:31 vap-james Exp $"
+//! rcsid 		= "$Id: scalar.h,v 1.3 2001/10/17 14:44:57 vap-warren Exp $"
 //! userlevel 	        = Normal
 //! docentry 	        = "VALET.Math.Geometry"
 
 //#===--- Includes
-#include "../arch/valet.h"
+#include "VALET/valet.h"
 
 namespace NValet {
 

@@ -12,16 +12,16 @@
 //! file 		= "VALET/3d/trimodel.h"
 //! author 		= "James Smith"
 //! date 		= "10/10/2001"
-//! lib 		= libVALET3d
-//! rcsid 		= "$Id: trimodel.h,v 1.1 2001/10/15 16:52:53 vap-james Exp $"
-//! userlevel 	        = Normal
-//! docentry 	        = "VALET.3D.Surface Representations"
+//! lib 			= libVALET3d
+//! rcsid 		= "$Id: trimodel.h,v 1.2 2001/10/17 14:44:54 vap-warren Exp $"
+//! userlevel 	= Normal
+//! docentry 	= "VALET.3D.Surface Representations"
 
 //#===--- Includes
-#include "../arch/valet.h"
-#include "surface.h"
-#include "../math/vector3d.h"
-#include "mesh.h"
+#include "VALET/valet.h"
+#include "VALET/surface.h"
+#include "VALET/vector3d.h"
+#include "VALET/mesh.h"
 
 #include <vector>
 
