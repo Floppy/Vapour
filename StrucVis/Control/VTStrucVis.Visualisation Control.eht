@@ -47,17 +47,17 @@ method.
 	faster execution. Like Java, ActiveX controls need a Container, such as Internet Explorer or MS Office
 	applications, in which to run. However, as each container has different capabilities and behaviours, the
 	control has to be explicitly tested with each container in which is it intended for use.
-	<P>
+	<P>Parallel Graphics' Cortona VRML browser is the only browser capable of communication with ActiveX controls.
 </UL>
 
 <P CLASS=HEADING>
 MFC vs. ATL
 </P>
 <P>
-The Microsoft Foundation Classes (MFC) and Active Template Library (ATL) are sets of development libraries for
+The Microsoft Foundation Classes (MFC) and Active Template Library (ATL) are sets of libraries for use in 
 the rapid development of ActiveX components. MFC provides a good framework for ActiveX control design, and supplies
 useful classes for user interface development. ATL's main advantages are that it can generate controls of a 
-smaller download size, and it is easier to create controls with dual interfaces (Automation and COM). However,
-given that these advantages were not useful to this project, and that we were already proficient in using MFC,
+smaller download size than MFC, and it is easier to create controls with dual interfaces (Automation and COM). 
+Given that these advantages were not useful to this project, and that we were already proficient in using MFC,
 ATL was not used.
 </P>

@@ -3,17 +3,23 @@
 
 <UL>
 <LI><B>Speed</B><BR>
-Simulation data manipulation within the control and within Cortona are fast operations, however transfer of
-data from the control to Cortona is marshalled by Microsoft's Automation engine. Given that Automation is the
-process that allows different languages, such as C++, Visual Basic and Delphi, . By reducing the amount of communication required between the control and
-Cortona for animations, it is possible to work around this bottleneck and dramatically improve frame update speed.</LI>
-<LI><B>Event Sinks</B><BR>
-The Cortona control does provide feedback via ActiveX for VRML events and therefore it is be possible for the
-control to react to user interactions with the VRML scene.</LI>
+Given that Automation is the Windows system that allows different languages, such as C++, Visual Basic and
+Delphi, to inter-operate, rigid type-checking (marshalling) is performed by Windows for Automation function calls.
+Cortona's Automation functions pass values individually, even for multiple value fields, and this introduces
+a lot of redundant type-checking immensely slowing down VRML scenes with significant amounts of dynamic data.
+<P>Use of an undocument Cortona function capable of passing an entire set of values has improved the speed
+of these calls. The VRML management of the scene geometry has been modified to demonstrate the speed increase.
+Similar redesign of the management of crack information and stress colours would significantly improve animation speed.
+<LI><B>Cortona Feedback</B><BR>
+The Cortona control does provide feedback via Automation for VRML events and therefore it is be possible for the
+control to react to user interactions with the VRML scene. This would allow the control to react to Cortona errors.
+This feedback would remove the need of VRML touch sensors and the transmission of redundant temperature values for
+display within the HUD. Also, this would allow for the retrieval of the camera position and orientation, 
+for easier viewpoint selection.</LI>
 <LI><B>Framebuffer Access</B><BR>
-It is possible to directly edit the image rendered by Cortona, allowing the possibility to add extra graphical
-elements such as improved tool-tips, a skinnable HUD and fire effects.</LI>
+It is possible to directly retrieve and edit the image rendered by Cortona, allowing the possibility to add extra graphical
+elements such as improved tool-tips, a skinnable HUD, fire effects and AVI generation of animations.</LI>
 <LI><B>Navigation Control</B><BR>
 It is also possible to directly control scene navigation, allowing to use of officially unsupported controllers
-such as 3D-mice or 6DOF 'space-balls'.</LI>
+such as 3D-mice, 6DOF 'space-balls' or head-mounted displays.</LI>
 </UL>
