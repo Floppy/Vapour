@@ -15,7 +15,6 @@ if (not $VALET_SRCROOT or not $VALET_DOCROOT) {
 
 # move the eht files into the dir
 my $find_results = `find $VALET_SRCROOT -name '*.eht' -printf "%p "`;
-printf "Found: $find_results\n";
 if ($find_results) {
 	`cp $find_results eht`;
 }
