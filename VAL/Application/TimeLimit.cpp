@@ -7,7 +7,7 @@
 // TimeLimit.cpp - 07/06/2000 - Warren Moore
 //	Time limit validation
 //
-// $Id: TimeLimit.cpp,v 1.3 2000/07/19 08:47:52 waz Exp $
+// $Id: TimeLimit.cpp,v 1.4 2000/07/24 21:11:48 waz Exp $
 //
 
 #include "StdAfx.h"
@@ -15,9 +15,13 @@
 #include "TimeLimit.h"
 
 #include <iostream.h>
-#include <fstream.h>
-#include "SGAToSims.h"
 #include <time.h>
+
+#ifdef _DEBUG
+#define new DEBUG_NEW
+#undef THIS_FILE
+static char THIS_FILE[] = __FILE__;
+#endif
 
 ///////////////
 // CTimeLimit
