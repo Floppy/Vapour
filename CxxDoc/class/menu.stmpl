@@ -10,9 +10,15 @@
 		<TR><TD>
 		<P CLASS="MENUITEM">
 		<A HREF="$(docroot)/$(if:$viewmode=developer:developer)$(else:user)/index.html">Class List</A><BR>
-		<A HREF="$(docroot)/sitemap.html">Sitemap</A><BR>
+		<A HREF="$(docroot)/sitemap.html">Doc Tree</A><BR>
 		<A HREF="$(docroot)/todo.html">To Do List</A><BR>
 		<A HREF="$(docroot)/bugs.html">Known Bugs</A>
+		</P>
+		</TD></TR>
+		<TR><TD BGCOLOR="#C0C0F0">
+		<P CLASS="MENUITEM">
+		<A HREF="/internal">Internal Site</A>
+		</P>
 		</TD></TR>
 	</TABLE>
 	</TD></TR>
