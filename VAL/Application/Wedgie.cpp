@@ -7,7 +7,7 @@
 // Wedgie.cpp - 02/07/2000 - Warren Moore
 //	Creation and reading of compressed Wedgie files
 //
-// $Id: Wedgie.cpp,v 1.3 2000/07/10 09:04:41 waz Exp $
+// $Id: Wedgie.cpp,v 1.4 2000/07/10 12:15:04 waz Exp $
 //
 
 #include "StdAfx.h"
@@ -173,7 +173,7 @@ WJERESULT CWedgie::Extract(unsigned int uEntry, const char *pcFilename) {
 
 	// Create the base directory name
 	sFileData &sEntry = m_psTable[uEntry];
-	char pcName[STR_LENGTH] = "";
+	char pcName[STR_SIZE] = "";
 	strcpy(pcName, m_pcBaseDir);
 	// Alternative name supplied
 	if (pcFilename) {
@@ -197,7 +197,7 @@ WJERESULT CWedgie::Extract(unsigned int uEntry, const char *pcFilename) {
 	if (m_poFile->bad())
 		return WJE_FILE_READ_ERROR;
 	// Create the directories, necessary
-	char pcDir[STR_LENGTH];
+	char pcDir[STR_SIZE];
 	int iLength = strlen(pcName);
 	int iCount = 0;
 	if ((iLength > 0) && (pcName[0] == '\\'))
@@ -370,10 +370,10 @@ WJERESULT CWedgie::Read1_0() {
 		return WJE_OUT_OF_MEMORY;
 	// Read the toc data
 	unsigned int uCount = 0;
-	char pcName[STR_LENGTH] = "";
+	char pcName[STR_SIZE] = "";
 	while (uCount < m_uFiles) {
 		// Read the filename
-		m_poFile->getline(pcName, STR_LENGTH, '\0');
+		m_poFile->getline(pcName, STR_SIZE, '\0');
 		if (strlen(pcName) > 0) {
 			NEWBEGIN
 			m_psTable[uCount].m_pcName = (char*) new char[m_poFile->gcount()];
