@@ -7,7 +7,7 @@
 // Wedgie.cpp - 02/07/2000 - Warren Moore
 //	Creation and reading of compressed Wedgie files
 //
-// $Id: Wedgie.cpp,v 1.4 2000/07/10 12:15:04 waz Exp $
+// $Id: Wedgie.cpp,v 1.5 2000/07/11 14:20:02 waz Exp $
 //
 
 #include "StdAfx.h"
@@ -62,7 +62,7 @@ WJERESULT CWedgie::Open(fstream *poFile, const char *pcDir, bool bCreate, bool b
 
 	//#===--- Set the wedgie vars
 	// Set the base directory
-	if (pcDir) {
+	if (pcDir && (strlen(pcDir) > 0)) {
 		// Get the string length and add trailing slash
 		int iLength = strlen(pcDir) + 1;
 		bool bTrail = true;			// trailing slash present
