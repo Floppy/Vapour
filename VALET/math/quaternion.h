@@ -14,7 +14,7 @@
 //! author 		= "James Smith"
 //! date 		= "02/10/2001"
 //! lib 		= libVALETmath
-//! rcsid 		= "$Id: quaternion.h,v 1.8 2001/10/24 21:33:26 vap-james Exp $"
+//! rcsid 		= "$Id: quaternion.h,v 1.9 2001/11/02 16:35:03 vap-james Exp $"
 //! userlevel 	        = Normal
 //! docentry 	        = "VALET.Math.Geometry"
 
@@ -81,27 +81,31 @@ namespace NVALET {
       //!param: oQuat = the quaternion to multiply this one by.
       //!param: return = a new quaternion equal to this * oQuat.
 
-      CQuaternion operator/(const double dScalar) const;
-      //: Division
-      // This operator divides all components of the quaternion by the argument.
-      //!param: dScalar = the value to divide by.
-      //!param: return = a new quaternion equal to this / dScalar.
-
       //:--------------------
       //: Geometric functions
 
       CQuaternion Conjugate() const;
       //: Conjugation
-      // Return the conjugate of this quaternion.
+      // Return the conjugate of this quaternion. This inverts
+      // the vector part of the quat.
       //!param: return = the conjugate.
-      //!todo: Explain what this means better in the documentation.
 
       double Norm() const;
       //: Norm
-      // Return the norm of this quaternion.
-      //!param: return = the norm.
-      //!todo: Explain what this means better in the documentation.
+      // Return the norm of the quaternion. This is the SQUARED length
+      // of the 4D vector.
+      //!param: return = the norm of the quaternion.
 
+      double Length() const;
+      //: Length
+      // Return the length of the quaternion.
+      //!param: return = the length of the quaternion.
+
+      CQuaternion& Normalise(void);
+      //: Normalise
+      // Normalises the quaternion (makes it length 1).
+      //!param: return = A reference to this quaternion.
+      
       CQuaternion Inverse() const;
       //: Inversion
       // Calculate the inverse of this quaternion
@@ -124,16 +128,9 @@ namespace NVALET {
       double Scalar(void) const;
       //: Access to scalar part
 		
-      double& Scalar(void);
-      //: Non-const access to scalar part
-      // This can be used to modify the scalar part.
-
       CVector3D Vector(void) const;
       //: Access to vector part
 
-      CVector3D& Vector(void);
-      //: Non-const access to vector part
-      // This can be used to modify the vector part.
    };
 }
 

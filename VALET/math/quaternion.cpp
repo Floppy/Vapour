@@ -11,7 +11,7 @@
 //! author 		= "James Smith"
 //! date 		= "02/10/2001"
 //! lib 		= libVALETmath
-//! rcsid 		= "$Id: quaternion.cpp,v 1.8 2001/11/02 11:53:27 vap-james Exp $"
+//! rcsid 		= "$Id: quaternion.cpp,v 1.9 2001/11/02 16:35:03 vap-james Exp $"
 //! userlevel 	        = Normal
 //! docentry 	        = "VALET.Math.Geometry"
 
@@ -25,21 +25,25 @@
 
 namespace NVALET {
 
-   CQuaternion::CQuaternion() {
+   CQuaternion::CQuaternion() :
+      m_oVector(0,0,0)
+   {
       CLog("math","CQuaternion::Constructor (default)",LL_OBJECT);
-      m_dScalar = 0.0F;
+      m_dScalar = 1.0F;
    } //CQuaternion()
 
    CQuaternion::CQuaternion(const CQuaternion & oQuat) {
       CLog("math","CQuaternion::Constructor (copy)",LL_OBJECT);
       m_oVector = oQuat.m_oVector;
       m_dScalar = oQuat.m_dScalar;
+      Normalise();
    } //CQuaternion(const CQuaternion & quat)
 
    CQuaternion::CQuaternion(const double dScalar, const CVector3D & oVector) {
       CLog("math","CQuaternion::Constructor (double,CVector3D)",LL_OBJECT);
       m_oVector = oVector;
       m_dScalar = dScalar;
+      Normalise();
    } //CQuaternion(const double & dScalar, const CVector3D & oVector)
 
    CQuaternion::CQuaternion(const CAxisRotation & oRot) {
@@ -50,6 +54,7 @@ namespace NVALET {
       double dSinHalfRotation = sin(dHalfRotation);
       m_oVector = temp.Axis() * dSinHalfRotation;
       m_dScalar = cos(dHalfRotation);
+      Normalise();
    } //CQuaternion(const CAxisRotation & oRot)
 
    CQuaternion::CQuaternion(const CEulerRotation & oRot) {
@@ -101,6 +106,7 @@ namespace NVALET {
          a[iSecondAxis] = -a[iSecondAxis];
       }	
       m_oVector.FromDouble(a[0], a[1], a[2]);
+      Normalise();
       return;
    } //CQuaternion(const CEulerRotation & oRot)
 
@@ -120,20 +126,13 @@ namespace NVALET {
       CQuaternion oResult;
       oResult.m_dScalar = m_dScalar * oQuat.m_dScalar - m_oVector.Dot(oQuat.m_oVector);
       oResult.m_oVector = oQuat.m_oVector.Cross(m_oVector) + (oQuat.m_oVector * m_dScalar) + (m_oVector * oQuat.m_dScalar);
+      oResult.Normalise();
       return oResult;
    } //operator *(const CQuaternion& quat) const
 
-   CQuaternion CQuaternion::operator /(const double dScalar) const {
-      CLog("math","CQuaternion::operator/");
-      return CQuaternion(m_dScalar/dScalar,m_oVector/dScalar);
-   } //operator /(const double dScalar)
-
    CQuaternion CQuaternion::Conjugate(void) const {
       CLog("math","CQuaternion::Conjugate");
-      CQuaternion oResult;
-      oResult.m_dScalar = m_dScalar;
-      oResult.m_oVector = -m_oVector;
-      return oResult;
+      return CQuaternion(m_dScalar,-m_oVector);
    } //Conjugate(void) const
 
    double CQuaternion::Norm(void) const {
@@ -148,9 +147,22 @@ namespace NVALET {
       return dResult;
    } //Norm(void) const
 
+   double CQuaternion::Length(void) const {
+      CLog("math","CQuaternion::Length");
+      return sqrt(Norm());
+   } //Length(void) const
+
+   CQuaternion& CQuaternion::Normalise(void) {
+      CLog("math","CQuaternion::Normalise");
+      double dMag = Length();
+      m_dScalar /= dMag;
+      m_oVector /= dMag;
+      return *this;
+   } //Normalise(void)
+
    CQuaternion CQuaternion::Inverse(void) const {
       CLog("math","CQuaternion::Inverse");
-      return CQuaternion((*this).Conjugate() / (*this).Norm());
+      return CQuaternion(Conjugate().Normalise());
    } //Inverse(void) const
 
    CQuaternion CQuaternion::SlerpTo(const CQuaternion& oQuat, double dAmount) const {
@@ -186,25 +198,17 @@ namespace NVALET {
          dScale1 = dAmount;
       }   
       // Calcalate result   
+      double dResult = dScale0*dThisW+dScale1*dTgtW;
       CVector3D oVecResult(dScale0*dThisX+dScale1*dTgtX,dScale0*dThisY+dScale1*dTgtY,dScale0*dThisZ+dScale1*dTgtZ);
-      CQuaternion oQuatResult(dScale0*dThisW+dScale1*dTgtW,oVecResult);
-      return oQuatResult;
+      return CQuaternion(dResult,oVecResult);
    } //SlerpTo(const CQuaternion& oQuat, double dAmount) const
 	
    double CQuaternion::Scalar(void) const {
       return m_dScalar;
    } //Scalar(void) const
 
-   double& CQuaternion::Scalar(void) {
-      return m_dScalar;
-   } //Scalar(void)
-
    CVector3D CQuaternion::Vector(void) const {
       return m_oVector;
    } //Vector(void) const
-
-   CVector3D& CQuaternion::Vector(void) {
-      return m_oVector;
-   } //Vector(void)
 
 }
