@@ -7,7 +7,7 @@
 // SGAToUnrealTournament.cpp - 12/06/2000 - Warren Moore
 //	SGA Avatar to Unreal Tournament converter wrapper 
 //
-// $Id: SgatoUnrealTournament.cpp,v 1.8 2000/10/26 08:49:54 waz Exp $
+// $Id: SgatoUnrealTournament.cpp,v 1.9 2000/11/29 21:24:25 james Exp $
 //
 
 #include "StdAfx.h"
@@ -219,6 +219,11 @@ VARESULT CSGAToUnrealTournament::Export() {
 			m_eResult = VA_AVATAR_LOAD_ERROR;
 			return m_eResult;
 		}
+      else if (poAvatar->Status() != CAvatar::AV_OK) {
+         delete poAvatar;
+			m_eResult = VA_AVATAR_LOAD_ERROR;
+			return m_eResult;
+      }
 
 	// Allocate the complete filename
 		int iLength = strlen(m_pcModelname) + 1;

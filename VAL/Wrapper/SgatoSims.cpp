@@ -7,7 +7,7 @@
 // SGAToSims.cpp - 12/06/2000 - Warren Moore
 //	SGA Avatar to The Sims converter wrapper 
 //
-// $Id: SgatoSims.cpp,v 1.8 2000/08/02 18:05:04 waz Exp $
+// $Id: SgatoSims.cpp,v 1.9 2000/11/29 21:24:25 james Exp $
 //
 
 #include "StdAfx.h"
@@ -277,6 +277,11 @@ VARESULT CSGAToSims::Export() {
 			m_eResult = VA_AVATAR_LOAD_ERROR;
 			return m_eResult;
 		}
+      else if (poAvatar->Status() != CAvatar::AV_OK) {
+         delete poAvatar;
+			m_eResult = VA_AVATAR_LOAD_ERROR;
+			return m_eResult;
+      }
 
 	// Allocate the complete filename
 		int iLength = strlen(m_pcModelname) + 1;
