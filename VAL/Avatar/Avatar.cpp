@@ -7,7 +7,7 @@
 // Avatar.cpp - 17/06/2000 - James Smith
 //	Avatar class implementation
 //
-// $Id: Avatar.cpp,v 1.3 2000/07/10 09:12:31 waz Exp $
+// $Id: Avatar.cpp,v 1.4 2000/07/11 16:09:38 waz Exp $
 //
 
 #include "stdafx.h"
@@ -281,52 +281,53 @@ CImage* CAvatar::Texture(int iTextureIndex, bool& bMore) const {
 } //Texture(int iTextureIndex, bool& bMore)
 
 void CAvatar::BoundingBox(BodyPart bpBodyPart, SPoint3D& max, SPoint3D& min) {
+   SPoint3D* pVertices = m_pCurrentVertices;
    if (bpBodyPart==unknown) {
       int iCurrentVertex = 0;
-      max.m_dComponents[0] = m_pDefaultVertices[iCurrentVertex].m_dComponents[0];
-      max.m_dComponents[1] = m_pDefaultVertices[iCurrentVertex].m_dComponents[1];
-      max.m_dComponents[2] = m_pDefaultVertices[iCurrentVertex].m_dComponents[2];
-      min.m_dComponents[0] = m_pDefaultVertices[iCurrentVertex].m_dComponents[0];
-      min.m_dComponents[1] = m_pDefaultVertices[iCurrentVertex].m_dComponents[1];
-      min.m_dComponents[2] = m_pDefaultVertices[iCurrentVertex].m_dComponents[2];
+      max.m_dComponents[0] = pVertices[iCurrentVertex].m_dComponents[0];
+      max.m_dComponents[1] = pVertices[iCurrentVertex].m_dComponents[1];
+      max.m_dComponents[2] = pVertices[iCurrentVertex].m_dComponents[2];
+      min.m_dComponents[0] = pVertices[iCurrentVertex].m_dComponents[0];
+      min.m_dComponents[1] = pVertices[iCurrentVertex].m_dComponents[1];
+      min.m_dComponents[2] = pVertices[iCurrentVertex].m_dComponents[2];
       for (int i=0; i<m_iNumVertices; i++) {
-         if (m_pDefaultVertices[i].m_dComponents[0] > max.m_dComponents[0])
-            max.m_dComponents[0] = m_pDefaultVertices[i].m_dComponents[0];
-         else if (m_pDefaultVertices[i].m_dComponents[0] < min.m_dComponents[0])
-            min.m_dComponents[0] = m_pDefaultVertices[i].m_dComponents[0];
-         if (m_pDefaultVertices[i].m_dComponents[1] > max.m_dComponents[1])
-            max.m_dComponents[1] = m_pDefaultVertices[i].m_dComponents[1];
-         else if (m_pDefaultVertices[i].m_dComponents[1] < min.m_dComponents[1])
-            min.m_dComponents[1] = m_pDefaultVertices[i].m_dComponents[1];
-         if (m_pDefaultVertices[i].m_dComponents[2] > max.m_dComponents[2])
-            max.m_dComponents[2] = m_pDefaultVertices[i].m_dComponents[2];
-         else if (m_pDefaultVertices[i].m_dComponents[2] < min.m_dComponents[2])
-            min.m_dComponents[2] = m_pDefaultVertices[i].m_dComponents[2];
+         if (pVertices[i].m_dComponents[0] > max.m_dComponents[0])
+            max.m_dComponents[0] = pVertices[i].m_dComponents[0];
+         else if (pVertices[i].m_dComponents[0] < min.m_dComponents[0])
+            min.m_dComponents[0] = pVertices[i].m_dComponents[0];
+         if (pVertices[i].m_dComponents[1] > max.m_dComponents[1])
+            max.m_dComponents[1] = pVertices[i].m_dComponents[1];
+         else if (pVertices[i].m_dComponents[1] < min.m_dComponents[1])
+            min.m_dComponents[1] = pVertices[i].m_dComponents[1];
+         if (pVertices[i].m_dComponents[2] > max.m_dComponents[2])
+            max.m_dComponents[2] = pVertices[i].m_dComponents[2];
+         else if (pVertices[i].m_dComponents[2] < min.m_dComponents[2])
+            min.m_dComponents[2] = pVertices[i].m_dComponents[2];
       }
    }
    else if (m_pBodyParts[bpBodyPart].m_iNumFaces != 0) {
       int iCurrentVertex = m_pFaces[m_pBodyParts[bpBodyPart].m_piFaces[0]].m_iVertices[0];
-      max.m_dComponents[0] = m_pDefaultVertices[iCurrentVertex].m_dComponents[0];
-      max.m_dComponents[1] = m_pDefaultVertices[iCurrentVertex].m_dComponents[1];
-      max.m_dComponents[2] = m_pDefaultVertices[iCurrentVertex].m_dComponents[2];
-      min.m_dComponents[0] = m_pDefaultVertices[iCurrentVertex].m_dComponents[0];
-      min.m_dComponents[1] = m_pDefaultVertices[iCurrentVertex].m_dComponents[1];
-      min.m_dComponents[2] = m_pDefaultVertices[iCurrentVertex].m_dComponents[2];
+      max.m_dComponents[0] = pVertices[iCurrentVertex].m_dComponents[0];
+      max.m_dComponents[1] = pVertices[iCurrentVertex].m_dComponents[1];
+      max.m_dComponents[2] = pVertices[iCurrentVertex].m_dComponents[2];
+      min.m_dComponents[0] = pVertices[iCurrentVertex].m_dComponents[0];
+      min.m_dComponents[1] = pVertices[iCurrentVertex].m_dComponents[1];
+      min.m_dComponents[2] = pVertices[iCurrentVertex].m_dComponents[2];
       for (int i=0; i<m_pBodyParts[bpBodyPart].m_iNumFaces; i++) {
          for (int j=0; j<3; j++) {
             iCurrentVertex = m_pFaces[m_pBodyParts[bpBodyPart].m_piFaces[i]].m_iVertices[j];
-            if (m_pDefaultVertices[iCurrentVertex].m_dComponents[0] > max.m_dComponents[0])
-               max.m_dComponents[0] = m_pDefaultVertices[iCurrentVertex].m_dComponents[0];
-            else if (m_pDefaultVertices[iCurrentVertex].m_dComponents[0] < min.m_dComponents[0])
-               min.m_dComponents[0] = m_pDefaultVertices[iCurrentVertex].m_dComponents[0];
-            if (m_pDefaultVertices[iCurrentVertex].m_dComponents[1] > max.m_dComponents[1])
-               max.m_dComponents[1] = m_pDefaultVertices[iCurrentVertex].m_dComponents[1];
-            else if (m_pDefaultVertices[iCurrentVertex].m_dComponents[1] < min.m_dComponents[1])
-               min.m_dComponents[1] = m_pDefaultVertices[iCurrentVertex].m_dComponents[1];
-            if (m_pDefaultVertices[iCurrentVertex].m_dComponents[2] > max.m_dComponents[2])
-               max.m_dComponents[2] = m_pDefaultVertices[iCurrentVertex].m_dComponents[2];
-            else if (m_pDefaultVertices[iCurrentVertex].m_dComponents[2] < min.m_dComponents[2])
-               min.m_dComponents[2] = m_pDefaultVertices[iCurrentVertex].m_dComponents[2];
+            if (pVertices[iCurrentVertex].m_dComponents[0] > max.m_dComponents[0])
+               max.m_dComponents[0] = pVertices[iCurrentVertex].m_dComponents[0];
+            else if (pVertices[iCurrentVertex].m_dComponents[0] < min.m_dComponents[0])
+               min.m_dComponents[0] = pVertices[iCurrentVertex].m_dComponents[0];
+            if (pVertices[iCurrentVertex].m_dComponents[1] > max.m_dComponents[1])
+               max.m_dComponents[1] = pVertices[iCurrentVertex].m_dComponents[1];
+            else if (pVertices[iCurrentVertex].m_dComponents[1] < min.m_dComponents[1])
+               min.m_dComponents[1] = pVertices[iCurrentVertex].m_dComponents[1];
+            if (pVertices[iCurrentVertex].m_dComponents[2] > max.m_dComponents[2])
+               max.m_dComponents[2] = pVertices[iCurrentVertex].m_dComponents[2];
+            else if (pVertices[iCurrentVertex].m_dComponents[2] < min.m_dComponents[2])
+               min.m_dComponents[2] = pVertices[iCurrentVertex].m_dComponents[2];
          }
       }
    }

@@ -7,7 +7,7 @@
 // Palette.cpp - 19/03/2000 - Warren Moore
 //	Palette implementation
 //
-// $Id: Palette.cpp,v 1.2 2000/06/17 10:42:17 waz Exp $
+// $Id: Palette.cpp,v 1.3 2000/07/11 16:09:39 waz Exp $
 //
 
 #include "stdafx.h"
@@ -84,7 +84,7 @@ void CImagePalette::SetEntry(int iIndex, unsigned long uColour) {
 	m_uPalette[iIndex] = uColour;
 } // SetEntry
 
-void CImagePalette::GetEntry(int iIndex, unsigned long &uColour) {
+void CImagePalette::GetEntry(int iIndex, unsigned long &uColour) const {
 	ASSERT(iIndex < m_iSize);
 	uColour = m_uPalette[iIndex];
 } // GetEntry

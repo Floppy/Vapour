@@ -7,7 +7,7 @@
 // Image.h - 21/12/1999 - Warren Moore
 //	Image header
 //
-// $Id: Image.h,v 1.4 2000/07/10 22:17:00 waz Exp $
+// $Id: Image.h,v 1.5 2000/07/11 16:09:39 waz Exp $
 //
 
 #ifndef _VAL_IMAGE_
@@ -74,6 +74,11 @@ public:
 	void Clear();
 	void Paste(const CImage &copy, int iXOff = 0, int iYOff = 0); // copy is pasted into this
 	void Flip();
+
+// Access Functions
+	const CImagePalette* GetPalette(void) const;
+	UINT GetPixel(int iX, int iY) const;
+	UINT GetPixel(unsigned long uPixel) const;
 
 // Conversion 
 	IRESULT Convert(IMAGETYPE eType, int iColours = 256);
@@ -152,6 +157,29 @@ inline IMAGETYPE CImage::GetType() const {
 inline void CImage::GetSize(int &iWidth, int &iHeight) const {
 	iWidth = m_iWidth;
 	iHeight = m_iHeight;
+}
+
+inline const CImagePalette* CImage::GetPalette(void) const {
+	return m_pPalette;
+}
+
+inline UINT CImage::GetPixel(int iX, int iY) const {
+	unsigned long uPixel = iY*m_iWidth + iX;
+	return GetPixel(uPixel);
+}
+
+inline UINT CImage::GetPixel(unsigned long uPixel) const {
+	if (m_eImageType == IT_RGB) {
+		unsigned long uValue= 0;
+		unsigned char* pPixel = (unsigned char*)m_pData + uPixel*3;
+		uValue = *((unsigned long*)pPixel) & 0x00FFFFFF;
+		return uValue;
+	}
+	else 
+		if (m_eImageType == IT_PALETTE)
+			return ((unsigned char*)m_pData)[uPixel];
+		else
+			return 0;
 }
 
 #endif // _VAL_IMAGE_

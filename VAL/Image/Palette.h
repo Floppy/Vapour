@@ -7,7 +7,7 @@
 // Palette.h - 19/03/2000 - Warren Moore
 //	Palette header
 //
-// $Id: Palette.h,v 1.3 2000/07/10 09:15:38 waz Exp $
+// $Id: Palette.h,v 1.4 2000/07/11 16:09:39 waz Exp $
 //
 
 #ifndef _VAL_PALETTE_
@@ -37,7 +37,7 @@ public:
 // Palette
 	int AddEntry(unsigned long uColour);
 	void SetEntry(int iIndex, unsigned long uColour);
-	void GetEntry(int iIndex, unsigned long &uColour);
+	void GetEntry(int iIndex, unsigned long &uColour) const;
 
 //#===--- Internal Functions
 protected:
