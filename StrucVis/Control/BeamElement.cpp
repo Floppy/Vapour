@@ -6,7 +6,7 @@
 // BeamElement.cpp
 // 19/03/2002 - James Smith
 //
-// $Id: BeamElement.cpp,v 1.5 2002/03/20 21:57:19 vap-warren Exp $
+// $Id: BeamElement.cpp,v 1.6 2002/03/20 22:14:18 vap-james Exp $
 
 #include "stdafx.h"
 #include "BeamElement.h"
@@ -98,8 +98,7 @@ bool CBeamElement::Display(void) const {
          float fX, fY, fZ;
          pField->GetMFVec3f(0, fX, fY, fZ);
          fY -= 0.1f;
-         // James, why does this get twice?
-         pField->GetMFVec3f(0, fX, fY, fZ);
+         pField->SetMFVec3f(0, fX, fY, fZ);
          pField->Release();
          return true;
       }      
