@@ -7,7 +7,7 @@
 // Stores.cpp - 01/06/2000 - Warren Moore
 //	VAL Specialty stores for external linkage
 //
-// $Id: Stores.cpp,v 1.2 2000/07/10 09:15:37 waz Exp $
+// $Id: Stores.cpp,v 1.3 2000/07/19 08:47:36 waz Exp $
 //
 
 #include "StdAfx.h"
@@ -22,6 +22,3 @@ CImageFileStore g_oImageFileStore;
 #include "AvatarFileStore.h"
 CAvatarFileStore g_oAvatarFileStore;
 
-//#===--- Progress control store
-#include "ProgressControl.h"
-CProgressControl g_oProgressControl;
