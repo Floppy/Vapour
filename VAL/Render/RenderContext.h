@@ -7,7 +7,7 @@
 // RenderContext.h - 23/07/2000 - Warren Moore
 //	Base class for render contexts
 //
-// $Id: RenderContext.h,v 1.6 2000/11/21 16:37:53 waz Exp $
+// $Id: RenderContext.h,v 1.7 2000/11/25 11:30:37 waz Exp $
 //
 
 #ifndef _VAL_RENDERCONTEXT_
@@ -18,6 +18,7 @@
 #include "VAL.h"
 
 #include "RenderContextStore.h"
+#include "DisplayContext.h"
 #include "Image.h"
 
 //#===--- Defines
@@ -129,7 +130,7 @@ enum RCRESULT {
 
 class CRenderContext {
 public:
-	CRenderContext();
+	CRenderContext(const CDisplayContext *poDisplay = NULL);
 	virtual ~CRenderContext();
 
 //#===--- External Functions
@@ -200,6 +201,7 @@ protected:
 //#===--- Internal Functions
 
 //#===--- Internal Data
+	const CDisplayContext *m_poDisplay;						// Display context
 	unsigned int m_uWidth, m_uHeight;						// Active context resolution
 	unsigned int m_uNewWidth, m_uNewHeight;				// Next context resolution
 	unsigned int m_uColourDepth;								// Colour depth (in bits per pixel)

@@ -7,7 +7,7 @@
 // Scene.h - 06/10/2000 - Warren Moore
 //	Base class for scene rendering classes
 //
-// $Id: Scene.h,v 1.1 2000/10/10 17:53:03 waz Exp $
+// $Id: Scene.h,v 1.2 2000/11/25 11:30:37 waz Exp $
 //
 
 #ifndef _VAL_SCENE_
@@ -20,9 +20,10 @@
 #include "RenderContextStore.h"
 #include "RenderContext.h"
 
-//#===--- Defines
+#include "DisplayContext.h"
 
 //#===--- Data types
+
 enum SCRESULT {
 	SC_OK = 0,
 	SC_OUT_OF_MEMORY,
@@ -31,8 +32,11 @@ enum SCRESULT {
 	SC_NO_CONTEXT,
 	SC_NO_DATA,
 	SC_SNAPSHOT_ERROR,
+	SC_NO_DISPLAY_CONTEXT,
 	SC_ERROR,
 };
+
+//#===--- Defines
 
 #define SC_ERROR_STRINGS \
 	"OK", \
@@ -42,6 +46,7 @@ enum SCRESULT {
 	"No render context has been created", \
 	"No data available to render", \
 	"Error creating render snapshot", \
+	"No display context", \
 	"Unknown error", \
 
 //#===--- External linkage dependencies
@@ -54,7 +59,7 @@ extern CRenderContextStore g_oRenderContextStore;
 class CScene {
 public:
 	// Constructor
-	CScene();
+	CScene(CDisplayContext *poDisplay = NULL);
 	// Destructor - cleans up render context
 	virtual ~CScene();
 
@@ -78,6 +83,7 @@ protected:
 //#===--- Internal Functions
 
 //#===--- Internal Data
+	const CDisplayContext *m_poDisplay;						// Display context
 	CRenderContext *m_poRC;										// Render context
 
 	static const char *m_pcErrorString[];					// Error string table

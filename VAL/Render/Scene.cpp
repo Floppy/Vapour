@@ -7,7 +7,7 @@
 // Scene.cpp - 06/10/2000 - Warren Moore
 //	Base class for scene rendering classes
 //
-// $Id: Scene.cpp,v 1.1 2000/10/10 17:53:03 waz Exp $
+// $Id: Scene.cpp,v 1.2 2000/11/25 11:30:37 waz Exp $
 //
 
 #include "StdAfx.h"
@@ -28,14 +28,11 @@ const char *CScene::m_pcErrorString[] = {
 	SC_ERROR_STRINGS
 };
 
-CScene::CScene() {
-	m_poRC = NULL;
+CScene::CScene(CDisplayContext *poDisplay) :
+	m_poDisplay(poDisplay),
+	m_poRC(NULL) {
 } // Contructor
 
 CScene::~CScene() {
-	TRACE("CScene::~CScene called\n");
-	// Delete the context
-	if (m_poRC)
-		delete m_poRC;
 } // Destructor
 

@@ -7,7 +7,7 @@
 // RenderContext.cpp - 23/07/2000 - Warren Moore
 //	Base class for render contexts
 //
-// $Id: RenderContext.cpp,v 1.5 2000/10/10 17:53:47 waz Exp $
+// $Id: RenderContext.cpp,v 1.6 2000/11/25 11:30:37 waz Exp $
 //
 
 #include "StdAfx.h"
@@ -28,19 +28,28 @@ const char *CRenderContext::m_pcErrorString[] = {
 	RC_ERROR_STRINGS
 };
 
-CRenderContext::CRenderContext() {
+CRenderContext::CRenderContext(const CDisplayContext *poDisplay) :
 	// No default values
-	m_uWidth = m_uHeight = m_uNewWidth = m_uNewHeight = 0;
-	m_uColourDepth = 0;
-	m_uZBuffer = 0;
-	m_fNearPlane = m_fFarPlane = m_fViewAngle = 0.0F;
+	m_uWidth(0),
+	m_uHeight(0),
+	m_uNewWidth(0),
+	m_uNewHeight(0),
+	m_uColourDepth(0),
+	m_uZBuffer(0),
+	m_fNearPlane(0.0F),
+	m_fFarPlane(0.0F),
+	m_fViewAngle(0.0F),
 	// Initial clear colour black
-	m_fBackRed = m_fBackGreen = m_fBackBlue = 0.0F;
+	m_fBackRed(0.0F),
+	m_fBackGreen(0.0F),
+	m_fBackBlue(0.0F),
 	// Initial projection mode
-	m_uProjMode = RCP_PERSPECTIVE;
+	m_uProjMode(RCP_PERSPECTIVE),
 	// Set the initial context state
-	m_bCreated = false;
-	m_bEnabled = false;
+	m_bCreated(false),
+	m_bEnabled(false),
+	// Display context
+	m_poDisplay(poDisplay) {
 } // Contructor
 
 CRenderContext::~CRenderContext() {

@@ -7,7 +7,7 @@
 // RenderContextStore.cpp - 05/10/2000 - Warren Moore
 //	Render context selection speciality store implementation
 //
-// $Id: RenderContextStore.cpp,v 1.1 2000/10/06 13:04:43 waz Exp $
+// $Id: RenderContextStore.cpp,v 1.2 2000/11/25 11:30:37 waz Exp $
 //
 
 #include "stdafx.h"
@@ -76,6 +76,11 @@ const CRenderContextProxyBase* CRenderContextStore::GetAt(int i) const {
 } // GetAt
 
 //#===--- Context selection
+
+void CRenderContextStore::SetDisplayContext(const CDisplayContext *poDC) {
+	m_poDC = (CDisplayContext*) poDC;
+} // SetDisplayContext
+
 void CRenderContextStore::ClearContextOptions() {
 	m_oOptionList.clear();
 } // ClearContextOptions
@@ -98,7 +103,7 @@ CRenderContext *CRenderContextStore::CreateSuitableContext() {
 	// Loop through all registered contexts until one found or all tried
 	while ((pContext == NULL) && (iCount < GetCount())) {
 		// Create the context under creation
-		pContext = GetAt(iCount)->CreateObject();
+		pContext = GetAt(iCount)->CreateObject(m_poDC);
 		// Pass in the selection options
 		RCRESULT eResult = RC_OK;
 		eResult = pContext->CheckSelection(m_oOptionList);
@@ -107,6 +112,7 @@ CRenderContext *CRenderContextStore::CreateSuitableContext() {
 			eResult = pContext->Create();
 		// If not ok, delete the context
 		if (eResult != RC_OK) {
+			TRACE("CRenderContextStore::CreateSuitableContext - %s\n", pContext->GetErrorString(eResult));
 			delete pContext;
 			pContext = NULL;
 		}

@@ -7,7 +7,7 @@
 // RenderContextStore.h - 05/10/2000 - Warren Moore
 //	Render Context selection speciality store header
 //
-// $Id: RenderContextStore.h,v 1.2 2000/11/21 16:39:05 waz Exp $
+// $Id: RenderContextStore.h,v 1.3 2000/11/25 11:30:37 waz Exp $
 //
 
 #pragma once
@@ -17,6 +17,7 @@
 
 #include <stdio.h>
 #include <vector>
+#include "DisplayContext.h"
 
 // DLL import/export definitions
 #ifndef DLL
@@ -54,7 +55,7 @@ typedef std::vector<SRCOptionTuple> RCOptionListVector;
 class DLL CRenderContextStore {
 public:
 //#===--- External Functions
-	CRenderContextStore() { m_pParentStore=NULL; };
+	CRenderContextStore() : m_poDC(NULL), m_pParentStore(NULL) {};
 	~CRenderContextStore();
 
 	// Proxy register function
@@ -68,6 +69,7 @@ public:
 	const CRenderContextProxyBase* GetAt(int i) const;
 
 	// Context selection
+	void SetDisplayContext(const CDisplayContext *poDC);
 	void ClearContextOptions();
 	void SetContextOption(int iOption, unsigned int uValue);
 	CRenderContext *CreateSuitableContext();
@@ -77,6 +79,7 @@ private:
 	void Init();
 
 //#===--- Internal Data
+	CDisplayContext *m_poDC;								// Display context
 	RenderContextVector* m_pRenderContexts;			// List of registered contexts
    static const double m_dMaxVersion;					// Maximum usable context version
    CRenderContextStore* m_pParentStore;				// Pointer to master store

@@ -7,7 +7,7 @@
 // RenderContextProxy.h - 05/10/2000 - Warren Moore
 //	Render context selection speciality store proxy header
 //
-// $Id: RenderContextProxy.h,v 1.2 2000/11/21 16:38:59 waz Exp $
+// $Id: RenderContextProxy.h,v 1.3 2000/11/25 11:30:37 waz Exp $
 //
 
 #pragma once
@@ -44,7 +44,7 @@ extern CRenderContextStore g_oRenderContextStore;
 class CRenderContextProxyBase {
 public:
 	CRenderContextProxyBase();
-	virtual CRenderContext* CreateObject() const = 0;
+	virtual CRenderContext* CreateObject(CDisplayContext *poDisplay = NULL) const = 0;
 
 	virtual const char* GetID() const = 0;
 	virtual float GetVersion() const = 0;
@@ -57,10 +57,10 @@ public:
 template <class T>
 class DLL CRenderContextProxy : public CRenderContextProxyBase {
 public:
-	CRenderContext* CreateObject() const { 
+	CRenderContext* CreateObject(CDisplayContext *poDisplay = NULL) const { 
 		T *pT = NULL;
 		NEWBEGIN
-		pT = new T;
+		pT = new T(poDisplay);
 		NEWEND("CRenderContextProxy::CreateObject - Render context")
 		return pT;
 	}
