@@ -7,7 +7,7 @@
 // Avatar.h - 16/06/2000 - James Smith
 //	Avatar class header
 //
-// $Id: Avatar.h,v 1.3 2000/07/10 09:14:32 waz Exp $
+// $Id: Avatar.h,v 1.4 2000/07/30 14:59:08 waz Exp $
 //
 
 #ifndef _VAL_AVATAR_
@@ -343,9 +343,7 @@ private:
    void TranslateDefault(BodyPart joint, CVector3D& vecTranslation);
 
    //#===--- Friend Classes
-	friend class CGLAvatar;
-	friend class CGLAvatarMorph;
-	friend class CGLAvatarPos;
+	friend class CRenderAvatar;
 
 };
 
