@@ -14,7 +14,7 @@
 //! author 		= "James Smith"
 //! date 		= "02/10/2001"
 //! lib 		= libVALETmath
-//! rcsid 		= "$Id: axisrotation.h,v 1.1 2001/10/02 17:00:15 vap-james Exp $"
+//! rcsid 		= "$Id: axisrotation.h,v 1.2 2001/10/02 22:15:57 vap-james Exp $"
 //! userlevel 	        = Normal
 //! docentry 	        = "VALET.Math.Geometry"
 
@@ -26,7 +26,7 @@ namespace VALET {
 #include "../arch/valet.h"
 #include "vector3d.h"
 #include "quaternion.h"
-//#include "EulerRotation.h"
+#include "eulerrotation.h"
 
 namespace VALET {
 
@@ -72,7 +72,7 @@ namespace VALET {
 		//: Constructor from a quaternion
 		//!param: oQuat = the quaternion to convert from.
 
-		//explicit CAxisRotation(const CEulerRotation & oRot);
+		explicit CAxisRotation(const CEulerRotation & oRot);
 		//: Constructor from an Euler rotation
 		//!param: oRot = the euler rotation to convert from.
 
