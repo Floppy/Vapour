@@ -9,10 +9,10 @@
 //! file      = "Control/Chunk.cpp"
 //! author    = "James Smith"
 //! date      = "19/3/2002"
-//! rcsid     = "$Id: Chunk.cpp,v 1.15 2002/04/04 11:28:08 vap-warren Exp $"
+//! rcsid     = "$Id: IChunk.cpp,v 1.1 2002/04/05 16:48:26 vap-warren Exp $"
 
 #include "stdafx.h"
-#include "Chunk.h"
+#include "IChunk.h"
 
 #include <memory.h>
 

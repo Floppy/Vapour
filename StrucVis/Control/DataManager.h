@@ -9,13 +9,13 @@
 //! file      = "Control/DataManager.h"
 //! author    = "James Smith"
 //! date      = "19/3/2002"
-//! rcsid     = "$Id: DataManager.h,v 1.15 2002/04/04 13:59:15 vap-warren Exp $"
+//! rcsid     = "$Id: DataManager.h,v 1.16 2002/04/05 16:48:25 vap-warren Exp $"
 
 #ifndef __VTSTRUCVIS_DATAMANAGER__
 #define __VTSTRUCVIS_DATAMANAGER__
 
 #include "Element.h"
-#include "Chunk.h"
+#include "IChunk.h"
 #include <vector>
 
 #if _MSC_VER > 1000

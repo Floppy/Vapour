@@ -9,7 +9,7 @@
 //! file      = "Control/IChunk.h"
 //! author    = "James Smith"
 //! date      = "19/3/2002"
-//! rcsid     = "$Id: Chunk.h,v 1.21 2002/04/04 22:31:35 vap-warren Exp $"
+//! rcsid     = "$Id: IChunk.h,v 1.1 2002/04/05 16:48:26 vap-warren Exp $"
 
 #ifndef __VTSTRUCVIS_ICHUNK__
 #define __VTSTRUCVIS_ICHUNK__

@@ -135,10 +135,6 @@ SOURCE=.\Category.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\Chunk.cpp
-# End Source File
-# Begin Source File
-
 SOURCE=.\CortonaControl.cpp
 # End Source File
 # Begin Source File
@@ -156,6 +152,10 @@ SOURCE=.\CortonaUtil.cpp
 # Begin Source File
 
 SOURCE=.\DataManager.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\IChunk.cpp
 # End Source File
 # Begin Source File
 
@@ -233,10 +233,6 @@ SOURCE=.\Category.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\Chunk.h
-# End Source File
-# Begin Source File
-
 SOURCE=.\CortonaControl.h
 # End Source File
 # Begin Source File
@@ -258,6 +254,10 @@ SOURCE=.\DataManager.h
 # Begin Source File
 
 SOURCE=.\Element.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\IChunk.h
 # End Source File
 # Begin Source File
 
