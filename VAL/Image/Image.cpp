@@ -7,7 +7,7 @@
 // Image.h - 21/12/1999 - Warren Moore
 //	Image implementation
 //
-// $Id: Image.cpp,v 1.7 2000/07/22 23:23:06 waz Exp $
+// $Id: Image.cpp,v 1.8 2000/07/30 20:56:46 waz Exp $
 //
 
 #include "stdafx.h"
@@ -31,46 +31,46 @@ static char THIS_FILE[]=__FILE__;
 // CImage
 
 CImage::CImage(IMAGETYPE eType, int iWidth, int iHeight, int iColours) {
-// Set the image type
+	// Set the image type
 	m_eImageType = eType;
-// Set the width and height params
+		// Set the width and height params
 	m_iWidth = iWidth;
 	m_iHeight = iHeight;
-// Allocate the memory
+	// Allocate the memory
 	m_pData = NULL;
-	m_pPalette = NULL;
+	m_poPalette = NULL;
 	IRESULT eResult = CreateImage();
 } // Constructor
 
 CImage::CImage(const CImage &oCopy) {
-// Set the relative parameters
+	// Set the relative parameters
 	m_eImageType = oCopy.m_eImageType;
 	m_iWidth = oCopy.m_iWidth;
 	m_iHeight = oCopy.m_iHeight;
-// Allocate the memory
+	// Allocate the memory
 	IRESULT eResult = CreateImage();
-// If image data has been allocated ok, copy over
+	// If image data has been allocated ok, copy over
 	if (eResult == I_OK) {
 		memcpy(m_pData, oCopy.m_pData, m_iDataSize * 4);
-		if ((m_eImageType == IT_PALETTE) && (oCopy.m_pPalette))
-			m_pPalette->Copy(oCopy.m_pPalette);
+		if ((m_eImageType == IT_PALETTE) && (oCopy.m_poPalette))
+			m_poPalette->Copy(oCopy.m_poPalette);
 	}
 } // Copy Constructor
 
 CImage::CImage(const CImage &oCopy, int iZoom) {
-// Set the relative parameters
+	// Set the relative parameters
 	m_eImageType = oCopy.m_eImageType;
 	m_iWidth = oCopy.m_iWidth;
 	m_iHeight = oCopy.m_iHeight;
-// Allocate the memory
+	// Allocate the memory
 	IRESULT eResult = CreateImage();
-// If image data has been allocated ok, copy over
+	// If image data has been allocated ok, copy over
 	if (eResult == I_OK) {
 		memcpy(m_pData, oCopy.m_pData, m_iDataSize * 4);
-		if ((m_eImageType == IT_PALETTE) && (oCopy.m_pPalette))
-			m_pPalette->Copy(oCopy.m_pPalette);
+		if ((m_eImageType == IT_PALETTE) && (oCopy.m_poPalette))
+			m_poPalette->Copy(oCopy.m_poPalette);
 	}
-// Scale the copied image
+	// Scale the copied image
 	if (eResult == I_OK) {
 		int iWidth = m_iWidth, iHeight = m_iHeight;
 		while (iZoom) {
@@ -87,88 +87,88 @@ CImage::CImage(const CImage &oCopy, int iZoom) {
 		}
 		eResult = Scale(iWidth, iHeight);
 	}
-// Clean up on errors
+	// Clean up on errors
 	if (eResult != I_OK) {
 		m_iWidth = m_iHeight = 0;
 		m_iDataSize = m_iLineSize = 0;
 		if (m_pData)
 			delete [] m_pData;
 		m_pData = NULL;
-		m_pPalette = NULL;
+		m_poPalette = NULL;
 	}
 
 } // Zoom Copy Constructor
 
 CImage::CImage(const CImage &oCopy, int iWidth, int iHeight, IMAGEFILTERTYPE eFilter) {
-// Set the relative parameters
+	// Set the relative parameters
 	m_eImageType = oCopy.m_eImageType;
 	m_iWidth = oCopy.m_iWidth;
 	m_iHeight = oCopy.m_iHeight;
-// Allocate the memory
+	// Allocate the memory
 	IRESULT eResult = CreateImage();
-// If image data has been allocated ok, copy over
+	// If image data has been allocated ok, copy over
 	if (eResult == I_OK) {
 		memcpy(m_pData, oCopy.m_pData, m_iDataSize * 4);
-		if ((m_eImageType == IT_PALETTE) && (oCopy.m_pPalette))
-			m_pPalette->Copy(oCopy.m_pPalette);
+		if ((m_eImageType == IT_PALETTE) && (oCopy.m_poPalette))
+			m_poPalette->Copy(oCopy.m_poPalette);
 	}
-// Scale the copied image
+	// Scale the copied image
 	if (eResult == I_OK) {
 		eResult = Scale(iWidth, iHeight, eFilter);
 	}
-// Clean up on errors
+	// Clean up on errors
 	if (eResult != I_OK) {
 		m_iWidth = m_iHeight = 0;
 		m_iDataSize = m_iLineSize = 0;
 		if (m_pData)
 			delete [] m_pData;
 		m_pData = NULL;
-		m_pPalette = NULL;
+		m_poPalette = NULL;
 	}
 
 } // Scale copy constructor
 
 CImage::CImage(const CImage &oCopy, IMAGETYPE eImgType, int iColours) {
-// Set the relative parameters
+	// Set the relative parameters
 	m_eImageType = oCopy.m_eImageType;
 	m_iWidth = oCopy.m_iWidth;
 	m_iHeight = oCopy.m_iHeight;
-// Allocate the memory
+	// Allocate the memory
 	IRESULT eResult = CreateImage();
-// If image data has been allocated ok, copy over
+	// If image data has been allocated ok, copy over
 	if (eResult == I_OK) {
 		memcpy(m_pData, oCopy.m_pData, m_iDataSize * 4);
-		if ((m_eImageType == IT_PALETTE) && (oCopy.m_pPalette))
-			m_pPalette->Copy(oCopy.m_pPalette);
+		if ((m_eImageType == IT_PALETTE) && (oCopy.m_poPalette))
+			m_poPalette->Copy(oCopy.m_poPalette);
 	}
-// Convert the copied image
+	// Convert the copied image
 	if (eResult == I_OK) {
 		eResult = Convert(eImgType, iColours);
 	}
-// Clean up on errors
+	// Clean up on errors
 	if (eResult != I_OK) {
 		m_iWidth = m_iHeight = 0;
 		m_iDataSize = m_iLineSize = 0;
 		if (m_pData)
 			delete [] m_pData;
 		m_pData = NULL;
-		m_pPalette = NULL;
+		m_poPalette = NULL;
 	}
 } // Conversion Copy Constructor
 
 CImage::~CImage() {
-// Delete the allocated memory
+	// Delete the allocated memory
 	if (m_pData)
 		delete [] m_pData;
-	if (m_pPalette)
-		delete m_pPalette;
+	if (m_poPalette)
+		delete m_poPalette;
 } // Destructor
 
 //#===--- Image Creation
 
 IRESULT CImage::CreateImage() {
 	IRESULT eResult = I_OK;
-// Validate image size
+	// Validate image size
 	if ((m_iWidth == 0) || (m_iHeight == 0))
 		eResult = I_NO_IMAGE;
 	if ((m_iWidth < 0) || (m_iWidth > IMG_MAXWIDTH)) {
@@ -180,30 +180,30 @@ IRESULT CImage::CreateImage() {
 		eResult = I_OUT_OF_RANGE;
 	}
 
-// If the size is valid, allocate the image memory
+	// If the size is valid, allocate the image memory
 	m_pData = NULL;
 	if (eResult == I_OK) {
-	// Calculate the line length - word align lines
+		// Calculate the line length - word align lines
 		switch (m_eImageType) {
-		// IT_UNKNOWN - Ignore image properties
+			// IT_UNKNOWN - Ignore image properties
 			case IT_UNKNOWN:
 				m_iLineSize = 0;
 				break;
-		// IT_MONO - 1 bit per pixel
+			// IT_MONO - 1 bit per pixel
 			case IT_MONO:
 				m_iLineSize = m_iWidth / 32;
 				if (m_iWidth % 32)
 					m_iLineSize++;
 				break;
-		// IT_GREY - 8 bit greyscale per pixel
-		// IT_PALETTE - 8 bits per colour index
+			// IT_GREY - 8 bit greyscale per pixel
+			// IT_PALETTE - 8 bits per colour index
 			case IT_GREY:
 			case IT_PALETTE:
 				m_iLineSize = m_iWidth / 4;
 				if (m_iWidth % 4)
 					m_iLineSize++;
 				break;
-		// IT_RGB - 24 bits per pixel
+			// IT_RGB - 24 bits per pixel
 			case IT_RGB:
 				m_iLineSize = (m_iWidth * 3) / 4;
 				if ((m_iWidth * 3) % 4)
@@ -211,9 +211,9 @@ IRESULT CImage::CreateImage() {
 				break;
 		}
 
-	// Set the total data size
+		// Set the total data size
 		m_iDataSize = m_iLineSize * m_iHeight;
-	// If valid, allocate the memory
+		// If valid, allocate the memory
 		if (m_iDataSize) {
 			NEWBEGIN
 			m_pData = (UINT*) new UINT[m_iDataSize];
@@ -223,26 +223,30 @@ IRESULT CImage::CreateImage() {
 		}
 	}
 
-// If necessary, create the palette
-	m_pPalette = NULL;
+	// If necessary, create the palette
+	m_poPalette = NULL;
 	if ((m_eImageType == IT_PALETTE) && (eResult == I_OK)) {
 		NEWBEGIN
-		m_pPalette = (CImagePalette*) new CImagePalette;
+		m_poPalette = (CImagePalette*) new CImagePalette;
 		NEWEND("CImage::CreateImage - Palette object")
-		if (!m_pPalette)
+		if (!m_poPalette)
 			eResult = I_OUT_OF_MEMORY;
 	}
 
-// If allocation or a size parameter failed, zero everything
+	// If allocation or a size parameter failed, zero everything
 	if (eResult != I_OK) {
 		m_iWidth = 0;
 		m_iHeight = 0;
 		m_iDataSize = 0;
 		m_iLineSize = 0;
-		if (m_pData)
+		if (m_pData) {
 			delete [] m_pData;
-		if (m_pPalette)
-			delete m_pPalette;
+			m_pData = NULL;
+		}
+		if (m_poPalette) {
+			delete m_poPalette;
+			m_poPalette = NULL;
+		}
 	}
 
 	return eResult;
@@ -251,57 +255,57 @@ IRESULT CImage::CreateImage() {
 //#===--- Editing Functions
 
 IRESULT CImage::SetSize(int iWidth, int iHeight) {
-// Set the image size
+	// Set the image size
 	m_iWidth = iWidth;
 	m_iHeight = iHeight;
 
-// If previous data exists, delete it
+	// If previous data exists, delete it
 	if (m_pData) {
 		delete [] m_pData;
 		m_pData = NULL;
 	}
 
-// Allocate the new image memory
+	// Allocate the new image memory
 	IRESULT eResult = CreateImage();
 
-// Copy the contents of the old image across
+	// Copy the contents of the old image across
 
-// TODO
+	// TODO
 
 	return eResult;
 } // SetSize
 
 void CImage::Clear() {
-// Clear the image memory (set to black)
+	// Clear the image memory (set to black)
 	if (m_pData)
 		memset(m_pData, 0, m_iDataSize * 4);
 } // Clear
 
-void CImage::Paste(const CImage &copy, int iXOff, int iYOff) {
-	if ((m_eImageType != IT_RGB) || (copy.m_eImageType != IT_RGB)) 
+void CImage::Paste(const CImage &oCopy, int iXOff, int iYOff) {
+	if ((m_eImageType != IT_RGB) || (oCopy.m_eImageType != IT_RGB)) 
 		return;
-// Make sure we don't go over the sides
+	// Make sure we don't go over the sides
 	int iClipLeft = 0, iClipRight = 0, iClipTop = 0, iClipBottom = 0;
 	if (iXOff < 0)
 		iClipLeft = -iXOff;
-	if ((iXOff + copy.m_iWidth) > m_iWidth)
-		iClipRight = (iXOff + copy.m_iWidth) - m_iWidth;
+	if ((iXOff + oCopy.m_iWidth) > m_iWidth)
+		iClipRight = (iXOff + oCopy.m_iWidth) - m_iWidth;
 	if (iYOff < 0)
 		iClipTop = -iYOff;
-	if ((iYOff + copy.m_iHeight) > m_iHeight)
-		iClipBottom = (iYOff + copy.m_iHeight) - m_iHeight;
-// Set up the params
-	// Input
-	const int iInputLine = (copy.m_iWidth - iClipRight) * 3;
-	const int iInputHeight = copy.m_iHeight - iClipBottom;
-	const int iInputPitch = copy.m_iLineSize * 4;
-	unsigned char *pIData = (unsigned char*)copy.m_pData;
-	// Output
+	if ((iYOff + oCopy.m_iHeight) > m_iHeight)
+		iClipBottom = (iYOff + oCopy.m_iHeight) - m_iHeight;
+	// Set up the params
+		// Input
+	const int iInputLine = (oCopy.m_iWidth - iClipRight) * 3;
+	const int iInputHeight = oCopy.m_iHeight - iClipBottom;
+	const int iInputPitch = oCopy.m_iLineSize * 4;
+	unsigned char *pIData = (unsigned char*)oCopy.m_pData;
+		// Output
 	const int iOutputPitch = m_iLineSize * 4;
 	unsigned char *pOData = (unsigned char*)m_pData;
 	pOData += (iXOff + iClipLeft) * 3;
 	pOData += iOutputPitch * (iYOff + iClipTop);
-// Copy the image
+	// Copy the image
 	register int iY = iInputHeight;
 	while (iY--) {
 		memcpy(pOData, pIData, (size_t)iInputLine);
@@ -310,43 +314,125 @@ void CImage::Paste(const CImage &copy, int iXOff, int iYOff) {
 	}
 } // Paste
 
+void CImage::Paste(const CImage &oCopy, float fAlpha, bool bTrans, unsigned int uColour, int iXOff, int iYOff) {
+	if ((m_eImageType != IT_RGB) || (oCopy.m_eImageType != IT_RGB)) 
+		return;
+	// Make sure we don't go over the sides
+	int iClipLeft = 0, iClipRight = 0, iClipTop = 0, iClipBottom = 0;
+	if (iXOff < 0)
+		iClipLeft = -iXOff;
+	if ((iXOff + oCopy.m_iWidth) > m_iWidth)
+		iClipRight = (iXOff + oCopy.m_iWidth) - m_iWidth;
+	if (iYOff < 0)
+		iClipTop = -iYOff;
+	if ((iYOff + oCopy.m_iHeight) > m_iHeight)
+		iClipBottom = (iYOff + oCopy.m_iHeight) - m_iHeight;
+	// Set up the input params
+	const int iInputWidth = oCopy.m_iWidth - iClipRight;
+	const int iInputLine = iInputWidth * 3;
+	const int iInputHeight = oCopy.m_iHeight - iClipBottom;
+	const int iInputPitch = oCopy.m_iLineSize * 4;
+	unsigned char *pIData = (unsigned char*)oCopy.m_pData;
+	unsigned char *pIDataPtr = pIData;
+	// Set up the output params
+	const int iOutputPitch = m_iLineSize * 4;
+	unsigned char *pOData = (unsigned char*)m_pData;
+	unsigned char *pODataPtr = pOData;
+	pOData += (iXOff + iClipLeft) * 3;
+	pOData += iOutputPitch * (iYOff + iClipTop);
+	// Alpha and transparency params
+	const unsigned int uTR = (uColour & 0x00FF0000) >> 16;
+	const unsigned int uTG = (uColour & 0x0000FF00) >> 8;
+	const unsigned int uTB = (uColour & 0x000000FF);
+	if (fAlpha > 1.0F)
+		fAlpha = 1.0F;
+	if (fAlpha <= 0.0F)
+		return;
+	const float fOAlpha = 1.0F - fAlpha;
+	const bool bAlpha = fAlpha < 1.0F;
+	// Loop params
+	register int iX = iInputWidth, iY = iInputHeight;
+	unsigned int uR, uG, uB;
+	// Copy the image
+	while (iY--) {
+		// Set the line pointers
+		pIDataPtr = pIData;
+		pODataPtr = pOData;
+		iX = iInputWidth;
+		// Loop through each pixel
+		while (iX--) {
+			// Get the input data
+			uR = (unsigned int)*pIDataPtr++;
+			uG = (unsigned int)*pIDataPtr++;
+			uB = (unsigned int)*pIDataPtr++;
+			// Check if its a transparent pixel
+			if ((!bTrans) || (uR != uTR) || (uB != uTB) || (uG != uTB)) {
+				// Sort out the alpha
+				if (bAlpha) {
+					// Red pixel
+					uR = unsigned int((fOAlpha * (float(pODataPtr[0]))) + (fAlpha * (float(uR))));
+					if (uR > 255)
+						uR = 255;
+					// Green pixel
+					uG = unsigned int((fOAlpha * (float(pODataPtr[1]))) + (fAlpha * (float(uG))));
+					if (uG > 255)
+						uG = 255;
+					// Red pixel
+					uB = unsigned int((fOAlpha * (float(pODataPtr[2]))) + (fAlpha * (float(uB))));
+					if (uB > 255)
+						uB = 255;
+				}
+				// Write out the pixels
+				pODataPtr[0] = (unsigned char)uR;
+				pODataPtr[1] = (unsigned char)uG;
+				pODataPtr[2] = (unsigned char)uB;
+			}
+			// Step to the next pixel
+			pODataPtr += 3;
+		}
+		// Add the line step
+		pIData += iInputPitch;
+		pOData += iOutputPitch;
+	}
+} // Paste (Transparenct and alpha)
+
 void CImage::Flip() {
-// Save the original image details
+	// Save the original image details
 	const int iLineSize = m_iLineSize * 4;
 	unsigned long *pInputData = (unsigned long*)m_pData;
 	unsigned long *pIData = pInputData + (m_iHeight - 1) * m_iLineSize;
-// Create the new image
+	// Create the new image
 	IRESULT eResult = CreateImage();
-// If image allocated ok, begin quantising
+	// If image allocated ok, begin quantising
 	if (eResult == I_OK) {
 		unsigned long *pOData = (unsigned long*)m_pData;
-	// Enter each colour into the quantiser
+		// Enter each colour into the quantiser
 		register int iY = m_iHeight;
-	// For each line
+		// For each line
 		while (iY--) {
 			memcpy(pOData, pIData, iLineSize);
-		// Add the line step
+			// Add the line step
 			pIData -= m_iLineSize;
 			pOData += m_iLineSize;
 		}
 	}
-// Delete the original image
+	// Delete the original image
 	delete [] pInputData;
 } // Flip
 
-//#===--- Conversion Functions
+	//#===--- Conversion Functions
 
 IRESULT CImage::Convert(IMAGETYPE eType, int iColours) {
-// Check input image
+	// Check input image
 	IRESULT eResult = I_OK;
 	if ((m_iWidth <= 0) || (m_iHeight <= 0)) 
 		eResult = I_NO_IMAGE;
 
 	if (eResult == I_OK) {
-// Select the correct conversion method for the current image type
+	// Select the correct conversion method for the current image type
 		switch (m_eImageType) {
 			case IT_RGB:
-			// Convert RGB image to correct type
+				// Convert RGB image to correct type
 				switch (eType) {
 					case IT_PALETTE:
 						eResult = CreatePaletteFromRGB(iColours);
@@ -387,7 +473,7 @@ IRESULT CImage::ForceToPalette(const CImagePalette &oPalette) {
 	// If image allocated ok, begin quantising
 	if (eResult == I_OK) {
 		// Get the palette
-		m_pPalette->Copy(&(CImagePalette)oPalette);
+		m_poPalette->Copy(&(CImagePalette)oPalette);
 		// Create the new image with the correct image indices
 		const int iOutputLine = m_iLineSize * 4;
 		pIData = pInputData;
@@ -406,25 +492,21 @@ IRESULT CImage::ForceToPalette(const CImagePalette &oPalette) {
 				// First pixel
 				uColour = *pIDataPtr++;
 				*pODataPtr = MatchColour(uColour);
-				TRACE("Index %d\n", *pODataPtr);
 				pODataPtr++;
 				// Second pixel
 				uInput = *pIDataPtr++;
 				uColour = (uColour >> 24) | (uInput << 8);
 				*pODataPtr = MatchColour(uColour);
-				TRACE("Index %d\n", *pODataPtr);
 				pODataPtr++;
 				// Third pixel
 				uColour = uInput >> 16;
 				uInput = *pIDataPtr++;
 				uColour |= (uInput << 16);
 				*pODataPtr = MatchColour(uColour);
-				TRACE("Index %d\n", *pODataPtr);
 				pODataPtr++;
 				// Fourth pixel
 				uColour = uInput >> 8;
 				*pODataPtr = MatchColour(uColour);
-				TRACE("Index %d\n", *pODataPtr);
 				pODataPtr++;
 			}
 			// For any remaining pixels
@@ -459,156 +541,183 @@ IRESULT CImage::ForceToPalette(const CImagePalette &oPalette) {
 	return I_OK;
 } // ForceToPalette
 
+IRESULT CImage::ForceType(IMAGETYPE eType, int iColours) {
+	// Changing the palette size
+	if ((m_eImageType == IT_PALETTE) && (eType == IT_PALETTE) && (iColours != m_poPalette->GetSize())) {
+		m_poPalette->SetSize(iColours);
+		return I_OK;
+	}
+	// Get out quick if on change required
+	if (eType == m_eImageType)
+		return I_OK;
+	// Delete any current memory
+	if (m_pData) {
+		delete [] m_pData;
+		m_pData = NULL;
+	}
+	if (m_poPalette) {
+		delete m_poPalette;
+		m_poPalette = NULL;
+	}
+	// Change the type and sort out memory and vars
+	m_eImageType = eType;
+	IRESULT eResult = CreateImage();
+	// Set the palette size, if IT_PALETTE
+	if ((m_eImageType == IT_PALETTE) && (eResult == I_OK))
+		m_poPalette->SetSize(iColours);
+	return eResult;
+} // ForceType
+
 //#===--- Colour Quantisation
 
 IRESULT CImage::CreatePaletteFromRGB(int iColours) {
 	IRESULT eResult = I_OK;
-// Create colour quantiser
+	// Create colour quantiser
 	CColourQuant oQuant;
 	iColours = (iColours < 1) ? 1 : (iColours > 256) ? 256 : iColours;
 	oQuant.SetSize(iColours);
-// Save the original image details
+	// Save the original image details
 	const int iInputLine = m_iLineSize;
 	unsigned long *pInputData = (unsigned long*)m_pData;
 	unsigned long *pIData = pInputData;
 	unsigned long *pIDataPtr = pInputData;
 	const unsigned iWidth = m_iWidth / 4;
 	const unsigned int iLeft = m_iWidth % 4;
-// Create the new image
+	// Create the new image
 	m_eImageType = IT_PALETTE;
 	eResult = CreateImage();
-// If image allocated ok, begin quantising
+	// If image allocated ok, begin quantising
 	if (eResult == I_OK) {
-	// Enter each colour into the quantiser
+		// Enter each colour into the quantiser
 		register int iY = m_iHeight, iX = m_iLineSize;
 		unsigned long uInput, uColour;
-	// For each line
+		// For each line
 		while (iY--) {
 			pIDataPtr = pIData;
 			iX = iWidth;
-		// For each three words (12 bytes) in the line add the pixel in BGR format
+			// For each three words (12 bytes) in the line add the pixel in BGR format
 			while (iX--) {
-			// First pixel
+				// First pixel
 				uColour = *pIDataPtr++;
 				oQuant.AddColour(uColour);
-			// Second pixel
+				// Second pixel
 				uInput = *pIDataPtr++;
 				uColour = (uColour >> 24) | (uInput << 8);
 				oQuant.AddColour(uColour);
-			// Third pixel
+				// Third pixel
 				uColour = uInput >> 16;
 				uInput = *pIDataPtr++;
 				uColour |= (uInput << 16);
 				oQuant.AddColour(uColour);
-			// Fourth pixel
+				// Fourth pixel
 				uColour = uInput >> 8;
 				oQuant.AddColour(uColour);
 			}
-		// For any remaining pixels
+			// For any remaining pixels
 			if (iLeft > 0) {
-			// First pixel
+				// First pixel
 				uColour = *pIDataPtr++;
 				oQuant.AddColour(uColour);
 			}
 			if (iLeft > 1) {
-			// Second pixel
+				// Second pixel
 				uInput = *pIDataPtr++;
 				uColour = (uColour >> 24) | (uInput << 8);
 				oQuant.AddColour(uColour);
 			}
 			if (iLeft > 2) {
-			// Third pixel
+				// Third pixel
 				uColour = uInput >> 16;
 				uInput = *pIDataPtr++;
 				uColour |= (uInput << 16);
 				oQuant.AddColour(uColour);
 			}
-		// Add the line step
+			// Add the line step
 			pIData += iInputLine;
 		}
-	// Generate the palette
+		// Generate the palette
 		oQuant.GeneratePalette();
-	// Get the palette
-		m_pPalette->Copy(oQuant.GetPalette());
-	// Create the new image with the correct image indices
+		// Get the palette
+		m_poPalette->Copy(oQuant.GetPalette());
+		// Create the new image with the correct image indices
 		const int iOutputLine = m_iLineSize * 4;
 		pIData = pInputData;
 		unsigned char *pOData = (unsigned char*)m_pData;
 		unsigned char *pODataPtr = pOData;
 		iY = m_iHeight;
-	// Retreive every pixel from the original image, and match it in BGR format
-	// For each line
+		// Retreive every pixel from the original image, and match it in BGR format
+		// For each line
 		while (iY--) {
 			pIDataPtr = pIData;
 			pODataPtr = pOData;
 			iX = iWidth;
-		// For each pixel in the line
+			// For each pixel in the line
 			while (iX--) {
-			// First pixel
+				// First pixel
 				uColour = *pIDataPtr++;
 				*pODataPtr = oQuant.MatchColour(uColour);
 				pODataPtr++;
-			// Second pixel
+				// Second pixel
 				uInput = *pIDataPtr++;
 				uColour = (uColour >> 24) | (uInput << 8);
 				*pODataPtr = oQuant.MatchColour(uColour);
 				pODataPtr++;
-			// Third pixel
+				// Third pixel
 				uColour = uInput >> 16;
 				uInput = *pIDataPtr++;
 				uColour |= (uInput << 16);
 				*pODataPtr = oQuant.MatchColour(uColour);
 				pODataPtr++;
-			// Fourth pixel
+				// Fourth pixel
 				uColour = uInput >> 8;
 				*pODataPtr = oQuant.MatchColour(uColour);
 				pODataPtr++;
 			}
-		// For any remaining pixels
+			// For any remaining pixels
 			if (iLeft > 0) {
-			// First pixel
+				// First pixel
 				uColour = *pIDataPtr++;
 				*pODataPtr = oQuant.MatchColour(uColour);
 				pODataPtr++;
 			}
 			if (iLeft > 1) {
-			// Second pixel
+				// Second pixel
 				uInput = *pIDataPtr++;
 				uColour = (uColour >> 24) | (uInput << 8);
 				*pODataPtr = oQuant.MatchColour(uColour);
 				pODataPtr++;
 			}
 			if (iLeft > 2) {
-			// Third pixel
+				// Third pixel
 				uColour = uInput >> 16;
 				uInput = *pIDataPtr++;
 				uColour |= (uInput << 16);
 				*pODataPtr = oQuant.MatchColour(uColour);
 				pODataPtr++;
 			}
-		// Add the line steps
+			// Add the line steps
 			pIData += iInputLine;
 			pOData += iOutputLine;
 		}
 	}
-// Delete the original image
+	// Delete the original image
 	delete [] pInputData;
 	return eResult;
 } // CreatePaletteFromRGB
 
 int CImage::MatchColour(unsigned long uColour) {
-	// Make sure it's a palettised image
+		// Make sure it's a palettised image
 	if (m_eImageType != IT_PALETTE)
 		return -1;
-	// Match the colour
+		// Match the colour
 	int iCount = 0;
 	unsigned long uPal = 0;
 	int iVal = -1;
-	int iLowestError = 8192;	// Huge error
-	while (iCount < m_pPalette->GetSize()) {
-		// Get the colour
-		m_pPalette->GetEntry(iCount, uPal);
-		// Calculate the error
+	int iLowestError = 8192;		// Huge error
+	while (iCount < m_poPalette->GetSize()) {
+			// Get the colour
+		m_poPalette->GetEntry(iCount, uPal);
+			// Calculate the error
 		int iR = (uColour >> 16) & 0x000000FF;
 		int iG = (uColour >>  8) & 0x000000FF;
 		int iB = (uColour      ) & 0x000000FF;
@@ -616,12 +725,12 @@ int CImage::MatchColour(unsigned long uColour) {
 		iG = abs(iG - ((uPal >>  8) & 0x000000FF));
 		iB = abs(iB - ((uPal >> 16) & 0x000000FF));
 		int iError = iR + iG + iB;
-		// Record if lowest error
+			// Record if lowest error
 		if (iError < iLowestError) {
 			iLowestError = iError;
 			iVal = iCount;
 		}
-		// Carry on through the palette
+			// Carry on through the palette
 		iCount++;
 	}
 	ASSERT(iVal != 255);
@@ -633,7 +742,7 @@ int CImage::MatchColour(unsigned long uColour) {
 IRESULT CImage::Scale(int iWidth, int iHeight, IMAGEFILTERTYPE eFilter) {
 	ASSERT(m_iWidth && m_iHeight);
 	IRESULT eResult = I_OK;
-// Validate the new image size
+	// Validate the new image size
 	if ((iWidth < 0) || (iWidth > IMG_MAXWIDTH))
 		iWidth = 0;
 	if ((iHeight < 0) || (iHeight > IMG_MAXHEIGHT))
@@ -641,12 +750,12 @@ IRESULT CImage::Scale(int iWidth, int iHeight, IMAGEFILTERTYPE eFilter) {
 	if ((iWidth == 0) || (iHeight == 0))
 		eResult = I_INVALID_PARAM;
 
-// Begin scaling if okay
+	// Begin scaling if okay
 	if (eResult == I_OK) {
-	// Calculate the differences
+		// Calculate the differences
 		int iWidthDif = iWidth - m_iWidth;
 		int iHeightDif = iHeight - m_iHeight;
-	// Arrange scaling passes in most efficient order
+		// Arrange scaling passes in most efficient order
 		if (iWidthDif < iHeightDif) {
 			if (iWidthDif != 0) 
 				eResult = ScaleHorizontal(iWidth, eFilter);
@@ -681,29 +790,29 @@ IRESULT CImage::ScaleVertical(int iHeight, IMAGEFILTERTYPE eFilter) {
 } // ScaleVertical
 
 CImage::SContribList *CImage::AllocateContributions(int iWidth, int iWindow) {
-// Allocate the contribution list
+	// Allocate the contribution list
 	SContribList *pList = NULL;
-// The list structure
+	// The list structure
 	NEWBEGIN
 	pList = (SContribList*) new SContribList;
 	NEWEND("CImage::AllocateContributions - Contribution list")
 	if (pList) {
 		pList->m_iWidth = iWidth;
 		pList->m_iWindow = iWindow;
-	// The line list
+		// The line list
 		NEWBEGIN
 		pList->m_pContrib = (SContrib*) new SContrib[iWidth];
 		NEWEND("CImage::AllocateContributions - Contributions")
 		if (pList->m_pContrib) {
 			int iCount = 0;
 			while (iCount < iWidth) {
-			// The line weights
+				// The line weights
 				NEWBEGIN
 				pList->m_pContrib[iCount].m_pWeights = (float*) new float[iWindow];
 				NEWEND("CImage::AllocateContributions - Contribution weights")
 				iCount++;
 			}
-		// Delete the remaining line widths
+			// Delete the remaining line widths
 			if (iCount < iWidth) {
 				while (iCount >= 0) {
 					iCount--;
@@ -713,7 +822,7 @@ CImage::SContribList *CImage::AllocateContributions(int iWidth, int iWindow) {
 				delete pList;
 			}
 		}
-	// Delete the list object
+		// Delete the list object
 		else {
 			delete pList;
 		}
@@ -723,7 +832,7 @@ CImage::SContribList *CImage::AllocateContributions(int iWidth, int iWindow) {
 
 CImage::SContribList *CImage::CalculateContributions(int iInputWidth, int iOutputWidth, IMAGEFILTERTYPE eFilter) {
 	SContribList *pList = NULL;
-// Allocate the filter
+	// Allocate the filter
 	CBaseFilter *pFilter = NULL;
 	switch (eFilter) {
 		case IF_BOX:
@@ -740,35 +849,35 @@ CImage::SContribList *CImage::CalculateContributions(int iInputWidth, int iOutpu
 			ASSERT(false);
 	}
 
-// Fill the contribution list
+	// Fill the contribution list
 	if (pFilter) {
-	// Set the vars
+		// Set the vars
 		float fScale = float(iOutputWidth) / float(iInputWidth);
 		float fWidth = 0.0F;
 		float fFScale = 1.0F;
 		const float fFilterWidth = pFilter->Width();
 		if (fScale < 1.0) {
-		// Minification
+			// Minification
 			fWidth = fFilterWidth / fScale; 
 			fFScale /= fScale; 
 		}
 		else {
-		// Magnification
+			// Magnification
 			fWidth = fFilterWidth; 
     }
 
-	// Window size is the number of sampled pixels
+		// Window size is the number of sampled pixels
 		int iWindow = 2 * ((int)ceil(fWidth) + 1); 
 
-	// Allocate the contributions
+		// Allocate the contributions
 		pList = AllocateContributions(iOutputWidth, iWindow); 
 
 		if (pList) {
 			for (int i = 0; i < iOutputWidth; i++) {
-			// Scan through line of contributions
-				float fCenter = float(i) / fScale;   // Reverse mapping
+				// Scan through line of contributions
+				float fCenter = float(i) / fScale;   	// Reverse mapping
 
-			// Find the significant edge points that affect the pixel
+				// Find the significant edge points that affect the pixel
 				int iLeft = (int) floor(fCenter - fWidth); 
 				if (iLeft < 0) 
 					iLeft = 0;
@@ -779,9 +888,9 @@ CImage::SContribList *CImage::CalculateContributions(int iInputWidth, int iOutpu
 					iRight = iInputWidth - 1;
 				pList->m_pContrib[i].m_iRight = iRight;
 
-				float fTotalWeight = 0.0;  // Zero sum of weights
+				float fTotalWeight = 0.0;  	// Zero sum of weights
 				for (int iSrc = iLeft; iSrc <= iRight; iSrc++) {
-				// Calculate weights
+					// Calculate weights
 					float fWeight = (fCenter - float(iSrc));
 					fWeight /= fWidth;
 					fWeight = pFilter->Filter(fWeight);
@@ -789,9 +898,9 @@ CImage::SContribList *CImage::CalculateContributions(int iInputWidth, int iOutpu
 					fTotalWeight += fWeight;
 					pList->m_pContrib[i].m_pWeights[iSrc - iLeft] = fWeight;
 				}
-				ASSERT (fTotalWeight >= 0.0);   // An error in the filter function can cause this 
+				ASSERT (fTotalWeight >= 0.0);   	// An error in the filter function can cause this 
 				if (fTotalWeight > 0.0) {
-				// Normalize weight of neighbouring points
+					// Normalize weight of neighbouring points
 					for (iSrc = iLeft; iSrc <= iRight; iSrc++)
 						pList->m_pContrib[i].m_pWeights[iSrc - iLeft] /= fTotalWeight;
 				} 
@@ -803,31 +912,31 @@ CImage::SContribList *CImage::CalculateContributions(int iInputWidth, int iOutpu
 	return pList;
 } // CalculateContributions
 
-void CImage::DeleteContributions(SContribList *pList) {
-	ASSERT(pList);
-// Delete the weights
-	for (int i = 0; i < pList->m_iWidth; i++) {
-		delete [] pList->m_pContrib[i].m_pWeights;
+void CImage::DeleteContributions(SContribList *psList) {
+	ASSERT(psList);
+	// Delete the weights
+	for (int i = 0; i < psList->m_iWidth; i++) {
+		delete [] psList->m_pContrib[i].m_pWeights;
 	}
-// Delete the list
-	delete [] pList->m_pContrib;
-// Delete the object
-	delete pList;
+	// Delete the list
+	delete [] psList->m_pContrib;
+	// Delete the object
+	delete psList;
 } // DeleteContributions
 
 IRESULT CImage::ScaleHorizontalRGB(int iWidth, IMAGEFILTERTYPE eFilter) {
-// Remember the current image details
+	// Remember the current image details
 	const int iOriginalWidth = m_iWidth;
 	const UINT iLineSize = m_iLineSize;
 	UINT *pInputData = m_pData;
-// Allocate new image
+	// Allocate new image
 	m_iWidth = iWidth;
 	IRESULT eResult = CreateImage();
 	if (eResult == I_OK) {
-	// Calculate the weights
+		// Calculate the weights
 		SContribList *pList = CalculateContributions(iOriginalWidth, m_iWidth, eFilter);
 		if (pList) {
-		// Loop vars
+			// Loop vars
 			unsigned char *pIData = (unsigned char*)pInputData;
 			unsigned char *pIDataPtr = pIData;
 			const unsigned int iIPitch = iLineSize * 4;
@@ -837,37 +946,37 @@ IRESULT CImage::ScaleHorizontalRGB(int iWidth, IMAGEFILTERTYPE eFilter) {
 			unsigned char cR = 0, cG = 0, cB = 0;
 			register int iY = m_iHeight, iX = m_iWidth, iPos = 0;
 			int iLeft = 0, iRight = 0;
-		// Loop through rows
+			// Loop through rows
 			while (iY--) {
-			// Set the image pointers
+				// Set the image pointers
 				pIDataPtr = pIData;
 				pODataPtr = pOData;
-			// Loop through pixels
+				// Loop through pixels
 				for (iX = 0; iX < m_iWidth; iX++) {
-				// Initialise the colour
+					// Initialise the colour
 					cR = cG = cB = 0;
-				// Retrieve the boundaries
+					// Retrieve the boundaries
 					iLeft = pList->m_pContrib[iX].m_iLeft;
 					iRight = pList->m_pContrib[iX].m_iRight;
-				// Add the contributions
+					// Add the contributions
 					for (iPos = iLeft; iPos <= iRight; iPos++) {
             cR += (unsigned char)(pList->m_pContrib[iX].m_pWeights[iPos - iLeft] * float(pIData[iPos * 3])); 
             cG += (unsigned char)(pList->m_pContrib[iX].m_pWeights[iPos - iLeft] * float(pIData[iPos * 3 + 1])); 
             cB += (unsigned char)(pList->m_pContrib[iX].m_pWeights[iPos - iLeft] * float(pIData[iPos * 3 + 2])); 
 					}
-				// Write the colour
+					// Write the colour
 					*pODataPtr++ = cR;
 					*pODataPtr++ = cG;
 					*pODataPtr++ = cB;
 				}
-			// Add the line steps
+				// Add the line steps
 				pIData += iIPitch;
 				pOData += iOPitch;
 			}
-		// Delete the weights
+			// Delete the weights
 			DeleteContributions(pList);
 		}
-	// Delete the old image
+		// Delete the old image
 		delete [] pInputData;
 	}
 
@@ -875,18 +984,18 @@ IRESULT CImage::ScaleHorizontalRGB(int iWidth, IMAGEFILTERTYPE eFilter) {
 } // ScaleHorizontalRGB
 
 IRESULT CImage::ScaleVerticalRGB(int iHeight, IMAGEFILTERTYPE eFilter) {
-// Remember the current image details
+	// Remember the current image details
 	const int iOriginalHeight = m_iHeight;
 	const UINT iLineSize = m_iLineSize;
 	UINT *pInputData = m_pData;
-// Allocate new image
+	// Allocate new image
 	m_iHeight = iHeight;
 	IRESULT eResult = CreateImage();
 	if (eResult == I_OK) {
-	// Calculate the weights
+		// Calculate the weights
 		SContribList *pList = CalculateContributions(iOriginalHeight, m_iHeight, eFilter);
 		if (pList) {
-		// Loop vars
+			// Loop vars
 			unsigned char *pIData = (unsigned char*)pInputData;
 			unsigned char *pIDataPtr = pIData;
 			const unsigned int iIPitch = iLineSize * 4;
@@ -896,40 +1005,40 @@ IRESULT CImage::ScaleVerticalRGB(int iHeight, IMAGEFILTERTYPE eFilter) {
 			unsigned char cR = 0, cG = 0, cB = 0;
 			register int iY = m_iHeight, iX = m_iWidth, iPos = 0;
 			int iLeft = 0, iRight = 0;
-		// Loop through columns
+			// Loop through columns
 			while (iX--) {
-			// Set the image pointers
+				// Set the image pointers
 				pIDataPtr = pIData;
 				pODataPtr = pOData;
-			// Loop through rows
+				// Loop through rows
 				for (iY = 0; iY < m_iHeight; iY++) {
-				// Initialise the colour
+					// Initialise the colour
 					cR = cG = cB = 0;
-				// Retrieve the boundaries
+					// Retrieve the boundaries
 					iLeft = pList->m_pContrib[iY].m_iLeft;
 					iRight = pList->m_pContrib[iY].m_iRight;
-				// Add the contributions
+					// Add the contributions
 					for (iPos = iLeft; iPos <= iRight; iPos++) {
             cR += (unsigned char)(pList->m_pContrib[iY].m_pWeights[iPos - iLeft] * float(pIData[iPos * iIPitch])); 
             cG += (unsigned char)(pList->m_pContrib[iY].m_pWeights[iPos - iLeft] * float(pIData[iPos * iIPitch + 1])); 
             cB += (unsigned char)(pList->m_pContrib[iY].m_pWeights[iPos - iLeft] * float(pIData[iPos * iIPitch + 2])); 
 					}
-				// Write the colour
+					// Write the colour
 					pODataPtr[0] = cR;
 					pODataPtr[1] = cG;
 					pODataPtr[2] = cB;
-				// Add the line steps
+					// Add the line steps
 					pIDataPtr += iIPitch;
 					pODataPtr += iOPitch;
 				}
-			// Add the pixel steps
+				// Add the pixel steps
 				pIData += 3;
 				pOData += 3;
 			}
-		// Delete the weights
+			// Delete the weights
 			DeleteContributions(pList);
 		}
-	// Delete the old image
+		// Delete the old image
 		delete [] pInputData;
 	}
 
@@ -939,22 +1048,22 @@ IRESULT CImage::ScaleVerticalRGB(int iHeight, IMAGEFILTERTYPE eFilter) {
 //#===--- Load/Save Functions
 
 FRESULT CImage::Load(const char *pFname, CImageFile *pImageFile) {
-// Check the image type
+	// Check the image type
 	IMAGETYPE eInputType;
 	FRESULT eFResult = pImageFile->GetImageType(pFname, eInputType);
 	if (eFResult != F_OK)
 		return eFResult;
 	m_eImageType = eInputType;
 
-// Delete the original image
+	// Delete the original image
 	if (m_pData)
 		delete [] m_pData;
-// Load the image
+	// Load the image
 	unsigned char *pData = NULL;
 	eFResult = pImageFile->Load(pFname, m_iWidth, m_iHeight, pData);
 	m_pData = (UINT*)pData;
 
-// If image loaded, adjust the other image variables
+	// If image loaded, adjust the other image variables
 	if (eFResult == F_OK) {
 		UINT iLineLength = m_iWidth;
 		switch(m_eImageType) {
@@ -985,16 +1094,16 @@ FRESULT CImage::Load(const char *pFname, CImageFile *pImageFile) {
 } // Load
 
 FRESULT CImage::Save(const char *pFname, CImageFile *pImageFile) const {
-// Set the image type
+	// Set the image type
 	pImageFile->SetSaveType(m_eImageType);
 
-// Check if CImage contains an image
+	// Check if CImage contains an image
 	if ((!m_iWidth) || (!m_iHeight))
 		return F_NODATATOSAVE;
 
-// If exists, set palette
-	if ((m_eImageType == IT_PALETTE) && m_pPalette)
-		pImageFile->SetPalette(m_pPalette);
+	// If exists, set palette
+	if ((m_eImageType == IT_PALETTE) && m_poPalette)
+		pImageFile->SetPalette(m_poPalette);
 
 	FRESULT fResult = pImageFile->Save(pFname, m_iWidth, m_iHeight, (unsigned char*)m_pData);
 
@@ -1004,22 +1113,22 @@ FRESULT CImage::Save(const char *pFname, CImageFile *pImageFile) const {
 //#===--- Import
 
 IRESULT CImage::ImportAMETexture(stAMETexture &sAME) {
-// Set the new image size
+	// Set the new image size
 	m_eImageType = IT_RGB;
 	IRESULT eIResult = SetSize(sAME.iWidth, sAME.iHeight);
 	if (eIResult == I_OK) {
 		ASSERT(sAME.ptrRGBData != NULL);
-	// Copy the image data
+		// Copy the image data
 		const int iInputLine = m_iWidth * 3;
 		const int iOutputLine = m_iLineSize * 4;
 		unsigned char *pIData = sAME.ptrRGBData;
 		unsigned char *pOData = (unsigned char*)m_pData;
-	// Copy each line
+		// Copy each line
 		register int iY = m_iHeight;
 		while (iY--) {
-		// Copy the line
+			// Copy the line
 			memcpy(pOData, pIData, iInputLine);
-		// Add the line steps
+			// Add the line steps
 			pIData += iInputLine;
 			pOData += iOutputLine;
 		}
@@ -1027,4 +1136,70 @@ IRESULT CImage::ImportAMETexture(stAMETexture &sAME) {
 	return eIResult;
 } // ImportAMETexture
 
+IRESULT CImage::ImportRawImage(unsigned char *pcRaw, bool bWordAlign, bool bReversePixels, bool bFlip) {
+	ASSERT(pcRaw);
+	// Make sure we have input data
+	if (!pcRaw)
+		return I_NO_DATA;
+	// Make sure the image is already set up
+	if (m_iWidth * m_iHeight == 0)
+		return I_NO_IMAGE;
+	// Check for supported image types
+	if ((m_eImageType != IT_RGB) &&
+			(m_eImageType != IT_PALETTE) &&
+			(m_eImageType != IT_GREY))
+			return I_UNSUPPORTED_TYPE;
+	// Calculate input line length
+	unsigned int uIWidth = m_iWidth;
+	if (m_eImageType == IT_RGB)
+		uIWidth *= 3;
+	unsigned int uILineStep = uIWidth;
+	if (bWordAlign && (uILineStep % 4))
+		uILineStep += (4 - (uILineStep % 4));
+	// Calculate the image object line step
+	unsigned int uOLineStep = m_iLineSize * 4;
+	//#===--- Loop vars
+	// Input image line pointers
+	unsigned char *pcIData = pcRaw;
+	if (bFlip) {
+		pcIData += uILineStep * (m_iHeight - 1);
+		uILineStep = -uILineStep;
+	}
+	unsigned char *pcIDataPtr = pcIData;
+	// Image object line pointers
+	unsigned char *pcOData = (unsigned char*)m_pData;
+	unsigned char *pcODataPtr = pcOData;
+	// Loop vars
+	register unsigned int uX = m_iWidth, uY = m_iHeight;
+	// Reverse pixels
+	if (bReversePixels) {
+		while (uY--) {
+			// Set the line pointers
+			pcIDataPtr = pcIData;
+			pcODataPtr = pcOData;
+			uX = m_iWidth;
+			while (uX--) {
+				// Read the pixels out in reverse order
+				pcODataPtr[2] = *pcIDataPtr++;
+				pcODataPtr[1] = *pcIDataPtr++;
+				pcODataPtr[0] = *pcIDataPtr++;
+				pcODataPtr += 3;
+			}
+			// Add the line step
+			pcIData += uILineStep;
+			pcOData += uOLineStep;
+		}
+	}
+	// Correct order pixels
+	else {
+		while (uY--) {
+			// Read the pixels over
+			memcpy(pcOData, pcIData, uIWidth);
+			// Add the line step
+			pcIData += uILineStep;
+			pcOData += uOLineStep;
+		}
+	}
+	return I_OK;
+} // ImportRawImage
 
