@@ -5,7 +5,7 @@
 # script to emulate intended VMake functionality
 
 # 17/09/2001 - Warren Moore
-# $Id: VMake.pl,v 1.1 2001/09/17 21:44:16 vap-warren Exp $
+# $Id: VMake.pl,v 1.2 2001/09/18 11:35:17 vap-warren Exp $
 # Copyright 2000-2001 Vapour Technology Ltd.
 
 use strict;
@@ -104,7 +104,7 @@ else {
 my @file_list = split /\n/, `find . -name '*.*.*'`;
 my @rm_list;
 $count = 0;
-while ($count <= $#file_list) {
+while ($count < $scalar(file_list)) {
 	my $file = $file_list[$count];
 	if ($file =~ /(.+\/)([^\.\/]+)\.([^\.]+)\.([^\.]+)$/) {
 		my $search = "$1$2.$arch_name.$4";
