@@ -5,9 +5,9 @@
 // Copyright 2000 Vapour Technology Ltd.
 //
 // Registry.h - 13/01/2000 - Warren Moore
-//	Utility class for registry key management
+//	  Utility class for registry key management
 //
-// $Id: Registry.h,v 1.1 2000/07/10 21:40:21 waz Exp $
+// $Id: Registry.h,v 1.2 2000/11/27 20:39:20 waz Exp $
 //
 
 #ifndef _REGISTRY_
@@ -30,29 +30,29 @@ public:
 	~CRegistry();
 
 //#===--- Individual Key Functions
-// The key must be opened firstin either read or write mode.
+// The key must be opened first in either read or write mode.
 // The subkeys can then be accessed in the mode specified.
 // The Key must then be closed
 
 // Key Management Functions
-	bool OpenKey(KEYTYPE eType, const char *pKey, bool bRead);
+	bool OpenKey(KEYTYPE eType, const char *pcKey, bool bRead);
 	void CloseKey();
 
 // Read Functions
-	CString ReadString(const char *pSubKey, const char *pDefault);
-	DWORD ReadInt(const char *pSubKey, const DWORD uDefault);
+	void ReadString(const char *pcSubKey, const char *pcDefault, char *const pcValue);
+	DWORD ReadInt(const char *pcSubKey, const DWORD uDefault);
 
 // Write Functions
-	void WriteString(const char *pSubKey, const char *pString);
-	void WriteInt(const char *pSubKey, const DWORD uNum);
+	void WriteString(const char *pcSubKey, const char *pcString);
+	void WriteInt(const char *pcSubKey, const DWORD uNum);
 
 //#===--- Monolithic Functions
 // Can be called at any time
-	CString ReadString(KEYTYPE eType, const char *pKey, const char *pSubKey, const char *pDefault);
-	DWORD ReadInt(KEYTYPE eType, const char *pKey, const char *pSubKey, const DWORD uDefault);
+	void ReadString(KEYTYPE eType, const char *pcKey, const char *pcSubKey, const char *pcDefault, char *const pcValue);
+	DWORD ReadInt(KEYTYPE eType, const char *pcKey, const char *pcSubKey, const DWORD uDefault);
 
-	void WriteString(KEYTYPE eType, const char *pKey, const char *pSubKey, const char *pString);
-	void WriteInt(KEYTYPE eType, const char *pKey, const char *pSubKey, const DWORD uNum);
+	void WriteString(KEYTYPE eType, const char *pcKey, const char *pcSubKey, const char *pcString);
+	void WriteInt(KEYTYPE eType, const char *pcKey, const char *pcSubKey, const DWORD uNum);
 
 //#===--- Internal Data
 private:
