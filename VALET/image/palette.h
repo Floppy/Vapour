@@ -14,7 +14,7 @@
 //! author 		= "Warren Moore"
 //! date 		= "17/10/2001"
 //! lib 			= libVALETimage
-//! rcsid 		= "$Id: palette.h,v 1.8 2001/10/18 11:22:30 vap-warren Exp $"
+//! rcsid 		= "$Id: palette.h,v 1.9 2001/10/24 17:07:43 vap-warren Exp $"
 //! userlevel 	= Advanced
 //! docentry 	= "VALET.Image.Palette"
 
@@ -32,8 +32,12 @@ namespace NValet {
    class CImagePalette {
    public:
 
-   	CImagePalette(int iSize = IPL_MAX_ENTRIES, unsigned int uColour = 0);
-      //: Constructor
+      explicit CImagePalette();
+      //: Empty Constructor
+      // Creates an empty palette object
+      
+   	explicit CImagePalette(int iSize, unsigned int uColour = 0);
+      //: Allocating constructor
       // Create the palette of a specified size filled with a default colour
       //!param: iSize = Size of palette
       //!param: uColour = Default colour palette entries (format 0x00RRGGBB)
@@ -90,6 +94,7 @@ namespace NValet {
 
    //#===--- Structures
 
+/*
    	//: Colour matching cache
    	struct SCacheStruct {
          unsigned int m_uColour;
@@ -128,6 +133,7 @@ namespace NValet {
       typedef struct SCacheStruct SCache;             // Cache structure typedef
       typedef struct SHashEntryStruct SHashEntry;     // Hash table entry typedef
       typedef struct SHashStruct SHash;               // Hash table typedef
+*/
 
    //:------
    //: Palette Allocation
