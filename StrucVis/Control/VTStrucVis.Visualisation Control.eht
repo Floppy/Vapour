@@ -2,5 +2,23 @@
 : ActiveX Control Overview
 
 <P CLASS=HEADING>
-Test
+Implementation Notes
+</P>
+<P>
+The ActiveX control is an Internet aware control developed using the MFC framework.
+An Automation interface is provided to allow control parameters to be set within HTML pages or
+other ActiveX containers such as Visual Basic or MS Excel.
+</P>
+<P>
+The single-threaded control is entirely event-driven i.e. functions are called in response to Windows messages indicating
+mouse movements, changes in the ActiveX container state or notifications that further streaming data has arrived.
+</P>
+<P>
+An instance of the Cortona VRML control is required in the same ActiveX container for 3D display.
+Through queries to the container, the control can obtain an interface to Cortona to allow direct communication
+through Cortona's Automation interface.
+</P>
+
+<P CLASS=HEADING>
+Extensions &and; Improvements
 </P>
