@@ -94,6 +94,15 @@ SOURCE=.\Application\NumericEdit.cpp
 # Begin Source File
 
 SOURCE=.\Render\RCOpenGLBufferWin32.cpp
+
+!IF  "$(CFG)" == "VALWin32 - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "VALWin32 - Win32 Debug"
+
+# SUBTRACT CPP /FA<none>
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
