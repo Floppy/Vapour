@@ -7,7 +7,7 @@
 // AvatarFileUnreal.cpp - 16/2/2000 - James Smith
 //	Unreal export filter implementation
 //
-// $Id: AvatarFileUnreal.cpp,v 1.11 2000/08/31 01:07:07 waz Exp $
+// $Id: AvatarFileUnreal.cpp,v 1.12 2000/09/01 11:26:34 waz Exp $
 //
 
 #include "stdafx.h"
@@ -52,7 +52,7 @@ CAvatarFileUnreal::CAvatarFileUnreal() {
    m_puFirstPixel = NULL;
    m_puImageHeight = NULL;
    m_uTotalHeight = 0;
-   m_iSex = UNREAL_FEMALE;
+   m_iSex = UNREAL_MALE;
    m_dYOffset = 0;
    m_dScale = 1;
    return;
@@ -180,7 +180,7 @@ FRESULT CAvatarFileUnreal::Save(const char* pszFilename, CAvatar* pAvatar) const
       return eResult;
    }
 
-   //////////////////////////////////////////////////////////////////////
+   /*//////////////////////////////////////////////////////////////////////
 
    // Save mesh description .3d file
    // Notify of progress
@@ -280,7 +280,7 @@ FRESULT CAvatarFileUnreal::Save(const char* pszFilename, CAvatar* pAvatar) const
       return eResult;
    }
 
-   //////////////////////////////////////////////////////////////////////
+   //////////////////////////////////////////////////////////////////////*/
 
    // Tidy up allocated memory
    eResult = Cleanup();
@@ -1170,50 +1170,6 @@ FRESULT CAvatarFileUnreal::SaveMeshU(const char* pszFilename, CAvatar* pAvatar) 
 
       int i; // Generic loop counter
 
-      // Build reordered face maps
-      unsigned int* pUTToAvatarFaces = NULL;
-      NEWBEGIN
-      pUTToAvatarFaces = new unsigned int[pAvatar->NumFaces()+1];
-      NEWEND("CAvatarFileUnreal::Save - pUTToAvatarFaces allocation");
-      if (pUTToAvatarFaces == NULL) {
-         osOutputStream.close();
-         return F_OUT_OF_MEMORY;
-      }
-      unsigned int* pAvatarToUTFaces = NULL;
-      NEWBEGIN
-      pAvatarToUTFaces = new unsigned int[pAvatar->NumFaces()+1];
-      NEWEND("CAvatarFileUnreal::Save - pAvatarToUTFaces allocation");
-      if (pAvatarToUTFaces == NULL) {
-         delete [] pUTToAvatarFaces;
-         osOutputStream.close();
-         return F_OUT_OF_MEMORY;
-      }
-      // Reorder faces
-      int iFaceCount = 0;
-      // Add head triangles first
-      for (i=0; i<pAvatar->NumFaces(); i++) {
-         const STriFace* pFace = &(pAvatar->Faces()[i]);
-         // Check texture number
-         if (pFace->m_iTextureNumber == pAvatar->TextureIndex(skullbase)) {
-            pUTToAvatarFaces[iFaceCount] = i;
-            pAvatarToUTFaces[i] = iFaceCount;
-            iFaceCount++;
-         }
-      }
-      // Add body triangles
-      for (i=0; i<pAvatar->NumFaces(); i++) {
-         const STriFace* pFace = &(pAvatar->Faces()[i]);
-         // Check texture number
-         if (pFace->m_iTextureNumber != pAvatar->TextureIndex(skullbase)) {
-            pUTToAvatarFaces[iFaceCount] = i;
-            pAvatarToUTFaces[i] = iFaceCount;
-            iFaceCount++;
-         }
-      }
-      // Add weapon triangle
-      pUTToAvatarFaces[iFaceCount] = i;
-      pAvatarToUTFaces[i] = iFaceCount;
-      
       // Stuff
       const unsigned int uNumFrames = 724;
       const unsigned int uNumSeqs = 71;
@@ -1356,8 +1312,6 @@ FRESULT CAvatarFileUnreal::SaveMeshU(const char* pszFilename, CAvatar* pAvatar) 
          }
       }
       else {
-         delete [] pAvatarToUTFaces;
-         delete [] pUTToAvatarFaces;
          osOutputStream.close();
          return F_OUT_OF_MEMORY;
       }
@@ -1508,8 +1462,6 @@ FRESULT CAvatarFileUnreal::SaveMeshU(const char* pszFilename, CAvatar* pAvatar) 
       }
       else {
          delete [] pcNameTable;
-         delete [] pAvatarToUTFaces;
-         delete [] pUTToAvatarFaces;
          osOutputStream.close();
          return F_OUT_OF_MEMORY;
       }
@@ -1585,8 +1537,6 @@ FRESULT CAvatarFileUnreal::SaveMeshU(const char* pszFilename, CAvatar* pAvatar) 
       else {
          delete [] pcMeshProperties;
          delete [] pcNameTable;
-         delete [] pAvatarToUTFaces;
-         delete [] pUTToAvatarFaces;
          osOutputStream.close();
          return F_OUT_OF_MEMORY;
       }
@@ -1635,8 +1585,6 @@ FRESULT CAvatarFileUnreal::SaveMeshU(const char* pszFilename, CAvatar* pAvatar) 
             delete [] pcMeshHeader;
             delete [] pcMeshProperties;
             delete [] pcNameTable;
-            delete [] pAvatarToUTFaces;
-            delete [] pUTToAvatarFaces;
             osOutputStream.close();
             osTempStream.close();
             TRACE("Could not open wedgie file!\n");
@@ -1668,8 +1616,6 @@ FRESULT CAvatarFileUnreal::SaveMeshU(const char* pszFilename, CAvatar* pAvatar) 
                delete [] pcMeshHeader;
                delete [] pcMeshProperties;
                delete [] pcNameTable;
-               delete [] pAvatarToUTFaces;
-               delete [] pUTToAvatarFaces;
                osOutputStream.close();
 			      oWedgie.Close();
                fsDataWJE.close();
@@ -1708,8 +1654,6 @@ FRESULT CAvatarFileUnreal::SaveMeshU(const char* pszFilename, CAvatar* pAvatar) 
          delete [] pcMeshHeader;
          delete [] pcMeshProperties;
          delete [] pcNameTable;
-         delete [] pAvatarToUTFaces;
-         delete [] pUTToAvatarFaces;
          osOutputStream.close();
          return F_FILE_ERROR;
       }
@@ -2035,38 +1979,18 @@ FRESULT CAvatarFileUnreal::SaveMeshU(const char* pszFilename, CAvatar* pAvatar) 
 
          puTempPtr = (unsigned long*)(pcMeshData + uMeshOffset);
          uTempOffset = 0;
-         for (f=0; f<uNumFaces; f++) {
-            // Work out adjacent faces
-            int iAdjacentFaces[3];
-            for (int a=0; a<3; a++) {
-               iAdjacentFaces[a] = -1;
-               int b = (a+1) % 3;
-               //const CDList<int>* pFaceList = pAvatar->FacesPerVertex(pFaces[pUTToAvatarFaces[f]].m_iVertices[a]);
-               const CDList<int>* pFaceList = pAvatar->FacesPerVertex(pFaces[f].m_iVertices[a]);
-               for (int i=0; (i<pFaceList->Length()) && (iAdjacentFaces[a]<0); i++) {
-                  int iFace = (*pFaceList)[i];
-                  if (iFace != pUTToAvatarFaces[f]) { 
-                     if ((pFaces[iFace].m_iVertices[0] == pFaces[f].m_iVertices[b]) ||
-                         (pFaces[iFace].m_iVertices[1] == pFaces[f].m_iVertices[b]) ||
-                         (pFaces[iFace].m_iVertices[2] == pFaces[f].m_iVertices[b])) 
-                         iAdjacentFaces[a] = iFace;
-                  }
-               }
-            }
-            // Write adjacent face numbers
-            //puTempPtr[uTempOffset++] = pAvatarToUTFaces[iAdjacentFaces[2]];
-            //puTempPtr[uTempOffset++] = pAvatarToUTFaces[iAdjacentFaces[1]];
-            //puTempPtr[uTempOffset++] = pAvatarToUTFaces[iAdjacentFaces[0]];
-            puTempPtr[uTempOffset++] = iAdjacentFaces[2];
-            puTempPtr[uTempOffset++] = iAdjacentFaces[1];
-            puTempPtr[uTempOffset++] = iAdjacentFaces[0];
+         for (v=0; v<uNumVertices; v++) {
+            const CDList<int>* pFaceList = pAvatar->FacesPerVertex(v);
+            for (int i=0; i<pFaceList->Length(); i++) {
+               puTempPtr[uTempOffset++] = (*pFaceList)[i];
+               uMeshOffset+=4;
+            }            
          }
          // Write weapon triangle data
          puTempPtr[uTempOffset++] = f;
          puTempPtr[uTempOffset++] = f;
          puTempPtr[uTempOffset++] = f;
-         // Update offset
-         uMeshOffset += 12 * (uNumFaces+1);
+         uMeshOffset+=12;
          // Store current offset in temp pointer
          *pTempAddressPtr = uCurrentOffset + uMeshOffset;
 
@@ -2232,8 +2156,6 @@ FRESULT CAvatarFileUnreal::SaveMeshU(const char* pszFilename, CAvatar* pAvatar) 
          delete [] pcMeshHeader;
          delete [] pcMeshProperties;
          delete [] pcNameTable;
-         delete [] pAvatarToUTFaces;
-         delete [] pUTToAvatarFaces;
          osOutputStream.close();
          return F_OUT_OF_MEMORY;
       }
@@ -2372,8 +2294,6 @@ FRESULT CAvatarFileUnreal::SaveMeshU(const char* pszFilename, CAvatar* pAvatar) 
          delete [] pcMeshHeader;
          delete [] pcMeshProperties;
          delete [] pcNameTable;
-         delete [] pAvatarToUTFaces;
-         delete [] pUTToAvatarFaces;
          osOutputStream.close();
          return F_OUT_OF_MEMORY;
       }
@@ -2423,8 +2343,6 @@ FRESULT CAvatarFileUnreal::SaveMeshU(const char* pszFilename, CAvatar* pAvatar) 
          delete [] pcMeshHeader;
          delete [] pcMeshProperties;
          delete [] pcNameTable;
-         delete [] pAvatarToUTFaces;
-         delete [] pUTToAvatarFaces;
          osOutputStream.close();
          return F_OUT_OF_MEMORY;
       }
@@ -2580,8 +2498,6 @@ FRESULT CAvatarFileUnreal::SaveMeshU(const char* pszFilename, CAvatar* pAvatar) 
          delete [] pcMeshHeader;
          delete [] pcMeshProperties;
          delete [] pcNameTable;
-         delete [] pAvatarToUTFaces;
-         delete [] pUTToAvatarFaces;
          osOutputStream.close();
          return F_OUT_OF_MEMORY;
       }
@@ -2671,8 +2587,6 @@ FRESULT CAvatarFileUnreal::SaveMeshU(const char* pszFilename, CAvatar* pAvatar) 
          delete [] pcMeshHeader;
          delete [] pcMeshProperties;
          delete [] pcNameTable;
-         delete [] pAvatarToUTFaces;
-         delete [] pUTToAvatarFaces;
          osOutputStream.close();
          return F_OUT_OF_MEMORY;
       }
@@ -2731,8 +2645,6 @@ FRESULT CAvatarFileUnreal::SaveMeshU(const char* pszFilename, CAvatar* pAvatar) 
          delete [] pcMeshHeader;
          delete [] pcMeshProperties;
          delete [] pcNameTable;
-         delete [] pAvatarToUTFaces;
-         delete [] pUTToAvatarFaces;
          osOutputStream.close();
          return F_OUT_OF_MEMORY;
       }
@@ -3047,29 +2959,13 @@ FRESULT CAvatarFileUnreal::SaveMeshU(const char* pszFilename, CAvatar* pAvatar) 
 
          puTempPtr = (unsigned long*)(pcSelectMesh + uSelectOffset);
          uTempOffset = 0;
-         for (f=0; f<uNumFaces; f++) {
-            // Work out adjacent faces
-            int iAdjacentFaces[3];
-            for (int a=0; a<3; a++) {
-               iAdjacentFaces[a] = -1;
-               int b = (a+1) % 3;
-               const CDList<int>* pFaceList = pAvatar->FacesPerVertex(pFaces[f].m_iVertices[a]);
-               for (int i=0; (i<pFaceList->Length()) && (iAdjacentFaces[a]<0); i++) {
-                  int iFace = (*pFaceList)[i];
-                  if (iFace != f) { 
-                     if ((pFaces[iFace].m_iVertices[0] == pFaces[f].m_iVertices[b]) ||
-                         (pFaces[iFace].m_iVertices[1] == pFaces[f].m_iVertices[b]) ||
-                         (pFaces[iFace].m_iVertices[2] == pFaces[f].m_iVertices[b])) 
-                         iAdjacentFaces[a] = iFace;
-                  }
-               }
-            }
-            // Write adjacent face numbers
-            puTempPtr[uTempOffset++] = iAdjacentFaces[2];
-            puTempPtr[uTempOffset++] = iAdjacentFaces[0];
-            puTempPtr[uTempOffset++] = iAdjacentFaces[1];
+         for (v=0; v<uNumVertices; v++) {
+            const CDList<int>* pFaceList = pAvatar->FacesPerVertex(v);
+            for (int i=0; i<pFaceList->Length(); i++) {
+               puTempPtr[uTempOffset++] = (*pFaceList)[i];
+               uSelectOffset+=4;
+            }            
          }
-         uSelectOffset += 12 * uNumFaces;
          // Store current offset in temp pointer
          *pTempAddressPtr = uCurrentOffset + uSelectOffset;
 
@@ -3201,8 +3097,6 @@ FRESULT CAvatarFileUnreal::SaveMeshU(const char* pszFilename, CAvatar* pAvatar) 
          delete [] pcMeshHeader;
          delete [] pcMeshProperties;
          delete [] pcNameTable;
-         delete [] pAvatarToUTFaces;
-         delete [] pUTToAvatarFaces;
          osOutputStream.close();
          return F_OUT_OF_MEMORY;
       }
@@ -3293,8 +3187,6 @@ FRESULT CAvatarFileUnreal::SaveMeshU(const char* pszFilename, CAvatar* pAvatar) 
          delete [] pcMeshHeader;
          delete [] pcMeshProperties;
          delete [] pcNameTable;
-         delete [] pAvatarToUTFaces;
-         delete [] pUTToAvatarFaces;
          osOutputStream.close();
          return F_OUT_OF_MEMORY;
       }
@@ -3328,8 +3220,6 @@ FRESULT CAvatarFileUnreal::SaveMeshU(const char* pszFilename, CAvatar* pAvatar) 
          delete [] pcMeshHeader;
          delete [] pcMeshProperties;
          delete [] pcNameTable;
-         delete [] pAvatarToUTFaces;
-         delete [] pUTToAvatarFaces;
          osOutputStream.close();
          return F_FILE_ERROR;
       }
@@ -3370,8 +3260,6 @@ FRESULT CAvatarFileUnreal::SaveMeshU(const char* pszFilename, CAvatar* pAvatar) 
       delete [] pcMeshHeader;
       delete [] pcMeshProperties;
       delete [] pcNameTable;
-      delete [] pAvatarToUTFaces;
-      delete [] pUTToAvatarFaces;
 
       // Restore old pose
       pAvatar->ImportPose(poOldPose);      
