@@ -14,7 +14,7 @@
 //! author 		= "James Smith"
 //! date 		= "01/10/2001"
 //! lib 		= libVALETmath
-//! rcsid 		= "$Id: vector3d.h,v 1.8 2001/10/17 14:44:57 vap-warren Exp $"
+//! rcsid 		= "$Id: vector3d.h,v 1.9 2001/10/17 22:49:36 vap-warren Exp $"
 //! userlevel 	        = Normal
 //! docentry 	        = "VALET.Math.Geometry"
 
@@ -274,6 +274,7 @@ namespace NValet {
     //!todo: Document this properly - don't have time now, I can't remember
     //!todo: what the return and parameters mean. Oops!
     //!todo: Rewrite this to use CScalar::ParseString()
+   //!todo: Remove usage of ctype - isdigit
 	
     //:-----------------
     //: Output functions
