@@ -68,51 +68,70 @@ $(include:../class/menu.stmpl)
 				<!-- End of EHT content -->
 			)
 
-$(ifany:docleaf:
-	<H2>Basic Classes:</H2>
-	<table>
-	$(forall:docleaf:
-		<tr><td><code>&nbsp;</code><A HREF="../Class/$(content)">$(ObjectName)</A><td>$(ifset:brief:$(brief))</tr>
-	)
-	</table>
-)
+			$(ifany:docleaf,$userlevel=Basic:
+				<P CLASS="CLASSHEADING">Basic Classes</P>
+				$(ident:
+					<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="0">
+					$(forall:docleaf,$userlevel=Basic:
+						<TR><TD><P><A HREF="../class/$(content)">$(ObjectName)</A></P></TD><TD><P>$(ifset:brief:- $(brief))</P></TD></TR>
+					)
+					</TABLE>
+				)
+			)
 
-$(ifany:docleaf,$userlevel=Basic:<H2>Basic Classes:</H2>
-<table>
-$(forall:docleaf,$userlevel=Basic:
-<tr><td><code>&nbsp;</code><A HREF="../Class/$(content)">$(ObjectName)</A><td>$(ifset:brief:$(brief))</tr>
-)</table>)
+			$(ifany:docleaf,$userlevel=Normal:
+				<P CLASS="CLASSHEADING">Normal Classes</P>
+				$(ident:
+					<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="0">
+					$(forall:docleaf,$userlevel=Normal:
+						<TR><TD><P><A HREF="../class/$(content)">$(ObjectName)</A></P></TD><TD><P>$(ifset:brief:- $(brief))</P></TD></TR>
+					)
+					</TABLE>
+				)
+			)
 
-$(ifany:docleaf,$userlevel=Normal:<H2>Normal Classes:</H2>
-<table>
-$(forall:docleaf,$userlevel=Normal:
-<tr><td><code>&nbsp;</code><A HREF="../Class/$(content)">$(ObjectName)</A><td>$(ifset:brief:$(brief))</tr>
-)</table>)
+			$(ifany:docleaf,$userlevel=Advanced:
+				<P CLASS="CLASSHEADING">Advanced Classes</P>
+				$(ident:
+					<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="0">
+					$(forall:docleaf,$userlevel=Advanced:
+						<TR><TD><P><A HREF="../class/$(content)">$(ObjectName)</A></P></TD><TD><P>$(ifset:brief:- $(brief))</P></TD></TR>
+					)
+					</TABLE>
+				)
+			)
 
-$(ifany:docleaf,$userlevel=Advanced:<H2>Advanced Classes:</H2>
-<table>
-$(forall:docleaf,$userlevel=Advanced:
-<tr><td><code>&nbsp;</code><A HREF="../Class/$(content)">$(ObjectName)</A><td>$(ifset:brief:$(brief))</tr>
-)</table>)
+			$(if:$viewmode=developer:
+				$(ifany:docleaf,$userlevel=Develop:
+					<P CLASS="CLASSHEADING">Develop Classes</P>
+					$(ident:
+						<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="0">
+						$(forall:docleaf,$userlevel=Develop:
+							<TR><TD><P><A HREF="../class/$(content)">$(ObjectName)</A></P></TD><TD><P>$(ifset:brief:- $(brief))</P></TD></TR>
+						)
+						</TABLE>
+					)
+				)
+			)
 
-$(if:$viewmode=developer:
-$(ifany:docleaf,$userlevel=Develop:<H2>Develop Classes:</H2>
-<table>
-$(forall:docleaf,$userlevel=Develop:
-<tr><td><code>&nbsp;</code><A HREF="../Class/$(content)">$(ObjectName)</A><td>$(ifset:brief:$(brief))</tr>
-)</table>))
+			$(ifany:docleaf,$userlevel=Default:
+				<P CLASS="CLASSHEADING">Default Classes</P>
+				$(ident:
+					<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="0">
+					$(forall:docleaf,$userlevel=Default:
+						<TR><TD><P><A HREF="../class/$(content)">$(ObjectName)</A></P></TD><TD><P>$(ifset:brief:- $(brief))</P></TD></TR>
+					)
+					</TABLE>
+				)
+			)
 
-$(ifany:docleaf,$userlevel=Default:<H2>Default Classes:</H2>
-<table>
-$(forall:docleaf,$userlevel=Default:
-<tr><td><code>&nbsp;</code><A HREF="../Class/$(content)">$(ObjectName)</A><td>$(ifset:brief:$(brief))</tr>
-)</table>)
-
-			<TABLE BORDER="0" CELLPADDING="2" CELLSPACING="2">
-				$(ifset:author:<TR><TD BGCOLOR="#C0C0C0"><P><B>Author</B></P></TD><TD BGCOLOR="#C0C0F0"><P>$(author)</P></TD></TR>)
-				$(ifset:date:<TR><TD BGCOLOR="#C0C0C0"><P><B>Created</B></P></TD><TD BGCOLOR="#C0C0F0"><P>$(date)</P></TD></TR>)
-			</TABLE>
-
+			$(if:$author!="" | $date != "":
+				<BR><P>Written
+				$(ifset:author:by <B>$(author)</B>)
+				$(ifset:date:on <B>$(date)</B>)
+				</P>
+			)
+			
 			</TD></TR>
 		</TABLE>
 		</TD></TR>
