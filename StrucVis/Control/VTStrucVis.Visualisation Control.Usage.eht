@@ -1,0 +1,68 @@
+! author="Warren Moore"
+: Control Usage
+
+<P CLASS=HEADING>
+Inserting the Control
+</P>
+
+<P>
+To use the control on a web page, you need to specify the control using the <I>&lt;OBJECT&gt;</I> tag.
+The object tag is used to specify the controls ID, it's size on the page and where the control should be
+downloaded from if it is not available on the client machine.
+</P>
+
+<PRE>
+&lt;OBJECT CLASSID="CLSID:AD64B056-E5E7-4C45-9243-755802D7CBF7"
+ CODEBASE="http://www.example.co.uk/VTStrucVis.ocx" WIDTH=180 HEIGHT=480&gt;
+
+... Control Parameters ...
+
+... HTML for browsers that don't support OBJECTs ...
+
+&lt;/OBJECT&gt;
+</PRE>
+
+<P>
+Here is some example HTML for inserting the control. The CLASSID used is the CLASSID for the VT Structural
+Visualisation control.
+</P>
+
+<P CLASS=HEADING>
+Object Parameters
+</P>
+
+<P>
+For the control to function correctly, parameters must be set. HTML parameters take the form 
+<I>&lt;PARAM NAME="name" VALUE="value"&gt;</I>
+</P>
+
+<UL>
+<LI><B>BackColor</B> (Optional) - 
+Microsoft format colour value for the control area not covered by the user interface</LI>
+<LI><B>ForeColor</B> (Optional) - 
+Microsoft format colour value for the user interface text</LI>
+<LI><B>WRLPath</B> (Required) - 
+Absolute URL to the VRML framework files (BeamElement.wrl, SlabElement.wrl and HUDView.wrl).
+<I>Requires a trailing slash.</I></LI>
+<LI><B>UIData</B> (Required) - 
+Absolute or relative URL to the user interface bitmap.</LI>
+<LI><B>SimData</B> (Required) - 
+Absolute or relative URL to the converted simulation data.</LI>
+<LI><B>Position</B> - 
+A string of 3 comma seperated floating point values specifying the intial 
+<A HREF="VTStrucVis.Visualisation_Control.Scene_Management.VRML_Nodes.HUDView.html">viewpoint position</A>.</LI>
+<LI><B>Orientation</B> - 
+A string of 4 comma seperated floating point values specifying the intial 
+<A HREF="VTStrucVis.Visualisation_Control.Scene_Management.VRML_Nodes.HUDView.html">viewpoint orientation</A>.</LI>
+<LI><B>Scale</B> - 
+A string of 3 comma seperated floating point values specifying the intial X, Y and Z scale factors</LI>
+</UL>
+
+<P CLASS=HEADING>
+Cortona Display
+</P>
+
+<P>
+For the control to display output, an instance of the Cortona ActiveX control must also be inserted into
+the container. Parameter information for Cortona can be found <A HREF="http://www.parallelgraphics.com/developer/products/cortona/html">here</A>.
+</P>

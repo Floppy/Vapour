@@ -1,0 +1,20 @@
+! author="Warren Moore"
+: Compilation Notes
+
+<P CLASS=HEADING>
+Cannot open include file: 'shelley.h'
+</P>
+<P>
+Shelley.idl is not included in compilation normally, as files it creates (shelley.h and shelley_i.c) cause
+recompilation of several source files every build. Shelley.idl only needs to be compiled on first compilation
+or when the modifications are made directly to Shelley.idl.
+</P>
+
+<P CLASS=HEADING>
+statements outside library block are illegal in mktyplib compatability mode
+</P>
+<P>
+Visual Studio does not remember compilation parameters for disabled files, so to avoid compilation errors of
+Shelley.h, disable the 'MkTypLib compatible' option for the file.
+</P>
+
