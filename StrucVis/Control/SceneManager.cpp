@@ -6,7 +6,7 @@
 // SceneManager.cpp
 // 19/03/2002 - James Smith
 //
-// $Id: SceneManager.cpp,v 1.10 2002/03/22 12:14:48 vap-james Exp $
+// $Id: SceneManager.cpp,v 1.11 2002/03/22 13:33:36 vap-james Exp $
 
 #include "stdafx.h"
 #include "SceneManager.h"
@@ -126,11 +126,11 @@ const unsigned int g_piSlabNodes[1][9] = {
 const unsigned int g_piSlabGroups[g_iNumSlabs] = {
    2
 };
-const unsigned char g_pcSlabCracks[g_iNumFrames][9] = {
-   {0,0,0,0,0,0,0,0,0},
-   {0,0,1,0,0,0,0,1,0},
-   {0,1,1,0,1,1,0,1,1},
-   {3,1,2,3,2,2,1,2,2}
+const unsigned char g_pcSlabCracks[g_iNumFrames][g_iNumSlabs][9] = {
+   {{0,0,0,0,0,0,0,0,0}},
+   {{0,0,0,3,0,0,0,0,0}},
+   {{1,1,0,3,0,0,0,1,0}},
+   {{2,2,1,3,0,0,1,2,0}}
 };
 
 ///////////
@@ -260,7 +260,7 @@ void CSceneManager::ShowFrame(unsigned int iFrame) {
             pfStresses[i] = g_pfNodeStresses[iFrame][(*pElem)->Node(i)];
          }
          (*pElem)->SetStresses(pfStresses);
-         static_cast<CSlabElement*>(*pElem)->SetCracks(0,g_pcSlabCracks[iFrame]);
+         static_cast<CSlabElement*>(*pElem)->SetCracks(0,g_pcSlabCracks[iFrame][1]);
       }
    }
    // Render
