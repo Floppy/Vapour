@@ -7,7 +7,7 @@
 // CortonaUtil.h
 // 07/03/2002 - Warren Moore
 //
-// $Id: CortonaUtil.h,v 1.5 2002/03/21 14:32:08 vap-warren Exp $
+// $Id: CortonaUtil.h,v 1.6 2002/03/21 23:03:14 vap-warren Exp $
 
 #ifndef __CORTONAUTIL__
 #define __CORTONAUTIL__
@@ -44,15 +44,8 @@ public:
                  const CCortonaNode &oDstNode, const char *pcDstField);
    // Add a route from the src node's field to the destination node's field
 
-   CCortonaField *GetField(const CCortonaNode &oNode, const char *pcName);
-   // Creates a CCortonaField object for the specified field of the supplied node
-   // returns NULL if failed
-
    CCortonaField *CreateField(const char *pcType);
    // Create an empty field, returns NULL if failed
-
-   bool AssignEventIn(const CCortonaNode &oNode, const char *pcField, const CCortonaField &oField);
-   // Assigns the supplied field value to the named EventIn field
 
 //#===--- Member Variables
 protected:

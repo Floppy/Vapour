@@ -7,7 +7,7 @@
 // CortonaUtil.cpp
 // 07/03/2002 - Warren Moore
 //
-// $Id: CortonaUtil.cpp,v 1.5 2002/03/21 14:32:07 vap-warren Exp $
+// $Id: CortonaUtil.cpp,v 1.6 2002/03/21 23:03:14 vap-warren Exp $
 
 #include "stdafx.h"
 #include "CortonaBase.h"
@@ -117,35 +117,6 @@ bool CCortonaUtil::AddRoute(const CCortonaNode &oSrcNode, const char *pcSrcField
    return SUCCEEDED(hResult);
 }
 
-CCortonaField *CCortonaUtil::GetField(const CCortonaNode &oNode, const char *pcName) {
-   // Check for pointers
-   if (!m_pEngine || !pcName)
-      return NULL;
-
-   // Get the node fields
-   IFieldsCollection *pFields = NULL;
-   HRESULT hResult = oNode.Interface()->get_Fields(&pFields);
-   if (FAILED(hResult))
-      return NULL;
-
-   // Get the specified field
-   IFieldObject *pFieldObject = NULL;
-   COleVariant oFieldName(pcName);
-   hResult = pFields->get_Item(oFieldName, &pFieldObject);
-
-   // If ok, create the field object
-   CCortonaField *poField = NULL;
-   if (SUCCEEDED(hResult)) {
-      // Create the field object
-      poField = (CCortonaField*) new CCortonaField(pFieldObject);
-   }
-
-   // Release the field collection
-   pFields->Release();
-
-   return poField;
-}
-
 CCortonaField *CCortonaUtil::CreateField(const char *pcType) {
    // Check for pointers
    if (!m_pEngine || !pcType)
@@ -164,41 +135,3 @@ CCortonaField *CCortonaUtil::CreateField(const char *pcType) {
 
    return poField;
 }
-
-bool CCortonaUtil::AssignEventIn(const CCortonaNode &oNode, const char *pcName, const CCortonaField &oField) {
-   // Check for pointers
-   if (!m_pEngine || !pcName)
-      return false;
-
-   // Get the node fields
-   IFieldsCollection *pFields = NULL;
-   HRESULT hResult = oNode.Interface()->get_Fields(&pFields);
-   if (FAILED(hResult))
-      return false;
-
-   // Get the specified field
-   IFieldObject *pFieldObject = NULL;
-   COleVariant oFieldName(pcName);
-   hResult = pFields->get_Item(oFieldName, &pFieldObject);
-
-   // If we got the field, check that it's an EventIn field
-   if (SUCCEEDED(hResult)) {
-      FCategory eCategory;
-      pFieldObject->get_Category(&eCategory);
-      if (eCategory == cEventIn) {
-         // If it is an EventIn, check the field types are compatible
-         FTYPE eType;
-         pFieldObject->get_Type(&eType);
-         if (eType == oField.Type()) {
-            // All checked, assign the value
-            pFieldObject->Assign(oField.Interface());
-         }
-      }
-      pFieldObject->Release();
-   }
-
-   // Release the field collection
-   pFields->Release();
-   return SUCCEEDED(hResult);
-}
-
