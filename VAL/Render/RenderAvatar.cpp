@@ -7,7 +7,7 @@
 // RenderAvatar.cpp - 29/02/2000 - Warren Moore
 //	Avatar render object implementation
 //
-// $Id: RenderAvatar.cpp,v 1.3 2000/10/06 13:17:39 waz Exp $
+// $Id: RenderAvatar.cpp,v 1.4 2000/10/10 17:52:50 waz Exp $
 //
 
 #include "StdAfx.h"
@@ -83,6 +83,12 @@ void CRenderAvatar::RenderMode(unsigned int uMode) {
 } // RenderMode (Set)
 
 void CRenderAvatar::Execute() {
+	// Check it's enabled
+	if (!m_bEnabled)
+		return;
+	// Check it's an OpenGL render context
+	if (m_uContextMode != RCV_OPENGL)
+		return;
 	// Move to the object position
 	glTranslatef(m_fXPos, m_fYPos, m_fZPos);
 

@@ -7,7 +7,7 @@
 // RenderObject.h - 28/02/2000 - Warren Moore
 //	Base render object header
 //
-// $Id: RenderObject.h,v 1.2 2000/07/30 14:57:55 waz Exp $
+// $Id: RenderObject.h,v 1.3 2000/10/10 17:52:51 waz Exp $
 //
 
 #ifndef _VAL_RENDEROBJECT_
@@ -27,7 +27,6 @@
 #define ROM_FLAT						2
 #define ROM_TEXTURE					3
 #define ROM_SELECTION				4
-#define ROM_SUBSELECTION		5
 
 //////////////////
 // CRenderObject
@@ -42,6 +41,10 @@ public:
 	virtual void Exit() {};
 
 	//#===--- Settings
+	// Enable/Disable the object
+	virtual void Enable();
+	virtual void Disable();
+
 	// Set an object from another
 	void Set(CRenderObject *poObject);
 
@@ -78,18 +81,29 @@ public:
 
 //#===--- Internal Functions
 protected:
+	// Stores redundant information concerning the render context
+	virtual void GetRendererParams();
 
 //#===--- Internal Data
 protected:
 	CRenderContext *m_poContext;									// Render context
-	float m_fXPos, m_fYPos, m_fZPos;							// Object position
-	float m_fXAngle, m_fYAngle, m_fZAngle;				// Object rotation
-	unsigned int m_uMode;													// Render mode
-	float m_fTransition;													// Transition value
+	unsigned int m_uContextMode;									// Renderer mode info
+	bool m_bEnabled;													// Enabled indicator
+	float m_fXPos, m_fYPos, m_fZPos;								// Object position
+	float m_fXAngle, m_fYAngle, m_fZAngle;						// Object rotation
+	unsigned int m_uMode;											// Render mode
+	float m_fTransition;												// Transition value
 	unsigned int m_uSelection;										// Selection value
 };
 
 //#===--- Inline Functions
+
+inline void CRenderObject::Enable() {
+} // Enable
+
+inline void CRenderObject::Disable() {
+
+} // Disable
 
 inline void CRenderObject::GetPosition(float &fX, float &fY, float &fZ) {
 	fX = m_fXPos;

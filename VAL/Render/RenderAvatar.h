@@ -7,7 +7,7 @@
 // RenderAvatar.h - 29/02/2000 - Warren Moore
 //	Avatar render object header
 //
-// $Id: RenderAvatar.h,v 1.2 2000/07/30 14:57:55 waz Exp $
+// $Id: RenderAvatar.h,v 1.3 2000/10/10 17:52:51 waz Exp $
 //
 
 #ifndef _VAL_RENDERAVATAR_
@@ -76,7 +76,7 @@ protected:
 	bool m_bGeneric;											// Generic (i.e. textureless) avatar indicator
 
 	int m_iNumTextures;										// Number of textures loaded
-	int m_iTexture[ROAV_MAX_TEXTURES];		// Texture handle table
+	int m_iTexture[ROAV_MAX_TEXTURES];					// Texture handle table
 
 //#===--- Friend classes
 
