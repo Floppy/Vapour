@@ -4,6 +4,12 @@
 use strict;
 use Env qw(VALET_SRCROOT VALET_DOCROOT);
 
+# check we have the variables
+if (not $VALET_SRCROOT or not $VALET_DOCROOT) {
+	print "create_docs.pl error: No roots specified\n";
+	exit -1;
+}
+
 # make the eht directory
 `mkdir eht`;
 
