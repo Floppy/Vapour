@@ -11,7 +11,7 @@
 //! author 	= "James Smith"
 //! date	= "02/10/2001"
 //! lib 	= libVALETmath
-//! rcsid 	= "$Id: homtransform.cpp,v 1.4 2001/10/24 21:33:25 vap-james Exp $"
+//! rcsid 	= "$Id: homtransform.cpp,v 1.5 2001/10/27 13:06:09 vap-james Exp $"
 //! userlevel	= Normal
 //! docentry	= "VALET.Math.Geometry"
 
@@ -132,13 +132,13 @@ namespace NVALET {
    } //~CHomTransform
 
    CHomTransform& CHomTransform::operator=(const CHomTransform& oTransform) {
-      CLog oLog("math","CHomTransform::operator=",LL_FUNCTION);
+      CLog oLog("math","CHomTransform::operator=");
       memcpy(m_pdMatrix,oTransform.m_pdMatrix,12*sizeof(double));
       return *this;
    } //operator=(const CHomTransform& oTransform)
   
    CHomTransform CHomTransform::operator*(const CHomTransform& oTransform) const {
-      CLog oLog("math","CHomTransform::operator* (CHomTransform)",LL_FUNCTION);
+      CLog oLog("math","CHomTransform::operator* (CHomTransform)");
       CHomTransform oReturn;
       oReturn.m_pdMatrix[0]  = oTransform.m_pdMatrix[0] * m_pdMatrix[0] + oTransform.m_pdMatrix[4] * m_pdMatrix[1] + oTransform.m_pdMatrix[8]  * m_pdMatrix[2];
       oReturn.m_pdMatrix[1]  = oTransform.m_pdMatrix[1] * m_pdMatrix[0] + oTransform.m_pdMatrix[5] * m_pdMatrix[1] + oTransform.m_pdMatrix[9]  * m_pdMatrix[2];
@@ -156,7 +156,7 @@ namespace NVALET {
    } //operator*(const CHomTransform& oTransform) const
   
    CVector3D CHomTransform::operator*(const CVector3D& oVec) const {
-      CLog oLog("math","CHomTransform::operator* (CVector3D)",LL_FUNCTION);
+      CLog oLog("math","CHomTransform::operator* (CVector3D)");
       CVector3D oReturn;
       oReturn.X() = m_pdMatrix[0] * oVec.X() + m_pdMatrix[1] * oVec.Y() + m_pdMatrix[2]  * oVec.Z() + m_pdMatrix[3];
       oReturn.Y() = m_pdMatrix[4] * oVec.X() + m_pdMatrix[5] * oVec.Y() + m_pdMatrix[6]  * oVec.Z() + m_pdMatrix[7];
@@ -165,12 +165,11 @@ namespace NVALET {
    } //operator*(const CVector3D& oVec) const
 
    double CHomTransform::Element(const unsigned int iRow, const unsigned int iCol) const {
-      CLog oLog("math","CHomTransform::Element",LL_FUNCTION);      
       return m_pdMatrix[iRow*4 + iCol];
    }
 
    void CHomTransform::ChangeCentre(const CVector3D& oCentre) {
-      CLog oLog("math","CHomTransform::ChangeCentre",LL_FUNCTION);
+      CLog oLog("math","CHomTransform::ChangeCentre");
       CVector3D oTranslation = (*this * -oCentre) + oCentre;
       m_pdMatrix[3]  = oTranslation.X();
       m_pdMatrix[7]  = oTranslation.Y();

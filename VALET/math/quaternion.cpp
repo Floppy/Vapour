@@ -11,7 +11,7 @@
 //! author 		= "James Smith"
 //! date 		= "02/10/2001"
 //! lib 		= libVALETmath
-//! rcsid 		= "$Id: quaternion.cpp,v 1.6 2001/10/24 21:33:26 vap-james Exp $"
+//! rcsid 		= "$Id: quaternion.cpp,v 1.7 2001/10/27 13:06:09 vap-james Exp $"
 //! userlevel 	        = Normal
 //! docentry 	        = "VALET.Math.Geometry"
 
@@ -22,11 +22,6 @@
 
 // Standard includes
 #include <math.h>
-
-// defines
-#define X_AXIS 0x0
-#define Y_AXIS 0x1
-#define Z_AXIS 0x2
 
 namespace NVALET {
 
@@ -59,18 +54,21 @@ namespace NVALET {
 
    CQuaternion::CQuaternion(const CEulerRotation & oRot) {
       CLog("math","CQuaternion::Constructor (CEulerRotation)",LL_OBJECT);
-      int NextAngle[] = {Y_AXIS, Z_AXIS, X_AXIS, Y_AXIS};
+      CEulerType::EEulerAxis NextAngle[] = {CEulerType::EU_Y_AXIS, 
+                                            CEulerType::EU_Z_AXIS, 
+                                            CEulerType::EU_X_AXIS, 
+                                            CEulerType::EU_Y_AXIS};
       CVector3D oEulerAngles = oRot.Angles();
-      CEulerRotation::TEulerType tType = oRot.Type();
-      int iFirstAxis = tType.m_tProperties.m_ucInnerAxis;	
-      int iSecondAxis = NextAngle[iFirstAxis + tType.m_tProperties.m_bOddParity];
-      int iThirdAxis = NextAngle[iFirstAxis + 1 - tType.m_tProperties.m_bOddParity];
-      if (tType.m_tProperties.m_bRotatingFrame) {
+      CEulerType oType = oRot.Type();
+      int iFirstAxis = oType.InnerAxis();	
+      int iSecondAxis = NextAngle[iFirstAxis + oType.OddParity()];
+      int iThirdAxis = NextAngle[iFirstAxis + 1 - oType.OddParity()];
+      if (oType.RotatingFrame()) {
          double dTemp = oEulerAngles.X();
          oEulerAngles.X() = oEulerAngles.Z();
          oEulerAngles.Z() = dTemp;
       }
-      if (tType.m_tProperties.m_bOddParity) {
+      if (oType.OddParity()) {
          oEulerAngles.Y() = -oEulerAngles.Y();
       }	
       double dHF = oEulerAngles.X() * 0.5;
@@ -87,7 +85,7 @@ namespace NVALET {
       double dSHFxCHT = dSHF * dCHT;
       double dSHFxSHT = dSHF * dSHT;
       double a[3];
-      if (tType.m_tProperties.m_bRepetition) {
+      if (oType.Repetition()) {
          a[iFirstAxis]  = dCHS * (dCHFxSHT + dSHFxCHT);
          a[iSecondAxis] = dSHS * (dCHFxCHT + dSHFxSHT);
          a[iThirdAxis]  = dSHS * (dCHFxSHT - dSHFxCHT);
@@ -99,7 +97,7 @@ namespace NVALET {
          a[iThirdAxis]  = dCHS * dCHFxSHT - dSHS * dSHFxCHT;
          m_dScalar      = dCHS * dCHFxCHT + dSHS * dSHFxSHT;
       }
-      if (tType.m_tProperties.m_bOddParity) {
+      if (oType.OddParity()) {
          a[iSecondAxis] = -a[iSecondAxis];
       }	
       m_oVector.FromDouble(a[0], a[1], a[2]);
@@ -111,14 +109,14 @@ namespace NVALET {
    } //~CQuaternion()
 
    CQuaternion& CQuaternion::operator=(const CQuaternion& oQuat) {
-      CLog("math","CQuaternion::operator=", LL_FUNCTION);
+      CLog("math","CQuaternion::operator=");
       m_dScalar = oQuat.m_dScalar;
       m_oVector = oQuat.m_oVector;
       return *this;
    } //operator=(const CQuaternion& oQuat)
 
    CQuaternion CQuaternion::operator *(const CQuaternion& oQuat) const {
-      CLog("math","CQuaternion::operator*", LL_FUNCTION);
+      CLog("math","CQuaternion::operator*");
       CQuaternion oResult;
       oResult.m_dScalar = m_dScalar * oQuat.m_dScalar - m_oVector.Dot(oQuat.m_oVector);
       oResult.m_oVector = oQuat.m_oVector.Cross(m_oVector) + (oQuat.m_oVector * m_dScalar) + (m_oVector * oQuat.m_dScalar);
@@ -126,12 +124,12 @@ namespace NVALET {
    } //operator *(const CQuaternion& quat) const
 
    CQuaternion CQuaternion::operator /(const double dScalar) const {
-      CLog("math","CQuaternion::operator/", LL_FUNCTION);
+      CLog("math","CQuaternion::operator/");
       return CQuaternion(m_dScalar/dScalar,m_oVector/dScalar);
    } //operator /(const double dScalar)
 
    CQuaternion CQuaternion::Conjugate(void) const {
-      CLog("math","CQuaternion::Conjugate", LL_FUNCTION);
+      CLog("math","CQuaternion::Conjugate");
       CQuaternion oResult;
       oResult.m_dScalar = m_dScalar;
       oResult.m_oVector = -m_oVector;
@@ -139,7 +137,7 @@ namespace NVALET {
    } //Conjugate(void) const
 
    double CQuaternion::Norm(void) const {
-      CLog("math","CQuaternion::Norm", LL_FUNCTION);
+      CLog("math","CQuaternion::Norm");
       double dResult = 0.0F;
       dResult += m_dScalar * m_dScalar;
       double dX, dY, dZ;
@@ -151,12 +149,12 @@ namespace NVALET {
    } //Norm(void) const
 
    CQuaternion CQuaternion::Inverse(void) const {
-      CLog("math","CQuaternion::Inverse", LL_FUNCTION);
+      CLog("math","CQuaternion::Inverse");
       return CQuaternion((*this).Conjugate() / (*this).Norm());
    } //Inverse(void) const
 
    CQuaternion CQuaternion::SlerpTo(const CQuaternion& oQuat, double dAmount) const {
-      CLog("math","CQuaternion::SlerpTo", LL_FUNCTION);
+      CLog("math","CQuaternion::SlerpTo");
       double dOmega, dCos, dSin, dScale0, dScale1;
       // Extract values from quaternions
       double dThisX, dThisY, dThisZ, dThisW, dTgtX, dTgtY, dTgtZ, dTgtW;
@@ -194,22 +192,18 @@ namespace NVALET {
    } //SlerpTo(const CQuaternion& oQuat, double dAmount) const
 	
    double CQuaternion::Scalar(void) const {
-      CLog("math","CQuaternion::Scalar (const)", LL_FUNCTION);
       return m_dScalar;
    } //Scalar(void) const
 
    double& CQuaternion::Scalar(void) {
-      CLog("math","CQuaternion::Scalar", LL_FUNCTION);
       return m_dScalar;
    } //Scalar(void)
 
    CVector3D CQuaternion::Vector(void) const {
-      CLog("math","CQuaternion::Vector (const)", LL_FUNCTION);
       return m_oVector;
    } //Vector(void) const
 
    CVector3D& CQuaternion::Vector(void) {
-      CLog("math","CQuaternion::Vector", LL_FUNCTION);
       return m_oVector;
    } //Vector(void)
 

@@ -11,7 +11,7 @@
 //! author     = "James Smith"
 //! date       = "02/10/2001"
 //! lib        = libVALETmath
-//! rcsid      = "$Id: axisrotation.cpp,v 1.5 2001/10/24 21:33:25 vap-james Exp $"
+//! rcsid      = "$Id: axisrotation.cpp,v 1.6 2001/10/27 13:06:08 vap-james Exp $"
 //! userlevel  = Normal
 //! docentry   = "VALET.Math.Geometry"
 
@@ -78,71 +78,66 @@ namespace NVALET {
    } //CAxisRotation(const CEulerRotation & oRot)
   
    CAxisRotation& CAxisRotation::operator=(const CAxisRotation& oRot) {
-      CLog oLog("math","CAxisRotation::operator=",LL_FUNCTION);
+      CLog oLog("math","CAxisRotation::operator=");
       m_oAxis = oRot.m_oAxis;
       m_dAngle = oRot.m_dAngle;
       return *this;
    } //operator=(const CAxisRotation& oRot)
   
    bool CAxisRotation::operator ==(const CAxisRotation& oRot) const {
-      CLog oLog("math","CAxisRotation::operator==",LL_FUNCTION);
+      CLog oLog("math","CAxisRotation::operator==");
       return ((m_dAngle == oRot.m_dAngle) && (m_oAxis == oRot.m_oAxis));
    }
   
    CAxisRotation CAxisRotation::MergeInside(const CAxisRotation & oRot) const{
-      CLog oLog("math","CAxisRotation::MergeInside",LL_FUNCTION);
+      CLog oLog("math","CAxisRotation::MergeInside");
       CQuaternion first(*this);
       CQuaternion second(oRot);
       return CAxisRotation(first * second);
    }
   
    CAxisRotation CAxisRotation::MergeOutside(const CAxisRotation & oRot) const{
-      CLog oLog("math","CAxisRotation::MergeOutside",LL_FUNCTION);
+      CLog oLog("math","CAxisRotation::MergeOutside");
       return oRot.MergeInside(*this);
    }
   
    CAxisRotation& CAxisRotation::Normalise() {
-      CLog oLog("math","CAxisRotation::Normalise",LL_FUNCTION);
+      CLog oLog("math","CAxisRotation::Normalise");
       m_oAxis.Normalise();
       return *this;
    } //Normalise()
   
    CVector3D CAxisRotation::Axis(void) const {
-      CLog oLog("math","CAxisRotation::Axis (const)",LL_FUNCTION);
       return m_oAxis;
    }
     
    CVector3D& CAxisRotation::Axis(void) {
-      CLog oLog("math","CAxisRotation::Axis",LL_FUNCTION);
       return m_oAxis;
    }
     
    double CAxisRotation::Angle(void) const {
-      CLog oLog("math","CAxisRotation::Angle (const)",LL_FUNCTION);
       return m_dAngle;
    }
     
    double& CAxisRotation::Angle(void) {
-      CLog oLog("math","CAxisRotation::Angle",LL_FUNCTION);
       return m_dAngle;
    }
-    
 
    void CAxisRotation::ToDouble(double& dX, double& dY, double& dZ, double& dAngle) const {
-      CLog oLog("math","CAxisRotation::ToDouble",LL_FUNCTION);
+      CLog oLog("math","CAxisRotation::ToDouble");
       m_oAxis.ToDouble(dX, dY, dZ);
       dAngle = m_dAngle;
    } //ToDouble(double& dX, double& dY, double& dZ, double& dAngle) const
   
    void CAxisRotation::FromDouble(double dX, double dY, double dZ, double dAngle) {
-      CLog oLog("math","CAxisRotation::FromDouble",LL_FUNCTION);
+      CLog oLog("math","CAxisRotation::FromDouble");
       m_dAngle = dAngle;
       m_oAxis.FromDouble(dX, dY, dZ);
       return;
    } //FromDouble(double dX, double dY, double dZ, double dAngle)
   
    bool CAxisRotation::ParseString(const char* pcInput, int* piUsed) {
-      CLog oLog("math","CAxisRotation::ParseString",LL_FUNCTION);
+      CLog oLog("math","CAxisRotation::ParseString");
       double pdInputData[4];
       const int iNumComponents = 4;
       int iCurrentComponent = 0;
@@ -226,7 +221,7 @@ namespace NVALET {
    } //ParseString(const char* pcInput, int& piUsed)
   
    char* CAxisRotation::ToString(int iPrecision) const {       
-      CLog oLog("math","CAxisRotation::ToString",LL_FUNCTION);
+      CLog oLog("math","CAxisRotation::ToString");
       // Allocate output buffer space and initialise it to a null string.
       char* pcOutput = (char*)malloc(512);
       pcOutput[0] = 0;

@@ -11,7 +11,7 @@
 //! author     = "James Smith"
 //! date       = "01/10/2001"
 //! lib        = libVALETmath
-//! rcsid      = "$Id: Vector3D.cpp,v 1.10 2001/10/24 21:33:27 vap-james Exp $"
+//! rcsid      = "$Id: Vector3D.cpp,v 1.11 2001/10/27 13:06:09 vap-james Exp $"
 //! userlevel  = Normal
 //! docentry   = "VALET.Math.Geometry"
 
@@ -56,91 +56,91 @@ namespace NVALET {
    } //~CVector3D()
   
    CVector3D CVector3D::operator *(const double dScalar) const {
-      CLog("math","CVector3D::operator* (double)", LL_FUNCTION);
+      CLog("math","CVector3D::operator* (double)");
       return CVector3D(*this) *= dScalar;
    } //operator *(const double dScalar) const
   
    CVector3D CVector3D::operator *(const CVector3D & oVec) const {
-      CLog("math","CVector3D::operator* (CVector3D)", LL_FUNCTION);
+      CLog("math","CVector3D::operator* (CVector3D)");
       return CVector3D(*this) *= oVec;
    } //operator *(const CVector3D & oVec) const
   
    CVector3D& CVector3D::operator *=(const double dScalar) {
-      CLog("math","CVector3D::operator*= (double)", LL_FUNCTION);
+      CLog("math","CVector3D::operator*= (double)");
       for (int i=0; i<3; i++)
          m_pdComponents[i] *= dScalar;
       return *this;
    } //operator *=(const double dScalar)
 	
    CVector3D& CVector3D::operator *=(const CVector3D & oVec) {
-      CLog("math","CVector3D::operator*= (CVector3D)", LL_FUNCTION);
+      CLog("math","CVector3D::operator*= (CVector3D)");
       for (int i=0; i<3; i++)
          m_pdComponents[i] *= oVec.m_pdComponents[i];
       return *this;
    } //operator *=(const CVector3D & oVec)
 	
    CVector3D CVector3D::operator /(const double dScalar) const {
-      CLog("math","CVector3D::operator/ (double)", LL_FUNCTION);
+      CLog("math","CVector3D::operator/ (double)");
       return CVector3D(*this) /= dScalar;
    } //operator /(const double dScalar) const
 	
    CVector3D CVector3D::operator /(const CVector3D & oVec) const {
-      CLog("math","CVector3D::operator/ (CVector3D)", LL_FUNCTION);
+      CLog("math","CVector3D::operator/ (CVector3D)");
       return CVector3D(*this) /= oVec;
    } //operator /(const CVector3D & oVec) const
 	
    CVector3D& CVector3D::operator /=(const double dScalar) {
-      CLog("math","CVector3D::operator/ (double)", LL_FUNCTION);
+      CLog("math","CVector3D::operator/ (double)");
       for (int i=0; i<3; i++)
          m_pdComponents[i] /= dScalar;
       return *this;
    } //operator /=(const double dScalar)
 	
    CVector3D& CVector3D::operator /=(const CVector3D & oVec) {
-      CLog("math","CVector3D::operator/= (CVector3D)", LL_FUNCTION);
+      CLog("math","CVector3D::operator/= (CVector3D)");
       for (int i=0; i<3; i++)
          m_pdComponents[i] /= oVec.m_pdComponents[i];
       return *this;	
    } //operator /=(const CVector3D & oVec)
 	
    CVector3D CVector3D::operator +(const CVector3D & oVec) const {
-      CLog("math","CVector3D::operator+", LL_FUNCTION);
+      CLog("math","CVector3D::operator+");
       return CVector3D(*this) += oVec;
    } //operator +(const CVector3D & vec) const
 	
    CVector3D& CVector3D::operator +=(const CVector3D & oVec) {
-      CLog("math","CVector3D::operator+=", LL_FUNCTION);
+      CLog("math","CVector3D::operator+=");
       for (int i=0; i<3; i++)
          m_pdComponents[i] += oVec.m_pdComponents[i];
       return *this;
    } //operator +=(const CVector3D & oVec)
 	
    CVector3D CVector3D::operator -(const CVector3D & oVec) const {
-      CLog("math","CVector3D::operator- (binary)", LL_FUNCTION);
+      CLog("math","CVector3D::operator- (binary)");
       return CVector3D(*this) -= oVec;
    } //operator -(const CVector3D & oVec) const
 	
    CVector3D& CVector3D::operator -=(const CVector3D & oVec) {
-      CLog("math","CVector3D::operator-=", LL_FUNCTION);
+      CLog("math","CVector3D::operator-=");
       for (int i=0; i<3; i++)
          m_pdComponents[i] -= oVec.m_pdComponents[i];
       return *this;
    } //operator -=(const CVector3D & oVec)
 	
    CVector3D CVector3D::operator -(void) const {
-      CLog("math","CVector3D::operator- (unary)", LL_FUNCTION);
+      CLog("math","CVector3D::operator- (unary)");
       return CVector3D(*this).Invert();
    } //operator -(void) const
 	
    CVector3D& CVector3D::Invert() {
-      CLog("math","CVector3D::Invert", LL_FUNCTION);
+      CLog("math","CVector3D::Invert");
       for (int i=0; i<3; i++)
          m_pdComponents[i] = -m_pdComponents[i];
       return *this;
    } //Invert()
 	
    bool CVector3D::operator ==(const CVector3D & oVec) const {
-      CLog("math","CVector3D::operator==", LL_FUNCTION);
+      CLog("math","CVector3D::operator==");
       for (int i=0; i<3; i++)
          if (m_pdComponents[i] != oVec.m_pdComponents[i]) 
             return false;
@@ -148,12 +148,12 @@ namespace NVALET {
    } //operator ==(const CVector3D & oVec) const
 	
    bool CVector3D::operator !=(const CVector3D & oVec) const {
-      CLog("math","CVector3D::operator!=", LL_FUNCTION);
+      CLog("math","CVector3D::operator!=");
       return !(*this==oVec);
    } //operator !=(const CVector3D & oVec) const
 	
    double CVector3D::Dot(const CVector3D & oVec) const {
-      CLog("math","CVector3D::Dot", LL_FUNCTION);
+      CLog("math","CVector3D::Dot");
       return 
          m_pdComponents[0] * oVec.m_pdComponents[0] +
          m_pdComponents[1] * oVec.m_pdComponents[1] +
@@ -161,7 +161,7 @@ namespace NVALET {
    } //Dot(const CVector3D & oVec) const
 	
    CVector3D CVector3D::Cross(const CVector3D & oVec) const {
-      CLog("math","CVector3D::Cross", LL_FUNCTION);
+      CLog("math","CVector3D::Cross");
       double dX = m_pdComponents[1] * oVec.m_pdComponents[2] - m_pdComponents[2] * oVec.m_pdComponents[1];
       double dY = m_pdComponents[2] * oVec.m_pdComponents[0] - m_pdComponents[0] * oVec.m_pdComponents[2];
       double dZ = m_pdComponents[0] * oVec.m_pdComponents[1] - m_pdComponents[1] * oVec.m_pdComponents[0];
@@ -170,26 +170,26 @@ namespace NVALET {
 	
 	
    double CVector3D::Length() const {
-      CLog("math","CVector3D::Length", LL_FUNCTION);
+      CLog("math","CVector3D::Length");
       return sqrt((m_pdComponents[0] * m_pdComponents[0]) + 
                   (m_pdComponents[1] * m_pdComponents[1]) + 
                   (m_pdComponents[2] * m_pdComponents[2]));
    } //Length() const
 	
    CVector3D& CVector3D::SetLength(double dLength) {  
-      CLog("math","CVector3D::SetLength", LL_FUNCTION);
+      CLog("math","CVector3D::SetLength");
       double dScale = dLength / Length();
       *this *= dScale; 
      return *this;
    } //SetLength(double dLength)
 	
    CVector3D& CVector3D::Normalise() {
-      CLog("math","CVector3D::Normalise", LL_FUNCTION);
+      CLog("math","CVector3D::Normalise");
       return *this /= Length();
    } //Normalise()
 	
    CVector3D CVector3D::Rotate(const CAxisRotation & oRot) const {
-      CLog("math","CVector3D::Rotate", LL_FUNCTION);
+      CLog("math","CVector3D::Rotate");
       CQuaternion oRotation(oRot);
       CQuaternion oVector(0, *this);
       CQuaternion oResult = oRotation.Inverse() * oVector * oRotation;
@@ -197,37 +197,31 @@ namespace NVALET {
    } //Rotate(const CAxisRotation & oRot) const
 	
    double CVector3D::X(void) const {
-      CLog("math","CVector3D::X (const)", LL_FUNCTION);
       return m_pdComponents[0];
    } //X(void) const
 	
    double& CVector3D::X(void) {
-      CLog("math","CVector3D::X", LL_FUNCTION);
       return m_pdComponents[0];
    } //X(void)
 	
    double CVector3D::Y(void) const {
-      CLog("math","CVector3D::Y (const)", LL_FUNCTION);
       return m_pdComponents[1];
    } //Y(void) const
 	
    double& CVector3D::Y(void) {
-      CLog("math","CVector3D::Y", LL_FUNCTION);
       return m_pdComponents[1];
    } //Y(void)
 	
    double CVector3D::Z(void) const {
-      CLog("math","CVector3D::Z (const)", LL_FUNCTION);
       return m_pdComponents[2];
    } //Z(void) const
 	
    double& CVector3D::Z(void) {
-      CLog("math","CVector3D::Z", LL_FUNCTION);
       return m_pdComponents[2];
    } //Z(void)
 	
    void CVector3D::ToDouble(double& dX, double& dY, double& dZ) const {
-      CLog("math","CVector3D::ToDouble", LL_FUNCTION);
+      CLog("math","CVector3D::ToDouble");
       dX = m_pdComponents[0];
       dY = m_pdComponents[1];
       dZ = m_pdComponents[2];
@@ -235,7 +229,7 @@ namespace NVALET {
    } //ToDouble(double& dX, double& dY, double& dZ) const
 	
    void CVector3D::FromDouble(double dX, double dY, double dZ) {
-      CLog("math","CVector3D::FromDouble", LL_FUNCTION);
+      CLog("math","CVector3D::FromDouble");
       m_pdComponents[0] = dX;
       m_pdComponents[1] = dY;
       m_pdComponents[2] = dZ;
@@ -243,7 +237,7 @@ namespace NVALET {
    } //FromDouble(double dX, double dY, double dZ)
 	
    bool CVector3D::ParseString(const char* pcInput, int* piUsed) {
-      CLog("math","CVector3D::ParseString", LL_FUNCTION);
+      CLog("math","CVector3D::ParseString");
       const int iNumComponents = 3;
       int iCurrentComponent = 0;
       bool bFractionalPart = false;
@@ -324,7 +318,7 @@ namespace NVALET {
    } //ParseString(const char* pcInput, int& piUsed)
 	
    char* CVector3D::ToString(int iPrecision) const {
-      CLog("math","CVector3D::ToString", LL_FUNCTION);
+      CLog("math","CVector3D::ToString");
       // Allocate output buffer space and initialise it to a null string.
       char* pcOutput = (char*)malloc(484);
       pcOutput[0] = 0;

@@ -11,7 +11,7 @@
 //! author 		= "James Smith"
 //! date 		= "01/10/2001"
 //! lib 		= libVALETmath
-//! rcsid 		= "$Id: scalar.cpp,v 1.4 2001/10/24 21:33:26 vap-james Exp $"
+//! rcsid 		= "$Id: scalar.cpp,v 1.5 2001/10/27 13:06:09 vap-james Exp $"
 //! userlevel 	        = Normal
 //! docentry 	        = "VALET.Math.Geometry"
 
@@ -52,13 +52,13 @@ namespace NVALET {
    } //~CScalar()
   
    CScalar& CScalar::operator=(const double dScl) {
-      CLog("math","CScalar::operator=",LL_FUNCTION);
+      CLog("math","CScalar::operator=");
       m_dScalar = dScl;
       return *this;
    } //operator=(const double dScl)
   
    bool CScalar::ParseString(const char* pcInput, int* piUsed) {
-      CLog("math","CScalar::ParseString",LL_FUNCTION);
+      CLog("math","CScalar::ParseString");
       const int iNumComponents = 1;
       int iCurrentComponent = 0;
       bool bFractionalPart = false;
@@ -139,7 +139,7 @@ namespace NVALET {
    } //ParseString(const char* pcInput, int& piUsed)
   
    char* CScalar::ToString(int iPrecision) const {
-      CLog("math","CScalar::ToString",LL_FUNCTION);
+      CLog("math","CScalar::ToString");
       // Check precision overrun
       // Maximum precision is 9 digits, becuase of overrun on unsigned long.
       if (iPrecision > 9) iPrecision = 9;
@@ -193,7 +193,7 @@ namespace NVALET {
    } //ToString(int iPrecision) const
 
    double CScalar::ToDouble(void) const {
-      CLog("math","CScalar::ToDouble",LL_FUNCTION);
+      CLog("math","CScalar::ToDouble");
       return m_dScalar;
    } //ToDouble(void) const
   

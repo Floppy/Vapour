@@ -14,7 +14,7 @@
 //! author     = "James Smith"
 //! date       = "02/10/2001"
 //! lib        = libVALETmath
-//! rcsid      = "$Id: eulerrotation.h,v 1.8 2001/10/27 09:40:36 vap-warren Exp $"
+//! rcsid      = "$Id: eulerrotation.h,v 1.9 2001/10/27 13:06:08 vap-james Exp $"
 //! userlevel  = Normal
 //! docentry   = "VALET.Math.Geometry"
 
@@ -25,6 +25,7 @@ namespace NVALET {
    
 //#===--- Includes
 #include "VALET/valet.h"
+#include "VALET/eulertype.h"
 #include "VALET/quaternion.h"
 #include "VALET/homtransform.h"
 
@@ -36,84 +37,12 @@ namespace NVALET {
    // about individual axes.
    class CEulerRotation {
     
-   public:
-    
-      //: Euler angle IDs
-      // Definitions of Euler angle types
-      // Allows types to be specified in code, either as encoding or ordering
-      enum EEulerTypeID {
-         // Type specified as encoding
-         XEDS = 0x00,
-         XEDR = 0x01,
-         XESS = 0x02,
-         XESR = 0x03,
-         XODS = 0x04,
-         XODR = 0x05,
-         XOSS = 0x06,
-         XOSR = 0x07,
-         YEDS = 0x08,
-         YEDR = 0x09,
-         YESS = 0x0A,
-         YESR = 0x0B,
-         YODS = 0x0C,
-         YODR = 0x0D,
-         YOSS = 0x0E,
-         YOSR = 0x0F,
-         ZEDS = 0x10,
-         ZEDR = 0x11,
-         ZESS = 0x12,
-         ZESR = 0x13,
-         ZODS = 0x14,
-         ZODR = 0x15,
-         ZOSS = 0x16,
-         ZOSR = 0x17,
-         // Type specified as axis orderings
-         XYZS = XEDS,
-         ZYXR = XEDR,
-         XYXS = XESS,
-         XYXR = XESR,
-         XZYS = XODS,
-         YZXR = XODR,
-         XZXS = XOSS,
-         XZXR = XOSR,
-         YZXS = YEDS,
-         XZYR = YEDR,
-         YZYS = YESS,
-         YZYR = YESR,
-         YXZS = YODS,
-         ZXYR = YODR,
-         YXYS = YOSS,
-         YXYR = YOSR,
-         ZXYS = ZEDS,
-         YXZR = ZEDR,
-         ZXZS = ZESS,
-         ZXZR = ZESR,
-         ZYXS = ZODS,
-         XYZR = ZODR,
-         ZYZS = ZOSS,
-         ZYZR = ZOSR
-      };
-
-      //: Euler Type structure
-      // Describes the type of an euler angle.
-      // This can be accessed as a complete EulerTypeID,
-      // or the properties can be extracted inidividually.
-      union TEulerType {
-         EEulerTypeID m_eID;
-         struct TProperties  {
-            bool m_bRotatingFrame : 1;
-            bool m_bRepetition : 1;
-            bool m_bOddParity : 1;
-            unsigned char m_ucInnerAxis : 2;
-         } m_tProperties;
-      };
-
    protected:
     
       CVector3D m_oAngles;
       //: The three angles, stored in a 3D vector
     
-      TEulerType m_tType;
+      CEulerType m_oType;
       //: The type of this rotation 
    
    public:    
@@ -123,35 +52,35 @@ namespace NVALET {
 
       CEulerRotation();
       //: Default constructor
-      // Creates a zero rotation of type XYZs.
+      // Creates a zero rotation of type EU_XYZS.
     
-      explicit CEulerRotation(const TEulerType& tType);
+      explicit CEulerRotation(const CEulerType& oType);
       //: Default constructor
-      // Creates a zero rotation of type tType.
-      //!param: tType = the type of the new object
+      // Creates a zero rotation of type oType.
+      //!param: oType = the type of the new object
     
-      CEulerRotation(const CVector3D& oAngles, const TEulerType& tType);
+      CEulerRotation(const CVector3D& oAngles, const CEulerType& oType);
       //: Constructor from a vector
       //!param: oAngles = the inidividual angles that make up the rotation.
-      //!param: tType = the type of the new object
+      //!param: oType = the type of the new object
 
-      CEulerRotation(double dAngle0, double dAngle1, double dAngle2, const TEulerType& tType);
+      CEulerRotation(double dAngle0, double dAngle1, double dAngle2, const CEulerType& oType);
       //: Constructor from a set of doubles
       //!param: dAngle0 = the first angle in the rotation.
       //!param: dAngle1 = the second angle in the rotation.
       //!param: dAngle2 = the third angle in the rotation.
-      //!param: tType = the type of the new object
+      //!param: oType = the type of the new object
     
-      CEulerRotation(const CQuaternion& oQuat, const TEulerType& tType);
+      CEulerRotation(const CQuaternion& oQuat, const CEulerType& oType);
       //: Constructor from a Quaternion
       //!param: oQuat = the quaternion to convert
-      //!param: tType = the type of the new object
+      //!param: oType = the type of the new object
     
-      CEulerRotation(const CHomTransform & oTransform, const TEulerType& tType);
+      CEulerRotation(const CHomTransform & oTransform, const CEulerType& oType);
       //: Constructor from a Homogeneous Transform
       // Only rotation information from the transform will be preserved.
       //!param: oTransform = the transform to convert
-      //!param: tType = the type of the new object
+      //!param: oType = the type of the new object
     
       ~CEulerRotation();
       //: Destructor
@@ -188,11 +117,11 @@ namespace NVALET {
       // Allows direct modfication of the angles.
       //!param: return = reference to the angles
     
-      TEulerType Type(void) const;
+      CEulerType Type(void) const;
       //: Access to the type of the angle.
       //!param: return = the type of the angle   
     
-      TEulerType& Type(void);
+      CEulerType& Type(void);
       //: Non-const access to the type of the angle.
       // Allows direct modfication of the type.
       //!param: return = reference to the type of the angle

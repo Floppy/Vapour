@@ -11,7 +11,7 @@
 //! author     = "James Smith"
 //! date       = "18/10/2001"
 //! lib        = libVALETmath
-//! rcsid      = "$Id: vector2d.cpp,v 1.4 2001/10/24 21:33:26 vap-james Exp $"
+//! rcsid      = "$Id: vector2d.cpp,v 1.5 2001/10/27 13:06:09 vap-james Exp $"
 //! userlevel  = Normal
 //! docentry   = "VALET.Math.Geometry"
 
@@ -52,91 +52,91 @@ namespace NVALET {
    } //~CVector2D()
   
    CVector2D CVector2D::operator *(const double dScalar) const {
-      CLog("math","CVector2D::operator* (double)", LL_FUNCTION);
+      CLog("math","CVector2D::operator* (double)");
       return CVector2D(*this) *= dScalar;
    } //operator *(const double dScalar) const
   
    CVector2D CVector2D::operator *(const CVector2D & oVec) const {
-      CLog("math","CVector2D::operator* (CVector2D)", LL_FUNCTION);
+      CLog("math","CVector2D::operator* (CVector2D)");
       return CVector2D(*this) *= oVec;
    } //operator *(const CVector2D & oVec) const
   
    CVector2D& CVector2D::operator *=(const double dScalar) {
-      CLog("math","CVector2D::operator*= (double)", LL_FUNCTION);
+      CLog("math","CVector2D::operator*= (double)");
       for (int i=0; i<2; i++)
          m_pdComponents[i] *= dScalar;
       return *this;
    } //operator *=(const double dScalar)
 	
    CVector2D& CVector2D::operator *=(const CVector2D & oVec) {
-      CLog("math","CVector2D::operator*= (CVector2D)", LL_FUNCTION);
+      CLog("math","CVector2D::operator*= (CVector2D)");
       for (int i=0; i<2; i++)
          m_pdComponents[i] *= oVec.m_pdComponents[i];
       return *this;
    } //operator *=(const CVector2D & oVec)
 	
    CVector2D CVector2D::operator /(const double dScalar) const {
-      CLog("math","CVector2D::operator/ (double)", LL_FUNCTION);
+      CLog("math","CVector2D::operator/ (double)");
       return CVector2D(*this) /= dScalar;
    } //operator /(const double dScalar) const
 	
    CVector2D CVector2D::operator /(const CVector2D & oVec) const {
-      CLog("math","CVector2D::operator/ (CVector2D)", LL_FUNCTION);
+      CLog("math","CVector2D::operator/ (CVector2D)");
       return CVector2D(*this) /= oVec;
    } //operator /(const CVector2D & oVec) const
 	
    CVector2D& CVector2D::operator /=(const double dScalar) {
-      CLog("math","CVector2D::operator/= (double)", LL_FUNCTION);
+      CLog("math","CVector2D::operator/= (double)");
       for (int i=0; i<2; i++)
          m_pdComponents[i] /= dScalar;
       return *this;
    } //operator /=(const double dScalar)
 	
    CVector2D& CVector2D::operator /=(const CVector2D & oVec) {
-      CLog("math","CVector2D::operator/= (CVector2D)", LL_FUNCTION);
+      CLog("math","CVector2D::operator/= (CVector2D)");
       for (int i=0; i<2; i++)
          m_pdComponents[i] /= oVec.m_pdComponents[i];
       return *this;	
    } //operator /=(const CVector2D & oVec)
 	
    CVector2D CVector2D::operator +(const CVector2D & oVec) const {
-      CLog("math","CVector2D::operator+", LL_FUNCTION);
+      CLog("math","CVector2D::operator+");
       return CVector2D(*this) += oVec;
    } //operator +(const CVector2D & vec) const
 	
    CVector2D& CVector2D::operator +=(const CVector2D & oVec) {
-      CLog("math","CVector2D::operator+=", LL_FUNCTION);
+      CLog("math","CVector2D::operator+=");
       for (int i=0; i<2; i++)
          m_pdComponents[i] += oVec.m_pdComponents[i];
       return *this;
    } //operator +=(const CVector2D & oVec)
 	
    CVector2D CVector2D::operator -(const CVector2D & oVec) const {
-      CLog("math","CVector2D::operator- (binary)", LL_FUNCTION);
+      CLog("math","CVector2D::operator- (binary)");
       return CVector2D(*this) -= oVec;
    } //operator -(const CVector2D & oVec) const
 	
    CVector2D& CVector2D::operator -=(const CVector2D & oVec) {
-      CLog("math","CVector2D::operator-=", LL_FUNCTION);
+      CLog("math","CVector2D::operator-=");
       for (int i=0; i<2; i++)
          m_pdComponents[i] -= oVec.m_pdComponents[i];
       return *this;
    } //operator -=(const CVector2D & oVec)
 	
    CVector2D CVector2D::operator -(void) const {
-      CLog("math","CVector2D::operator- (unary)", LL_FUNCTION);
+      CLog("math","CVector2D::operator- (unary)");
       return CVector2D(*this).Invert();
    } //operator -(void) const
 	
    CVector2D& CVector2D::Invert() {
-      CLog("math","CVector2D::Invert", LL_FUNCTION);
+      CLog("math","CVector2D::Invert");
       for (int i=0; i<2; i++)
          m_pdComponents[i] = -m_pdComponents[i];
       return *this;
    } //Invert()
 	
    bool CVector2D::operator ==(const CVector2D & oVec) const {
-      CLog("math","CVector2D::operator==", LL_FUNCTION);
+      CLog("math","CVector2D::operator==");
       for (int i=0; i<2; i++)
          if (m_pdComponents[i] != oVec.m_pdComponents[i]) 
             return false;
@@ -144,71 +144,67 @@ namespace NVALET {
    } //operator ==(const CVector2D & oVec) const
 	
    bool CVector2D::operator !=(const CVector2D & oVec) const {
-      CLog("math","CVector2D::operator!=", LL_FUNCTION);
+      CLog("math","CVector2D::operator!=");
       return !(*this==oVec);
    } //operator !=(const CVector2D & oVec) const
 	
    double CVector2D::Dot(const CVector2D & oVec) const {
-      CLog("math","CVector2D::Dot", LL_FUNCTION);
+      CLog("math","CVector2D::Dot");
       return 
          m_pdComponents[0] * oVec.m_pdComponents[0] +
          m_pdComponents[1] * oVec.m_pdComponents[1];
    } //Dot(const CVector2D & oVec) const
    
    double CVector2D::Length() const {
-      CLog("math","CVector2D::Length", LL_FUNCTION);
+      CLog("math","CVector2D::Length");
       return sqrt((m_pdComponents[0] * m_pdComponents[0]) + 
                   (m_pdComponents[1] * m_pdComponents[1]));
    } //Length() const
 	
    CVector2D& CVector2D::SetLength(double dLength) {  
-      CLog("math","CVector2D::SetLength", LL_FUNCTION);
+      CLog("math","CVector2D::SetLength");
       double dScale = dLength / Length();
       *this *= dScale;
       return *this;
    } //SetLength(double dLength)
 	
    CVector2D& CVector2D::Normalise() {
-      CLog("math","CVector2D::Normalise", LL_FUNCTION);
+      CLog("math","CVector2D::Normalise");
       return *this /= Length();
    } //Normalise()
 	
    double CVector2D::X(void) const {
-      CLog("math","CVector2D::X (const)", LL_FUNCTION);
       return m_pdComponents[0];
    } //X(void) const
 	
    double& CVector2D::X(void) {
-      CLog("math","CVector2D::X", LL_FUNCTION);
       return m_pdComponents[0];
    } //X(void)
 	
    double CVector2D::Y(void) const {
-      CLog("math","CVector2D::Y (const)", LL_FUNCTION);
       return m_pdComponents[1];
    } //Y(void) const
 	
    double& CVector2D::Y(void) {
-      CLog("math","CVector2D::Y", LL_FUNCTION);
       return m_pdComponents[1];
    } //Y(void)
 	
    void CVector2D::ToDouble(double& dX, double& dY) const {
-      CLog("math","CVector2D::ToDouble", LL_FUNCTION);
+      CLog("math","CVector2D::ToDouble");
       dX = m_pdComponents[0];
       dY = m_pdComponents[1];
       return;
    } //ToDouble(double& dX, double& dY) const
 	
    void CVector2D::FromDouble(double dX, double dY) {
-      CLog("math","CVector2D::FromDouble", LL_FUNCTION);
+      CLog("math","CVector2D::FromDouble");
       m_pdComponents[0] = dX;
       m_pdComponents[1] = dY;
       return;
    } //FromDouble(double dX, double dY)
 	
    bool CVector2D::ParseString(const char* pcInput, int* piUsed) {
-      CLog("math","CVector2D::ParseString", LL_FUNCTION);
+      CLog("math","CVector2D::ParseString");
       const int iNumComponents = 2;
       int iCurrentComponent = 0;
       bool bFractionalPart = false;
@@ -289,7 +285,7 @@ namespace NVALET {
    } //ParseString(const char* pcInput, int& piUsed)
 	
    char* CVector2D::ToString(int iPrecision) const {
-      CLog("math","CVector2D::ToString", LL_FUNCTION);
+      CLog("math","CVector2D::ToString");
       // Allocate output buffer space and initialise it to a null string.
       char* pcOutput = (char*)malloc(484);
       pcOutput[0] = 0;

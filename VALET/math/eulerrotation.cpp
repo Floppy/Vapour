@@ -11,7 +11,7 @@
 //! author 	= "James Smith"
 //! date	= "02/10/2001"
 //! lib 	= libVALETmath
-//! rcsid 	= "$Id: eulerrotation.cpp,v 1.4 2001/10/24 23:03:27 vap-james Exp $"
+//! rcsid 	= "$Id: eulerrotation.cpp,v 1.5 2001/10/27 13:06:08 vap-james Exp $"
 //! userlevel	= Normal
 //! docentry	= "VALET.Math.Geometry"
 
@@ -24,48 +24,47 @@
 #include <math.h>
 #include <float.h>
 
-// defines
-#define X_AXIS 0x0
-#define Y_AXIS 0x1
-#define Z_AXIS 0x2
-
 namespace NVALET {
 
-   CEulerRotation::CEulerRotation() {
+   CEulerRotation::CEulerRotation() :
+      m_oType(CEulerType::EU_XYZS)
+   {
       CLog("math","CEulerRotation::Constructor (default)",LL_OBJECT);
-      m_tType.m_eID = XYZS;
    } //CEulerRotation()
   
-   CEulerRotation::CEulerRotation(const TEulerType& tType) :
-      m_tType(tType)
+   CEulerRotation::CEulerRotation(const CEulerType& oType) :
+      m_oType(oType)
    {
-      CLog("math","CEulerRotation::Constructor (TEulerType)",LL_OBJECT);
-   } //CEulerRotation(const TEulerType& tType)
+      CLog("math","CEulerRotation::Constructor (CEulerType)",LL_OBJECT);
+   } //CEulerRotation(const CEulerType& oType)
   
-   CEulerRotation::CEulerRotation(const CVector3D& oAngles, const TEulerType& tType) :
+   CEulerRotation::CEulerRotation(const CVector3D& oAngles, const CEulerType& oType) :
       m_oAngles(oAngles),
-      m_tType(tType)
+      m_oType(oType)
    {
-      CLog("math","CEulerRotation::Constructor (CVector3D,TEulerType)",LL_OBJECT);
-   } //CEulerRotation(const CVector3D& oAngles, const TEulerType& tType)
+      CLog("math","CEulerRotation::Constructor (CVector3D,CEulerType)",LL_OBJECT);
+   } //CEulerRotation(const CVector3D& oAngles, const CEulerType& oType)
   
-   CEulerRotation::CEulerRotation(double dAngle0, double dAngle1, double dAngle2, const TEulerType& tType) :
+   CEulerRotation::CEulerRotation(double dAngle0, double dAngle1, double dAngle2, const CEulerType& oType) :
       m_oAngles(dAngle0,dAngle1,dAngle2),
-      m_tType(tType)
+      m_oType(oType)
    {
-      CLog("math","CEulerRotation::Constructor (doubles, TEulerType)",LL_OBJECT);
-   } //CEulerRotation(double dAngle0, double dAngle1, double dAngle2, const TEulerType& tType)
+      CLog("math","CEulerRotation::Constructor (doubles, CEulerType)",LL_OBJECT);
+   } //CEulerRotation(double dAngle0, double dAngle1, double dAngle2, const CEulerType& oType)
 
 
-   CEulerRotation::CEulerRotation(const CHomTransform & oTransform, const TEulerType& tType) : 
-      m_tType(tType)
+   CEulerRotation::CEulerRotation(const CHomTransform & oTransform, const CEulerType& oType) : 
+      m_oType(oType)
    {
-      CLog("math","CEulerRotation::Constructor (CHomTransform,TEulerType)",LL_OBJECT);
-      int NextAngle[] = {Y_AXIS, Z_AXIS, X_AXIS, Y_AXIS};
-      int i = tType.m_tProperties.m_ucInnerAxis;
-      int j = NextAngle[i + tType.m_tProperties.m_bOddParity];
-      int k = NextAngle[i + 1 - tType.m_tProperties.m_bOddParity];	
-      if (tType.m_tProperties.m_bRepetition) {
+      CLog("math","CEulerRotation::Constructor (CHomTransform,CEulerType)",LL_OBJECT);
+      CEulerType::EEulerAxis NextAngle[] = {CEulerType::EU_Y_AXIS, 
+                                            CEulerType::EU_Z_AXIS, 
+                                            CEulerType::EU_X_AXIS, 
+                                            CEulerType::EU_Y_AXIS};
+      int i = oType.InnerAxis();
+      int j = NextAngle[i + oType.OddParity()];
+      int k = NextAngle[i + 1 - oType.OddParity()];	
+      if (oType.Repetition()) {
          double sy = sqrt(oTransform.Element(i,j)*oTransform.Element(i,j) + oTransform.Element(i,k)*oTransform.Element(i,k));
          if (sy > 16*FLT_EPSILON) {
             m_oAngles.X() = atan2(oTransform.Element(i,j),oTransform.Element(i,k));
@@ -91,36 +90,36 @@ namespace NVALET {
             m_oAngles.Z() = 0;
          }
       }
-      if (tType.m_tProperties.m_bOddParity) {
+      if (oType.OddParity()) {
          m_oAngles.Invert();
       }
-      if (tType.m_tProperties.m_bRotatingFrame) {
+      if (oType.RotatingFrame()) {
          double dTemp = m_oAngles.X();
          m_oAngles.X() = m_oAngles.Z();
          m_oAngles.Z() = dTemp;
       }
-   } //CEulerRotation(const CHomTransform & oTransform, const TEulerType& tType)
+   } //CEulerRotation(const CHomTransform & oTransform, const CEulerType& oType)
   
-   CEulerRotation::CEulerRotation(const CQuaternion& oQuat, const TEulerType& tType) {    
-      CLog("math","CEulerRotation::Constructor (CQuaternion,TEulerType)",LL_OBJECT);
+   CEulerRotation::CEulerRotation(const CQuaternion& oQuat, const CEulerType& oType) {    
+      CLog("math","CEulerRotation::Constructor (CQuaternion,CEulerType)",LL_OBJECT);
       CHomTransform oTransform(oQuat);
-      *this = CEulerRotation(oTransform,tType);
-   } //CEulerRotation(const CQuaternion& oQuat, const TEulerType& tType)
+      *this = CEulerRotation(oTransform,oType);
+   } //CEulerRotation(const CQuaternion& oQuat, const CEulerType& oType)
   
    CEulerRotation::~CEulerRotation() {
       CLog("math","CEulerRotation::Destructor",LL_OBJECT);
    } //~CEulerRotation()
   
    CEulerRotation& CEulerRotation::operator*=(const CEulerRotation& oScale) {
-      CLog("math","CEulerRotation::operator*=",LL_FUNCTION);
-      if (m_tType.m_eID == oScale.m_tType.m_eID)
+      CLog("math","CEulerRotation::operator*=");
+      if (m_oType == oScale.m_oType)
          m_oAngles *= oScale.m_oAngles;
       return *this;
    } //operator*=(const CVector3D& oVec)
   
    bool CEulerRotation::Limit(const CEulerRotation& oMax, const CEulerRotation& oMin) {
-      CLog("math","CEulerRotation::Limit",LL_FUNCTION);
-      if ((m_tType.m_eID != oMax.m_tType.m_eID) || (m_tType.m_eID != oMin.m_tType.m_eID)) return false;
+      CLog("math","CEulerRotation::Limit");
+      if ((m_oType != oMax.m_oType) || (m_oType != oMin.m_oType)) return false;
       bool bReturn = false;
       if (m_oAngles.X() > oMax.m_oAngles.X()) {
          m_oAngles.X() = oMax.m_oAngles.X(); 
@@ -150,23 +149,19 @@ namespace NVALET {
    } //Limit(const CVector3D& oMax, const CVector3D& oMin) 
 
    CVector3D CEulerRotation::Angles(void) const {
-      CLog("math","CEulerRotation::Angles (const)",LL_FUNCTION);
       return m_oAngles;
    }
     
    CVector3D& CEulerRotation::Angles(void) {
-      CLog("math","CEulerRotation::Angles",LL_FUNCTION);
       return m_oAngles;
    }
     
-   CEulerRotation::TEulerType CEulerRotation::Type(void) const {
-      CLog("math","CEulerRotation::Type (const)",LL_FUNCTION);
-      return m_tType;
+   CEulerType CEulerRotation::Type(void) const {
+      return m_oType;
    }
     
-   CEulerRotation::TEulerType& CEulerRotation::Type(void) {
-      CLog("math","CEulerRotation::Type",LL_FUNCTION);
-      return m_tType;
+   CEulerType& CEulerRotation::Type(void) {
+      return m_oType;
    }
  
 }
