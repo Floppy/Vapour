@@ -7,7 +7,7 @@
 // Viewpoint.h
 // 19/03/2002 - James Smith
 //
-// $Id: Viewpoint.h,v 1.5 2002/03/24 13:52:02 vap-warren Exp $
+// $Id: Viewpoint.h,v 1.6 2002/03/24 23:01:35 vap-james Exp $
 
 #ifndef __VTSTRUCVIS_VIEWPOINT__
 #define __VTSTRUCVIS_VIEWPOINT__
@@ -51,6 +51,9 @@ public:
    bool Connect(const CElement* pElement);
    // Connects the element to the viewpoint
    // for description display purposes.
+
+   bool Redisplay(void);
+   // Redisplays the viewpoint in the scene.
 
 //#===--- Member Variables
 protected:

@@ -7,7 +7,7 @@
 // Viewpoint.cpp
 // 19/03/2002 - James Smith
 //
-// $Id: Viewpoint.cpp,v 1.5 2002/03/24 13:52:01 vap-warren Exp $
+// $Id: Viewpoint.cpp,v 1.6 2002/03/24 23:01:35 vap-james Exp $
 
 #include "stdafx.h"
 #include "Viewpoint.h"
@@ -68,21 +68,8 @@ bool CViewpoint::Set(float* pfPosition, float* pfRotation) {
       // Close the Viewpoint
       strView << "}";
       // Create VRML nodes from the buffer
-      if (m_poNodePtr = m_poCortona->CreateVrmlFromString(pcBuffer)) {
-         m_poCortona->AddToScene(*m_poNodePtr);
-      }
-      // Bind node to move the camera
-      // Create boolean field
-      CCortonaField* poSFBool = m_poCortona->CreateField("SFBool");
-      if (poSFBool==NULL) return false;
-      // Set value
-      poSFBool->SetSFBool(true);
-      // Send event
-      if (!m_poNodePtr->AssignEventIn("set_bind",*poSFBool)) return false;
-      // Done!
-      poSFBool->Release();
-      delete poSFBool;
-      return true;
+      if (m_poNodePtr = m_poCortona->CreateVrmlFromString(pcBuffer))
+         return Redisplay();
    }
    else {
       // Set animation mode
@@ -118,6 +105,7 @@ bool CViewpoint::Set(float* pfPosition, float* pfRotation) {
       delete poSFBool;
       return true;
    }
+   return false;
 }
 
 void CViewpoint::Animate(bool bAnimate) {
@@ -127,4 +115,26 @@ void CViewpoint::Animate(bool bAnimate) {
 bool CViewpoint::Connect(const CElement* pElement) {
    m_poCortona->AddRoute(*(pElement->m_poNodePtr), "description_changed", *m_poNodePtr, "set_description");
    return false;
+}
+
+bool CViewpoint::Redisplay(void) {
+   if (!m_poCortona || !m_poNodePtr) 
+      return false;
+
+   // Add nodes to scene
+   if (!m_poCortona->AddToScene(*m_poNodePtr)) return false;
+
+   // Bind node to move the camera
+   // Create boolean field
+   CCortonaField* poSFBool = m_poCortona->CreateField("SFBool");
+   if (poSFBool==NULL) return false;
+   // Set value
+   poSFBool->SetSFBool(true);
+   // Send event
+   if (!m_poNodePtr->AssignEventIn("set_bind",*poSFBool)) return false;
+   // Done!
+   poSFBool->Release();
+   delete poSFBool;
+
+   return true;
 }
