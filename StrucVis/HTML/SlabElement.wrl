@@ -7,18 +7,19 @@
 # SlabElement.wrl
 # 19/03/2002 - James Smith
 #
-# $Id: SlabElement.wrl,v 1.8 2002/03/22 12:48:35 vap-james Exp $
+# $Id: SlabElement.wrl,v 1.9 2002/03/22 19:06:30 vap-james Exp $
 
 PROTO SlabElement [
-   eventIn MFColor set_colours
-   eventIn MFInt32 set_cracks
-   eventIn MFVec3f set_nodes
-   eventIn SFBool  set_visible
-   exposedField MFString description []
-   field MFColor colours [ 1 1 1, 1 1 1, 1 1 1, 1 1 1, 1 1 1, 1 1 1, 1 1 1, 1 1 1, 1 1 1]
-   field MFInt32 cracks  [ 0 0 0 0 0 0 0 0 0 ]
-   field MFVec3f nodes   [ 0.5 0 0.5, 0 0 0.5, -0.5 0 0.5, -0.5 0 0, -0.5 0 -0.5, 0 0 -0.5, 0.5 0 -0.5, , 0.5 0 0, 0 0 0]
-   field SFFloat thickness 1
+   eventIn MFColor  set_colours
+   eventIn MFInt32  set_cracks
+   eventIn MFVec3f  set_nodes
+   eventIn SFBool   set_visible
+   field   MFColor  colours     [ 1 1 1, 1 1 1, 1 1 1, 1 1 1, 1 1 1, 1 1 1, 1 1 1, 1 1 1, 1 1 1]
+   field   MFInt32  cracks      [ 0 0 0 0 0 0 0 0 0 ]
+   field   MFString description ["ID:" "Group:" "Temperature:"]
+   field   MFVec3f  nodes       [ 0.5 0 0.5, 0 0 0.5, -0.5 0 0.5, -0.5 0 0, -0.5 0 -0.5, 0 0 -0.5, 0.5 0 -0.5, , 0.5 0 0, 0 0 0]
+   field   SFFloat  thickness   1
+   eventOut MFString description_changed
 ]
 {
 
@@ -73,6 +74,7 @@ PROTO SlabElement [
 
    Group {
       children [
+         DEF SENSOR TouchSensor {}
          DEF SLAB Shape {
             appearance Appearance {
                material DEF SLABMATERIAL Material {
@@ -160,15 +162,17 @@ PROTO SlabElement [
          }
       ]
    }
-   Script {
+   DEF SCRIPT Script {
       directOutput TRUE
       mustEvaluate TRUE
       eventIn MFColor set_colours IS set_colours
       eventIn MFInt32 set_cracks IS set_cracks
       eventIn MFVec3f set_nodes IS set_nodes
       eventIn SFBool  set_visible IS set_visible
+      eventIn SFBool  set_mouseOver
       field MFColor colours IS colours
       field MFInt32 cracks IS cracks
+      field MFString description IS description
       field SFFloat thickness IS thickness
       field MFVec3f nodes  IS nodes
       field MFVec3f points []
@@ -185,6 +189,7 @@ PROTO SlabElement [
       field SFNode  crack7 USE CRACK7
       field SFNode  crack8 USE CRACK8
       field SFNode  crack9 USE CRACK9
+      eventOut MFString description_changed IS description_changed
       url "javascript:
          function initialize() {
             // Create points
@@ -252,8 +257,17 @@ PROTO SlabElement [
                slabmaterial.transparency = 0.9;
             }
          }
+         function set_mouseOver(value,time) {
+            if (value) {
+               description_changed = description;
+            }
+            else {
+               description_changed = new MFString();
+            }
+         }
       "
    }
+   ROUTE SENSOR.isOver TO SCRIPT.set_mouseOver
 }
 
 SlabElement {}

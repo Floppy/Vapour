@@ -6,7 +6,7 @@
 // SlabElement.cpp
 // 19/03/2002 - James Smith
 //
-// $Id: SlabElement.cpp,v 1.16 2002/03/22 15:59:09 vap-james Exp $
+// $Id: SlabElement.cpp,v 1.17 2002/03/22 19:06:30 vap-james Exp $
 
 #include "stdafx.h"
 #include "SlabElement.h"
@@ -34,15 +34,16 @@ CSlabElement::CSlabElement(CCortonaUtil *poCortona, CNodeSet* poNodeSet) :
 // Beginning of SlabElement node
 const char pcSlabStart[] = " \
    EXTERNPROTO SlabElement [ \
-      eventIn MFColor set_colours \
-      eventIn MFInt32 set_cracks \
-      eventIn MFVec3f set_nodes \
-      eventIn SFBool  set_visible \
-      exposedField MFString description \
-      field MFColor colours \
-      field MFInt32 cracks  \
-      field MFVec3f nodes \
-      field SFFloat thickness \
+      eventIn MFColor  set_colours \
+      eventIn MFInt32  set_cracks \
+      eventIn MFVec3f  set_nodes \
+      eventIn SFBool   set_visible \
+      field   MFColor  colours \
+      field   MFInt32  cracks \
+      field   MFString description \
+      field   MFVec3f  nodes \
+      field   SFFloat  thickness \
+      eventOut MFString description_changed \
    ] \
    [ \
       \"SlabElement.wrl\" \
@@ -69,7 +70,9 @@ bool CSlabElement::Display(void) const {
       // Add the basic SlabElement syntax
       strSlab << pcSlabStart;
       // Set the description
-      strSlab << " description \"Group: " << m_iGroup << "\" ";
+      strSlab << " description [\"ID: " << m_iElement << "\" ";
+      strSlab << " \"Group: " << m_iGroup << "\" ";
+      strSlab << " \"Temp: " << m_fTemp << "\"] ";
       // Set the size
       strSlab << " thickness " << m_fThickness;
       // Set colours
@@ -159,6 +162,11 @@ void CSlabElement::SetCracks(unsigned int iLayer, const unsigned char* pcCracks)
 void CSlabElement::SetStresses (const float* pfStresses) const {
    memcpy(m_pfStresses,pfStresses,9*sizeof(float));
    return;
+}
+
+void CSlabElement::SetTemp(float fTemp) const {
+   m_fTemp = fTemp;
+   // Update description
 }
 
 void CSlabElement::SetSize(float fThickness) {

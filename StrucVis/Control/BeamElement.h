@@ -6,7 +6,7 @@
 // BeamElement.h
 // 19/03/2002 - James Smith
 //
-// $Id: BeamElement.h,v 1.8 2002/03/21 23:35:31 vap-james Exp $
+// $Id: BeamElement.h,v 1.9 2002/03/22 19:06:30 vap-james Exp $
 
 #ifndef __BEAM_ELEMENT__
 #define __BEAM_ELEMENT__
@@ -39,6 +39,9 @@ public:
    bool SetVisible(bool bVisible) const;
    // Set whether the beam is visible or not.
    // Returns true if successful
+
+   void SetTemp(float fTemp) const;
+   // Sets the temperature of the element
 
    void SetSize(float fHeight, float fWidth, float fFlangeThickness, float fWebThickness);
    // Sets the sizes of the I-beam

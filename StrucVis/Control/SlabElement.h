@@ -6,7 +6,7 @@
 // SlabElement.h
 // 19/03/2002 - James Smith
 //
-// $Id: SlabElement.h,v 1.9 2002/03/22 11:09:56 vap-james Exp $
+// $Id: SlabElement.h,v 1.10 2002/03/22 19:06:30 vap-james Exp $
 
 #ifndef __SLAB_ELEMENT__
 #define __SLAB_ELEMENT__
@@ -51,6 +51,9 @@ public:
    void SetStresses(const float* pfStresses) const;
    // Sets stresses for individual nodes
    // This function expects a pointer to a 9-float array
+
+   void SetTemp(float fTemp) const;
+   // Sets the temperature of the element
 
    void SetSize(float fThickness);
    // Sets the sizes of the slab

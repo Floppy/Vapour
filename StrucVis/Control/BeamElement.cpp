@@ -6,7 +6,7 @@
 // BeamElement.cpp
 // 19/03/2002 - James Smith
 //
-// $Id: BeamElement.cpp,v 1.15 2002/03/22 15:59:10 vap-james Exp $
+// $Id: BeamElement.cpp,v 1.16 2002/03/22 19:06:31 vap-james Exp $
 
 #include "stdafx.h"
 #include "BeamElement.h"
@@ -36,18 +36,20 @@ CBeamElement::CBeamElement(CCortonaUtil *poCortona, CNodeSet* poNodeSet) :
 // Beginning of BeamElement node
 const char pcBeamStart[] = " \
    EXTERNPROTO BeamElement [ \
-      eventIn MFColor set_colours \
-      eventIn MFVec3f set_nodes \
-      eventIn SFBool  set_visible \
-      exposedField MFString description \
-      field MFColor colours \
-      field SFFloat flange \
-      field SFFloat height \
-      field SFFloat web \
-      field SFFloat width \
-      field MFVec3f nodes \
+      eventIn MFColor  set_colours \
+      eventIn MFVec3f  set_nodes \
+      eventIn SFBool   set_visible \
+      field   MFColor  colours \
+      field   MFString description \
+      field   SFFloat  flange \
+      field   SFFloat  height \
+      field   SFFloat  web \
+      field   SFFloat  width \
+      field   MFVec3f  nodes \
+      eventOut MFString description_changed \
    ] \
    [ \
+      \"BeamElement.wrl\" \
       \"file://D:\\Vapour\\Dev\\Src\\Research\\CortonaBase\\BeamElement.wrl\" \
       \"file://D:\\James\\vapour\\dev.local\\src\\Research\\CortonaBase\\BeamElement.wrl\" \
    ] \
@@ -71,7 +73,9 @@ bool CBeamElement::Display(void) const {
       // Add the basic BeamElement syntax
       strBeam << pcBeamStart;
       // Set the description
-      strBeam << " description \"Group: " << m_iGroup << "\" ";
+      strBeam << " description [\"ID: " << m_iElement << "\" ";
+      strBeam << " \"Group: " << m_iGroup << "\" ";
+      strBeam << " \"Temp: " << m_fTemp << "\"] ";
       // Set the size
       strBeam << " height " << m_fHeight;
       strBeam << " width "  << m_fWidth;
@@ -129,6 +133,11 @@ bool CBeamElement::Display(void) const {
       // Done
       return bOK;
    }
+}
+
+void CBeamElement::SetTemp(float fTemp) const {
+   m_fTemp = fTemp;
+   // Update description
 }
 
 void CBeamElement::SetSize(float fHeight, float fWidth, float fFlangeThickness, float fWebThickness) {

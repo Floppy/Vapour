@@ -6,7 +6,7 @@
 // Element.h
 // 19/03/2002 - James Smith
 //
-// $Id: Element.h,v 1.10 2002/03/22 15:59:10 vap-james Exp $
+// $Id: Element.h,v 1.11 2002/03/22 19:06:30 vap-james Exp $
 
 #ifndef __ELEMENT__
 #define __ELEMENT__
@@ -83,6 +83,9 @@ public:
    // This will be overridden and each child will 
    // expect a certain number of floats in the array.
 
+   virtual void SetTemp(float fTemp) const = 0;
+   // Sets the temperature of the element
+
    unsigned int ID(void) {return m_iElement;}
    // Get the element's ID number
 
@@ -135,11 +138,17 @@ protected:
    mutable float m_fMaxStress;
    // Lower and upper limits on stress values.
 
+   mutable float m_fTemp;
+   // Current temperature
+
    mutable float m_pfColour[3];
    // A manually set colour for the element
 
    mutable TColourScheme m_oColourScheme;
    // Which colouring scheme to use
+
+//#===--- Member Variables
+   friend class CViewpoint;
 
 };
 
