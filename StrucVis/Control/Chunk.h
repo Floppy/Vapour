@@ -9,7 +9,7 @@
 //! file      = "Control/IChunk.h"
 //! author    = "James Smith"
 //! date      = "19/3/2002"
-//! rcsid     = "$Id: Chunk.h,v 1.20 2002/04/04 22:16:20 vap-warren Exp $"
+//! rcsid     = "$Id: Chunk.h,v 1.21 2002/04/04 22:31:35 vap-warren Exp $"
 
 #ifndef __VTSTRUCVIS_ICHUNK__
 #define __VTSTRUCVIS_ICHUNK__
@@ -45,9 +45,6 @@ enum TIChunkType {
 //: Chunk Types
 // Setup data 0x10 - 0x1F
 // Frame data 0x20 - 0xFF
-
-/* Predeclare class to sort out CxxDoc */
-class CIChunk;
 
 //: An input data chunk
 // This class provides an interface to a VSV file data chunk, specifically for file loading.
