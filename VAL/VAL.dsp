@@ -98,14 +98,6 @@ SOURCE=.\AvatarFiles\AvatarFile3DS.cpp
 # Begin Source File
 
 SOURCE=.\AvatarFiles\AvatarFileAME.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\AvatarFiles\AvatarFileDXF.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\AvatarFiles\avatarfilegeneric.cpp
 
 !IF  "$(CFG)" == "VAL - Win32 Release"
 
@@ -115,6 +107,14 @@ SOURCE=.\AvatarFiles\avatarfilegeneric.cpp
 
 !ENDIF 
 
+# End Source File
+# Begin Source File
+
+SOURCE=.\AvatarFiles\AvatarFileDXF.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\AvatarFiles\avatarfilegeneric.cpp
 # End Source File
 # Begin Source File
 
@@ -223,6 +223,10 @@ SOURCE=.\DataTypes\Quaternion.cpp
 # Begin Source File
 
 SOURCE=.\Render\RenderAvatar.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\Render\RenderCamera.cpp
 # End Source File
 # Begin Source File
 
@@ -500,6 +504,10 @@ SOURCE=.\DataTypes\Quaternion.h
 # Begin Source File
 
 SOURCE=.\Render\RenderAvatar.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\Render\RenderCamera.h
 # End Source File
 # Begin Source File
 
