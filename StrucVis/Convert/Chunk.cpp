@@ -7,7 +7,7 @@
 // Chunk.cpp
 // 19/03/2002 - James Smith
 //
-// $Id: Chunk.cpp,v 1.4 2002/03/27 17:15:30 vap-james Exp $
+// $Id: Chunk.cpp,v 1.5 2002/03/28 18:03:50 vap-james Exp $
 
 #include "Chunk.h"
 
@@ -22,6 +22,20 @@ CChunk::CChunk(TChunkType oType) :
    m_pcData(NULL),
    m_iLength(0)
 {
+}
+
+CChunk::CChunk(const CChunk& oChunk) :
+   m_iFrame(oChunk.m_iFrame),
+   m_oType(oChunk.m_oType),
+   m_pcData(NULL),
+   m_iLength(oChunk.m_iLength),
+   m_oSubChunks(oChunk.m_oSubChunks)
+{
+   // Alloocate memory for copied data
+   m_pcData = new unsigned char[m_iLength];
+   if (m_pcData == NULL) return;
+   // Copy data
+   memcpy(m_pcData,oChunk.m_pcData,m_iLength);
 }
 
 CChunk::~CChunk() {
@@ -727,7 +741,7 @@ bool CChunk::CreateStressChunk(CInputData& oInput) {
    return true;
 }
 
-bool CChunk::AddSubChunk(CChunk* pSubChunk) {
+bool CChunk::AddSubChunk(const CChunk* pSubChunk) {
    if (m_iLength == 0) {
       m_iLength = 2 + sizeof(unsigned int);
    }
@@ -738,19 +752,19 @@ bool CChunk::AddSubChunk(CChunk* pSubChunk) {
    return true;
 }
 
-bool CChunk::Write(ofstream& oOutput) {
-   char* pcData = NULL;
+bool CChunk::Write(ofstream& oOutput) const {
+   const char* pcData = NULL;
    bool bOK = true;
    if (m_oSubChunks.size() > 0) {
       // Calculate sizes and write header
       oOutput << static_cast<unsigned char>(m_oType);
-      pcData = reinterpret_cast<char*>(&m_iLength);
+      pcData = reinterpret_cast<const char*>(&m_iLength);
       oOutput.write(pcData,sizeof(unsigned int));
       oOutput << static_cast<unsigned char>(m_oSubChunks.size());
       // Write TOC
       unsigned int iOffset = 2 + sizeof(unsigned int) + (m_oSubChunks.size() * (1 + sizeof(unsigned int)));
-      pcData = reinterpret_cast<char*>(&iOffset);
-      for (std::vector<CChunk*>::iterator pSubChunk = m_oSubChunks.begin(); pSubChunk != m_oSubChunks.end(); pSubChunk++) {
+      pcData = reinterpret_cast<const char*>(&iOffset);
+      for (std::vector<const CChunk*>::const_iterator pSubChunk = m_oSubChunks.begin(); pSubChunk != m_oSubChunks.end(); pSubChunk++) {
          oOutput << static_cast<unsigned char>((*pSubChunk)->Type());
          oOutput.write(pcData,sizeof(unsigned int));
          iOffset += (*pSubChunk)->Length();
@@ -765,4 +779,11 @@ bool CChunk::Write(ofstream& oOutput) {
       oOutput.write(reinterpret_cast<const char *>(m_pcData),m_iLength);
       return true;
    }
+}
+
+const CChunk* CChunk::SubChunk(TChunkType oType) const {
+   for (std::vector<const CChunk*>::const_iterator pEntry=m_oSubChunks.begin(); pEntry!=m_oSubChunks.end(); pEntry++) {
+      if ((*pEntry)->m_oType == oType) return *pEntry;
+   }
+   return NULL;
 }

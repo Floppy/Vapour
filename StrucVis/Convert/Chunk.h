@@ -7,7 +7,7 @@
 // Chunk.cpp
 // 19/03/2002 - James Smith
 //
-// $Id: Chunk.h,v 1.2 2002/03/27 16:38:55 vap-james Exp $
+// $Id: Chunk.h,v 1.3 2002/03/28 18:03:49 vap-james Exp $
 
 #ifndef __VTSTRUCVIS_CHUNK__
 #define __VTSTRUCVIS_CHUNK__
@@ -53,26 +53,34 @@ public:
    // Otherwise, the chunk will take on the type of the 
    // data loaded into it.
 
+   CChunk(const CChunk& oChunk);
+   // Copy constructor
+   // Copies chunk data into a new chunk.
+   // Does NOT perform a deep copy of subchunks.
+
    ~CChunk();
    // Destructor
 
    bool Read(CInputData& oInput);
    // Reads chunk data from the input file
 
-   TChunkType Type(void) {return m_oType;}
+   TChunkType Type(void) const {return m_oType;}
    // The type of the chunk
 
-   unsigned int Length(void) {return m_iLength;}
+   unsigned int Length(void) const {return m_iLength;}
    // Gets the length of the chunk
 
-   bool AddSubChunk(CChunk* pSubChunk);
+   bool AddSubChunk(const CChunk* pSubChunk);
    // Adds a subchunk to this chunk.
 
-   bool Write(ofstream& oOutput);
+   const CChunk* SubChunk(TChunkType oType) const;
+   // Get a subchunk with the specified type
+
+   bool Write(ofstream& oOutput) const;
    // Writes the chunk and it's children to the output stream.
    // The output stream should have ios:binary set.
 
-   unsigned int Frame(void) {return m_iFrame;}
+   unsigned int Frame(void) const {return m_iFrame;}
    // Gets the frame number
 
    bool CreateFrameInfoChunk(CInputData& oInput);
@@ -103,7 +111,7 @@ private:
 
 protected:
 
-   vector<CChunk*> m_oSubChunks;
+   vector<const CChunk*> m_oSubChunks;
    // A list of subchunks
 
    TChunkType m_oType;

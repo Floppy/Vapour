@@ -7,7 +7,7 @@
 // StrucVisCnv.cpp
 // 19/03/2002 - James Smith
 //
-// $Id: VTStrucVisCnv.cpp,v 1.3 2002/03/27 16:38:55 vap-james Exp $
+// $Id: VTStrucVisCnv.cpp,v 1.4 2002/03/28 18:03:49 vap-james Exp $
 
 #include <iostream>
 #include <vector>
@@ -79,6 +79,28 @@ int main(int argc, char* argv[]) {
             bOK = true;
          }
       }
+      // Fill in empty chunks
+      const CChunk* pSubChunk = pChunk->SubChunk(CHUNK_NODEDISP);
+      if (pSubChunk == NULL) {
+         CChunk* pOldChunk = new CChunk(oFrames.back()->SubChunk(CHUNK_NODEDISP));
+         pChunk->AddSubChunk(pOldChunk);
+      }
+      pSubChunk = pChunk->SubChunk(CHUNK_SLABFORC);
+      if (pSubChunk == NULL) {
+         CChunk* pOldChunk = new CChunk(oFrames.back()->SubChunk(CHUNK_SLABFORC));
+         pChunk->AddSubChunk(pOldChunk);
+      }
+      pSubChunk = pChunk->SubChunk(CHUNK_BEAMFORC);
+      if (pSubChunk == NULL) {
+         CChunk* pOldChunk = new CChunk(oFrames.back()->SubChunk(CHUNK_BEAMFORC));
+         pChunk->AddSubChunk(pOldChunk);
+      }
+      pSubChunk = pChunk->SubChunk(CHUNK_CRACKS);
+      if (pSubChunk == NULL) {
+         CChunk* pOldChunk = new CChunk(oFrames.back()->SubChunk(CHUNK_CRACKS));
+         pChunk->AddSubChunk(pOldChunk);
+      }
+      // Add frame chunk to frame list
       if (bOK) oFrames.push_back(pChunk);
       else delete pChunk;
    } while (bOK);
