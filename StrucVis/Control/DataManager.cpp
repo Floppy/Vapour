@@ -6,7 +6,7 @@
 // DataManager.cpp
 // 19/03/2002 - James Smith
 //
-// $Id: DataManager.cpp,v 1.5 2002/03/23 11:21:31 vap-james Exp $
+// $Id: DataManager.cpp,v 1.6 2002/03/23 11:53:21 vap-james Exp $
 
 #include "stdafx.h"
 #include "DataManager.h"
@@ -251,6 +251,9 @@ const float g_pfSlabStresses[g_iNumFrames][g_iNumSlabs][27] = {
    }
 };
 
+float g_fMinStress = 0;
+float g_fMaxStress = 100;
+
 ///////////
 // CDataManager
 
@@ -343,8 +346,8 @@ const float* CDataManager::GroupColour(unsigned int iGroup) {
 }
 
 void CDataManager::StressRange(float& fMin, float& fMax) {
-   fMin = 0;
-   fMax = 100;
+   fMin = g_fMinStress;
+   fMax = g_fMaxStress;
 }
 
 unsigned int CDataManager::NumBeams(void) {
