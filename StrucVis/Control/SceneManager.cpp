@@ -7,7 +7,7 @@
 // SceneManager.cpp
 // 19/03/2002 - James Smith
 //
-// $Id: SceneManager.cpp,v 1.29 2002/03/27 17:51:07 vap-james Exp $
+// $Id: SceneManager.cpp,v 1.30 2002/03/28 13:18:30 vap-james Exp $
 
 #include "stdafx.h"
 #include "SceneManager.h"
@@ -222,8 +222,6 @@ bool CSceneManager::ShowFrame(const unsigned char* pcData, unsigned int iLength)
    // Render
    Update();
    // Done
-   GetCurrentPosition();
-   GetCurrentOrientation();
    return true;
 }
 
