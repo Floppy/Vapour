@@ -9,7 +9,7 @@
 //! file      = "Convert/OChunk.h"
 //! author    = "James Smith"
 //! date      = "19/3/2002"
-//! rcsid     = "$Id: OChunk.h,v 1.9 2002/04/04 21:42:22 vap-warren Exp $"
+//! rcsid     = "$Id: OChunk.h,v 1.8 2002/04/04 21:37:44 vap-warren Exp $"
 
 #ifndef __VTSTRUCVIS_OCHUNK__
 #define __VTSTRUCVIS_OCHUNK__
@@ -44,7 +44,7 @@ enum TOChunkType {
    CHUNK_CRACKS   = 0x26
 };
 //: Chunk Types
-// Defines for output data chunk types
+//
 
 //: A output-specific data chunk
 // This class provides an interface to a VSV file data chunk for output purposes.
