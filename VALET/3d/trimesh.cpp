@@ -11,9 +11,9 @@
 //! author 		= "James Smith"
 //! date 		= "10/10/2001"
 //! lib 		= libVALET3d
-//! rcsid 		= "$Id: trimesh.cpp,v 1.1 2001/10/10 12:39:23 vap-james Exp $"
+//! rcsid 		= "$Id: trimesh.cpp,v 1.2 2001/10/15 16:12:39 vap-james Exp $"
 //! userlevel 	        = Normal
-//! docentry 	        = "VALET.3D.Model Representations"
+//! docentry 	        = "VALET.3D.Surface Representations"
 
 #include "trimesh.h"
 
