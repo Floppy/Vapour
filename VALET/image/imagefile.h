@@ -19,7 +19,7 @@
 //! author 		= "Warren Moore"
 //! date 		= "17/10/2001"
 //! lib 			= libVALETimage
-//! rcsid 		= "$Id: imagefile.h,v 1.1 2001/10/18 11:10:41 vap-warren Exp $"
+//! rcsid 		= "$Id: imagefile.h,v 1.2 2001/10/24 17:12:45 vap-warren Exp $"
 //! userlevel 	= Normal
 //! docentry 	= "VALET.Image.File"
 //! example 	= VALET/image/image.test.cpp
@@ -41,14 +41,14 @@ namespace NValet {
    //:------
    //: Load Functions
 
-   	virtual FRESULT GetImageType(const char *pFname, IMAGETYPE &eImgType) = 0;
+   	virtual FRESULT GetImageType(const char *pFname, IMAGE_TYPE &eImgType) = 0;
    	virtual FRESULT Load(const char *pFname, int &x, int &y, unsigned char *&pData) = 0;
 
    //:------
    //: Save Functions
 
-      virtual bool CheckSaveType(IMAGETYPE eImgType) const = 0;
-      virtual void SetSaveType(IMAGETYPE eImgType) = 0;
+      virtual bool CheckSaveType(IMAGE_TYPE eImgType) const = 0;
+      virtual void SetSaveType(IMAGE_TYPE eImgType) = 0;
       virtual void SetPalette(CImagePalette *pPalette) = 0;
       virtual FRESULT Save(const char *pFname, const int x, const int y,
                            const unsigned char *pData) const = 0;
