@@ -7,7 +7,7 @@
 // AvatarFileAME.cpp - 17/06/2000 - James Smith
 //	AME import filter implementation
 //
-// $Id: AvatarFileAME.cpp,v 1.8 2000/10/06 13:16:58 waz Exp $
+// $Id: AvatarFileAME.cpp,v 1.9 2000/10/23 13:50:35 waz Exp $
 //
 
 #include "stdafx.h"
@@ -89,7 +89,12 @@ CAvatar* CAvatarFileAME::Load(const char* pszFilename) const {
    g_poVAL->SetProgressText("AMELoad", "Loading AvatarMe file");
    cAvatar AMeModel;
    CAvatar* pNewAvatar = NULL;
-   if (AMeModel.Load(pszFilename) == 0) {
+   // Load file - this returns an int, but it's supposed to be an enumAMEFileIO
+   // value, so we cast it to use this damn thing properly... all a bit bulgarian really.
+   cAvatar::enumAMEFileIO eAMEResult = (cAvatar::enumAMEFileIO)AMeModel.Load(pszFilename);
+   // Test return code
+   if (eAMEResult == cAvatar::AME_IO_OK) {
+      // If successfully loaded from file, load AME cAvatar into our CAvatar
       g_poVAL->StepProgress("AMELoad") ;
       g_poVAL->SetProgressText("AMELoad", "Creating structures");
       pNewAvatar = new CAvatar(AMeModel.iTotalNumVertices,AMeModel.iTotalNumTriangles);
