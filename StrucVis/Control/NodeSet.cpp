@@ -7,7 +7,7 @@
 // NodeSet.cpp
 // 19/03/2002 - James Smith
 //
-// $Id: NodeSet.cpp,v 1.7 2002/03/24 13:52:00 vap-warren Exp $
+// $Id: NodeSet.cpp,v 1.8 2002/03/27 15:08:40 vap-james Exp $
 
 #include "stdafx.h"
 #include "NodeSet.h"
@@ -62,6 +62,9 @@ void CNodeSet::SetDefault(const float* pfNodePositions) {
 }
 
 void CNodeSet::Displace(const float* pfDisplacements) const {
+   // Check input data
+   if (pfDisplacements == NULL) return;
+   // Carry on
    float* pfDefault = m_pfDefaultNodePositions;
    float* pfCurrent = m_pfCurrentNodePositions;
    const float* pfDisplacement = pfDisplacements;
