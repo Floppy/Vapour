@@ -7,7 +7,7 @@
 // Wedgie.h - 02/07/2000 - Warren Moore
 //	Creation and reading of compressed Wedgie files
 //
-// $Id: Wedgie.h,v 1.4 2000/07/15 10:40:03 waz Exp $
+// $Id: Wedgie.h,v 1.5 2000/07/22 23:23:31 waz Exp $
 //
 
 #ifndef _VAL_WEDGIE_
@@ -41,6 +41,9 @@
 #define WJE_TOTAL				"WJETotal"
 #define WJE_FILE				"WJEFile"
 
+// File Handles
+#define WJE_MAX_HANDLES	1024
+
 //#===--- Data types
 enum WJERESULT {
 	WJE_OK = 0,
@@ -48,6 +51,7 @@ enum WJERESULT {
 	WJE_NO_DATA,
 	WJE_OUT_OF_MEMORY,
 	WJE_CREATE_ERROR,
+	WJE_NOT_OPEN,
 	WJE_FILE_OPEN_ERROR,
 	WJE_FILE_READ_ERROR,
 	WJE_FILE_WRITE_ERROR,
@@ -79,49 +83,80 @@ public:
 	// Close the wedgie (does not close the file stream)
 	WJERESULT Close();
 
+	//#===--- Status Functions
 	// Return the current base directory 
 	const char *Directory() const;
-
 	// Return the number of files in the wedgie
 	unsigned int Files() const;
-
 	// Return the name of the selected file, NULL if invalid
 	const char *Filename(unsigned int uEntry);
 
-	// Extracts the selected file. An alternative filename may be provided
+	//#===--- Extract To File
+	// Extracts the selected file to an alternative filename
 	WJERESULT Extract(unsigned int uEntry, const char *pcFilename = NULL);
-	// Extracts the selected file. An alternative filename may be provided
+	// Extracts the selected file to an alternative filename
 	WJERESULT Extract(const char *pcEntryName, const char *pcFilename = NULL);
-	// Extract functions for specific version (complete filename created by base extract function)
-	WJERESULT Extract1_0(unsigned int uEntry, const char *pcFilename);
+
+	//#===--- Extract To File Stream
+	// Extracts the selected file to a supplied file stream
+	WJERESULT Extract(unsigned int uEntry, ofstream &oFileOut);
+	// Extracts the selected file to a supplied file stream
+	WJERESULT Extract(const char *pcEntryName, ofstream &oFileOut);
+
+	//#===--- Read data from a selected file
+	// Opens the selected file. Returns a handle ID
+	int Open(unsigned int uEntry);
+	// Opens the selected file. Returns a handle ID
+	int Open(const char *pcEntryName);
+	// Read a block of data from the open file. Returns amount of data read
+	unsigned int Read(int iHandle, unsigned char *pcData, unsigned int uSize);
+	// Closes the file handle
+	void Close(int iHandle);
 
 protected:
 //#===--- Internal Structures
-	typedef struct sFileDataStruct {
+	typedef struct SFileDataStruct {
 		char *m_pcName;
 		unsigned int m_uOffset;
 		unsigned int m_uOrigSize;
 		unsigned int m_uCompSize;
 
-		sFileDataStruct() {
+		SFileDataStruct() {
 			m_pcName = NULL;
 			m_uOffset = m_uOrigSize = m_uCompSize = 0;
 		}
 
-	} sFileData;
+	} SFileData;
+
+	typedef struct SFileHandleStruct {
+		unsigned int m_uEntry;
+
+		SFileHandleStruct() {
+			m_uEntry = 0;
+		}
+
+	} SFileHandle;
 
 //#===--- Internal Functions
+
+	//#===--- Extraction Functions
+	// Extract functions for specific version (complete filename created by base extract function)
+	WJERESULT Extract1_0(unsigned int uEntry, const char *pcFilename);
+	// Extract functions for specific version
+	WJERESULT Extract1_0(unsigned int uEntry, ofstream &oFileOut);
+
+	//#===--- Open Functions
 	// Creates the wedgie from the base dir
 	WJERESULT Write(bool bMove = false);
 	// Reads the contents of the wedgie
-	WJERESULT Read();
+	WJERESULT ReadTOC();
 	// Read functions for specific versions
-	WJERESULT Read1_0();
+	WJERESULT ReadTOC1_0();
 
 	// Counts the files within the supplied directory
 	unsigned int Count(const char *pcDir);
 
-	//#===--- File creation functions
+	//#===--- Wedgie Creation Functions
 
 	// Fills the table with the files in the supplied directory
 	// File table must have been created
@@ -140,17 +175,18 @@ protected:
 	WJERESULT RemoveFiles(const char *pcDir);
 
 //#===--- Internal Data
-	char *m_pcBaseDir;							// Base directory
-	int m_iBaseLength;							// Length of base directory string
-	fstream *m_poFile;							// Active file stream pointer
-	bool m_bCreate;									// Wedgie creation indicator
-	unsigned int m_uFiles;					// Number of files in wedgie
-	sFileData *m_psTable;						// File data table
-	unsigned int m_uTotalSize;			// Total amount of uncompressed data in wedgie
-	unsigned int m_uStartPos;				// File pos of the start of the wedgie
-	unsigned int m_uOffsetPos;			// Running stream offset for file positions
-	unsigned int m_uPreambleSize;		// Size of the wedgie preamble
-	unsigned int m_uTOCSize;				// Size of the table of contents
+	char *m_pcBaseDir;												// Base directory
+	int m_iBaseLength;												// Length of base directory string
+	fstream *m_poFile;												// Active file stream pointer
+	bool m_bCreate;														// Wedgie creation indicator
+	unsigned int m_uFiles;										// Number of files in wedgie
+	SFileData *m_psTable;											// File data table
+	unsigned int m_uTotalSize;								// Total amount of uncompressed data in wedgie
+	unsigned int m_uStartPos;									// File pos of the start of the wedgie
+	unsigned int m_uOffsetPos;								// Running stream offset for file positions
+	unsigned int m_uPreambleSize;							// Size of the wedgie preamble
+	unsigned int m_uTOCSize;									// Size of the table of contents
+	SFileHandle m_psHandle[WJE_MAX_HANDLES];	// Open file handle table
 
 	// Wedgie version number
 	const char m_cVerHigh;

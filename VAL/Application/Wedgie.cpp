@@ -7,7 +7,7 @@
 // Wedgie.cpp - 02/07/2000 - Warren Moore
 //	Creation and reading of compressed Wedgie files
 //
-// $Id: Wedgie.cpp,v 1.9 2000/07/21 16:27:57 waz Exp $
+// $Id: Wedgie.cpp,v 1.10 2000/07/22 23:23:31 waz Exp $
 //
 
 #include "StdAfx.h"
@@ -122,7 +122,7 @@ WJERESULT CWedgie::Open(fstream *poFile, const char *pcDir, bool bCreate, bool b
 		eResult = Write(bMove);
 	}
 	else {
-		eResult = Read();
+		eResult = ReadTOC();
 	}
 	if (eResult != WJE_OK)
 		Close();
@@ -166,13 +166,18 @@ const char *CWedgie::Filename(unsigned int uEntry) {
 } // Filename
 
 WJERESULT CWedgie::Extract(unsigned int uEntry, const char *pcFilename) {
-	ASSERT(m_poFile && (!m_bCreate));
+	// Check it's open for reading
+	if (!m_poFile)
+		return WJE_NOT_OPEN;
+	if (m_bCreate)
+		return WJE_WRONG_MODE;
+
 	// Check it's a valid entry
 	if (uEntry >= m_uFiles)
 		return WJE_INVALID_ENTRY;
 
 	// Create the base directory name
-	sFileData &sEntry = m_psTable[uEntry];
+	SFileData &sEntry = m_psTable[uEntry];
 	char pcName[STR_SIZE] = "";
 	strcpy(pcName, m_pcBaseDir);
 	// Alternative name supplied
@@ -238,7 +243,12 @@ WJERESULT CWedgie::Extract(unsigned int uEntry, const char *pcFilename) {
 } // Extract (Index)
 
 WJERESULT CWedgie::Extract(const char *pcEntryName, const char *pcFilename) {
-	ASSERT(m_poFile && (!m_bCreate));
+	// Check it's open for reading
+	if (!m_poFile)
+		return WJE_NOT_OPEN;
+	if (m_bCreate)
+		return WJE_WRONG_MODE;
+
 	// Check it's a valid entry
 	unsigned int uEntry = 0;
 	bool bFound = false;
@@ -252,7 +262,7 @@ WJERESULT CWedgie::Extract(const char *pcEntryName, const char *pcFilename) {
 		return WJE_INVALID_ENTRY;
 
 	// Create the base directory name
-	sFileData &sEntry = m_psTable[uEntry];
+	SFileData &sEntry = m_psTable[uEntry];
 	char pcName[STR_SIZE] = "";
 	strcpy(pcName, m_pcBaseDir);
 	// Alternative name supplied
@@ -332,7 +342,7 @@ WJERESULT CWedgie::Extract1_0(unsigned int uEntry, const char *pcFilename) {
 	oDeflate.Init(false);
 
 	// Decompress the file
-	sFileData &sEntry = m_psTable[uEntry];
+	SFileData &sEntry = m_psTable[uEntry];
 	unsigned char pcBuffer[WJE_BLOCK_SIZE];
 	unsigned int uCount = 0;
 	unsigned int uBlock = 0;
@@ -341,13 +351,12 @@ WJERESULT CWedgie::Extract1_0(unsigned int uEntry, const char *pcFilename) {
 		uBlock = (sEntry.m_uCompSize - uCount > WJE_BLOCK_SIZE) ? 
 			WJE_BLOCK_SIZE : sEntry.m_uCompSize - uCount;
 		m_poFile->read(pcBuffer, uBlock);
-		int iRead = m_poFile->gcount();
-		uCount += iRead;
+		uCount += uBlock;
 		// Pass the data to the compressor
-		oDeflate.Input(pcBuffer, iRead);
+		oDeflate.Input(pcBuffer, uBlock);
 		// Check all is well
 		if (m_poFile->bad())
-			uCount = sEntry.m_uCompSize;
+			break;
 	}
 
 	// Close the file and tidy up
@@ -356,6 +365,233 @@ WJERESULT CWedgie::Extract1_0(unsigned int uEntry, const char *pcFilename) {
 
 	return WJE_OK;
 } // Extract1_0
+
+WJERESULT CWedgie::Extract(unsigned int uEntry, ofstream &oFileOut) {
+	// Check it's open for reading
+	if (!m_poFile)
+		return WJE_NOT_OPEN;
+	if (m_bCreate)
+		return WJE_WRONG_MODE;
+
+	// Check it's a valid entry
+	if (uEntry >= m_uFiles)
+		return WJE_INVALID_ENTRY;
+
+	// Seek to the beginning of the file
+	SFileData &sEntry = m_psTable[uEntry];
+	m_poFile->seekg(m_uStartPos, ios::beg);
+	m_poFile->seekg(sEntry.m_uOffset, ios::cur);
+	if (m_poFile->bad())
+		return WJE_FILE_READ_ERROR;
+	// Select the specific extraction function
+	switch (m_uCurrentVer) {
+		case 0x0100:
+			return Extract1_0(uEntry, oFileOut);
+			break;
+		default:
+			return WJE_UNSUPPORTED_VERSION;
+	}
+} // Extract (Index)
+
+WJERESULT CWedgie::Extract(const char *pcEntryName, ofstream &oFileOut) {
+	// Check it's open for reading
+	if (!m_poFile)
+		return WJE_NOT_OPEN;
+	if (m_bCreate)
+		return WJE_WRONG_MODE;
+
+	// Check it's a valid entry
+	unsigned int uEntry = 0;
+	while (uEntry < m_uFiles) {
+		if (stricmp(pcEntryName, m_psTable[uEntry].m_pcName) != 0)
+			uEntry++;
+		else
+			break;
+	}
+	if (uEntry == m_uFiles)
+		return WJE_INVALID_ENTRY;
+
+	// Seek to the beginning of the file
+	SFileData &sEntry = m_psTable[uEntry];
+	m_poFile->seekg(m_uStartPos, ios::beg);
+	m_poFile->seekg(sEntry.m_uOffset, ios::cur);
+	if (m_poFile->bad())
+		return WJE_FILE_READ_ERROR;
+	// Select the specific extraction function
+	switch (m_uCurrentVer) {
+		case 0x0100:
+			return Extract1_0(uEntry, oFileOut);
+			break;
+		default:
+			return WJE_UNSUPPORTED_VERSION;
+	}
+} // Extract (Filename)
+
+WJERESULT CWedgie::Extract1_0(unsigned int uEntry, ofstream &oFileOut) {
+	ASSERT(uEntry < m_uFiles);
+
+	// Open the decompressor
+	CCompressDeflate oDeflate;
+	oDeflate.WriteToFile(true, &oFileOut);
+	oDeflate.Init(false);
+
+	// Decompress the file
+	SFileData &sEntry = m_psTable[uEntry];
+	unsigned char pcBuffer[WJE_BLOCK_SIZE];
+	unsigned int uCount = 0;
+	unsigned int uBlock = 0;
+	while (uCount < sEntry.m_uCompSize) {
+		// Read the data
+		uBlock = (sEntry.m_uCompSize - uCount > WJE_BLOCK_SIZE) ? 
+			WJE_BLOCK_SIZE : sEntry.m_uCompSize - uCount;
+		m_poFile->read(pcBuffer, uBlock);
+		uCount += uBlock;
+		// Pass the data to the compressor
+		oDeflate.Input(pcBuffer, uBlock);
+		// Check all is well
+		if (m_poFile->bad())
+			break;
+	}
+
+	// Close the file and tidy up
+	oDeflate.End();
+
+	return WJE_OK;
+} // Extract1_0
+
+int CWedgie::Open(unsigned int uEntry) {
+	// Check it's open for reading
+	if (!m_poFile)
+		return -1;
+	if (m_bCreate)
+		return -1;
+
+	// Check it's a valid entry
+	if (uEntry >= m_uFiles)
+		return -1;
+
+	// Find a free file handle
+	int iCount = 0;
+	while (iCount < WJE_MAX_HANDLES) {
+		if (m_psHandle[iCount].m_uEntry != 0)
+			iCount++;
+		else
+			break;
+	}
+	if (iCount == WJE_MAX_HANDLES)
+		return -1;
+
+	// Set the handle
+	m_psHandle[iCount].m_uEntry = uEntry;
+	// Return the handle
+	return iCount;
+} // Open (Index)
+
+int CWedgie::Open(const char *pcEntryName) {
+	// Check it's open for reading
+	if (!m_poFile)
+		return -1;
+	if (m_bCreate)
+		return -1;
+
+	// Check it's a valid entry
+	unsigned int uEntry = 0;
+	while (uEntry < m_uFiles) {
+		if (stricmp(pcEntryName, m_psTable[uEntry].m_pcName) != 0)
+			uEntry++;
+		else
+			break;
+	}
+	if (uEntry == m_uFiles)
+		return -1;
+
+	// Find a free file handle
+	int iCount = 0;
+	while (iCount < WJE_MAX_HANDLES) {
+		if (m_psHandle[iCount].m_uEntry != 0)
+			iCount++;
+		else
+			break;
+	}
+	if (iCount == WJE_MAX_HANDLES)
+		return -1;
+
+	// Set the handle
+	m_psHandle[iCount].m_uEntry = uEntry;
+	// Return the handle
+	return iCount;
+} // Open (Filename)
+
+unsigned int CWedgie::Read(int iHandle, unsigned char *pcData, unsigned int uSize) {
+	// Check it's open for reading
+	if (!m_poFile)
+		return 0;
+	if (m_bCreate)
+		return 0;
+
+	// Check it's a valid entry
+	if (iHandle >= WJE_MAX_HANDLES)
+		return 0;
+
+	// Check the handle is open
+	unsigned int uEntry = m_psHandle[iHandle].m_uEntry;
+	if (uEntry == 0)
+		return 0;
+
+	// Get the data size
+	SFileData &sEntry = m_psTable[uEntry];
+	unsigned uReadSize = (uSize > sEntry.m_uOrigSize) ? sEntry.m_uOrigSize : uSize;
+
+	// Seek to the beginning of the file
+	m_poFile->seekg(m_uStartPos, ios::beg);
+	m_poFile->seekg(sEntry.m_uOffset, ios::cur);
+	if (m_poFile->bad())
+		return 0;
+
+	// Open the decompressor
+	CCompressDeflate oDeflate;
+	oDeflate.WriteToFile(false);
+	oDeflate.Init(false);
+
+	// Decompress the file
+	unsigned char pcBuffer[WJE_BLOCK_SIZE];
+	unsigned int uCount = 0;
+	unsigned int uBlock = 0;
+	unsigned int uOut = 0;
+	while (uSize && (uCount < sEntry.m_uCompSize)) {
+		// Read the data
+		uBlock = (sEntry.m_uCompSize - uCount > WJE_BLOCK_SIZE) ? 
+			WJE_BLOCK_SIZE : sEntry.m_uCompSize - uCount;
+		m_poFile->read(pcBuffer, uBlock);
+		uCount += uBlock;
+		// Pass the data to the compressor
+		uOut = oDeflate.Input(pcBuffer, uBlock);
+		// Copy the data out to the buffer
+		while (uOut > 0) {
+			unsigned int uLeft = oDeflate.Retrieve(pcData, uSize);
+			uSize -= (uOut - uLeft);
+			pcData += (uOut - uLeft);
+			uOut = uLeft;
+		}
+		// Check all is well
+		if (m_poFile->bad())
+			break;
+	}
+
+	// Close the file and tidy up
+	oDeflate.End();
+
+	return uReadSize;
+} //  Read (Data)
+
+void CWedgie::Close(int iHandle) {
+	// Check it's a valid handle
+	if (iHandle >= WJE_MAX_HANDLES)
+		return;
+
+	// Close the handle
+	m_psHandle[iHandle].m_uEntry = 0;
+} // Close
 
 WJERESULT CWedgie::Write(bool bMove) {
 	ASSERT(m_poFile);
@@ -367,7 +603,7 @@ WJERESULT CWedgie::Write(bool bMove) {
 
 	// Allocate the file table
 	NEWBEGIN
-	m_psTable = (sFileData*)new sFileData[m_uFiles];
+	m_psTable = (SFileData*)new SFileData[m_uFiles];
 	NEWEND("CWedgie::Write - File table")
 	if (!m_psTable)
 		return WJE_OUT_OF_MEMORY;
@@ -401,7 +637,7 @@ WJERESULT CWedgie::Write(bool bMove) {
 	return eResult;
 } // Write
 
-WJERESULT CWedgie::Read() {
+WJERESULT CWedgie::ReadTOC() {
 	ASSERT(m_poFile);
 	ASSERT(!m_bCreate);
 	// Save the beginning of the stream
@@ -425,14 +661,14 @@ WJERESULT CWedgie::Read() {
 	// Select the correct version reader
 	switch (m_uCurrentVer) {
 		case 0x0100:
-			return Read1_0();
+			return ReadTOC1_0();
 		default:
 			return WJE_UNSUPPORTED_VERSION;
 	}
 	return WJE_OK;
-} // Read
+} // ReadTOC
 
-WJERESULT CWedgie::Read1_0() {
+WJERESULT CWedgie::ReadTOC1_0() {
 	ASSERT(m_uPreambleSize);
 	// Read the number of files
 	m_poFile->read((char*)&m_uFiles, WJE_POS_SIZE);
@@ -444,7 +680,7 @@ WJERESULT CWedgie::Read1_0() {
 	m_poFile->read((char*)&m_uTOCSize, WJE_POS_SIZE);
 	// Allocate the file data table
 	NEWBEGIN
-	m_psTable = (sFileData*)new sFileData[m_uFiles];
+	m_psTable = (SFileData*)new SFileData[m_uFiles];
 	NEWEND("CWedgie::Read1_0 - File table")
 	if (!m_psTable)
 		return WJE_OUT_OF_MEMORY;
@@ -474,7 +710,7 @@ WJERESULT CWedgie::Read1_0() {
 		uCount++;
 	}
 	return WJE_OK;
-} // Read1_0
+} // ReadTOC1_0
 
 unsigned int CWedgie::Count(const char *pcDir) {
 	unsigned int uCount = 0;
@@ -635,7 +871,7 @@ WJERESULT CWedgie::ProcessFiles() {
 	for (unsigned int uCount = 0; uCount < m_uFiles; uCount++) {
 		// Set the dialog info
 		uSize = 0;
-		sFileData &sEntry = m_psTable[uCount];
+		SFileData &sEntry = m_psTable[uCount];
 		g_poVAL->SetProgressText(WJE_FILE, sEntry.m_pcName); 
 		g_poVAL->SetProgressPos(WJE_FILE, uSize);
 		g_poVAL->SetProgressMax(WJE_FILE, sEntry.m_uOrigSize);
