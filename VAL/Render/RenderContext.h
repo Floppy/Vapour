@@ -7,7 +7,7 @@
 // RenderContext.h - 23/07/2000 - Warren Moore
 //	Base class for render contexts
 //
-// $Id: RenderContext.h,v 1.7 2000/11/25 11:30:37 waz Exp $
+// $Id: RenderContext.h,v 1.8 2000/11/25 22:35:05 waz Exp $
 //
 
 #ifndef _VAL_RENDERCONTEXT_
@@ -34,16 +34,20 @@
 #define RCO_HEIGHT							5
 #define RCO_COL_DEPTH						6
 #define RCO_Z_BUF_SIZE						7
+#define RCO_DEPTH_TEST						8
 	// Context
-#define RCO_NEARPLANE						8
-#define RCO_FARPLANE							9
-#define RCO_VIEWANGLE					  10
-#define RCO_BACKRED						  11
-#define RCO_BACKGREEN					  12
-#define RCO_BACKBLUE						  13
+#define RCO_NEARPLANE						9
+#define RCO_FARPLANE						  10
+#define RCO_VIEWANGLE					  11
+#define RCO_BACKRED						  12
+#define RCO_BACKGREEN					  13
+#define RCO_BACKBLUE						  14
 
 //#===--- Option values
 #define RCV_DONT_CARE						0
+	// Common
+#define RCV_ENABLE							1
+#define RCV_DISABLE							2
 	// RCO_MODE
 #define RCV_SOFTWARE							1
 #define RCV_OPENGL							2
@@ -166,6 +170,11 @@ public:
 	// Disable the context
 	virtual RCRESULT Disable() = 0;
 
+	// Set the display properties prior to rendering
+	virtual RCRESULT BeginRender();
+	// Finish operations and update screen
+	virtual RCRESULT EndRender();
+
 	//#===--- Buffer Control
 	// Sets the buffer to render to
 	virtual RCRESULT SetWriteBuffer(int iBuffer) = 0;
@@ -226,6 +235,14 @@ inline bool CRenderContext::Active() const {
 inline bool CRenderContext::Enabled() const {
 	return m_bEnabled;
 } // Enabled
+
+inline RCRESULT CRenderContext::BeginRender() {
+	return RC_OK;
+} // BeginRender
+
+inline RCRESULT CRenderContext::EndRender() {
+	return RC_OK;
+} // EndRender
 
 inline unsigned int CRenderContext::GetProjectionMode() const {
 	return m_uProjMode;

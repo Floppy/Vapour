@@ -7,7 +7,7 @@
 // SceneHLThumbnail.h - 06/10/2000 - Warren Moore
 //	Scene rendering class for HalfLife thumbnail production
 //
-// $Id: SceneHLThumbnail.cpp,v 1.2 2000/11/25 11:26:08 waz Exp $
+// $Id: SceneHLThumbnail.cpp,v 1.3 2000/11/25 22:34:44 waz Exp $
 //
 
 #include "StdAfx.h"
@@ -78,6 +78,7 @@ SCRESULT CSceneHLThumbnail::Render() {
 	// Check we have an avatar
 	if (!m_poAvatar)
 		return SC_NO_DATA;
+	//#===--- Set up the render context
 	// Black background
 	m_poRC->SetOption(RCO_BACKRED, 0.0F);
 	m_poRC->SetOption(RCO_BACKGREEN, 0.0F);
@@ -87,30 +88,39 @@ SCRESULT CSceneHLThumbnail::Render() {
 	m_poRC->SetOption(RCO_FARPLANE, 20.0F);
 	m_poRC->SetOption(RCO_VIEWANGLE, 10.0F);
 	m_poRC->SetProjectionMode(RCP_PERSPECTIVE);
-	// Create the avatar render object
+	//#===--- Create and set up the avatar render object
 	CRenderAvatar oAvatar(m_poRC);
 	oAvatar.SetAvatar(m_poAvatar, false);
 	// Move the avatar into position
 	oAvatar.SetPosition(0.0F, -(m_poAvatar->Height() / 2.0F), -12.0F);
 	// Set the render mode to textured
 	oAvatar.RenderMode(ROM_TEXTURE);
-	// Create the light
+	// Initialise the avatar
+	m_poRC->Enable();
+	oAvatar.Init();
+	oAvatar.Enable();
+	m_poRC->Disable();
+	//#===--- Create and set up the light
 	CRenderLight oLight(m_poRC);
 	// Enable the context
 	m_poRC->Enable();
-	// Initialise the avatar
-	oAvatar.Init();
-	// Enable the light
+	oLight.Init();
 	oLight.Enable();
+	m_poRC->Disable();
+	//#===--- Render the scene
+	m_poRC->Enable();
 	// Clear the buffer
 	m_poRC->ClearBuffer(RCB_COLOUR | RCB_DEPTH);
 	// Set up the light
 	oLight.Execute();
 	// Render the avatar
 	oAvatar.Execute();
-	// Clear-up the avatar
+	// Clear-up the objects
+	m_poRC->Enable();
+	oAvatar.Disable();
 	oAvatar.Exit();
-	// Disable the context
+	oLight.Disable();
+	oLight.Exit();
 	m_poRC->Disable();
 	// OK to go
 	return SC_OK;

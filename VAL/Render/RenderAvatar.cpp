@@ -7,7 +7,7 @@
 // RenderAvatar.cpp - 29/02/2000 - Warren Moore
 //	Avatar render object implementation
 //
-// $Id: RenderAvatar.cpp,v 1.5 2000/11/21 16:43:04 waz Exp $
+// $Id: RenderAvatar.cpp,v 1.6 2000/11/25 22:34:44 waz Exp $
 //
 
 #include "StdAfx.h"
@@ -24,37 +24,35 @@ static char THIS_FILE[]=__FILE__;
 //////////////////
 // CRenderAvatar
 
-CRenderAvatar::CRenderAvatar(CRenderContext *poContext) : CRenderObject(poContext) {
-	m_pAvatar = NULL;
-
-	m_bNewAvatar = false;
-	m_bGeneric = true;
-
+CRenderAvatar::CRenderAvatar(CRenderContext *poContext) : 
+	CRenderObject(poContext),
+	m_poAvatar(NULL),
+	m_bNewAvatar(false),
+	m_bGeneric(true),
+	m_iNumTextures(0) {
 	m_uMode = ROM_TEXTURE;
-
-	m_iNumTextures = 0;
 } // Constructor
 
 CRenderAvatar::~CRenderAvatar() {
 } // Destructor
 
-void CRenderAvatar::SetAvatar(CAvatar *pAvatar, bool bGeneric) {
-	m_pAvatar = pAvatar;
+void CRenderAvatar::SetAvatar(CAvatar *poAvatar, bool bGeneric) {
+	m_poAvatar = poAvatar;
 	m_bGeneric = bGeneric;
 
 	m_bNewAvatar = true;
 } // SetAvatar
 
 void CRenderAvatar::ImportPose(CAvatarPose &oPose) {
-	ASSERT(m_pAvatar);
+	ASSERT(m_poAvatar);
 	// Set the pose
-	m_pAvatar->ImportPose(oPose);
+	m_poAvatar->ImportPose(oPose);
 } // ImportPose
 
 CAvatarPose CRenderAvatar::ExportPose() {
-	ASSERT(m_pAvatar);
+	ASSERT(m_poAvatar);
 	// Get the pose
-	return m_pAvatar->ExportPose();
+	return m_poAvatar->ExportPose();
 } // ExportPose
 
 void CRenderAvatar::Init() {
@@ -62,7 +60,7 @@ void CRenderAvatar::Init() {
 	if (!m_poContext->Active())
 		return;
 	// If an avatar is present and is not generic, load it's textures into memory
-	if (m_pAvatar && (!m_bGeneric))
+	if (m_poAvatar && (!m_bGeneric))
 		CreateTextures();
 	// Avatar sorted
 	m_bNewAvatar = false;
@@ -91,21 +89,17 @@ void CRenderAvatar::Execute() {
 		return;
 	// Move to the object position
 	glTranslatef(m_fXPos, m_fYPos, m_fZPos);
+	// Rotate the object
+	glRotatef(m_fXAngle, 1.0F, 0.0F, 0.0F);
+	glRotatef(m_fYAngle, 0.0F, 1.0F, 0.0F);
+	glRotatef(m_fZAngle, 0.0F, 0.0F, 1.0F);
 
-	if (m_pAvatar) {
-		// If new avatar set, update the textures
-		if (m_bNewAvatar) {
-			if (m_iNumTextures)
-				DeleteTextures();
-
-			if (!m_bGeneric)
-				CreateTextures();
-
-			m_bNewAvatar = false;
-		}
+	if (m_poAvatar) {
+		// If this assert kicks in, then you haven't called Init for the newly imported avatar 
+		ASSERT(!m_bNewAvatar);
 
 		// Update the model vertices
-		m_pAvatar->UpdateModel(true, true);
+		m_poAvatar->UpdateModel(true, true);
 
 		// Render the model accordingly
 		switch (m_uMode) {
@@ -134,7 +128,7 @@ void CRenderAvatar::RenderFlat() {
 	SPoint3D *pVertex = NULL;
 	// Loop vars
 	int iFaces = 0, iCurrentFace = 0;
-	const SBodyPart *pPart = m_pAvatar->BodyParts();
+	const SBodyPart *pPart = m_poAvatar->BodyParts();
 	// Render the flat shaded avatar
 	for (register int iPartNum = 0; iPartNum < TOTAL_NUMBER_BODYPARTS; iPartNum++) {
 		// Set the material
@@ -149,11 +143,11 @@ void CRenderAvatar::RenderFlat() {
 			// Get the current face
 			iCurrentFace = pPart[iPartNum].m_piFaces[iCount];
 			// Calculate the point
-			int iV0 = m_pAvatar->m_pFaces[iCurrentFace].m_sVertices[0].m_iVertex;
-			int iV1 = m_pAvatar->m_pFaces[iCurrentFace].m_sVertices[1].m_iVertex;
-			int iV2 = m_pAvatar->m_pFaces[iCurrentFace].m_sVertices[2].m_iVertex;
-			pNormal = m_pAvatar->m_pVertexNormals;
-			pVertex = m_pAvatar->m_pVertices;
+			int iV0 = m_poAvatar->m_pFaces[iCurrentFace].m_sVertices[0].m_iVertex;
+			int iV1 = m_poAvatar->m_pFaces[iCurrentFace].m_sVertices[1].m_iVertex;
+			int iV2 = m_poAvatar->m_pFaces[iCurrentFace].m_sVertices[2].m_iVertex;
+			pNormal = m_poAvatar->m_pVertexNormals;
+			pVertex = m_poAvatar->m_pVertices;
 			// Draw the triangle
 			glBegin(GL_TRIANGLES);
 				glNormal3f(pNormal[iV0].m_dComponents[0],
@@ -206,7 +200,7 @@ void CRenderAvatar::RenderTexture() {
 	// Loop vars
 	int iFaces = 0, iCurrentFace = 0;
 	int iTextureNum = -1;
-	const SBodyPart *pPart = m_pAvatar->BodyParts();
+	const SBodyPart *pPart = m_poAvatar->BodyParts();
 	// Render the textured avatar
 	for (register int iPartNum = 0; iPartNum < TOTAL_NUMBER_BODYPARTS; iPartNum++) {
 		// Set the material
@@ -221,17 +215,17 @@ void CRenderAvatar::RenderTexture() {
 			// Get the current face
 			iCurrentFace = pPart[iPartNum].m_piFaces[iCount];
 			// Calculate the point
-			int iV0 = m_pAvatar->m_pFaces[iCurrentFace].m_sVertices[0].m_iVertex;
-			int iV1 = m_pAvatar->m_pFaces[iCurrentFace].m_sVertices[1].m_iVertex;
-			int iV2 = m_pAvatar->m_pFaces[iCurrentFace].m_sVertices[2].m_iVertex;
-			pNormal = m_pAvatar->m_pVertexNormals;
-			pVertex = m_pAvatar->m_pVertices;
+			int iV0 = m_poAvatar->m_pFaces[iCurrentFace].m_sVertices[0].m_iVertex;
+			int iV1 = m_poAvatar->m_pFaces[iCurrentFace].m_sVertices[1].m_iVertex;
+			int iV2 = m_poAvatar->m_pFaces[iCurrentFace].m_sVertices[2].m_iVertex;
+			pNormal = m_poAvatar->m_pVertexNormals;
+			pVertex = m_poAvatar->m_pVertices;
 			// Find the texture
-			iTextureNum = m_pAvatar->m_pFaces[iCurrentFace].m_iMaterialNumber;
+			iTextureNum = m_poAvatar->m_pFaces[iCurrentFace].m_iMaterialNumber;
 			ASSERT(m_iTexture[iTextureNum] != -1);
 			// Set the texture
 			m_poContext->UseTexture(m_iTexture[iTextureNum]);
-			sTexCoords = m_pAvatar->m_pFaces[iCurrentFace].m_sVertices;
+			sTexCoords = m_poAvatar->m_pFaces[iCurrentFace].m_sVertices;
 			// Draw the triangle
 			glBegin(GL_TRIANGLES);
 				glNormal3f(pNormal[iV0].m_dComponents[0],
@@ -278,7 +272,7 @@ void CRenderAvatar::RenderSelection() {
 	glEnable(GL_CULL_FACE);
 	// Render the segmented avatar
 	int iFaces = 0, iCurrentFace = 0;
-	const SBodyPart *pPart = m_pAvatar->BodyParts();
+	const SBodyPart *pPart = m_poAvatar->BodyParts();
 	for (register int iPartNum = 0; iPartNum < TOTAL_NUMBER_BODYPARTS; iPartNum++) {
 		// Set the material
 		glColor3ub(iPartNum + 1, 0, 0);
@@ -288,22 +282,22 @@ void CRenderAvatar::RenderSelection() {
 			// Get the current face
 			iCurrentFace = pPart[iPartNum].m_piFaces[iCount];
 			// Calculate the point
-			int iV0 = m_pAvatar->m_pFaces[iCurrentFace].m_sVertices[0].m_iVertex;
-			int iV1 = m_pAvatar->m_pFaces[iCurrentFace].m_sVertices[1].m_iVertex;
-			int iV2 = m_pAvatar->m_pFaces[iCurrentFace].m_sVertices[2].m_iVertex;
+			int iV0 = m_poAvatar->m_pFaces[iCurrentFace].m_sVertices[0].m_iVertex;
+			int iV1 = m_poAvatar->m_pFaces[iCurrentFace].m_sVertices[1].m_iVertex;
+			int iV2 = m_poAvatar->m_pFaces[iCurrentFace].m_sVertices[2].m_iVertex;
 			// Draw the triangle
 			glBegin(GL_TRIANGLES);
-				glVertex3f(m_pAvatar->m_pVertices[iV0].m_dComponents[0],
-									 m_pAvatar->m_pVertices[iV0].m_dComponents[1],
-									 m_pAvatar->m_pVertices[iV0].m_dComponents[2]);
+				glVertex3f(m_poAvatar->m_pVertices[iV0].m_dComponents[0],
+									 m_poAvatar->m_pVertices[iV0].m_dComponents[1],
+									 m_poAvatar->m_pVertices[iV0].m_dComponents[2]);
 
-				glVertex3f(m_pAvatar->m_pVertices[iV1].m_dComponents[0],
-									 m_pAvatar->m_pVertices[iV1].m_dComponents[1],
-									 m_pAvatar->m_pVertices[iV1].m_dComponents[2]);
+				glVertex3f(m_poAvatar->m_pVertices[iV1].m_dComponents[0],
+									 m_poAvatar->m_pVertices[iV1].m_dComponents[1],
+									 m_poAvatar->m_pVertices[iV1].m_dComponents[2]);
 
-				glVertex3f(m_pAvatar->m_pVertices[iV2].m_dComponents[0],
-									 m_pAvatar->m_pVertices[iV2].m_dComponents[1],
-									 m_pAvatar->m_pVertices[iV2].m_dComponents[2]);
+				glVertex3f(m_poAvatar->m_pVertices[iV2].m_dComponents[0],
+									 m_poAvatar->m_pVertices[iV2].m_dComponents[1],
+									 m_poAvatar->m_pVertices[iV2].m_dComponents[2]);
 			glEnd();
 		}
 	}
@@ -312,11 +306,11 @@ void CRenderAvatar::RenderSelection() {
 } // RenderSelection
 
 void CRenderAvatar::CreateTextures() {
-	if (m_pAvatar) {
-		const int iNumTextures = m_pAvatar->NumMaterials();
+	if (m_poAvatar) {
+		const int iNumTextures = m_poAvatar->NumMaterials();
 		// For each texture in the model
 		for (int i = 0; i < iNumTextures; i++) {
-			CImage *pImg = m_pAvatar->Material(i)->Texture();
+			CImage *pImg = m_poAvatar->Material(i)->Texture();
 			m_iTexture[i] = m_poContext->ImportTexture(*pImg);
 			if (m_iTexture[i] >= 0)
 				m_iNumTextures++;

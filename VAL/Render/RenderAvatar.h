@@ -7,7 +7,7 @@
 // RenderAvatar.h - 29/02/2000 - Warren Moore
 //	Avatar render object header
 //
-// $Id: RenderAvatar.h,v 1.3 2000/10/10 17:52:51 waz Exp $
+// $Id: RenderAvatar.h,v 1.4 2000/11/25 22:35:05 waz Exp $
 //
 
 #ifndef _VAL_RENDERAVATAR_
@@ -38,7 +38,7 @@ public:
 	virtual ~CRenderAvatar();
 
 	//#===--- Import/Export
-	void SetAvatar(CAvatar *pAvatar, bool bGeneric);
+	void SetAvatar(CAvatar *poAvatar, bool bGeneric);
 	void ImportPose(CAvatarPose &oPose);
 	CAvatarPose ExportPose();
 
@@ -70,7 +70,7 @@ protected:
 
 //#===--- Internal Data
 protected:
-	CAvatar *m_pAvatar;										// The avatar to be rendered
+	CAvatar *m_poAvatar;										// The avatar to be rendered
 
 	bool m_bNewAvatar;										// New avatar indicator
 	bool m_bGeneric;											// Generic (i.e. textureless) avatar indicator

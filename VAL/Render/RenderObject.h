@@ -7,7 +7,7 @@
 // RenderObject.h - 28/02/2000 - Warren Moore
 //	Base render object header
 //
-// $Id: RenderObject.h,v 1.3 2000/10/10 17:52:51 waz Exp $
+// $Id: RenderObject.h,v 1.4 2000/11/25 22:35:05 waz Exp $
 //
 
 #ifndef _VAL_RENDEROBJECT_
@@ -37,7 +37,12 @@ public:
 	virtual ~CRenderObject();
 
 	//#===--- Initialisation/Shutdown
+	// Initialises context specific data
+	// NOTE: Must be executed while the context is enabled
 	virtual void Init() {};
+	// Removes context specific data
+	// NOTE: Must be executed while the context is enabled
+	// NOTE: Must be called specifically. Will not be called on delete
 	virtual void Exit() {};
 
 	//#===--- Settings
@@ -99,10 +104,11 @@ protected:
 //#===--- Inline Functions
 
 inline void CRenderObject::Enable() {
+	m_bEnabled = true;
 } // Enable
 
 inline void CRenderObject::Disable() {
-
+	m_bEnabled = false;
 } // Disable
 
 inline void CRenderObject::GetPosition(float &fX, float &fY, float &fZ) {

@@ -7,7 +7,7 @@
 // RenderLight.cpp - 30/07/2000 - Warren Moore
 //	Light render object 
 //
-// $Id: RenderLight.cpp,v 1.1 2000/10/10 17:52:04 waz Exp $
+// $Id: RenderLight.cpp,v 1.2 2000/11/25 22:34:44 waz Exp $
 //
 
 #include "StdAfx.h"
@@ -26,30 +26,11 @@ static char THIS_FILE[]=__FILE__;
 // CRenderLight
 
 CRenderLight::CRenderLight(CRenderContext *poContext) : CRenderObject(poContext) {
-	ASSERT(poContext);
 	m_bEnabled = false;
 } // Constructor
 
 CRenderLight::~CRenderLight() {
 } // Destructor
-
-void CRenderLight::Enable() {
-	// Check the render context mode
-	if (m_uContextMode != RCV_OPENGL)
-		return;
-	// Enable the light
-	m_bEnabled = true;
-	glEnable(GL_LIGHT0);
-} // Enable
-
-void CRenderLight::Disable() {
-	// Check the render context mode
-	if (m_uContextMode != RCV_OPENGL)
-		return;
-	// Disable the light
-	m_bEnabled = false;
-	glDisable(GL_LIGHT0);
-} // Disable
 
 //#===--- Settings
 
@@ -58,10 +39,12 @@ void CRenderLight::Execute() {
 	if (m_uContextMode != RCV_OPENGL)
 		return;
 	// Check it's enabled
-	if (!m_bEnabled)
+	if (!m_bEnabled) {
+		glDisable(GL_LIGHT0);
 		return;
-	// Reset the matrix
-	glLoadIdentity();
+	}
+	// Turn on the light
+	glEnable(GL_LIGHT0);
 	// Place the light
 	GLfloat fLAmbient[4] = {0.1F, 0.1F, 0.1F, 1.0F};
 	GLfloat fLWhite[4] = {1.0F, 1.0F, 1.0F, 1.0F};

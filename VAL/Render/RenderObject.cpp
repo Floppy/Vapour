@@ -7,7 +7,7 @@
 // RenderObject.cpp - 28/02/2000 - Warren Moore
 //	Base render object implementation
 //
-// $Id: RenderObject.cpp,v 1.3 2000/10/10 17:52:51 waz Exp $
+// $Id: RenderObject.cpp,v 1.4 2000/11/25 22:34:44 waz Exp $
 //
 
 #include "StdAfx.h"
@@ -25,17 +25,20 @@ static char THIS_FILE[]=__FILE__;
 //////////////////
 // CRenderObject
 
-CRenderObject::CRenderObject(CRenderContext *poContext) {
-	// Set the render context
-	ASSERT(poContext);
-	m_poContext = poContext;
+CRenderObject::CRenderObject(CRenderContext *poContext) : 
 	// Set the object defaults
-	m_bEnabled = true;
-	m_fXPos = m_fYPos = m_fZPos = 0.0F;
-	m_fXAngle = m_fYAngle = m_fZAngle = 0.0F;
-	m_uMode = ROM_DEFAULT;
-	m_fTransition = 1.0F;
-	m_uSelection = 0;
+	m_poContext(poContext),
+	m_bEnabled(true),
+	m_fXPos(0.0F),
+	m_fYPos(0.0F),
+	m_fZPos(0.0F),
+	m_fXAngle(0.0F),
+	m_fYAngle(0.0F),
+	m_fZAngle(0.0F),
+	m_uMode(ROM_DEFAULT),
+	m_fTransition(1.0F),
+	m_uSelection(0) {
+	ASSERT(poContext);
 	// Store renderer attributes
 	GetRendererParams();
 } // Constructor

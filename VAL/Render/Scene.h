@@ -7,7 +7,7 @@
 // Scene.h - 06/10/2000 - Warren Moore
 //	Base class for scene rendering classes
 //
-// $Id: Scene.h,v 1.2 2000/11/25 11:30:37 waz Exp $
+// $Id: Scene.h,v 1.3 2000/11/25 22:35:05 waz Exp $
 //
 
 #ifndef _VAL_SCENE_
@@ -73,6 +73,9 @@ public:
 	// Returns an image of the previously rendered scene
 	virtual SCRESULT Snapshot(CImage *&poImage) {return SC_NOT_IMPLEMENTED; };
 
+	// Checks whether the render context is active
+	bool Active() const;
+
 	//#===--- Diagnostics
 	// Returns an error string for a specified error
 	virtual const char *GetErrorString(SCRESULT eResult) const;
@@ -90,6 +93,12 @@ protected:
 };
 
 //#===--- Inline Functions
+
+//#===--- Inline Functions
+
+inline bool CScene::Active() const {
+	return (m_poRC != NULL);
+} // Active
 
 inline const char *CScene::GetErrorString(SCRESULT eResult) const {
 	return m_pcErrorString[(int)eResult];

@@ -4,14 +4,14 @@
 // Vapour Technology All-Purpose Library
 // Copyright 2000 Vapour Technology Ltd.
 //
-// RenderLight.h - 30/07/2000 - Warren Moore
-//	Light render object
+// RenderCamera.h - 25/11/2000 - Warren Moore
+//	  Camera render object
 //
-// $Id: RenderLight.h,v 1.2 2000/11/25 22:35:05 waz Exp $
+// $Id: RenderCamera.h,v 1.1 2000/11/25 22:35:05 waz Exp $
 //
 
-#ifndef _VAL_RENDERLIGHT_
-#define _VAL_RENDERLIGHT_
+#ifndef _VAL_RENDERCAMERA_
+#define _VAL_RENDERCAMERA_
 
 #pragma once
 
@@ -21,13 +21,13 @@
 
 //#===--- Defines
 
-/////////////////
-// CRenderLight
+//////////////////
+// CRenderCamera
 
-class CRenderLight : public CRenderObject {
+class CRenderCamera : public CRenderObject {
 public:
-	CRenderLight(CRenderContext *poContext);
-	virtual ~CRenderLight();
+	CRenderCamera(CRenderContext *poContext);
+	virtual ~CRenderCamera();
 
 	//#===--- Initialisation/Shutdown
 
@@ -48,4 +48,4 @@ protected:
 
 //#===--- Inline Functions
 
-#endif // _VAL_RENDERLIGHT_
+#endif // _VAL_RENDERCAMERA_
