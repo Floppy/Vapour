@@ -4,12 +4,12 @@
 // ActiveX Control for structure visualisation
 // Copyright 2002 Vapour Technology Ltd.
 //
-//! docentry  = "VTStrucVis.Visualisation Control.Scene Management.VRML Interface"
+//! docentry  = "VTStrucVis.Visualisation Control.VRML"
 //! userlevel =  Normal
 //! file      = "Control/Element.h"
 //! author    = "James Smith"
 //! date      = "19/3/2002"
-//! rcsid     = "$Id: Element.h,v 1.27 2002/04/23 11:32:07 vap-james Exp $"
+//! rcsid     = "$Id: Element.h,v 1.28 2002/04/25 15:44:04 vap-warren Exp $"
 
 #ifndef __VTSTRUCVIS_ELEMENT__
 #define __VTSTRUCVIS_ELEMENT__

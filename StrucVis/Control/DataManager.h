@@ -4,12 +4,12 @@
 // ActiveX Control for structure visualisation
 // Copyright 2002 Vapour Technology Ltd.
 //
-//! docentry  = "VTStrucVis.Visualisation Control.Scene Management.VSV File IO"
+//! docentry  = "VTStrucVis.Visualisation Control.VRML.VSV File Loading"
 //! userlevel =  Normal
 //! file      = "Control/DataManager.h"
 //! author    = "James Smith"
 //! date      = "19/3/2002"
-//! rcsid     = "$Id: DataManager.h,v 1.16 2002/04/05 16:48:25 vap-warren Exp $"
+//! rcsid     = "$Id: DataManager.h,v 1.17 2002/04/25 15:44:04 vap-warren Exp $"
 
 #ifndef __VTSTRUCVIS_DATAMANAGER__
 #define __VTSTRUCVIS_DATAMANAGER__

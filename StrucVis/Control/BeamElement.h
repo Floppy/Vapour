@@ -4,12 +4,12 @@
 // ActiveX Control for structure visualisation
 // Copyright 2002 Vapour Technology Ltd.
 //
-//! docentry  = "VTStrucVis.Visualisation Control.Scene Management.VRML Interface"
+//! docentry  = "VTStrucVis.Visualisation Control.VRML.BeamElement"
 //! userlevel =  Normal
 //! file      = "Control/BeamElement.h"
 //! author    = "James Smith"
 //! date      = "19/3/2002"
-//! rcsid     = "$Id: BeamElement.h,v 1.21 2002/04/23 11:33:24 vap-james Exp $"
+//! rcsid     = "$Id: BeamElement.h,v 1.22 2002/04/25 15:44:02 vap-warren Exp $"
 
 #ifndef __VTSTRUCVIS_BEAMELEMENT__
 #define __VTSTRUCVIS_BEAMELEMENT__

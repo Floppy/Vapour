@@ -4,12 +4,12 @@
 // ActiveX Control for structure visualisation
 // Copyright 2002 Vapour Technology Ltd.
 //
-//! docentry  = "VTStrucVis.Visualisation Control.Scene Management.VSV File IO"
+//! docentry  = "VTStrucVis.Visualisation Control.VRML.VSV File Loading"
 //! userlevel =  Normal
 //! file      = "Control/IChunk.h"
 //! author    = "James Smith"
 //! date      = "19/3/2002"
-//! rcsid     = "$Id: IChunk.h,v 1.1 2002/04/05 16:48:26 vap-warren Exp $"
+//! rcsid     = "$Id: IChunk.h,v 1.2 2002/04/25 15:44:04 vap-warren Exp $"
 
 #ifndef __VTSTRUCVIS_ICHUNK__
 #define __VTSTRUCVIS_ICHUNK__
