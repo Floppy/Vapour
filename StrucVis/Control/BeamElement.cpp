@@ -6,7 +6,7 @@
 // BeamElement.cpp
 // 19/03/2002 - James Smith
 //
-// $Id: BeamElement.cpp,v 1.16 2002/03/22 19:06:31 vap-james Exp $
+// $Id: BeamElement.cpp,v 1.17 2002/03/22 19:52:42 vap-james Exp $
 
 #include "stdafx.h"
 #include "BeamElement.h"
@@ -138,6 +138,13 @@ bool CBeamElement::Display(void) const {
 void CBeamElement::SetTemp(float fTemp) const {
    m_fTemp = fTemp;
    // Update description
+   if (m_poNodePtr) {
+      CCortonaField* poString = m_poNodePtr->GetField("description");
+      char pcBuffer[32];
+      sprintf(pcBuffer,"%.2f",m_fTemp);
+      poString->SetMFString(3,pcBuffer);
+      poString->Release();
+   }
 }
 
 void CBeamElement::SetSize(float fHeight, float fWidth, float fFlangeThickness, float fWebThickness) {

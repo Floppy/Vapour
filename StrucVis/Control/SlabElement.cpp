@@ -6,7 +6,7 @@
 // SlabElement.cpp
 // 19/03/2002 - James Smith
 //
-// $Id: SlabElement.cpp,v 1.17 2002/03/22 19:06:30 vap-james Exp $
+// $Id: SlabElement.cpp,v 1.18 2002/03/22 19:52:42 vap-james Exp $
 
 #include "stdafx.h"
 #include "SlabElement.h"
@@ -167,6 +167,13 @@ void CSlabElement::SetStresses (const float* pfStresses) const {
 void CSlabElement::SetTemp(float fTemp) const {
    m_fTemp = fTemp;
    // Update description
+   if (m_poNodePtr) {
+      CCortonaField* poString = m_poNodePtr->GetField("description");
+      char pcBuffer[32];
+      sprintf(pcBuffer,"%.2f",m_fTemp);
+      poString->SetMFString(3,pcBuffer);
+      poString->Release();
+   }
 }
 
 void CSlabElement::SetSize(float fThickness) {
