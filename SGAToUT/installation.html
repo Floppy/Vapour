@@ -1,0 +1,90 @@
+<HTML>
+<TITLE>
+SGAToUT 1.0 - Converter Usage & Avatar Installation Instructions
+</TITLE>
+<BODY>
+<CENTER>
+<H1>SGAToUT 1.0</H1>
+<H2>Converter Usage & Avatar Installation Instructions</H2>
+</CENTER>
+<H3>Usage</H3>
+<P>
+The application <FONT FACE="courier new">sgatout.exe</FONT> is a Win32 command-line app used to generate self-extracting executables containing 
+models for 'Unreal Tournament', created from SGA1 avatars. 
+It is executed from the MS-DOS command prompt in the form:-
+</P>
+<P>
+<FONT FACE="courier new">sgatout avatar_filename.ame [sfx_path\]sfx_name.exe {-option argument ...}</FONT>
+</P>
+<P>
+No model will be produced unless these options are specified:-
+</P>
+<P>
+<TABLE CELLSPACING=0 CELLPADDING=0 BORDER=0 WIDTH=80% COLS=2>
+<TR><TD WIDTH=40% VALIGN="top"><FONT FACE="courier new">avatar_filename.ame</FONT></TD><TD>Filename for the input SGA avatar</TD></TR>
+<TR><TD WIDTH=40% VALIGN="top"><FONT FACE="courier new">[sfx_path\]sfx_name.exe</FONT></TD><TD>Output filename of the self-extracting executable.
+The <FONT FACE="courier new">sfx_path\</FONT> is optional, and is independent of the <FONT FACE="courier new">-path</FONT> option</TD></TR>
+</TABLE>
+</P>
+<P>
+These options may be used to specify a model output directory and properties for the exported model.
+</P>
+<TABLE CELLSPACING=0 CELLPADDING=0 BORDER=0 WIDTH=80% COLS=2>
+<TR><TD WIDTH=40% VALIGN="top"><FONT FACE="courier new">-name [model_name]</FONT></TD><TD>Name to be used for model files - <I>Default: <FONT FACE="courier new">sfx_name</FONT></I></TD></TR>
+<TR><TD WIDTH=40% VALIGN="top"><FONT FACE="courier new">-path [pathname]</FONT></TD><TD>Directory in which to place temporary model files.
+The directory <FONT FACE="courier new">sga_temp</FONT> is created within the executable working directory and used if this option is not specified.</TD>
+<TR><TD WIDTH=40% VALIGN="top"><FONT FACE="courier new">-sex (male|female)</FONT></TD><TD>Model sex - <I>Default: male</I></TD></TR>
+<TR><TD WIDTH=40% VALIGN="top"><FONT FACE="courier new">-0</FONT></TD><TD>No text output</TD></TR>
+</TABLE>
+<P>
+This example set of command-line arguments will convert <FONT FACE="courier new">test.ame</FONT> into a female Unreal Tournament model. 
+The temporary model files will be placed in the directory <FONT FACE="courier new">d:\model_files</FONT>.
+These files will then be moved into a self-extracting executable called <FONT FACE="courier new">c:\sfx\test.exe</FONT>.
+</P>
+<P>
+<FONT FACE="courier new">sgatout test.ame c:\sfx\test.exe -name model -path d:\model_files -sex female</FONT>
+</P>
+<H3>Files</H3>
+<P>
+The conversion process generates four files (using the above example):
+<UL>
+<LI><FONT FACE="courier new">d:\model_files\<B>System\name.u</B></FONT></LI>
+<LI><FONT FACE="courier new">d:\model_files\<B>System\name.int</B></FONT></LI>
+<LI><FONT FACE="courier new">d:\model_files\<B>System\nameSkins.int</B></FONT></LI>
+<LI><FONT FACE="courier new">d:\model_files\<B>Textures\name.utx</B></FONT></LI>
+</UL>
+</P>
+<P>
+These files are then compressed into the self-extracting executable <FONT FACE="courier new">c:\sfx\test.exe</FONT>.
+</P>
+<H3>Installing models into 'Unreal Tournament'</H3>
+<P>
+The above files need to be installed in your game folder. This is normally <FONT FACE="courier new">
+C:\UnrealTournament</FONT>, but you may have installed to a different place on
+your computer. 
+The self-extracting executable can be run from any location on the computer on which you wish to install the model.
+If the game has been installed correctly, the game folder should be found automatically and the files installed into
+the correct subfolders without any other user intervention. Should the installer not be able to find the game folder,
+you will be prompted to specify the folder yourself. 
+</P>
+<H3>Playing as your avatar</H3>
+<P>
+In Unreal Tournament, go to the 'Options\Player Setup' menu screen, then select your avatar from the 'Class' drop-down menu.
+The installed avatars are only used within multi-player and practice games.  
+</P>
+<H3>Playing against your avatar</H3>
+<P>
+In Unreal Tournament, start a game with the menu option 'Game\Start Practice Session'. Click on the 'Bots' tab to bring up the bot configuration menu.
+Click the 'Configure' button to configure individual bots. Select your avatar in the 'Class' drop-down menu for the bot.
+</P>
+<P>
+To have more that one of your avatar running round, select your avatar for Bot 1,2,3,etc. Uncheck 'Random Order' in the 'Bots' menu screen to 
+make sure the bots are selected in consecutive order.
+</P>
+<P>
+Copyright &copy; 2000 <A HREF="http://www.vapourtech.com">Vapour Technology Ltd.</A><BR>
+Licensed to <A HREF="http://www.avatarme.com">AvatarMe Ltd.</A> under agreement.
+</P>
+</BODY>
+</HTML>
+
