@@ -21,6 +21,8 @@ P.BUG { COLOR: #FF0000; }
 P.PARAM { COLOR: #606060; }
 P.TODO { COLOR: #6060C0; }
 H2 { FONT-FAMILY: 'Verdana', 'Arial', helvetica, sans-serif; FONT-SIZE: 12PT;	FONT-WEIGHT: BOLD; MARGIN-TOP: 6PT; MARGIN-BOTTOM: 2PT; }
+LI { FONT-FAMILY: 'Verdana', 'Arial', helvetica, sans-serif; FONT-SIZE: 10PT; MARGIN-TOP: 0PT; MARGIN-BOTTOM: 2PT; }
+PRE { COLOR: #808080; }
 TD { FONT-FAMILY: 'Verdana', 'Arial', helvetica, sans-serif; FONT-SIZE: 10PT; MARGIN-TOP: 0PT; MARGIN-BOTTOM: 2PT; }
 A { TEXT-DECORATION: NONE; }
 A:HOVER { COLOR: #8385E5; }

@@ -25,7 +25,7 @@ $(ifany:docnode:
 </TABLE>
 
 $(ifany:docnode:
-	<TABLE BORDER=0 CELLPADDING=1 CELLSPACING=1 ALIGN=RIGHT>
+	<TABLE BORDER=0 CELLPADDING=1 CELLSPACING=1 ALIGN=RIGHT BGCOLOR="#C0C0F0">
 		<TR><TD>
 		$(forall:docnode:
 			<P><A HREF="$(MakeFilename:%.html)"><B>$(subst:_: :$(ObjectName))</B></A>$(ifset:brief: - $(brief))</P>
