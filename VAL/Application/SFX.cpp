@@ -7,7 +7,7 @@
 // SFX.h - 10/07/2000 - Warren Moore
 //	Class for self-management of self-extracting wedgies
 //
-// $Id: SFX.cpp,v 1.2 2000/07/10 13:59:23 waz Exp $
+// $Id: SFX.cpp,v 1.3 2000/07/10 14:17:26 waz Exp $
 //
 
 #include "StdAfx.h"
@@ -63,10 +63,18 @@ bool CSFX::SetEnd() {
 	if (uPos == 0)
 		return false;
 	// Close the app and reopen writeable
+
+	//#===--- TODO: Get this to open the app while running
 	oFile.open(pcAppName, ios::in|ios::out|ios::binary|ios::nocreate, filebuf::sh_write);
 	if (!oFile) {
+		//#=== TODO: Remove this once file open works ok
+		CString strAddress;
+		strAddress.Format("Pos address : 0x%08X - End pos : 0x%08X", uPos, uEnd);
+		AfxMessageBox(strAddress, MB_OK);
+
 		oFile.close();
-		return false;
+		//#===--- TODO: Don't forget to set this to false when corrected
+		return true;
 	}
 	// Seek to the position of the flag
 	oFile.seekp(uPos - 1, ios::beg);
@@ -79,6 +87,10 @@ bool CSFX::SetEnd() {
 		return false;
 	}
 	oFile.close();
+
+	// Set the object variables
+	m_pcMagic[3] = 0xFF;
+	m_uWJEPos = uPos;
 
 	return true;
 } // SetEnd
