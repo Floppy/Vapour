@@ -7,7 +7,7 @@
 // AvatarFileHalflife.cpp - 16/2/2000 - James Smith
 //	Halflife export filter implementation
 //
-// $Id: AvatarFileHalflife.cpp,v 1.11 2000/08/07 18:57:48 waz Exp $
+// $Id: AvatarFileHalflife.cpp,v 1.12 2000/10/06 13:16:57 waz Exp $
 //
 
 #include "stdafx.h"
@@ -17,13 +17,16 @@
 #include "Image.h"
 #include "ImageFileStore.h"
 #include "MathConstants.h"
+#include "DList.h"
 
 #include <float.h>
 #include <direct.h>
 #include <errno.h>
 
-#include "RCOpenGLBufferWin32.h"
+#include "RenderContextStore.h"
+#include "RenderContext.h"
 #include "RenderAvatar.h"
+
 #include "gl\gl.h"
 
 #ifdef _DEBUG
@@ -35,6 +38,7 @@ static char THIS_FILE[] = __FILE__;
 #define WORDALIGN(x) if (x & 0x03) x = (x + 0x04) & 0xfffffffc
 
 extern CImageFileStore g_oImageFileStore;
+extern CRenderContextStore g_oRenderContextStore;
 
 ////////////////////////
 // CAvatarFileHalflife
@@ -199,6 +203,7 @@ FRESULT CAvatarFileHalflife::Save(ofstream& osOutputStream, CAvatar* pAvatar) co
 
    int iCurrentPos = 0;    // Temporary counter
    int i=0;                // predeclared loop variable
+   int t=0;                // predeclared loop variable
 
    // Set model scale factor - all models will be the same size, 
    // as this is based on height. However, gamers prefer this :)
@@ -236,19 +241,19 @@ FRESULT CAvatarFileHalflife::Save(ofstream& osOutputStream, CAvatar* pAvatar) co
    pAvatar->UpdateModel();
    pAvatar->AlignBodyPart(l_ankle,vecTarget,false);
    pAvatar->AlignBodyPart(r_ankle,vecTarget,false);
-   /*// Line up spine exactly on Y axis
-   pAvatar->AlignBodyPart(vl5,vecTarget,false);
-   pAvatar->UpdateModel();
-   pAvatar->AlignBodyPart(vt12,vecTarget,false);
-   pAvatar->UpdateModel();
-   pAvatar->AlignBodyPart(vt8,vecTarget,false);
-   pAvatar->UpdateModel();
-   pAvatar->AlignBodyPart(vt4,vecTarget,false);
-   pAvatar->UpdateModel();
-   pAvatar->AlignBodyPart(vc7,vecTarget,false);
-   pAvatar->UpdateModel();
-   pAvatar->AlignBodyPart(skullbase,vecTarget,false);
-   pAvatar->UpdateModel();*/
+   // Line up spine exactly on Y axis
+   //pAvatar->AlignBodyPart(vl5,vecTarget,false);
+   //pAvatar->UpdateModel();
+   //pAvatar->AlignBodyPart(vt12,vecTarget,false);
+   //pAvatar->UpdateModel();
+   //pAvatar->AlignBodyPart(vt8,vecTarget,false);
+   //pAvatar->UpdateModel();
+   //pAvatar->AlignBodyPart(vt4,vecTarget,false);
+   //pAvatar->UpdateModel();
+   //pAvatar->AlignBodyPart(vc7,vecTarget,false);
+   //pAvatar->UpdateModel();
+   //pAvatar->AlignBodyPart(skullbase,vecTarget,false);
+   //pAvatar->UpdateModel();
    // Point arms in vaguely the right directions, right from the clavicles
    pAvatar->SetJointAngle(l_acromioclavicular,CAxisRotation(1,0,0,V_PI),false);
    pAvatar->SetJointAngle(r_acromioclavicular,CAxisRotation(1,0,0,-V_PI),false);
@@ -271,9 +276,6 @@ FRESULT CAvatarFileHalflife::Save(ofstream& osOutputStream, CAvatar* pAvatar) co
    // Twist entire model sideways
    pAvatar->SetJointAngle(sacroiliac,CAxisRotation(0,0,1,-V_PI/2),false);
    pAvatar->UpdateModel();
-   // Translate model down...
-   //pAvatar->SetRootTranslation(CVector3D(0,-(pAvatar->Height()/2.0),0));
-   //pAvatar->UpdateModel();
 
    //pAvatar->ResetPose();
    //pAvatar->UpdateModel();
@@ -282,7 +284,7 @@ FRESULT CAvatarFileHalflife::Save(ofstream& osOutputStream, CAvatar* pAvatar) co
    g_poVAL->SetProgressText("HLSave", "Creating header");
 
    // Create Header & fill in some fields
-   SHalflifeMDLHeader sHeader;
+   SHalflifeHeader sHeader;
    // Set ID and version
    sHeader.iID = HL_MDL_MAGIC;
    sHeader.iVersion = HL_MDL_VERSION;
@@ -316,7 +318,7 @@ FRESULT CAvatarFileHalflife::Save(ofstream& osOutputStream, CAvatar* pAvatar) co
    sHeader.iSoundGroupOffset = 0;
 
    // Add header to file offset counter
-   sHeader.iLength += sizeof(SHalflifeMDLHeader);
+   sHeader.iLength += sizeof(SHalflifeHeader);
 	 	 
    g_poVAL->StepProgress("HLSave");
    g_poVAL->SetProgressText("HLSave", "Creating bones");
@@ -328,7 +330,7 @@ FRESULT CAvatarFileHalflife::Save(ofstream& osOutputStream, CAvatar* pAvatar) co
    sHeader.iNumBones = m_vCompressedSkeletonMap.size();
    sHeader.iBoneChunkOffset = sHeader.iLength;
    NEWBEGIN
-   m_pBoneChunk = new SHalflifeMDLBone[sHeader.iNumBones];
+   m_pBoneChunk = new SHalflifeBone[sHeader.iNumBones];
 	NEWEND("CAvatarFileHalflife::Save - Bone Chunk Allocation")
    if (m_pBoneChunk == NULL) {
       Cleanup(pAvatar);
@@ -338,7 +340,7 @@ FRESULT CAvatarFileHalflife::Save(ofstream& osOutputStream, CAvatar* pAvatar) co
    // Read generic bone data from external file
    int iHandle = m_oWedgie.Open("hlmdlbonedata.bin");
    if (iHandle > -1) {
-	   unsigned int uDataSize = sizeof(SHalflifeMDLBone) * sHeader.iNumBones;
+	   unsigned int uDataSize = sizeof(SHalflifeBone) * sHeader.iNumBones;
 	   unsigned int uRead = m_oWedgie.Read(iHandle, (unsigned char*)m_pBoneChunk, uDataSize);
       if (uRead != uDataSize) {
          Cleanup(pAvatar);
@@ -348,14 +350,16 @@ FRESULT CAvatarFileHalflife::Save(ofstream& osOutputStream, CAvatar* pAvatar) co
    else {
       Cleanup(pAvatar);
 	   return F_ERROR;
-   }
+   }/**/
 
    iCurrentPos = 0;
-   // Customise bone data
+   // Enter bone data
    for (i=0; i<sHeader.iNumBones; i++) {
       // Set name
       BodyPart bpPart = (BodyPart)m_vCompressedSkeletonMap[i];
       strncpy(m_pBoneChunk[i].pszName,m_pszJointNames[bpPart],32);
+      // Set Flags
+      m_pBoneChunk[i].iFlags = 0;
       // Set parent reference
       BodyPart bpParent = (bpPart==l_acromioclavicular)||(bpPart==r_acromioclavicular) ? vc7 : pBodyParts[bpPart].m_bpParent;
       m_pBoneChunk[i].iParent = bpParent==unknown ? -1 : m_pReverseCompressedSkeletonMap[bpParent];
@@ -368,23 +372,24 @@ FRESULT CAvatarFileHalflife::Save(ofstream& osOutputStream, CAvatar* pAvatar) co
       // Scale vector
       vecJoint *= dScaleFactor;
       // Write centre
+      //m_pBoneChunk[i].vCentre[0] = vecJoint.Y();
+      //m_pBoneChunk[i].vCentre[1] = vecJoint.X();
+      //m_pBoneChunk[i].vCentre[2] = vecJoint.Z();
       m_pBoneChunk[i].vCentre[0] =  vecJoint.X();
       m_pBoneChunk[i].vCentre[1] =  vecJoint.Z();
       m_pBoneChunk[i].vCentre[2] = -vecJoint.Y();
       // Set rotation and scales
-      /*pBoneChunk[i].vRotation[0]      = 0.0;
+      /*m_pBoneChunk[i].vRotation[0]      = 0.0;
       m_pBoneChunk[i].vRotation[1]      = 0.0;
       m_pBoneChunk[i].vRotation[2]      = 0.0;
-      m_pBoneChunk[i].vCentreScale[0]   = 1.0;
-      m_pBoneChunk[i].vCentreScale[1]   = 1.0;
-      m_pBoneChunk[i].vCentreScale[2]   = 1.0;
-      m_pBoneChunk[i].vRotationScale[0] = 1.0;
-      m_pBoneChunk[i].vRotationScale[1] = 1.0;
-      m_pBoneChunk[i].vRotationScale[2] = 1.0;*/
-      // Set Flags
-      m_pBoneChunk[i].iFlags = 0;
+      m_pBoneChunk[i].vCentreScale[0]   = 0.01f;
+      m_pBoneChunk[i].vCentreScale[1]   = 0.01f;
+      m_pBoneChunk[i].vCentreScale[2]   = 0.01f;
+      m_pBoneChunk[i].vRotationScale[0] = 0.01f;
+      m_pBoneChunk[i].vRotationScale[1] = 0.01f;
+      m_pBoneChunk[i].vRotationScale[2] = 0.01f;*/
    }
-   sHeader.iLength += sizeof(SHalflifeMDLBone) * sHeader.iNumBones;
+   sHeader.iLength += sizeof(SHalflifeBone) * sHeader.iNumBones;
 
    g_poVAL->StepProgress("HLSave");
    g_poVAL->SetProgressText("HLSave", "Creating bonecontrollers");
@@ -393,7 +398,7 @@ FRESULT CAvatarFileHalflife::Save(ofstream& osOutputStream, CAvatar* pAvatar) co
    sHeader.iNumBoneControllers = 4;
    sHeader.iBoneControllerChunkOffset = sHeader.iLength;
    NEWBEGIN
-   m_pBoneControllerChunk = new SHalflifeMDLBoneController[sHeader.iNumBoneControllers];
+   m_pBoneControllerChunk = new SHalflifeBoneController[sHeader.iNumBoneControllers];
 	NEWEND("CAvatarFileHalflife::Save - Bone Controller Chunk Allocation")
    if (m_pBoneControllerChunk == NULL) {
       Cleanup(pAvatar);
@@ -403,7 +408,7 @@ FRESULT CAvatarFileHalflife::Save(ofstream& osOutputStream, CAvatar* pAvatar) co
       // Set bone link
       m_pBoneControllerChunk[i].iBone  = m_pReverseCompressedSkeletonMap[vl5] + i;
       // Set bone's link to this controller
-      m_pBoneChunk[m_pReverseCompressedSkeletonMap[vl5]+i].iBoneController[0] = i;
+      m_pBoneChunk[m_pReverseCompressedSkeletonMap[vl5]+i].piBoneController[0] = i;
       // Set type = XR
       m_pBoneControllerChunk[i].iType  = 0x08;
       // Set range
@@ -414,7 +419,7 @@ FRESULT CAvatarFileHalflife::Save(ofstream& osOutputStream, CAvatar* pAvatar) co
       // Set index
       m_pBoneControllerChunk[i].iIndex = i;
    }
-   sHeader.iLength += sizeof(SHalflifeMDLBoneController) * sHeader.iNumBoneControllers;
+   sHeader.iLength += sizeof(SHalflifeBoneController) * sHeader.iNumBoneControllers;
 
    g_poVAL->StepProgress("HLSave");
    g_poVAL->SetProgressText("HLSave", "Creating attachments");
@@ -423,7 +428,7 @@ FRESULT CAvatarFileHalflife::Save(ofstream& osOutputStream, CAvatar* pAvatar) co
    sHeader.iNumAttachments = 3;
    sHeader.iAttachmentChunkOffset = sHeader.iLength;
    NEWBEGIN
-   m_pAttachmentChunk = new SHalflifeMDLAttachment[sHeader.iNumAttachments];
+   m_pAttachmentChunk = new SHalflifeAttachment[sHeader.iNumAttachments];
 	NEWEND("CAvatarFileHalflife::Save - Attachment Chunk Allocation")
    if (m_pAttachmentChunk == NULL) {
       Cleanup(pAvatar);
@@ -472,7 +477,7 @@ FRESULT CAvatarFileHalflife::Save(ofstream& osOutputStream, CAvatar* pAvatar) co
       m_pAttachmentChunk[i].vVector2[1] = 0.0;
       m_pAttachmentChunk[i].vVector2[2] = 0.0;
    }
-   sHeader.iLength += sizeof(SHalflifeMDLAttachment) * sHeader.iNumAttachments;
+   sHeader.iLength += sizeof(SHalflifeAttachment) * sHeader.iNumAttachments;
 
    g_poVAL->StepProgress("HLSave");
    g_poVAL->SetProgressText("HLSave", "Creating hitboxes");
@@ -482,7 +487,7 @@ FRESULT CAvatarFileHalflife::Save(ofstream& osOutputStream, CAvatar* pAvatar) co
    sHeader.iNumHitboxes = sHeader.iNumBones;
    sHeader.iHitboxChunkOffset = sHeader.iLength;
    NEWBEGIN
-   m_pHitboxChunk = new SHalflifeMDLHitbox[sHeader.iNumHitboxes];
+   m_pHitboxChunk = new SHalflifeHitbox[sHeader.iNumHitboxes];
 	NEWEND("CAvatarFileHalflife::Save - Hitbox Chunk Allocation")
    if (m_pHitboxChunk == NULL) {
       Cleanup(pAvatar);
@@ -496,7 +501,7 @@ FRESULT CAvatarFileHalflife::Save(ofstream& osOutputStream, CAvatar* pAvatar) co
       SPoint3D min, max;
       pAvatar->BoundingBox((BodyPart)m_vCompressedSkeletonMap[i],max,min);
       CVector3D vecMin(min);
-      CVector3D vecMax(max);      
+      CVector3D vecMax(max);
       // Work out offsets from bone centre
       CVector3D vecCentre(pBodyParts[m_vCompressedSkeletonMap[i]].m_pntCurrentCentre);
       vecMin -= vecCentre;
@@ -505,27 +510,34 @@ FRESULT CAvatarFileHalflife::Save(ofstream& osOutputStream, CAvatar* pAvatar) co
       vecMin *= dScaleFactor;
       vecMax *= dScaleFactor;
       // Write minimum
-      m_pHitboxChunk[i].vMinimum[0] =  vecMin.X();
-      m_pHitboxChunk[i].vMinimum[1] =  vecMin.Z();
+      //m_pHitboxChunk[i].vMinimum[0] = vecMin.X();
+      //m_pHitboxChunk[i].vMinimum[1] = vecMin.Y();
+      //m_pHitboxChunk[i].vMinimum[2] = vecMin.Z();
+      m_pHitboxChunk[i].vMinimum[0] =  vecMax.X();
+      m_pHitboxChunk[i].vMinimum[1] =  vecMax.Z();
       m_pHitboxChunk[i].vMinimum[2] = -vecMin.Y();
       // Write maximum
-      m_pHitboxChunk[i].vMaximum[0] =  vecMax.X();
-      m_pHitboxChunk[i].vMaximum[1] =  vecMax.Z();
+      //m_pHitboxChunk[i].vMaximum[0] = vecMax.X();
+      //m_pHitboxChunk[i].vMaximum[1] = vecMax.Y();
+      //m_pHitboxChunk[i].vMaximum[2] = vecMax.Z();
+      m_pHitboxChunk[i].vMaximum[0] =  vecMin.X();
+      m_pHitboxChunk[i].vMaximum[1] =  vecMin.Z();
       m_pHitboxChunk[i].vMaximum[2] = -vecMax.Y();
    }
-   sHeader.iLength += sizeof(SHalflifeMDLHitbox) * sHeader.iNumHitboxes;
+   sHeader.iLength += sizeof(SHalflifeHitbox) * sHeader.iNumHitboxes;
 
    // Create Animation Sequence Header Chunk
    sHeader.iNumSeqs = 77;
-   sHeader.iLength += 0x30304; // Offset into anim file of look_idle seq desc.
+   sHeader.iLength += 0x30304; // Offset into animdata file of first seq desc.0x295E0;//
    sHeader.iSeqChunkOffset = sHeader.iLength;
-   sHeader.iLength += (sHeader.iNumSeqs * 0xB0) + 0x474; // + space for seqs descs and events (0x474 bytes);
+   sHeader.iLength += (sHeader.iNumSeqs * sizeof(SHalflifeSequence));
+   sHeader.iLength += (15 * sizeof(SHalflifeEvent)); // 15 events
 
    // Create Sequence Groups Chunk
    sHeader.iNumSeqGroups = 1;
    sHeader.iSeqGroupChunkOffset = sHeader.iLength;
    NEWBEGIN
-   m_pSeqGroupsChunk = new SHalflifeMDLSeqGroup[sHeader.iNumSeqGroups];
+   m_pSeqGroupsChunk = new SHalflifeSeqGroup[sHeader.iNumSeqGroups];
 	NEWEND("CAvatarFileHalflife::Save - Sequence Groups Chunk Allocation")
    if (m_pSeqGroupsChunk == NULL) {
       Cleanup(pAvatar);
@@ -543,86 +555,145 @@ FRESULT CAvatarFileHalflife::Save(ofstream& osOutputStream, CAvatar* pAvatar) co
          m_pSeqGroupsChunk[i].iData = 0;
       }
    }
-   sHeader.iLength += sizeof(SHalflifeMDLSeqGroup) * sHeader.iNumSeqGroups;
+   sHeader.iLength += sizeof(SHalflifeSeqGroup) * sHeader.iNumSeqGroups;
 
    // Deal with Transition Chunk (but don't create anything)
    sHeader.iNumTransitions = 0;
    sHeader.iTransitionChunkOffset = sHeader.iLength;
    
-   // Process textures, cos we'll need them in a minute
-   std::vector<CImage*> vpSmallTextures;
-   for (i=0; i<pAvatar->NumTextures(); i++) {
-      // Notify of progress
-      char pszDisplay[32];
-      sprintf(pszDisplay,"Converting texture %d", i);
-      g_poVAL->StepProgress("HLSave");
-      g_poVAL->SetProgressText("HLSave", pszDisplay);
-      // Downsize images
-      CImage* pTexture;
-      NEWBEGIN
-      pTexture = new CImage(*(pAvatar->Texture(i)));
-   	NEWEND("CAvatarFileHalflife::Save - Small Image Allocation")
-      if (pTexture == NULL) { 
-         eResult = F_OUT_OF_MEMORY;
-         continue;
-      }
-      int iWidth = 0;
-      int  iHeight = 0;
-      pTexture->GetSize(iWidth,iHeight);
-      if (i == pAvatar->TextureIndex(skullbase)) {
-         // Set size of face texture to 256x256
-         iWidth  = 256;
-         iHeight = 256;
-      }
-      else if (i == pAvatar->TextureIndex(vl5)) {
-         // Set size of torso texture to 128x128
-         iWidth  = 128;
-         iHeight = 128;
-      }
-      else {
-         // Halve size of other textures
-         iWidth  = iWidth  >> 1;
-         iHeight = iHeight >> 1;
-         // Max 64x64
-         if (iWidth > 64) iWidth = 64;
-         if (iHeight > 64) iHeight = 64;
-      }
-      // Scale
-      pTexture->Scale(iWidth,iHeight);
-      // Flip
-      pTexture->Flip();
-      // Reduce colours
-      pTexture->Convert(IT_PALETTE,256);
-      // Store
-      vpSmallTextures.push_back(pTexture);
+   const int uFaceTexIndex = pAvatar->TextureIndex(skullbase);
+
+   // We create two textures - head and body.
+   // Deal with head texture first:
+   g_poVAL->StepProgress("HLSave");
+   g_poVAL->SetProgressText("HLSave", "Converting head texture");
+   // Copy texture out
+   CImage imgFace(*(pAvatar->Texture(uFaceTexIndex)));
+   // Scale
+   imgFace.Scale(HL_TEXTURE_WIDTH,HL_TEXTURE_HEIGHT);
+   // and convert to palette!
+   imgFace.Convert(IT_PALETTE);
+
+   unsigned int uNumTextures = pAvatar->NumTextures();
+
+   unsigned int* uFirstPixel = new unsigned int[uNumTextures];
+   unsigned int* uImageHeight = new unsigned int[uNumTextures];
+
+   // Now sort out body texture:
+   g_poVAL->StepProgress("HLSave");
+   g_poVAL->SetProgressText("HLSave", "Creating body texture");
+   // Store torso tex index for future reference
+   unsigned int uTorsoTexIndex = pAvatar->TextureIndex(vl5);
+   // Resize textures
+   CImage** pImages = NULL;
+   NEWBEGIN
+   pImages = new CImage*[uNumTextures];
+   NEWEND("CAvatarFileHalflife::Save - image pointer allocation");
+   if (pImages == NULL) {
+      Cleanup(pAvatar);
+      return F_OUT_OF_MEMORY;
    }
-   
+   for (t=0; t<uNumTextures; t++) {
+      pImages[t] = NULL;
+   }
+   unsigned int uTotalHeight = 0;
+   for (t=0; t<uNumTextures; t++) {
+      // If this is not an exempt texture
+      if (t != uFaceTexIndex) {
+         // Variables
+         int iWidth = 0;
+         int iHeight = 0;
+         CImage* pSmallerImage = NULL;
+         // Create temporary image by copying current image
+         NEWBEGIN
+         pSmallerImage = new CImage(*(pAvatar->Texture(t)));
+         NEWEND("CAvatarFileHalflife::Save - small image allocation");
+         if (pSmallerImage == NULL) {
+            // Dump data
+            for (int i=0; i<uNumTextures; i++) {
+               if (pImages[i] != NULL) delete pImages[i];
+            }
+            delete [] pImages;
+            return F_OUT_OF_MEMORY;
+         }
+         // Get size
+         pSmallerImage->GetSize(iWidth,iHeight);
+         // Modify width to be correct width
+         iWidth = HL_TEXTURE_WIDTH;
+         // Modify height to be a maximum of a quarter of the width.
+         // Unless it is the torso, where we want more detail
+         if (t == uTorsoTexIndex) iHeight = iWidth;
+         else if (iHeight > iWidth/4) iHeight = iWidth/4;
+         // Scale image to new size
+         pSmallerImage->Scale(iWidth,iHeight);
+         // Store image data
+         uFirstPixel[t] = uTotalHeight;
+         uImageHeight[t] = iHeight;
+         uTotalHeight += iHeight;
+         // Store image pointer
+         pImages[t] = pSmallerImage;
+      }
+      // If it is, we don't bother with it.
+      else {
+         uFirstPixel[t] = uTotalHeight;
+         uImageHeight[t] = 0;
+         pImages[t] = NULL;
+      }
+   }
+   // Create body image
+   CImage imgBody(IT_RGB,HL_TEXTURE_WIDTH,uTotalHeight);
+   int iWidth = 0; 
+   int iHeight = 0;
+   imgBody.GetSize(iWidth,iHeight);
+   if (iWidth==0 || iHeight==0) {
+      Cleanup(pAvatar);
+      for (int i=0; i<uNumTextures; i++) {
+         if (pImages[i] != NULL) delete pImages[i];
+      }
+      delete [] pImages;
+      return F_OUT_OF_MEMORY;
+   }
+   else {
+      for (t=0; t<uNumTextures; t++) {
+         if (pImages[t] != NULL) {
+            imgBody.Paste(*(pImages[t]),0,uFirstPixel[t]);
+            delete pImages[t];
+         }
+      }
+   }
+   delete [] pImages;
+   imgBody.Scale(HL_TEXTURE_WIDTH,HL_TEXTURE_HEIGHT);
+   // Convert
+   g_poVAL->StepProgress("HLSave");
+   g_poVAL->SetProgressText("HLSave", "Converting body texture");
+   imgBody.Convert(IT_PALETTE);
+
    g_poVAL->StepProgress("HLSave");
    g_poVAL->SetProgressText("HLSave", "Creating body parts");
 
    // Create Body Part Header
    sHeader.iNumBodyParts = 1;
    sHeader.iBodyPartChunkOffset = sHeader.iLength;
-   SHalflifeMDLBodyPart sBodyPartHeader;
+   SHalflifeBodyPart sBodyPartHeader;
    strncpy(sBodyPartHeader.pszName,"body",64);
    sBodyPartHeader.iNumModels  = 1;
    sBodyPartHeader.iBase       = 1;
-   sHeader.iLength += sizeof(SHalflifeMDLBodyPart);
+   sHeader.iLength += sizeof(SHalflifeBodyPart);
    sBodyPartHeader.iModelIndex = sHeader.iLength;
 
    g_poVAL->StepProgress("HLSave");
    g_poVAL->SetProgressText("HLSave", "Creating model");
 
    // Create Model Header Chunk
-   SHalflifeMDLModel sModelHeader;
+   SHalflifeModel sModelHeader;
    // Copy name
    strncpy(sModelHeader.pszName,m_pszModelname,64);
    // Type
    sModelHeader.iType = 0;
    // Bounding radius
    sModelHeader.fRadius = 0.0;
-   // Number of submeshes (one for each texture)
-   sModelHeader.iNumMeshes   = pAvatar->NumTextures();
+   // Number of submeshes (one head, one body)
+   sModelHeader.iNumMeshes   = 2;
    // Vertex info
    sModelHeader.iNumVertices = iNumVertices;
    // Normal info
@@ -630,15 +701,15 @@ FRESULT CAvatarFileHalflife::Save(ofstream& osOutputStream, CAvatar* pAvatar) co
    // Calculate data segment lengths
    unsigned long iVertexInfoLength = iNumVertices;
    unsigned long iNormalInfoLength = iNumVertices;
-   unsigned long iVertexDataLength = iNumVertices * sizeof(HalflifeMDLVector);
-   unsigned long iNormalDataLength = iNumVertices * sizeof(HalflifeMDLVector);
+   unsigned long iVertexDataLength = iNumVertices * sizeof(HalflifeVector);
+   unsigned long iNormalDataLength = iNumVertices * sizeof(HalflifeVector);
    // Word align lengths
    WORDALIGN(iVertexInfoLength);
    WORDALIGN(iNormalInfoLength);
    WORDALIGN(iVertexDataLength);
    WORDALIGN(iNormalDataLength);
    // Fill in vertex and normal indices
-   sModelHeader.iVertexInfoIndex = sHeader.iLength + sizeof(SHalflifeMDLModel);
+   sModelHeader.iVertexInfoIndex = sHeader.iLength + sizeof(SHalflifeModel);
    sModelHeader.iNormalInfoIndex = sModelHeader.iVertexInfoIndex + iVertexInfoLength;
    sModelHeader.iVertexDataIndex = sModelHeader.iNormalInfoIndex + iNormalInfoLength;
    sModelHeader.iNormalDataIndex = sModelHeader.iVertexDataIndex + iVertexDataLength;
@@ -646,7 +717,7 @@ FRESULT CAvatarFileHalflife::Save(ofstream& osOutputStream, CAvatar* pAvatar) co
    sModelHeader.iNumDeformGroups = 0;
    sModelHeader.iDeformGroupIndex = 0;
    // We fill more in later on...
-   sHeader.iLength += sizeof(SHalflifeMDLModel);
+   sHeader.iLength += sizeof(SHalflifeModel);
 
    // Create Model Data Chunk
    int iModelDataChunkLength = iVertexInfoLength + iNormalInfoLength + iVertexDataLength + iNormalDataLength;
@@ -699,6 +770,9 @@ FRESULT CAvatarFileHalflife::Save(ofstream& osOutputStream, CAvatar* pAvatar) co
          // Scale
          vecVertex *= dScaleFactor;
          // Write
+         //*(pfDataPtr++) = vecVertex.X();
+         //*(pfDataPtr++) = vecVertex.Y();
+         //*(pfDataPtr++) = vecVertex.Z();
          *(pfDataPtr++) =  vecVertex.X();
          *(pfDataPtr++) =  vecVertex.Z();
          *(pfDataPtr++) = -vecVertex.Y();
@@ -710,6 +784,9 @@ FRESULT CAvatarFileHalflife::Save(ofstream& osOutputStream, CAvatar* pAvatar) co
          // Get normal
          CVector3D vecNormal(pNormals[i]);
          // Write
+         //*(pfDataPtr++) = vecNormal.X();
+         //*(pfDataPtr++) = vecNormal.Y();
+         //*(pfDataPtr++) = vecNormal.Z();
          *(pfDataPtr++) =  vecNormal.X();
          *(pfDataPtr++) =  vecNormal.Z();
          *(pfDataPtr++) = -vecNormal.Y();
@@ -718,60 +795,264 @@ FRESULT CAvatarFileHalflife::Save(ofstream& osOutputStream, CAvatar* pAvatar) co
    // Update offset
    sHeader.iLength += iModelDataChunkLength;
    
+   // Create mesh data
    g_poVAL->StepProgress("HLSave");
    g_poVAL->SetProgressText("HLSave", "Creating meshes");
 
-   // Predeclare a couple of things
-   int iMeshDataChunkLength = 0;
-   // Split main mesh into submeshes based on texture
-   std::vector<STriFace>* vSubMeshes;
-   NEWBEGIN
-   vSubMeshes = new std::vector<STriFace>[sModelHeader.iNumMeshes];
-	NEWEND("CAvatarFileHalflife::Save - Submesh Allocation")
-   if (vSubMeshes == NULL) {
-      Cleanup(pAvatar);
-      return F_OUT_OF_MEMORY;
-   }
+   // Precalc a couple of texture vals
+   const int iMaxU = HL_TEXTURE_WIDTH-1;
+   const int iMaxV = HL_TEXTURE_HEIGHT-1;      
+   // Split main mesh into two submeshes based on texture
+   CDList<STriFace> pSubMeshes[2];
    for (i=0; i<iNumFaces; i++) {
-      (vSubMeshes + pFaces[i].m_iTextureNumber)->push_back(pFaces[i]);
+      int iTextureNumber = pFaces[i].m_iTextureNumber;
+      CDList<STriFace>* pSubMesh = (iTextureNumber==uFaceTexIndex) ? pSubMeshes : pSubMeshes+1;
+      pSubMesh->AddBack(pFaces[i]);
+      // Rescale texture coordinates
+      for (int v=3; v--!=0; ) {
+         // Get tex coords
+         double dU = pFaces[i].m_sVertices[v].m_sTexCoord.dU;
+         double dV = pFaces[i].m_sVertices[v].m_sTexCoord.dV;
+         // Recalculate texture V coordinates if this is not the face texture
+         if (iTextureNumber!=uFaceTexIndex) {
+            // Clamp V to 0.1..0.9 to remove texture glitches
+            if (dV > 0.9) dV = 0.9;
+            else if (dV < 0.1) dV = 0.1;
+            // Multiply by height of this particular image
+            dV *= uImageHeight[iTextureNumber];
+            // Add where this image starts
+            dV += uFirstPixel[iTextureNumber];
+            // Divide by the total height of the image
+            dV /= uTotalHeight;
+         }
+         // Rescale and store
+         STexCoord* pTexCoord = &((*pSubMesh)[pSubMesh->Length()-1].m_sVertices[v].m_sTexCoord);
+         pTexCoord->dU = dU*iMaxU;
+         pTexCoord->dV = dV*iMaxV;
+      }
    }
-   // Compress submeshes into triangle strips
-   // ********NOT IMPLEMENTED YET*********
 
    // Create Mesh Header Chunk
    sModelHeader.iMeshIndex = sHeader.iLength;
    NEWBEGIN
-   m_pMeshHeaderChunk = new SHalflifeMDLMesh[sModelHeader.iNumMeshes];
+   m_pMeshHeaderChunk = new SHalflifeMesh[sModelHeader.iNumMeshes];
 	NEWEND("CAvatarFileHalflife::Save - Mesh Header Chunk Allocation")
    if (m_pMeshHeaderChunk == NULL) {
       Cleanup(pAvatar);
       return F_OUT_OF_MEMORY;
    }
    // Write info into header
-   for (i=0; i<sModelHeader.iNumMeshes; i++) {
+   for (i=sModelHeader.iNumMeshes; i--!=0; ) {
       // Number of triangles
-      m_pMeshHeaderChunk[i].iNumTriangles = vSubMeshes[i].size();
+      m_pMeshHeaderChunk[i].iNumTriangles = pSubMeshes[i].Length();
       // We fill in the triangle index in a minute
       // Texture reference
       m_pMeshHeaderChunk[i].iSkinRef = i;
       // Number of normals
-      m_pMeshHeaderChunk[i].iNumNormals = vSubMeshes[i].size();
+      m_pMeshHeaderChunk[i].iNumNormals = pSubMeshes[i].Length();
       // Normal index
       m_pMeshHeaderChunk[i].iNormalIndex = 0;
    }
-   sHeader.iLength += sizeof(SHalflifeMDLMesh) * sModelHeader.iNumMeshes;
+   sHeader.iLength += sizeof(SHalflifeMesh) * sModelHeader.iNumMeshes;
+
+   // Strip submeshes
+   CDList<CTriStrip> pStrippedSubMeshes[2];
+   // Work on one submesh at a time
+   for (int m=2; m--!=0; ) {
+      // Store data pointers
+      CDList<STriFace>* pSubMesh = pSubMeshes + m;
+      CDList<CTriStrip>* pStrippedMesh = pStrippedSubMeshes + m;
+      // How may triangles and vertices in mesh
+      const int iNumVertices = pAvatar->NumVertices();
+      const int iNumTriangles = pSubMesh->Length();
+      // How many triangles left to do?
+      int iRemainingTriangles = iNumTriangles;
+
+      // Create various mesh information lists
+      // Create vertex connectivity list
+      CDList<int>* plVertexConnectivity = new CDList<int>[iNumVertices];
+      for (int f=iNumTriangles; f--!=0; ) {
+         for (int v=3; v--!=0; ) {
+            plVertexConnectivity[(*pSubMesh)[f].m_sVertices[v].m_iVertex].AddBack(f);
+         }
+      }
+      // Create vertex valence list
+      int* piVertexValences = new int[iNumVertices];
+      for (int v=iNumVertices; v--!=0; ) {
+         piVertexValences[v] = plVertexConnectivity[v].Length();
+      }
+      // Create face connectivity list
+      CDList<int>* plFaceConnectivity = new CDList<int>[iNumTriangles];
+      for (f=iNumTriangles; f--!=0; ) {
+         for (int v=3; v--!=0; ) {
+            int iFirstVertex = (*pSubMesh)[f].m_sVertices[v].m_iVertex;
+            int iSecondVertex = (*pSubMesh)[f].m_sVertices[(v+1)%3].m_iVertex;
+            for (int t1=piVertexValences[iFirstVertex]; t1--!=0; ) {
+               int iFirstVertexFace = plVertexConnectivity[iFirstVertex][t1];
+               if (iFirstVertexFace != f) {
+                  for (int t2=piVertexValences[iSecondVertex]; t2--!=0; ) {
+                     int iSecondVertexFace = plVertexConnectivity[iSecondVertex][t2];
+                     if (iFirstVertexFace == iSecondVertexFace) {
+                        plFaceConnectivity[f].AddBack(iFirstVertexFace);
+                     }
+                  }
+               }
+            }
+         }         
+      }
+      // Create face valence list
+      int* piFaceValences = new int[iNumTriangles];
+      for (f=iNumTriangles; f--!=0; ) {
+         piFaceValences[f] = plFaceConnectivity[f].Length();
+      }
+      // Create processed face list
+      bool* pbProcessedFaces = new bool[iNumTriangles];
+      for (f=iNumTriangles; f--!=0; ) pbProcessedFaces[f] = false;
+      
+      // Create triangle strips
+      while (iRemainingTriangles > 0) {
+         // Create new tristrip
+         CTriStrip oTriStrip;
+         // Find starting triangle - the one with the lowest valence
+         int iStart = -1;
+         for (int t=iNumTriangles; t--!=0; ) {
+            if (pbProcessedFaces[t] == false) {
+               if (iStart < 0) iStart = t;
+               else if (piFaceValences[t] < piFaceValences[iStart]) iStart = t;
+            }
+         }
+         // Add starting triangle to strip
+         for (int v=3; v--!=0; ) {
+            // Stick vertex on strip
+            oTriStrip.push_back((*pSubMesh)[iStart].m_sVertices[v]);
+            // Reduce vertex valence
+            piVertexValences[(*pSubMesh)[iStart].m_sVertices[v].m_iVertex]--;
+         }
+         // Mark starting triangle as done
+         pbProcessedFaces[iStart] = true;
+         // Reduce valences of surrounding triangles
+         for (t=plFaceConnectivity[iStart].Length(); t--!=0; ) {
+            piFaceValences[plFaceConnectivity[iStart][t]]--;
+         }
+         // Reduce number of remaining triangles
+         iRemainingTriangles--;
+         // Add triangles to strip until we can't do any more or we reach the max length
+         bool bDone = false;
+         int iLastTriangle = iStart;
+         int iTriangleScores[3];
+         while (!bDone && (oTriStrip.size() < 0x3)) {
+            // Select next triangle...
+            bool bCandidateExists = false;
+            // Get neighbouring triangle numbers
+            int iNextTriangles[3] = {-1,-1,-1};
+            for (int t=plFaceConnectivity[iLastTriangle].Length(); t--!=0; ) {
+               iNextTriangles[t] = plFaceConnectivity[iLastTriangle][t];
+            }
+            // Score neighbouring triangles which have not yet been done.
+            for (t=3; t--!=0; ) {
+               if ((iNextTriangles[t]!=-1) && (pbProcessedFaces[iNextTriangles[t]]==false)) {
+                  // Triangle is a candidate
+                  bCandidateExists = true;
+                  iTriangleScores[t] = 0;
+                  // Add valence to score
+                  iTriangleScores[t] += piFaceValences[iNextTriangles[t]];
+                  // Add 1 for highest vertex valence, subtract 1 otherwise
+                  // ...not used yet...
+                  // Add 1 for if swap required, subtract 1 otherwise
+                  // ...not used yet...
+               }
+               else {
+                  // Triangle does not exist or has already been 
+                  // processed, so give it a very high score
+                  iTriangleScores[t] = 100;
+               }
+            }
+            // If there are any candidate triangles, add one to the strip
+            if (bCandidateExists) {
+               // Select the lowest scoring triangle
+               int iNextTriangle = 2;
+               for (t=2; t--!=0; ) {
+                  if (iTriangleScores[t] < iTriangleScores[iNextTriangle])
+                     iNextTriangle = t;
+               }
+               iNextTriangle = iNextTriangles[iNextTriangle];
+               // Find it's unique vertex - this is the one that doesn't connect to the last triangle
+               int iNextVertex = 0;
+               bool bFound = false;
+               for (int v=3; !bFound && v--!=0; ) {
+                  // Get vertex number
+                  int iVertex = (*pSubMesh)[iNextTriangle].m_sVertices[v].m_iVertex;
+                  // If the vertex does not belong to the last triangle
+                  if (iVertex != (*pSubMesh)[iLastTriangle].m_sVertices[0].m_iVertex &&
+                      iVertex != (*pSubMesh)[iLastTriangle].m_sVertices[1].m_iVertex &&
+                      iVertex != (*pSubMesh)[iLastTriangle].m_sVertices[2].m_iVertex) {
+                     // Store it
+                     iNextVertex = v;
+                     // Found it!
+                     bFound = true;
+                  }
+               }
+               // Stick vertex on strip
+               oTriStrip.push_back((*pSubMesh)[iNextTriangle].m_sVertices[iNextVertex]);
+               // Reduce vertex valences
+               for (v=3; v--!=0; ) {
+                  piVertexValences[(*pSubMesh)[iNextTriangle].m_sVertices[v].m_iVertex]--;
+               }
+               // Mark triangle as done
+               pbProcessedFaces[iNextTriangle] = true;
+               // Reduce valences of surrounding triangles
+               for (t=plFaceConnectivity[iNextTriangle].Length(); t--!=0; ) {
+                  piFaceValences[plFaceConnectivity[iNextTriangle][t]]--;
+               }
+               // Reduce number of remaining triangles
+               iRemainingTriangles--;
+               // Store triangle index
+               iLastTriangle = iNextTriangle;
+            }
+            // Otherwise, we're done
+            else bDone = true;
+         }
+         // Store new tristrip
+         pStrippedMesh->AddBack(oTriStrip);
+      }
+      // Check data
+      for (f=iNumTriangles; f--!=0; ) {
+         if (pbProcessedFaces[f] == false) cout << "unprocessed triangle!" << endl;
+         if (piFaceValences[f] < 0) cout << "overzealous triangle - " << piFaceValences[f] << "!" << endl;
+         else if (piFaceValences[f] > 0) cout << "uncompleted triangle - " << piFaceValences[f] << "!" << endl;
+      }
+      for (v=iNumVertices; v--!=0; ) {
+         if (piVertexValences[v] > 0) cout << "uncompleted vertex!" << endl;
+      }
+      // Dump temporary data
+      delete [] pbProcessedFaces;
+      delete [] piFaceValences;
+      delete [] piVertexValences;
+      delete [] plFaceConnectivity;
+      delete [] plVertexConnectivity;
+   }  
+   // Dump submesh information
+   pSubMeshes[0].Clear();
+   pSubMeshes[1].Clear();
 
    g_poVAL->StepProgress("HLSave");
-   g_poVAL->SetProgressText("HLSave", "Creating mesh data");
+   g_poVAL->SetProgressText("HLSave", "Storing meshes");
 
    // Create Mesh Data Chunk
+   int iMeshDataChunkLength = 0;
    int iMeshDataChunkStart = sHeader.iLength;
    for (i=0; i<sModelHeader.iNumMeshes; i++) {
       // Fill in index in header
       m_pMeshHeaderChunk[i].iTriangleDataIndex = sHeader.iLength;
       // Work our mesh length
-      int iMeshLength = (vSubMeshes[i].size() * 26) + 2;
+      int iMeshLength = 2; //Space for terminating 0
+      for (int s=pStrippedSubMeshes[i].Length(); s--!=0; ) {
+         iMeshLength += 2; // Space for number of points in strip
+         iMeshLength +=  (pStrippedSubMeshes[i])[s].size() * 8; // Space for points
+      }
+      // Word align the mesh
       WORDALIGN(iMeshLength);
+      // Update chunk & file size variables
       iMeshDataChunkLength += iMeshLength;
       sHeader.iLength += iMeshLength;
    }
@@ -783,27 +1064,33 @@ FRESULT CAvatarFileHalflife::Save(ofstream& osOutputStream, CAvatar* pAvatar) co
       return F_OUT_OF_MEMORY;
    }
    memset(m_pcMeshDataChunk,0,iMeshDataChunkLength);
+   // Write data
    for (i=0; i<sModelHeader.iNumMeshes; i++) {
       int iCurrentOffset = m_pMeshHeaderChunk[i].iTriangleDataIndex - iMeshDataChunkStart;
       short* pcTempMeshDataPtr = (short*)(m_pcMeshDataChunk + iCurrentOffset);
-      for (int j=0; j<vSubMeshes[i].size(); j++) {
-         *pcTempMeshDataPtr++ = 3;
-         for (int k=2; k>=0; k--) {
-            STriFace* iCurrentFace = &((vSubMeshes[i])[j]);
-            *pcTempMeshDataPtr++ = iCurrentFace->m_iVertices[k];
-            *pcTempMeshDataPtr++ = iCurrentFace->m_iVertices[k];
-            int iWidth, iHeight;
-            vpSmallTextures[i]->GetSize(iWidth,iHeight);
-            *pcTempMeshDataPtr++ = iCurrentFace->m_sTexCoords[k].dU * iWidth;
-            *pcTempMeshDataPtr++ = (1-iCurrentFace->m_sTexCoords[k].dV) * iHeight;
+      for (int j=0; j<pStrippedSubMeshes[i].Length(); j++) {
+         CTriStrip* pStrip = &((pStrippedSubMeshes[i])[j]);
+         int iNumPoints = pStrip->size();
+         *pcTempMeshDataPtr++ = iNumPoints;
+         for (int k=0; k<iNumPoints; k++) {
+            // Vertex
+            *pcTempMeshDataPtr++ = (*pStrip)[k].m_iVertex;
+            // Normal
+            *pcTempMeshDataPtr++ = (*pStrip)[k].m_iVertex;
+            // Texture Coordinates
+            *pcTempMeshDataPtr++ = short((*pStrip)[k].m_sTexCoord.dU + 0.5); // Add 0.5 to ensure correct rounding
+            *pcTempMeshDataPtr++ = short((*pStrip)[k].m_sTexCoord.dV + 0.5); // Add 0.5 to ensure correct rounding
          }
       }
       // Write terminating zero
       *pcTempMeshDataPtr = 0;
    }
-   // Bin submesh and tristrip information
-   delete [] vSubMeshes;
 
+   // Dump triangle strips
+   pStrippedSubMeshes[0].Clear();
+   pStrippedSubMeshes[1].Clear();
+
+   // Write Textures
    g_poVAL->StepProgress("HLSave");
    g_poVAL->SetProgressText("HLSave", "Creating texture info");
 
@@ -811,10 +1098,10 @@ FRESULT CAvatarFileHalflife::Save(ofstream& osOutputStream, CAvatar* pAvatar) co
    int iTextureIndexChunkLength = 0;
    int iTextureDataChunkLength = 0;
    // Create Texture Header Chunk
-   sHeader.iNumTextures = pAvatar->NumTextures();
+   sHeader.iNumTextures = 2;
    sHeader.iTextureHeaderChunkOffset = sHeader.iLength;
    NEWBEGIN
-   m_pTextureHeaderChunk = new SHalflifeMDLTexture[sHeader.iNumTextures];
+   m_pTextureHeaderChunk = new SHalflifeTexture[sHeader.iNumTextures];
 	NEWEND("CAvatarFileHalflife::Save - Texture Header Chunk Allocation")
    if (m_pTextureHeaderChunk == NULL) {
       Cleanup(pAvatar);
@@ -830,15 +1117,13 @@ FRESULT CAvatarFileHalflife::Save(ofstream& osOutputStream, CAvatar* pAvatar) co
       strcpy(m_pTextureHeaderChunk[i].pszName + iLength, "_a.bmp");
       m_pTextureHeaderChunk[i].pszName[iLength + 1] += i;
       // Get image size
-      int iWidth, iHeight;
-      vpSmallTextures[i]->GetSize(iWidth,iHeight);
       // Store data
-      m_pTextureHeaderChunk[i].iWidth = iWidth;
-      m_pTextureHeaderChunk[i].iHeight = iHeight;
+      m_pTextureHeaderChunk[i].iWidth = HL_TEXTURE_WIDTH;
+      m_pTextureHeaderChunk[i].iHeight = HL_TEXTURE_HEIGHT;
       // Increase data chunk size to allow space for image @ 8bpp
-      iTextureDataChunkLength += (iWidth * iHeight) + 0x300;
+      iTextureDataChunkLength += (HL_TEXTURE_WIDTH * HL_TEXTURE_HEIGHT) + 0x300;
    }
-   sHeader.iLength += sizeof(SHalflifeMDLTexture) * sHeader.iNumTextures;
+   sHeader.iLength += sizeof(SHalflifeTexture) * sHeader.iNumTextures;
 
    // Create Texture Index Chunk
    sHeader.iNumReplaceableTextures = sHeader.iNumTextures;
@@ -873,7 +1158,7 @@ FRESULT CAvatarFileHalflife::Save(ofstream& osOutputStream, CAvatar* pAvatar) co
    }
    iCurrentPos = 0;
    for (i=0; i<sHeader.iNumTextures; i++) {
-      const CImage* pTexture = vpSmallTextures[i];
+      const CImage* pTexture = i==0 ? &imgFace : &imgBody;
       // Store index in header
       m_pTextureHeaderChunk[i].iIndex = sHeader.iLength + iCurrentPos;
       // Write texture data
@@ -895,32 +1180,29 @@ FRESULT CAvatarFileHalflife::Save(ofstream& osOutputStream, CAvatar* pAvatar) co
    }
    sHeader.iLength += iTextureDataChunkLength;
 
-   // Dispose of resized textures
-   for (i=0; i<pAvatar->NumTextures(); i++) {
-      CImage* pTexture = vpSmallTextures.back();
-      vpSmallTextures.pop_back();
-      delete pTexture;
-   }
-
    g_poVAL->StepProgress("HLSave");
    g_poVAL->SetProgressText("HLSave", "Writing to file");
 
    // Write chunks to stream in correct order
    if (eResult == F_OK) {
-      osOutputStream.write((char*)&sHeader,sizeof(SHalflifeMDLHeader));
-      osOutputStream.write((char*)m_pBoneChunk,sizeof(SHalflifeMDLBone) * sHeader.iNumBones);
-      osOutputStream.write((char*)m_pBoneControllerChunk,sizeof(SHalflifeMDLBoneController) * sHeader.iNumBoneControllers);
-      osOutputStream.write((char*)m_pAttachmentChunk,sizeof(SHalflifeMDLAttachment) * sHeader.iNumAttachments);
-      osOutputStream.write((char*)m_pHitboxChunk,sizeof(SHalflifeMDLHitbox) * sHeader.iNumHitboxes);
+      osOutputStream.write((char*)&sHeader,sizeof(SHalflifeHeader));
+      osOutputStream.write((char*)m_pBoneChunk,sizeof(SHalflifeBone) * sHeader.iNumBones);
+      osOutputStream.write((char*)m_pBoneControllerChunk,sizeof(SHalflifeBoneController) * sHeader.iNumBoneControllers);
+      osOutputStream.write((char*)m_pAttachmentChunk,sizeof(SHalflifeAttachment) * sHeader.iNumAttachments);
+      osOutputStream.write((char*)m_pHitboxChunk,sizeof(SHalflifeHitbox) * sHeader.iNumHitboxes);
       if (m_oWedgie.Extract("hlmdlanimdata.bin", osOutputStream) != WJE_OK) 
          eResult = F_ERROR;
-      osOutputStream.write((char*)m_pSeqGroupsChunk,sizeof(SHalflifeMDLSeqGroup) * sHeader.iNumSeqGroups);
-      osOutputStream.write((char*)&sBodyPartHeader,sizeof(SHalflifeMDLBodyPart));
-      osOutputStream.write((char*)&sModelHeader,sizeof(SHalflifeMDLModel));
+      //ifstream ifAnimStream;
+      //ifAnimStream.open("d:\\temp\\hlmdlanimdata.bin",ios::nocreate|ios::in|ios::binary);
+      //osOutputStream << ifAnimStream.rdbuf();
+      //ifAnimStream.close();
+      osOutputStream.write((char*)m_pSeqGroupsChunk,sizeof(SHalflifeSeqGroup) * sHeader.iNumSeqGroups);
+      osOutputStream.write((char*)&sBodyPartHeader,sizeof(SHalflifeBodyPart));
+      osOutputStream.write((char*)&sModelHeader,sizeof(SHalflifeModel));
       osOutputStream.write(m_pcModelDataChunk,iModelDataChunkLength);
-      osOutputStream.write((char*)m_pMeshHeaderChunk,sizeof(SHalflifeMDLMesh) * sModelHeader.iNumMeshes);
+      osOutputStream.write((char*)m_pMeshHeaderChunk,sizeof(SHalflifeMesh) * sModelHeader.iNumMeshes);
       osOutputStream.write(m_pcMeshDataChunk,iMeshDataChunkLength);
-      osOutputStream.write((char*)m_pTextureHeaderChunk,sizeof(SHalflifeMDLTexture) * sHeader.iNumTextures);
+      osOutputStream.write((char*)m_pTextureHeaderChunk,sizeof(SHalflifeTexture) * sHeader.iNumTextures);
       osOutputStream.write(m_pcTextureIndexChunk,iTextureIndexChunkLength);
       osOutputStream.write(m_pcTextureDataChunk,iTextureDataChunkLength);
    }
@@ -952,58 +1234,69 @@ void CAvatarFileHalflife::SaveThumbnail(const char *pcBitmap, CAvatar *poAvatar)
 	// Create thumbnail
 	g_poVAL->StepProgress("HLSave");
 	g_poVAL->SetProgressText("HLSave", "Rendering thumbnail");
-	// The render context
-	CRCOpenGLBufferWin32 oRC;
-	// Image size
-	oRC.SetSize(164, 200);
-	// Colour depth
-	oRC.SetOption(RCO_DEPTH, 24U);
-	// Black background
-	oRC.SetOption(RCO_BACKRED, 0.0F);
-	oRC.SetOption(RCO_BACKGREEN, 0.0F);
-	oRC.SetOption(RCO_BACKBLUE, 0.0F);
-	// Set the view planes and angle
-	oRC.SetOption(RCO_NEARPLANE, 0.5F);
-	oRC.SetOption(RCO_FARPLANE, 20.0F);
-	oRC.SetOption(RCO_VIEWANGLE, 10.0F);
-	oRC.SetProjectionMode(RCP_PERSPECTIVE);
-	// Create the context
-	if (oRC.Create() != RC_OK)
-		return;
-	// Create the avatar render object
-	CRenderAvatar oView(&oRC);
-	oView.SetAvatar(poAvatar, false);
-	// Move the avatar into position
-	oView.SetPosition(0.0F, -(poAvatar->Height() / 2.0F), -12.0F);
-	// Set the render mode to textured
-	oView.RenderMode(ROM_TEXTURE);
-	// Enable the context
-	oRC.Enable();
-	// Initialise the avatar
-	oView.Init();
-	// Clear the buffer
-	oRC.ClearBuffer(RCB_COLOUR | RCB_DEPTH);
-	// Reset the matrix
-	glLoadIdentity();
-	// Place the light
-	glEnable(GL_LIGHT0);
-	GLfloat fLAmbient[4] = {0.1F, 0.1F, 0.1F, 1.0F};
-	GLfloat fLWhite[4] = {1.0F, 1.0F, 1.0F, 1.0F};
-	glLightfv(GL_LIGHT0, GL_AMBIENT, fLAmbient);
-	glLightfv(GL_LIGHT0, GL_DIFFUSE, fLWhite);
-	glLightfv(GL_LIGHT0, GL_SPECULAR, fLWhite);
-	GLfloat fLPos[4] = { 0.0F, 0.0F, 0.0F, 1.0F};
-	glLightfv(GL_LIGHT0, GL_POSITION, fLPos);
-	// Render the avatar
-	oView.Execute();
-	// Disable the context
-	oRC.Disable();
-	// Get the snapshot image
+	// Create the snapshot image
 	CImage oImage(IT_RGB, 164, 200);
-	CImage *poImage = &oImage; // Hack for render context
-	oRC.Snapshot(poImage);
-	// Destroy the context
-	oRC.Destroy();
+	// Set the render context options
+	g_oRenderContextStore.ClearContextOptions();
+	g_oRenderContextStore.SetContextOption(RCO_MODE, RCV_DONT_CARE);
+	g_oRenderContextStore.SetContextOption(RCO_MEDIUM, RCV_BUFFER);
+	g_oRenderContextStore.SetContextOption(RCO_VIEW, RCV_NORMAL);
+	g_oRenderContextStore.SetContextOption(RCO_WIDTH, 164U);
+	g_oRenderContextStore.SetContextOption(RCO_HEIGHT, 200U);
+	g_oRenderContextStore.SetContextOption(RCO_DEPTH, 24U);
+	// Check for a suitable context
+	CRenderContext *poRC = g_oRenderContextStore.CreateSuitableContext();
+	// If failed display error text
+	if (poRC == NULL) {
+		g_poVAL->SetProgressText("HLSave", "Unable to find suitable render context");
+	}
+	// Otherwise render the avatar
+	else {
+		// Black background
+		poRC->SetOption(RCO_BACKRED, 0.0F);
+		poRC->SetOption(RCO_BACKGREEN, 0.0F);
+		poRC->SetOption(RCO_BACKBLUE, 0.0F);
+		// Set the view planes and angle
+		poRC->SetOption(RCO_NEARPLANE, 0.5F);
+		poRC->SetOption(RCO_FARPLANE, 20.0F);
+		poRC->SetOption(RCO_VIEWANGLE, 10.0F);
+		poRC->SetProjectionMode(RCP_PERSPECTIVE);
+		// Create the avatar render object
+		CRenderAvatar oView(poRC);
+		oView.SetAvatar(poAvatar, false);
+		// Move the avatar into position
+		oView.SetPosition(0.0F, -(poAvatar->Height() / 2.0F), -12.0F);
+		// Set the render mode to textured
+		oView.RenderMode(ROM_TEXTURE);
+		// Enable the context
+		poRC->Enable();
+		// Initialise the avatar
+		oView.Init();
+		// Clear the buffer
+		poRC->ClearBuffer(RCB_COLOUR | RCB_DEPTH);
+		// Reset the matrix
+		glLoadIdentity();
+		// Place the light
+		glEnable(GL_LIGHT0);
+		GLfloat fLAmbient[4] = {0.1F, 0.1F, 0.1F, 1.0F};
+		GLfloat fLWhite[4] = {1.0F, 1.0F, 1.0F, 1.0F};
+		glLightfv(GL_LIGHT0, GL_AMBIENT, fLAmbient);
+		glLightfv(GL_LIGHT0, GL_DIFFUSE, fLWhite);
+		glLightfv(GL_LIGHT0, GL_SPECULAR, fLWhite);
+		GLfloat fLPos[4] = { 0.0F, 0.0F, 0.0F, 1.0F};
+		glLightfv(GL_LIGHT0, GL_POSITION, fLPos);
+		// Render the avatar
+		oView.Execute();
+		// Disable the context
+		poRC->Disable();
+		// Get a pointer reference for the snapshot
+		CImage *poImage = &oImage;
+		poRC->Snapshot(poImage);
+		// Destroy the context
+		poRC->Destroy();
+		// Delete the context
+		delete poRC;
+	}
 
 	// Write thumbnail
 	g_poVAL->StepProgress("HLSave");
@@ -1039,7 +1332,7 @@ void CAvatarFileHalflife::SaveThumbnail(const char *pcBitmap, CAvatar *poAvatar)
 		// Paste the logo into the image
 		oImage.Paste(oLogo, 0.5F, true, 0, 164 - HL_LOGO_WIDTH, 200 - HL_LOGO_HEIGHT);
 		// Convert the image to 256 colours
-		oImage.Convert(IT_PALETTE);
+		oImage.Convert(IT_PALETTE, 192);
 		// Create the BMP save filter
 		CImageFile *poBMPFile = g_oImageFileStore.CreateByExtension("bmp");
 		if (poBMPFile) {

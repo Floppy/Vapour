@@ -7,7 +7,7 @@
 // AvatarFileAME.cpp - 17/06/2000 - James Smith
 //	AME import filter implementation
 //
-// $Id: AvatarFileAME.cpp,v 1.7 2000/08/21 23:07:49 waz Exp $
+// $Id: AvatarFileAME.cpp,v 1.8 2000/10/06 13:16:58 waz Exp $
 //
 
 #include "stdafx.h"
@@ -308,6 +308,7 @@ CAvatar* CAvatarFileAME::Load(const char* pszFilename) const {
             bp_RightForeArm,
             bp_RightHand
          };
+         // Associate vertices
          for (i=0; i<16; i++) {
             BodyPart bpPart = bpParts[i];
             enumBodyPartID amePart= ameParts[i];
@@ -343,15 +344,37 @@ CAvatar* CAvatarFileAME::Load(const char* pszFilename) const {
 				      pNewAvatar->AssociateVertex(bpPart, iCurrentVertex++);
 			      }
             }
-            // Associate faces
+         }
+         // Fix vertex associations
+         pNewAvatar->FixVertexAssociations();
+         // Associate faces
+         for (i=0; i<16; i++) {
+            BodyPart bpPart = bpParts[i];
+            enumBodyPartID amePart= ameParts[i];
   			   int iNumFaces = AMeModel.NumTrianglesInBodyPart[amePart];
 			   int iCurrentFace = AMeModel.FirstTriangleOfBodyPart[amePart];
+            // Associate texture
             pNewAvatar->AssociateTexture(bpPart,pFaces[iCurrentFace].m_iTextureNumber);
-			   for (int j=0; j<iNumFaces; j++) {
-				   pNewAvatar->AssociateFace(bpPart, iCurrentFace++);
-			   }
+            // Associate faces
+            if (bpPart == vl5) {
+               // Deal specially with the torso - we need to split it into 4
+               for (int j=0; j<iNumFaces; j++) {
+                  bpPart = unknown;
+                  for (int v=0; v<3; v++) {
+                     BodyPart bpVertex = (BodyPart)pNewAvatar->GetVertexPart(pFaces[iCurrentFace].m_sVertices[v].m_iVertex);
+                     if (bpVertex > bpPart) bpPart = bpVertex;
+                  }
+      				pNewAvatar->AssociateFace(bpPart, iCurrentFace++);
+   	   		}
+            }
+            else {
+               // Associate faces & textures
+               for (int j=0; j<iNumFaces; j++) {
+   				   pNewAvatar->AssociateFace(bpPart, iCurrentFace++);
+	   		   }
+            }
          }
-         // Associate skirt faces
+         // Associate skirt faces if skirt exists
   			int iNumBPFaces = AMeModel.NumTrianglesInBodyPart[bp_Skirt];
          if (iNumBPFaces != 0) {
 			   int iCurrentFace = AMeModel.FirstTriangleOfBodyPart[bp_Skirt];
@@ -360,8 +383,9 @@ CAvatar* CAvatarFileAME::Load(const char* pszFilename) const {
 				   pNewAvatar->AssociateFace(skirt, iCurrentFace++);
 			   }
          }
-         // Fix face & vertex associations
-         pNewAvatar->FixAssociations();
+         // Fix face associations
+         pNewAvatar->FixFaceAssociations();
+
          // Associate torso texture with extra body parts
 			int iTorsoTexture = pNewAvatar->TextureIndex(vl5);
 			pNewAvatar->AssociateTexture(vt12,iTorsoTexture);
@@ -498,7 +522,7 @@ CAvatar* CAvatarFileAME::Load(const char* pszFilename) const {
 
 CAvatar* CAvatarFileAME::LoadSections(const char* pszFilename, int bsSections) const {
    // Start loading
-   cAvatar AMeModel;
+   /*cAvatar AMeModel;
    CAvatar* pNewAvatar = NULL;
    if (AMeModel.Load(pszFilename) == 0) {      pNewAvatar = new CAvatar(AMeModel.iTotalNumVertices,AMeModel.iTotalNumTriangles);
       bool bAllocError = false;
@@ -674,6 +698,7 @@ CAvatar* CAvatarFileAME::LoadSections(const char* pszFilename, int bsSections) c
             bp_RightForeArm,
             bp_RightHand
          };
+         // Associate vertices
          for (i=0; i<16; i++) {
             BodyPart bpPart = bpParts[i];
             enumBodyPartID amePart= ameParts[i];
@@ -709,15 +734,37 @@ CAvatar* CAvatarFileAME::LoadSections(const char* pszFilename, int bsSections) c
 				      pNewAvatar->AssociateVertex(bpPart, iCurrentVertex++);
 			      }
             }
-            // Associate faces
+         }
+         // Fix vertex associations
+         pNewAvatar->FixVertexAssociations();
+         // Associate faces
+         for (i=0; i<16; i++) {
+            BodyPart bpPart = bpParts[i];
+            enumBodyPartID amePart= ameParts[i];
   			   int iNumFaces = AMeModel.NumTrianglesInBodyPart[amePart];
 			   int iCurrentFace = AMeModel.FirstTriangleOfBodyPart[amePart];
+            // Associate texture
             pNewAvatar->AssociateTexture(bpPart,pFaces[iCurrentFace].m_iTextureNumber);
-			   for (int j=0; j<iNumFaces; j++) {
-				   pNewAvatar->AssociateFace(bpPart, iCurrentFace++);
-			   }
+            // Associate faces
+            if (bpPart == vl5) {
+               // Deal specially with the torso - we need to split it into 4
+               for (int j=0; j<iNumFaces; j++) {
+                  bpPart = unknown;
+                  for (int v=0; v<3; v++) {
+                     BodyPart bpVertex = (BodyPart)pNewAvatar->GetVertexPart(pFaces[iCurrentFace].m_sVertices[v].m_iVertex);
+                     if (bpVertex > bpPart) bpPart = bpVertex;
+                  }
+      				pNewAvatar->AssociateFace(bpPart, iCurrentFace++);
+   	   		}
+            }
+            else {
+               // Associate faces & textures
+               for (int j=0; j<iNumFaces; j++) {
+   				   pNewAvatar->AssociateFace(bpPart, iCurrentFace++);
+	   		   }
+            }
          }
-         // Associate skirt faces
+         // Associate skirt faces if skirt exists
   			int iNumBPFaces = AMeModel.NumTrianglesInBodyPart[bp_Skirt];
          if (iNumBPFaces != 0) {
 			   int iCurrentFace = AMeModel.FirstTriangleOfBodyPart[bp_Skirt];
@@ -726,8 +773,8 @@ CAvatar* CAvatarFileAME::LoadSections(const char* pszFilename, int bsSections) c
 				   pNewAvatar->AssociateFace(skirt, iCurrentFace++);
 			   }
          }
-         // Fix face & vertex associations
-         pNewAvatar->FixAssociations();
+         // Fix face associations
+         pNewAvatar->FixFaceAssociations();
          // Associate torso texture with extra body parts
          int iTorsoTexture = pNewAvatar->TextureIndex(vl5);
          pNewAvatar->AssociateTexture(vt12,iTorsoTexture);
@@ -897,7 +944,8 @@ CAvatar* CAvatarFileAME::LoadSections(const char* pszFilename, int bsSections) c
 			pNewAvatar = NULL;
 		}
 	}
-	return pNewAvatar;
+	return pNewAvatar;*/
+   return NULL;
 }
 
 /*int CAvatarFileAME::LoadBP(int bsSections, const char* pszFilename, CAvatar* pAvatar) const {

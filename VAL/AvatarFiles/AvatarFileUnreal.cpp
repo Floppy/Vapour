@@ -7,7 +7,7 @@
 // AvatarFileUnreal.cpp - 16/2/2000 - James Smith
 //	Unreal export filter implementation
 //
-// $Id: AvatarFileUnreal.cpp,v 1.13 2000/09/02 10:21:06 waz Exp $
+// $Id: AvatarFileUnreal.cpp,v 1.14 2000/10/06 13:16:59 waz Exp $
 //
 
 #include "stdafx.h"
@@ -554,7 +554,7 @@ FRESULT CAvatarFileUnreal::SaveTextureUTX(const char* pszFilename, const CAvatar
             // Unless it is the torso, where we want more detail
             if (t == uTorsoTexIndex) iHeight = iWidth;
             else if (iHeight > iWidth/4) iHeight = iWidth/4;
-            // Scale image to new sie
+            // Scale image to new size
             pSmallerImage->Scale(iWidth,iHeight);
             // Store image data
             m_puFirstPixel[t] = m_uTotalHeight;
@@ -1710,17 +1710,17 @@ FRESULT CAvatarFileUnreal::SaveMeshU(const char* pszFilename, CAvatar* pAvatar) 
             //const STriFace* pFace = &(pFaces[pUTToAvatarFaces[f]]);
             const STriFace* pFace = &(pFaces[f]);
             // Vertex indices
-            pFaceData[f].uVertex0 = pFace->m_iVertices[2];
-            pFaceData[f].uVertex1 = pFace->m_iVertices[1];
-            pFaceData[f].uVertex2 = pFace->m_iVertices[0];
+            pFaceData[f].uVertex0 = pFace->m_sVertices[2].m_iVertex;
+            pFaceData[f].uVertex1 = pFace->m_sVertices[1].m_iVertex;
+            pFaceData[f].uVertex2 = pFace->m_sVertices[0].m_iVertex;
             // Write Flags
             pFaceData[f].uFlags = UNREAL_U_TRI_NORMAL1SIDE;
             // Texture coordinates
             int iTextureNumber = pFace->m_iTextureNumber;
             for (int tc=3; tc--!=0; ) {
                // Get tex coords
-               double dU = pFace->m_sTexCoords[tc].dU;
-               double dV = pFace->m_sTexCoords[tc].dV;
+               double dU = pFace->m_sVertices[tc].m_sTexCoord.dU;
+               double dV = pFace->m_sVertices[tc].m_sTexCoord.dV;
                // Clamp to 0..1
                if (dU > 1) dU = 1;
                else if (dU < 0) dU = 0;
@@ -2791,17 +2791,17 @@ FRESULT CAvatarFileUnreal::SaveMeshU(const char* pszFilename, CAvatar* pAvatar) 
          // Write faces
          for (f=0; f<uNumFaces; f++) {
             // Vertex indices
-            pFaceData[f].uVertex0 = pFaces[f].m_iVertices[2];
-            pFaceData[f].uVertex1 = pFaces[f].m_iVertices[1];
-            pFaceData[f].uVertex2 = pFaces[f].m_iVertices[0];
+            pFaceData[f].uVertex0 = pFaces[f].m_sVertices[2].m_iVertex;
+            pFaceData[f].uVertex1 = pFaces[f].m_sVertices[1].m_iVertex;
+            pFaceData[f].uVertex2 = pFaces[f].m_sVertices[0].m_iVertex;
             // Write Flags
             pFaceData[f].uFlags = UNREAL_U_TRI_NORMAL1SIDE;
             // Texture coordinates
             int iTextureNumber = pFaces[f].m_iTextureNumber;
             for (int tc=3; tc--!=0; ) {
                // Get tex coords
-               double dU = pFaces[f].m_sTexCoords[tc].dU;
-               double dV = pFaces[f].m_sTexCoords[tc].dV;
+               double dU = pFaces[f].m_sVertices[tc].m_sTexCoord.dU;
+               double dV = pFaces[f].m_sVertices[tc].m_sTexCoord.dV;
                // Clamp to 0..1
                if (dU > 1) dU = 1;
                else if (dU < 0) dU = 0;
@@ -3308,9 +3308,9 @@ FRESULT CAvatarFileUnreal::SaveMeshD3D(const char* pszFilename, CAvatar* pAvatar
       const STriFace* pFaces = pAvatar->Faces();
       for (i=0; i<iNumFaces; i++) {
          // Vertex indices
-         unsigned short iVertex0 = pFaces[i].m_iVertices[0];
-         unsigned short iVertex1 = pFaces[i].m_iVertices[1];
-         unsigned short iVertex2 = pFaces[i].m_iVertices[2];
+         unsigned short iVertex0 = pFaces[i].m_sVertices[0].m_iVertex;
+         unsigned short iVertex1 = pFaces[i].m_sVertices[1].m_iVertex;
+         unsigned short iVertex2 = pFaces[i].m_sVertices[2].m_iVertex;
       	osOutputStream.write((char*)&iVertex2,2);
       	osOutputStream.write((char*)&iVertex1,2);
       	osOutputStream.write((char*)&iVertex0,2);
@@ -3324,8 +3324,8 @@ FRESULT CAvatarFileUnreal::SaveMeshD3D(const char* pszFilename, CAvatar* pAvatar
          int iTextureNumber = pFaces[i].m_iTextureNumber;
          for (int tc=3; tc--!=0; ) {
             // Get tex coords
-            double dU = pFaces[i].m_sTexCoords[tc].dU;
-            double dV = pFaces[i].m_sTexCoords[tc].dV;
+            double dU = pFaces[i].m_sVertices[tc].m_sTexCoord.dU;
+            double dV = pFaces[i].m_sVertices[tc].m_sTexCoord.dV;
             // Clamp to 0..1
             if (dU > 1) dU = 1;
             else if (dU < 0) dU = 0;
@@ -3435,9 +3435,9 @@ FRESULT CAvatarFileUnreal::SaveSelectionMeshD3D(const char* pszFilename, CAvatar
       const STriFace* pFaces = pAvatar->Faces();
       for (i=0; i<uNumFaces; i++) {
          // Vertex indices
-         unsigned short iVertex0 = pFaces[i].m_iVertices[0];
-         unsigned short iVertex1 = pFaces[i].m_iVertices[1];
-         unsigned short iVertex2 = pFaces[i].m_iVertices[2];
+         unsigned short iVertex0 = pFaces[i].m_sVertices[0].m_iVertex;
+         unsigned short iVertex1 = pFaces[i].m_sVertices[1].m_iVertex;
+         unsigned short iVertex2 = pFaces[i].m_sVertices[2].m_iVertex;
       	osOutputStream.write((char*)&iVertex2,2);
       	osOutputStream.write((char*)&iVertex1,2);
       	osOutputStream.write((char*)&iVertex0,2);
@@ -3451,8 +3451,8 @@ FRESULT CAvatarFileUnreal::SaveSelectionMeshD3D(const char* pszFilename, CAvatar
          int iTextureNumber = pFaces[i].m_iTextureNumber;
          for (int tc=3; tc--!=0; ) {
             // Get tex coords
-            double dU = pFaces[i].m_sTexCoords[tc].dU;
-            double dV = pFaces[i].m_sTexCoords[tc].dV;
+            double dU = pFaces[i].m_sVertices[tc].m_sTexCoord.dU;
+            double dV = pFaces[i].m_sVertices[tc].m_sTexCoord.dV;
             // Clamp to 0..1
             if (dU > 1) dU = 1;
             else if (dU < 0) dU = 0;

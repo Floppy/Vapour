@@ -7,7 +7,7 @@
 // HalflifeMDL.h - 16/02/2000 - James Smith
 //	Structures and definitions for halflife MDL export
 //
-// $Id: HalflifeMDL.h,v 1.6 2000/08/02 18:05:06 waz Exp $
+// $Id: HalflifeMDL.h,v 1.7 2000/10/06 13:16:59 waz Exp $
 //
 
 #ifndef _VAL_HALFLIFEMDL_
@@ -19,9 +19,12 @@
 #define HL_LOGO_WIDTH       90
 #define HL_LOGO_HEIGHT      23
 
-typedef float HalflifeMDLVector[3];
+#define HL_TEXTURE_WIDTH    256
+#define HL_TEXTURE_HEIGHT   256
 
-struct SHalflifeMDLHeader {
+typedef float HalflifeVector[3];
+
+struct SHalflifeHeader {
    // The magic number for the file type. This is MDLMAGIC
    unsigned long iID;
    // The version number. This is HLMDLVERSION
@@ -31,13 +34,13 @@ struct SHalflifeMDLHeader {
    // The total length of the file
    unsigned long iLength;
    // Ideal eye position
-   HalflifeMDLVector vEyePosition;
+   HalflifeVector vEyePosition;
    // Movement hull
-   HalflifeMDLVector vMin;
-   HalflifeMDLVector vMax;
+   HalflifeVector vMin;
+   HalflifeVector vMax;
    // Bounding box
-   HalflifeMDLVector vBBMin;
-   HalflifeMDLVector vBBMax;
+   HalflifeVector vBBMin;
+   HalflifeVector vBBMax;
      // Flags
    unsigned long iFlags;
    // Number of bones
@@ -92,7 +95,7 @@ struct SHalflifeMDLHeader {
    unsigned long iTransitionChunkOffset;
 };
 
-struct SHalflifeMDLBone {
+struct SHalflifeBone {
    // Name
    char pszName[32];
    // Parent
@@ -100,18 +103,18 @@ struct SHalflifeMDLBone {
    // Bone flags
    unsigned long iFlags;
    // Bonecontroller link
-   long iBoneController[6];
+   long piBoneController[6];
    // Joint centre
-   HalflifeMDLVector vCentre;
+   HalflifeVector vCentre;
    // Joint Rotation
-   HalflifeMDLVector vRotation;
+   HalflifeVector vRotation;
    // Joint centre scale
-   HalflifeMDLVector vCentreScale;
+   HalflifeVector vCentreScale;
    // Joint Rotation scale
-   HalflifeMDLVector vRotationScale;
+   HalflifeVector vRotationScale;
 };    
 
-struct SHalflifeMDLBoneController {
+struct SHalflifeBoneController {
    // Which bone this is attached to
    unsigned long iBone;
    // Type
@@ -126,7 +129,7 @@ struct SHalflifeMDLBoneController {
    unsigned int iIndex;
 };
 
-struct SHalflifeMDLAttachment {
+struct SHalflifeAttachment {
    // Name
    char pszName[32];
    // Type
@@ -134,25 +137,81 @@ struct SHalflifeMDLAttachment {
    // Which bone this attachment is attached to
    unsigned long iBone;
    // Position
-   HalflifeMDLVector vPosition;
+   HalflifeVector vPosition;
    // Vectors??
-   HalflifeMDLVector vVector0;
-   HalflifeMDLVector vVector1;
-   HalflifeMDLVector vVector2;
+   HalflifeVector vVector0;
+   HalflifeVector vVector1;
+   HalflifeVector vVector2;
 };
 
-struct SHalflifeMDLHitbox {
+struct SHalflifeHitbox {
    // Bone
    unsigned long iBone;
    // Group
    unsigned long iGroup;
    // Maximum
-   HalflifeMDLVector vMaximum;
+   HalflifeVector vMaximum;
    // Minimum
-   HalflifeMDLVector vMinimum;
+   HalflifeVector vMinimum;
 };
 
-struct SHalflifeMDLSeqGroup {
+struct SHalflifeSequence {
+   // Sequence name
+	char pszName[32];
+   // frames per second	
+	float	fFPS;
+   // looping/non-looping flags
+	int iFlags;
+   // Activity?
+	int iActivity;
+	int iWeight;
+   // Events
+	int iNumEvents;
+	int iEventOffset;
+   // Number of frames
+	int iNumFrames;
+   // Pivots
+	int iNumPivots;
+	int iPivotOffset;
+   // Motion params
+	int iMotionType;	
+	int iMotionBone;
+	HalflifeVector	vLinearMovement;
+	int iAutoMovePosOffset;
+	int iAutoMoveAngleOffset;
+   // Bounding Box
+	HalflifeVector vBoxMin;
+	HalflifeVector vBoxMax;
+   // Animations
+	int iNumBlends;
+	int iAnimOffset;
+   // Blends
+	int piBlendType[2];
+	float	pfBlendStart[2];
+	float	pfBlendEnd[2];
+	int iBlendParent;
+   // Group
+	int iSeqGroup;
+   // Transition nodes
+	int iEntryNode;
+	int iExitNode;
+	int iNodeFlags;
+	// Next Sequence?
+	int iNextSeq;
+};
+
+struct SHalflifeEvent {
+   // The frame of the event
+	int iFrame;
+   // The event itself
+	int iEvent;
+   // Event type
+	int iType;
+   // Options
+	char pcOptions[64];
+};
+
+struct SHalflifeSeqGroup {
    // Name
    char pszName[32];
    // Filename
@@ -163,7 +222,7 @@ struct SHalflifeMDLSeqGroup {
    unsigned long iData;
 };
 
-struct SHalflifeMDLBodyPart {
+struct SHalflifeBodyPart {
    // Name
    char pszName[64];
    // Number of models
@@ -174,7 +233,7 @@ struct SHalflifeMDLBodyPart {
    unsigned long iModelIndex;
 };
 
-struct SHalflifeMDLModel {
+struct SHalflifeModel {
    // Name
    char pszName[64];
    // Type
@@ -203,7 +262,7 @@ struct SHalflifeMDLModel {
    unsigned long iDeformGroupIndex;
 };
 
-struct SHalflifeMDLMesh {
+struct SHalflifeMesh {
    // Number of triangles
    unsigned long iNumTriangles;
    // Triangle data index
@@ -216,7 +275,7 @@ struct SHalflifeMDLMesh {
    unsigned long iNormalIndex;
 };
 
-struct SHalflifeMDLTexture {
+struct SHalflifeTexture {
    // Name
    char pszName[64];
    // Flags

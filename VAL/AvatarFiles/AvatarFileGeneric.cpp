@@ -4,14 +4,15 @@
 // Vapour Technology All-Purpose Library
 // Copyright 2000 Vapour Technology Ltd.
 //
-// AvatarFileGeneric.cpp - 14/1/2000 - James Smith
-//   Generic avatar loading filter implementation
+// AvatarFileGeneric.cpp - 04/10/2000 - James Smith
+//	Generic avatar import filter implementation
 //
-// $Id: AvatarFileGeneric.cpp,v 1.0 2000/08/29 18:37:29 waz Exp $
+// $Id: AvatarFileGeneric.cpp,v 1.1 2000/10/06 13:16:58 waz Exp $
 //
 
 #include "stdafx.h"
 
+#include "VAL.h"
 #include "AvatarFileGeneric.h"
 #include "AvatarFileProxy.h"
 #include "MathConstants.h"
@@ -28,10 +29,14 @@ static char THIS_FILE[] = __FILE__;
 
 CAvatarFileProxy<CAvatarFileGeneric> g_oAvatarProxyGeneric;
 
-///////////////////////
+//////////////////
 // CAvatarFileGeneric
 
-//#===--- Store Functions
+/////////////////////
+// Member Functions
+
+////////////////////
+// Store Functions
 
 CAvatarFileGeneric::CAvatarFileGeneric() {
 } // CAvatarFileGeneric()
@@ -72,7 +77,8 @@ bool CAvatarFileGeneric::CanFilterLoadBPStream() const {
    return CanLoadBPStream();
 } // CanFilterLoadBPStream();
 
-//#===--- AvatarFile Functions
+////////////////////////
+// AvatarFile Functions
 
 CAvatar* CAvatarFileGeneric::Load(const char* pszFilename) const {
    // Start loading
@@ -252,6 +258,7 @@ CAvatar* CAvatarFileGeneric::Load(const char* pszFilename) const {
          bp_RightForeArm,
          bp_RightHand
       };
+      // Associate vertices
       for (i=0; i<16; i++) {
          BodyPart bpPart = bpParts[i];
          enumBodyPartID amePart= ameParts[i];
@@ -287,15 +294,37 @@ CAvatar* CAvatarFileGeneric::Load(const char* pszFilename) const {
 				   pNewAvatar->AssociateVertex(bpPart, iCurrentVertex++);
 			   }
          }
-         // Associate faces
+      }
+      // Fix vertex associations
+      pNewAvatar->FixVertexAssociations();
+      // Associate faces
+      for (i=0; i<16; i++) {
+         BodyPart bpPart = bpParts[i];
+         enumBodyPartID amePart= ameParts[i];
   			int iNumFaces = AMeModel.NumTrianglesInBodyPart[amePart];
 			int iCurrentFace = AMeModel.FirstTriangleOfBodyPart[amePart];
+         // Associate texture
          pNewAvatar->AssociateTexture(bpPart,pFaces[iCurrentFace].m_iTextureNumber);
-			for (int j=0; j<iNumFaces; j++) {
-				pNewAvatar->AssociateFace(bpPart, iCurrentFace++);
-			}
+         // Associate faces
+         if (bpPart == vl5) {
+            // Deal specially with the torso - we need to split it into 4
+            for (int j=0; j<iNumFaces; j++) {
+               bpPart = unknown;
+               for (int v=0; v<3; v++) {
+                  BodyPart bpVertex = (BodyPart)pNewAvatar->GetVertexPart(pFaces[iCurrentFace].m_sVertices[v].m_iVertex);
+                  if (bpVertex > bpPart) bpPart = bpVertex;
+               }
+      			pNewAvatar->AssociateFace(bpPart, iCurrentFace++);
+   	   	}
+         }
+         else {
+            // Associate faces & textures
+            for (int j=0; j<iNumFaces; j++) {
+   				pNewAvatar->AssociateFace(bpPart, iCurrentFace++);
+	   		}
+         }
       }
-      // Associate skirt faces
+      // Associate skirt faces if skirt exists
   		int iNumBPFaces = AMeModel.NumTrianglesInBodyPart[bp_Skirt];
       if (iNumBPFaces != 0) {
 			int iCurrentFace = AMeModel.FirstTriangleOfBodyPart[bp_Skirt];
@@ -304,8 +333,8 @@ CAvatar* CAvatarFileGeneric::Load(const char* pszFilename) const {
 				pNewAvatar->AssociateFace(skirt, iCurrentFace++);
 			}
       }
-      // Fix face & vertex associations
-      pNewAvatar->FixAssociations();
+      // Fix face associations
+      pNewAvatar->FixFaceAssociations();
       // Associate torso texture with extra body parts
 		int iTorsoTexture = pNewAvatar->TextureIndex(vl5);
 		pNewAvatar->AssociateTexture(vt12,iTorsoTexture);
@@ -418,8 +447,8 @@ CAvatar* CAvatarFileGeneric::Load(const char* pszFilename) const {
 		// Update the model
 		pNewAvatar->UpdateModel();
       // Reset pose
-      //pNewAvatar->ResetPose();
-      //pNewAvatar->UpdateModel();
+      pNewAvatar->ResetPose();
+      pNewAvatar->UpdateModel();
 		// Tell the avatar that loading is complete
 		pNewAvatar->FinishLoad();
  	}

@@ -7,7 +7,7 @@
 // AvatarFileSims.cpp - 16/2/2000 - James Smith
 //	Sims export filter implementation
 //
-// $Id: AvatarFileSims.cpp,v 1.4 2000/08/02 18:05:05 waz Exp $
+// $Id: AvatarFileSims.cpp,v 1.5 2000/10/06 13:16:57 waz Exp $
 //
 
 
@@ -195,18 +195,18 @@ FRESULT CAvatarFileSims::Save(const char* pszFilename, CAvatar* pAvatar) const {
    ////////////////////////////////////////////////////////////////////
 
    // Build Cranium Names
-   char* pszMeshName = new char[8+iNameLength]; //C999MA_avanew
+   char* pszMeshName = new char[8+iNameLength]; //C999MA_name
    pszMeshName[0] = 'C';
    strcpy(pszMeshName+1,"999");
    pszMeshName[4] = cSex;
    pszMeshName[5] = cAge;
    pszMeshName[6] = '_';
    strcpy(pszMeshName+7,pszName);
-   char* pszSkinName = new char[18+strlen(pszMeshName)]; //xskin-C999MA_avanew-HEAD-HEADB
+   char* pszSkinName = new char[18+strlen(pszMeshName)]; //xskin-C999MA_name-HEAD-HEADB
    strcpy(pszSkinName,"xskin-");
    strcpy(pszSkinName+6,pszMeshName);
    strcpy(pszSkinName+6+strlen(pszMeshName),"-HEAD-HEADB");
-   char* pszTextureName = new char[11+iNameLength]; //C999MAlgt_avanew
+   char* pszTextureName = new char[11+iNameLength]; //C999MAlgt_name
    strcpy(pszTextureName,pszMeshName);
    strcpy(pszTextureName+6,pszSkin);
    pszTextureName[9] = '_';
@@ -316,12 +316,12 @@ FRESULT CAvatarFileSims::Save(const char* pszFilename, CAvatar* pAvatar) const {
       // Write texture coordinates
       osCraniumSKNStream << iNumVertices << endl;
       for (i=0; i<iNumFaces; i++) {
-         double dU0 = vFaceList[i]->m_sTexCoords[0].dU;
-         double dU1 = vFaceList[i]->m_sTexCoords[1].dU;
-         double dU2 = vFaceList[i]->m_sTexCoords[2].dU;
-         double dV0 = 1-vFaceList[i]->m_sTexCoords[0].dV;
-         double dV1 = 1-vFaceList[i]->m_sTexCoords[1].dV;
-         double dV2 = 1-vFaceList[i]->m_sTexCoords[2].dV;
+         double dU0 = vFaceList[i]->m_sVertices[0].m_sTexCoord.dU;
+         double dU1 = vFaceList[i]->m_sVertices[1].m_sTexCoord.dU;
+         double dU2 = vFaceList[i]->m_sVertices[2].m_sTexCoord.dU;
+         double dV0 = 1-vFaceList[i]->m_sVertices[0].m_sTexCoord.dV;
+         double dV1 = 1-vFaceList[i]->m_sVertices[1].m_sTexCoord.dV;
+         double dV2 = 1-vFaceList[i]->m_sVertices[2].m_sTexCoord.dV;
          osCraniumSKNStream << dU0 << ' ' << dV0 << endl;
          osCraniumSKNStream << dU1 << ' ' << dV1 << endl;
          osCraniumSKNStream << dU2 << ' ' << dV2 << endl;
@@ -342,7 +342,7 @@ FRESULT CAvatarFileSims::Save(const char* pszFilename, CAvatar* pAvatar) const {
       osCraniumSKNStream << iNumVertices << endl;
       for (i=0; i<iNumFaces; i++) {
          for (int v=0; v<3; v++) {
-            int iVertexIndex = vFaceList[i]->m_iVertices[v];
+            int iVertexIndex = vFaceList[i]->m_sVertices[v].m_iVertex;
             osCraniumSKNStream << (pVertices[iVertexIndex].m_dComponents[1]-dY)*dScale << ' ';
             osCraniumSKNStream << (pVertices[iVertexIndex].m_dComponents[0]-dX)*dScale << ' ';
             osCraniumSKNStream << (pVertices[iVertexIndex].m_dComponents[2]-dZ)*dScale << ' ';
@@ -363,7 +363,7 @@ FRESULT CAvatarFileSims::Save(const char* pszFilename, CAvatar* pAvatar) const {
    delete [] pszMeshName;
    delete [] pszSkinName;
    delete [] pszTextureName;
-   pszMeshName = new char[11+iNameLength]; //B999MAFit_avanew
+   pszMeshName = new char[11+iNameLength]; //B999MAFit_name
    pszMeshName[0] = 'B';
    strcpy(pszMeshName+1,"999");
    pszMeshName[4] = cSex; //(m_iAge == SIMS_CHILD) ? 'U' : cSex;
@@ -371,11 +371,11 @@ FRESULT CAvatarFileSims::Save(const char* pszFilename, CAvatar* pAvatar) const {
    strcpy(pszMeshName+6,pszBuild);
    pszMeshName[9] = '_';
    strcpy(pszMeshName+10,pszName);
-   pszSkinName = new char[20+strlen(pszMeshName)]; //xskin-B999MAFit_avanew-PELVIS-BODY
+   pszSkinName = new char[20+strlen(pszMeshName)]; //xskin-B999MAFit_name-PELVIS-BODY
    strcpy(pszSkinName,"xskin-");
    strcpy(pszSkinName+6,pszMeshName);
    strcpy(pszSkinName+6+strlen(pszMeshName),"-PELVIS-BODY");
-   pszTextureName = new char[14+iNameLength]; //"B999MAFitlgt_avanew
+   pszTextureName = new char[14+iNameLength]; //"B999MAFitlgt_name
    strcpy(pszTextureName,pszMeshName);
    //pszTextureName[4] = cSex;
    strcpy(pszTextureName+9,pszSkin);
@@ -451,7 +451,7 @@ FRESULT CAvatarFileSims::Save(const char* pszFilename, CAvatar* pAvatar) const {
    int iHeight = 0;
    imgTexture.GetSize(iWidth,iHeight);
    if (iWidth==0 || iHeight==0) {
-      ::AfxMessageBox("Could not create merged texture!",MB_ICONERROR|MB_OK);
+      return F_OUT_OF_MEMORY;
    }
    else {
       for (t=0; t<pAvatar->NumTextures(); t++) {
@@ -579,19 +579,19 @@ FRESULT CAvatarFileSims::Save(const char* pszFilename, CAvatar* pAvatar) const {
             pFaceToPartMap[iFace] = bpPart;
             const STriFace* pFace = &pFaces[pBodyParts[bpPart].m_piFaces[f]];
             // Copy vertex indices
-            for (int v=0; v<3; v++) pSubMesh[iFace].m_iVertices[v] = pFace->m_iVertices[v];
+            for (int v=0; v<3; v++) pSubMesh[iFace].m_sVertices[v].m_iVertex = pFace->m_sVertices[v].m_iVertex;
             // Copy texture number and work out texture base positions and sizes
             int t = pSubMesh[iFace].m_iTextureNumber = pFace->m_iTextureNumber;
             double dBaseV = pMinima[t] * dTextureScale;
             double dHeight = (pMaxima[t] - pMinima[t]+1) * dTextureScale;
             // Copy and translate texture coordinates
             for (v=0; v<3; v++) {
-                double dTexCoordV = 1-pFace->m_sTexCoords[v].dV;
+                double dTexCoordV = 1-pFace->m_sVertices[v].m_sTexCoord.dV;
                dTexCoordV *= dHeight;
                dTexCoordV += dBaseV;
                dTexCoordV /= (double)iTextureHeight;
-               pSubMesh[iFace].m_sTexCoords[v].dU = pFace->m_sTexCoords[v].dU ;
-               pSubMesh[iFace].m_sTexCoords[v].dV = dTexCoordV ;
+               pSubMesh[iFace].m_sVertices[v].m_sTexCoord.dU = pFace->m_sVertices[v].m_sTexCoord.dU ;
+               pSubMesh[iFace].m_sVertices[v].m_sTexCoord.dV = dTexCoordV ;
             }
             iFace++;
          }
@@ -601,19 +601,19 @@ FRESULT CAvatarFileSims::Save(const char* pszFilename, CAvatar* pAvatar) const {
                pFaceToPartMap[iFace] = bpPart;
                const STriFace* pFace = &pFaces[pBodyParts[vt4].m_piFaces[f]];
                // Copy vertex indices
-               for (int v=0; v<3; v++) pSubMesh[iFace].m_iVertices[v] = pFace->m_iVertices[v];
+               for (int v=0; v<3; v++) pSubMesh[iFace].m_sVertices[v].m_iVertex = pFace->m_sVertices[v].m_iVertex;
                // Copy texture number and work out texture base positions and sizes
                int t = pSubMesh[iFace].m_iTextureNumber = pFace->m_iTextureNumber;
                double dBaseV = pMinima[t] * dTextureScale;
                double dHeight = (pMaxima[t] - pMinima[t]+1) * dTextureScale;
                // Copy and translate texture coordinates
                for (v=0; v<3; v++) {
-                   double dTexCoordV = 1-pFace->m_sTexCoords[v].dV;
+                  double dTexCoordV = 1-pFace->m_sVertices[v].m_sTexCoord.dV;
                   dTexCoordV *= dHeight;
                   dTexCoordV += dBaseV;
                   dTexCoordV /= (double)iTextureHeight;
-                  pSubMesh[iFace].m_sTexCoords[v].dU = pFace->m_sTexCoords[v].dU ;
-                  pSubMesh[iFace].m_sTexCoords[v].dV = dTexCoordV ;
+                  pSubMesh[iFace].m_sVertices[v].m_sTexCoord.dU = pFace->m_sVertices[v].m_sTexCoord.dU ;
+                  pSubMesh[iFace].m_sVertices[v].m_sTexCoord.dV = dTexCoordV ;
                }
                iFace++;
             }
@@ -631,25 +631,25 @@ FRESULT CAvatarFileSims::Save(const char* pszFilename, CAvatar* pAvatar) const {
          BodyPart bpPart = bpParts[i];
          for (int f=0; f<iNumFaces; f++) {
             for (int v=0; v<3; v++) {
-               BodyPart bpVertexPart = (BodyPart)(pAvatar->GetVertexPart(pSubMesh[f].m_iVertices[v]));
+               BodyPart bpVertexPart = (BodyPart)(pAvatar->GetVertexPart(pSubMesh[f].m_sVertices[v].m_iVertex));
                if (bpVertexPart == bpPart) {
-                  pVertexList[iCurrentVertex] = pSubMesh[f].m_iVertices[v];
+                  pVertexList[iCurrentVertex] = pSubMesh[f].m_sVertices[v].m_iVertex;
                   pVertexMap[(f*3)+v] = iCurrentVertex++;
                }
                else if ((bpPart == vt12) && (bpVertexPart == vt8)){
-                  pVertexList[iCurrentVertex] = pSubMesh[f].m_iVertices[v];
+                  pVertexList[iCurrentVertex] = pSubMesh[f].m_sVertices[v].m_iVertex;
                   pVertexMap[(f*3)+v] = iCurrentVertex++;
                }
                else if ((bpPart == r_elbow) && (bpVertexPart == r_wrist)) {
-                  pVertexList[iCurrentVertex] = pSubMesh[f].m_iVertices[v];
+                  pVertexList[iCurrentVertex] = pSubMesh[f].m_sVertices[v].m_iVertex;
                   pVertexMap[(f*3)+v] = iCurrentVertex++;
                }
                else if ((bpPart == l_elbow) && (bpVertexPart == l_wrist)) {
-                  pVertexList[iCurrentVertex] = pSubMesh[f].m_iVertices[v];
+                  pVertexList[iCurrentVertex] = pSubMesh[f].m_sVertices[v].m_iVertex;
                   pVertexMap[(f*3)+v] = iCurrentVertex++;
                }
                else if ((bpPart == vc7) && (bpVertexPart == skullbase)) {
-                  pVertexList[iCurrentVertex] = pSubMesh[f].m_iVertices[v];
+                  pVertexList[iCurrentVertex] = pSubMesh[f].m_sVertices[v].m_iVertex;
                   pVertexMap[(f*3)+v] = iCurrentVertex++;
                }
             }
@@ -680,8 +680,8 @@ FRESULT CAvatarFileSims::Save(const char* pszFilename, CAvatar* pAvatar) const {
       for (i=0; i<iNumFaces; i++) {
          const STriFace* pFace = &pSubMesh[i];
          for (int v=0; v<3; v++) {
-            pTexCoords[pVertexMap[(i*3)+v]].dU = pFace->m_sTexCoords[v].dU;
-            pTexCoords[pVertexMap[(i*3)+v]].dV = pFace->m_sTexCoords[v].dV;
+            pTexCoords[pVertexMap[(i*3)+v]].dU = pFace->m_sVertices[v].m_sTexCoord.dU;
+            pTexCoords[pVertexMap[(i*3)+v]].dV = pFace->m_sVertices[v].m_sTexCoord.dV;
          }
       }
       for (i=0; i<iNumVertices; i++) {

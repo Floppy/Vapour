@@ -4,10 +4,10 @@
 // Vapour Technology All-Purpose Library
 // Copyright 2000 Vapour Technology Ltd.
 //
-// AvatarFileGeneric.h - 14/1/2000 - James Smith
-//	  Generic avatar loading header
+// AvatarFileGeneric.h - 18/05/2000 - James Smith
+//	Generic avatar import filter header
 //
-// $Id: AvatarFileGeneric.h,v 1.0 2000/08/29 18:37:29 waz Exp $
+// $Id: AvatarFileGeneric.h,v 1.1 2000/10/06 13:16:58 waz Exp $
 //
 
 #pragma once
@@ -19,15 +19,23 @@
 
 #include <fstream.h>
 
-///////////////////////
+//////////////////
 // CAvatarFileGeneric
 
 class CAvatarFileGeneric : public CAvatarFile {
 
+/////////////////////
+// Member Variables
+private:
+
+/////////////////////
+// Member Functions
+private:
+
 public:
 	CAvatarFileGeneric();
 
-   //#===--- Exported Functions
+   // Exported Functions
 	float GetFilterVersion() const;
 	const char* GetFileExtension() const;
 	const char* GetFileTitle() const;
@@ -40,9 +48,9 @@ public:
 
    CAvatar* Load(const char* pszFilename = NULL) const;
 
-   //#===--- AvatarFileProxy Functions
+   // AvatarFileProxy Functions
 	static float GetVersion() {return 0.1F;}
-	static const char* GetTitle() {return ("Generic model");}
+	static const char* GetTitle() {return ("Generic avatar");}
 	static const char* GetExtension() {return ("generic");}
 	static bool CanLoadFile() {return false;}
 	static bool CanLoadStream() {return false;}

@@ -7,7 +7,7 @@
 // AvatarFileHalflife.h - 16/2/2000 - James Smith
 //	Halflife MDL export filter header
 //
-// $Id: AvatarFileHalflife.h,v 1.5 2000/08/02 18:05:06 waz Exp $
+// $Id: AvatarFileHalflife.h,v 1.6 2000/10/06 13:16:59 waz Exp $
 //
 
 #pragma once
@@ -39,15 +39,15 @@ private:
    mutable int m_pReverseCompressedSkeletonMap[TOTAL_NUMBER_BODYPARTS];
    mutable char* m_pcTextureDataChunk;
    mutable char* m_pcTextureIndexChunk;
-   mutable SHalflifeMDLTexture* m_pTextureHeaderChunk;
+   mutable SHalflifeTexture* m_pTextureHeaderChunk;
    mutable char* m_pcMeshDataChunk;
-   mutable SHalflifeMDLMesh* m_pMeshHeaderChunk;
+   mutable SHalflifeMesh* m_pMeshHeaderChunk;
    mutable char* m_pcModelDataChunk;
-   mutable SHalflifeMDLSeqGroup* m_pSeqGroupsChunk;
-   mutable SHalflifeMDLHitbox* m_pHitboxChunk;
-   mutable SHalflifeMDLAttachment* m_pAttachmentChunk;
-   mutable SHalflifeMDLBoneController* m_pBoneControllerChunk;
-   mutable SHalflifeMDLBone* m_pBoneChunk;
+   mutable SHalflifeSeqGroup* m_pSeqGroupsChunk;
+   mutable SHalflifeHitbox* m_pHitboxChunk;
+   mutable SHalflifeAttachment* m_pAttachmentChunk;
+   mutable SHalflifeBoneController* m_pBoneControllerChunk;
+   mutable SHalflifeBone* m_pBoneChunk;
    mutable fstream m_fsDataWJE;
    mutable CWedgie m_oWedgie;
    mutable CAvatarPose* m_pPose;
