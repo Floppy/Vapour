@@ -7,7 +7,7 @@
 // Viewpoint.h
 // 19/03/2002 - James Smith
 //
-// $Id: Viewpoint.h,v 1.7 2002/03/25 14:55:34 vap-james Exp $
+// $Id: Viewpoint.h,v 1.8 2002/03/27 17:51:07 vap-james Exp $
 
 #ifndef __VTSTRUCVIS_VIEWPOINT__
 #define __VTSTRUCVIS_VIEWPOINT__
@@ -54,6 +54,24 @@ public:
 
    bool Redisplay(void);
    // Redisplays the viewpoint in the scene.
+
+   bool GetCurrentPosition(float& fX, float& fY, float& fZ);
+   // Gets the current viewpoint position as a set of numbers
+   // Returns true if successful
+   
+   const char* GetCurrentPosition(void);
+   // Gets the current viewpoint position as a string
+   // Returns NULL on failure.
+   // It is the client's responsibility to delete the memory returned
+   
+   bool GetCurrentOrientation(float& fX, float& fY, float& fZ, float& fA);
+   // Gets the current viewpoint orientation as a set of numbers
+   // Returns true if successful
+
+   const char* GetCurrentOrientation(void);
+   // Gets the current viewpoint orientation as a string
+   // Returns NULL on failure.
+   // It is the client's responsibility to delete the memory returned
 
 //#===--- Member Variables
 protected:

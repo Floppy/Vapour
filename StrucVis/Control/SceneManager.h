@@ -7,7 +7,7 @@
 // SceneManager.h
 // 19/03/2002 - James Smith
 //
-// $Id: SceneManager.h,v 1.11 2002/03/25 14:55:35 vap-james Exp $
+// $Id: SceneManager.h,v 1.12 2002/03/27 17:51:07 vap-james Exp $
 
 #ifndef __VTSTRUCVIS_SCENEMANAGER__
 #define __VTSTRUCVIS_SCENEMANAGER__
@@ -81,6 +81,16 @@ public:
 
    void SetBaseURL(const char* pcURL);
    // Sets the base URL for the auxiliary VRML files
+
+   const char* GetCurrentPosition(void) {return m_oViewpoint.GetCurrentPosition();}
+   // Gets the current viewpoint position as a string
+   // Returns NULL on failure.
+   // It is the client's responsibility to delete the memory returned
+   
+   const char* GetCurrentOrientation(void)  {return m_oViewpoint.GetCurrentOrientation();}
+   // Gets the current viewpoint orientation as a string
+   // Returns NULL on failure.
+   // It is the client's responsibility to delete the memory returned
 
 private:
 

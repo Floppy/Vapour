@@ -7,7 +7,7 @@
 // Viewpoint.cpp
 // 19/03/2002 - James Smith
 //
-// $Id: Viewpoint.cpp,v 1.7 2002/03/25 14:55:34 vap-james Exp $
+// $Id: Viewpoint.cpp,v 1.8 2002/03/27 17:51:07 vap-james Exp $
 
 #include "stdafx.h"
 #include "Viewpoint.h"
@@ -32,6 +32,8 @@ const char pcViewStart[] = " \
       exposedField SFRotation orientation \
       exposedField SFVec3f textPosition \
       exposedField SFBool jump \
+      eventOut     SFVec3f currentPosition \
+      eventOut     SFRotation currentOrientation \
    ] \
    [ \
       \"";
@@ -137,3 +139,47 @@ bool CViewpoint::Redisplay(void) {
 
    return true;
 }
+
+bool CViewpoint::GetCurrentPosition(float& fX, float& fY, float& fZ) {  
+   CCortonaField* poField = m_poNodePtr->GetField("currentPosition");
+   if (poField == NULL) return false;
+   if (!poField->GetSFVec3f(fX,fY,fZ)) return false;
+   poField->Release();
+   delete poField;
+   return true;
+}
+
+const char* CViewpoint::GetCurrentPosition(void) {
+   float pfData[3];
+   // Get position
+   if (!GetCurrentPosition(pfData[0],pfData[1],pfData[2]))
+      return NULL;
+   // Create string
+   char* pcString = new char[50];
+   sprintf(pcString,"%.3g %.3g %.3g",pfData[0],pfData[1],pfData[2]);
+   // Done
+   return pcString;
+}
+
+bool CViewpoint::GetCurrentOrientation(float& fX, float& fY, float& fZ, float& fA) {
+   float pfData[4];
+   CCortonaField* poField = m_poNodePtr->GetField("currentOrientation");
+   if (poField == NULL) return false;
+   if (!poField->GetSFRotation(fX,fY,fZ,fA)) return false;
+   poField->Release();
+   delete poField;
+   return true;
+}
+
+const char* CViewpoint::GetCurrentOrientation(void) {
+   float pfData[4];
+   // Get position
+   if (!GetCurrentOrientation(pfData[0],pfData[1],pfData[2],pfData[3]))
+      return NULL;
+   // Create string
+   char* pcString = new char[77];
+   sprintf(pcString,"%.3g %.3g %.3g %.3g",pfData[0],pfData[1],pfData[2],pfData[3]);
+   // Done
+   return pcString;
+}
+
