@@ -10,7 +10,7 @@
 //! file 		= "VALET/3D/heightfield.test.cpp"
 //! author 		= "James Smith"
 //! date 		= "18/10/2001"
-//! rcsid 		= "$Id: heightfield.test.cpp,v 1.1 2001/10/18 14:01:52 vap-james Exp $"
+//! rcsid 		= "$Id: heightfield.test.cpp,v 1.2 2001/10/18 14:03:35 vap-james Exp $"
 
 //#===--- Includes
 #include "VALET/heightfield.h"
@@ -35,14 +35,14 @@ int main(int argc, char *argv[]) {
    // Fill with random dat
    for (int r=0; r<iNumRows; r++) {
       for (int c=0; c<iNumRows; c++) {
-         oHF.Vertex(r,c) = rand();
+         oHF.Height(r,c) = rand();
       }
    }
 
    // Check access functions
    for (int r=0; r<iNumRows; r++) {
       for (int c=0; c<iNumRows; c++) {
-         if (oHF.Vertex(r,c) != oHF.Vertex(r*iNumRows + c)) bError = true;
+         if (oHF.Height(r,c) != oHF.Vertex(r*iNumRows + c)) bError = true;
       }
    }
    
