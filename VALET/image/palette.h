@@ -14,7 +14,7 @@
 //! author 		= "Warren Moore"
 //! date 		= "17/10/2001"
 //! lib 			= libVALETimage
-//! rcsid 		= "$Id: palette.h,v 1.7 2001/10/18 11:05:56 vap-warren Exp $"
+//! rcsid 		= "$Id: palette.h,v 1.8 2001/10/18 11:22:30 vap-warren Exp $"
 //! userlevel 	= Advanced
 //! docentry 	= "VALET.Image.Palette"
 
@@ -115,7 +115,7 @@ namespace NValet {
       //: Palette hash table
       struct SHashStruct {
          unsigned int m_uEntries;            // Number of entries in this part of the hash
-         SHashEntry *m_psColour;
+         struct SHashEntryStruct *m_psColour;
 
          SHashStruct() {
             m_uEntries = 0;

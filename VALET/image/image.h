@@ -14,7 +14,7 @@
 //! author 		= "Warren Moore"
 //! date 		= "17/10/2001"
 //! lib 			= libVALETimage
-//! rcsid 		= "$Id: image.h,v 1.1 2001/10/18 11:10:41 vap-warren Exp $"
+//! rcsid 		= "$Id: image.h,v 1.2 2001/10/18 11:22:30 vap-warren Exp $"
 //! userlevel 	= Normal
 //! docentry 	= "VALET.Image"
 //! example 	= VALET/image/image.test.cpp
@@ -144,9 +144,11 @@ namespace NValet {
       IRESULT ImportRawImage(unsigned char *pcRaw, bool bWordAlign = false,
                              bool bReversePixels = false, bool bFlip = false);
 	// Import an image from raw data (bounds checking not performed)
-//	IRESULT ImportAMETexture(stAMETexture &sAME);
-	// Import an image from an AME texture structure
 
+/*
+//	IRESULT ImportAMETexture(stAMETexture &sAME);
+	Import an image from an AME texture structure
+*/
    protected:
 
       //: Image Filter Precalculated Weights
@@ -161,11 +163,10 @@ namespace NValet {
          // Inline constructor
 
       };
-      typedef struct SContribStruct SContrib;            // Filter weights typedef
 
       //: List of Filter Weights
    	struct SContribListStruct {
-         SContrib *m_pContrib;
+         struct SContribStruct *m_pContrib;
          int m_iWidth, m_iWindow;
 
          SContribListStruct() {
@@ -173,6 +174,8 @@ namespace NValet {
             m_iWidth = m_iWindow = 0;
          }
       };
+
+      typedef struct SContribStruct SContrib;            // Filter weights typedef
       typedef struct SContribListStruct SContribList;    // Weight List typedef
 
    //:------
@@ -203,10 +206,11 @@ namespace NValet {
       unsigned int* m_pData;              // Pointer to image data
       CImagePalette *m_poPalette;         // pointer to palette object
 
+/*
    //#===--- Friends
-//      friend class CRCOpenGLBufferWin32;
-//      friend class CRCOpenGLWin32;
-
+      friend class CRCOpenGLBufferWin32;
+      friend class CRCOpenGLWin32;
+*/
    };
 
 }

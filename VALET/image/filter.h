@@ -14,8 +14,8 @@
 //! author 		= "Warren Moore"
 //! date 		= "17/10/2001"
 //! lib 			= libVALETimage
-//! rcsid 		= "$Id: filter.h,v 1.2 2001/10/17 22:14:17 vap-warren Exp $"
-//! userlevel 	= Normal
+//! rcsid 		= "$Id: filter.h,v 1.3 2001/10/18 11:22:30 vap-warren Exp $"
+//! userlevel 	= Develop
 //! docentry 	= "VALET.Image.Scaling"
 
 namespace NValet {
