@@ -1,6 +1,8 @@
 #if !defined(AFX_ABOUTDIALOG_H__73BD3682_93A6_11D2_B744_80E203C10000__INCLUDED_)
 #define AFX_ABOUTDIALOG_H__73BD3682_93A6_11D2_B744_80E203C10000__INCLUDED_
 
+#include "StaticLink.h"
+
 #if _MSC_VER >= 1000
 #pragma once
 #endif // _MSC_VER >= 1000
@@ -14,6 +16,7 @@ class CAboutDialog : public CDialog
 {
 private:
 	CBitmapButton m_AboutLogo;
+   CStaticLink m_oVapourLink;
 // Construction
 public:
 	CAboutDialog(CWnd* pParent = NULL);   // standard constructor

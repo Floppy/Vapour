@@ -53,6 +53,9 @@ BOOL CAboutDialog::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 	
+   // Set up static link
+   m_oVapourLink.SubclassDlgItem(IDC_VAPOURTECH_LINK,this);
+
 	// Set up bitmap button
 	VERIFY(m_AboutLogo.AutoLoad(IDC_CREDIT_BUTTON, this));
 	

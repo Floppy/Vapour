@@ -186,14 +186,14 @@ BEGIN
     LTEXT           "(C) 1999 Vapour Technology",IDC_STATIC,45,60,92,8
     CONTROL         "Logo",IDC_CREDIT_BUTTON,"Button",BS_OWNERDRAW | 
                     BS_BITMAP | WS_TABSTOP,7,7,56,14
-    LTEXT           "www.vapourtech.com",IDC_STATIC,45,69,70,8
+    LTEXT           "www.vapourtech.com",IDC_VAPOURTECH_LINK,45,69,70,8
 END
 
 IDD_DIZZY_DIALOG DIALOGEX 0, 0, 331, 135
 STYLE WS_MINIMIZEBOX | WS_POPUP | WS_VISIBLE | WS_CLIPSIBLINGS | WS_CAPTION | 
     WS_SYSMENU
 CAPTION "Dizzy"
-FONT 8, "MS Sans Serif"
+FONT 8, "MS Sans Serif", 0, 0, 0x1
 BEGIN
     LTEXT           "Rotation:",IDC_STATIC,7,9,30,8
     EDITTEXT        IDC_INPUT_BOX,41,6,148,14,ES_AUTOHSCROLL
