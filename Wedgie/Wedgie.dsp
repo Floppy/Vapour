@@ -92,6 +92,10 @@ LINK32=link.exe
 # PROP Default_Filter "cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 # Begin Source File
 
+SOURCE=.\CommandLine.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\Progress.cpp
 # End Source File
 # Begin Source File
@@ -117,6 +121,10 @@ SOURCE=.\WedgieDlg.cpp
 # PROP Default_Filter "h;hpp;hxx;hm;inl"
 # Begin Source File
 
+SOURCE=.\CommandLine.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\Progress.h
 # End Source File
 # Begin Source File
@@ -126,10 +134,6 @@ SOURCE=.\Resource.h
 # Begin Source File
 
 SOURCE=.\StdAfx.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\TOC.h
 # End Source File
 # Begin Source File
 

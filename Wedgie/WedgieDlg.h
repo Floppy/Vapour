@@ -1,14 +1,17 @@
-///////////////////////////////
-// Wedgie - WJE file compiler
+//=======---
+// Wedgie
+//-------
+// Wedgie Archive Compiler
+// Copyright 1999-2000 Vapour Technology Ltd.
 //
-// Copyright 1999 Vapour Technology
-// 02/12/99 - Warren Moore
-// 
-// WedgieDlg.h
+// WedgieDlg.h - 02/12/1999 - Warren Moore
+//	  Main application dialog
+//
+// $Id: WedgieDlg.h,v 1.2 2000/12/03 18:30:04 warren Exp $
 //
 
-#ifndef _WEDGIEDLG_
-#define _WEDGIEDLG_
+#ifndef _WEDGIE_DIALOG_
+#define _WEDGIE_DIALOG_
 
 #pragma once
 
@@ -39,10 +42,11 @@ protected:
 	afx_msg HCURSOR OnQueryDragIcon();
 	afx_msg void OnBrowse();
 	afx_msg void OnStart();
+	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 };
 
 //{{AFX_INSERT_LOCATION}}
 
-#endif // _WEDGIEDLG_
+#endif // _WEDGIE_DIALOG_

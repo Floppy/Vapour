@@ -1,3 +1,15 @@
+//=======---
+// Wedgie
+//-------
+// Wedgie Archive Compiler
+// Copyright 1999-2000 Vapour Technology Ltd.
+//
+// Progress.cpp - 02/12/1999 - Warren Moore
+//	  Compilation progress dialog box
+//
+// $Id: Progress.cpp,v 1.2 2000/12/03 18:31:36 warren Exp $
+//
+
 #include "stdafx.h"
 #include "WedgieApp.h"
 

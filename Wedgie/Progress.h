@@ -1,5 +1,17 @@
-#ifndef _PROGRESS_
-#define _PROGRESS_
+//=======---
+// Wedgie
+//-------
+// Wedgie Archive Compiler
+// Copyright 1999-2000 Vapour Technology Ltd.
+//
+// Progress.h - 02/12/1999 - Warren Moore
+//	  Compilation progress dialog box
+//
+// $Id: Progress.h,v 1.2 2000/12/03 18:31:36 warren Exp $
+//
+
+#ifndef _WEDGIE_PROGRESS_
+#define _WEDGIE_PROGRESS_
 
 #pragma once
 
@@ -42,4 +54,4 @@ public:
 
 //{{AFX_INSERT_LOCATION}}
 
-#endif // _PROGRESS_
+#endif // _WEDGIE_PROGRESS_

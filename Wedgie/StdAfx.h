@@ -1,26 +1,29 @@
-// stdafx.h : include file for standard system include files,
-//  or project specific include files that are used frequently, but
-//      are changed infrequently
+//=======---
+// Wedgie
+//-------
+// Wedgie Archive Compiler
+// Copyright 1999-2000 Vapour Technology Ltd.
+//
+// StdAfx.h - 02/12/1999 - Warren Moore
+//	  Windows includes
+//
+// $Id: StdAfx.h,v 1.2 2000/12/03 18:30:04 warren Exp $
 //
 
-#if !defined(AFX_STDAFX_H__1A80FA6A_A904_11D3_ABFC_0020186162E9__INCLUDED_)
-#define AFX_STDAFX_H__1A80FA6A_A904_11D3_ABFC_0020186162E9__INCLUDED_
+#ifndef _WEDGIE_STDAFX_
+#define _WEDGIE_STDAFX_
 
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
 
-#define VC_EXTRALEAN		// Exclude rarely-used stuff from Windows headers
+#define VC_EXTRALEAN					// Exclude rarely-used stuff from Windows headers
 
-#include <afxwin.h>         // MFC core and standard components
-#include <afxext.h>         // MFC extensions
-#include <afxdtctl.h>		// MFC support for Internet Explorer 4 Common Controls
+#include <afxwin.h>					// MFC core and standard components
+#include <afxext.h>					// MFC extensions
+#include <afxdtctl.h>				// MFC support for Internet Explorer 4 Common Controls
 #ifndef _AFX_NO_AFXCMN_SUPPORT
-#include <afxcmn.h>			// MFC support for Windows Common Controls
+#include <afxcmn.h>					// MFC support for Windows Common Controls
 #endif // _AFX_NO_AFXCMN_SUPPORT
 
-
 //{{AFX_INSERT_LOCATION}}
-// Microsoft Visual C++ will insert additional declarations immediately before the previous line.
 
-#endif // !defined(AFX_STDAFX_H__1A80FA6A_A904_11D3_ABFC_0020186162E9__INCLUDED_)
+#endif // _WEDGIE_STDAFX_

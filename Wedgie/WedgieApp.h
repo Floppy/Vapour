@@ -1,14 +1,17 @@
-///////////////////////////////
-// Wedgie - WJE file compiler
+//=======---
+// Wedgie
+//-------
+// Wedgie Archive Compiler
+// Copyright 1999-2000 Vapour Technology Ltd.
 //
-// Copyright 1999 Vapour Technology
-// 02/12/99 - Warren Moore
-// 
-// WedgieApp.h
+// WedgieApp.h - 02/12/1999 - Warren Moore
+//	  Main application declaration
+//
+// $Id: WedgieApp.h,v 1.2 2000/12/03 18:30:04 warren Exp $
 //
 
-#ifndef _WEDGIE_
-#define _WEDGIE_
+#ifndef _WEDGIE_APP_
+#define _WEDGIE_APP_
 
 #pragma once
 
@@ -18,7 +21,8 @@
 
 #include "resource.h"		// main symbols
 
-#define REGISTRY_KEY	"Wedgie"
+#define REGISTRY_KEY	"vapourtech"
+#define WEDGIE_VERSION "v1.1"
 
 ///////////////
 // CWedgieApp
@@ -39,4 +43,4 @@ public:
 
 //{{AFX_INSERT_LOCATION}}
 
-#endif // _WEDGIE_
+#endif // _WEDGIE_APP_

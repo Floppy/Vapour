@@ -1,10 +1,13 @@
-///////////////////////////////
-// Wedgie - WJE file compiler
+//=======---
+// Wedgie
+//-------
+// Wedgie Archive Compiler
+// Copyright 1999-2000 Vapour Technology Ltd.
 //
-// Copyright 1999 Vapour Technology
-// 02/12/99 - Warren Moore
-// 
-// WedgieDialog.cpp
+// WedgieDlg.cpp - 02/12/1999 - Warren Moore
+//	  Main wedgie dialog box and about box
+//
+// $Id: WedgieDlg.cpp,v 1.3 2000/12/03 18:30:04 warren Exp $
 //
 
 #include "stdafx.h"
@@ -13,6 +16,8 @@
 
 #include "FolderDialog.h"
 #include "Wedgie.h"
+
+#include <string.h>
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -83,6 +88,7 @@ BEGIN_MESSAGE_MAP(CWedgieDlg, CDialog)
 	ON_WM_QUERYDRAGICON()
 	ON_BN_CLICKED(IDC_BROWSE, OnBrowse)
 	ON_BN_CLICKED(IDD_START, OnStart)
+	ON_WM_CREATE()
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
@@ -92,7 +98,7 @@ END_MESSAGE_MAP()
 BOOL CWedgieDlg::OnInitDialog() {
 	CDialog::OnInitDialog();
 
-// Add "About..." menu item to system menu.
+	// Add "About..." menu item to system menu.
 	// IDM_ABOUTBOX must be in the system command range.
 	ASSERT((IDM_ABOUTBOX & 0xFFF0) == IDM_ABOUTBOX);
 	ASSERT(IDM_ABOUTBOX < 0xF000);
@@ -107,13 +113,25 @@ BOOL CWedgieDlg::OnInitDialog() {
 		}
 	}
 
-// Set the icon for this dialog.  The framework does this automatically
-//  when the application's main window is not a dialog
+	// Set the icon for this dialog.  The framework does this automatically
+	//  when the application's main window is not a dialog
 	SetIcon(m_hIcon, TRUE);			// Set big icon
 	SetIcon(m_hIcon, FALSE);		// Set small icon
 	
 	return TRUE;  // return TRUE  unless you set the focus to a control
 } // OnInitDialog
+
+int CWedgieDlg::OnCreate(LPCREATESTRUCT lpCreateStruct) {
+	if (CDialog::OnCreate(lpCreateStruct) == -1)
+		return -1;
+	
+	// Set the window text
+	char pcWindowText[STR_SIZE] = "";
+	sprintf(pcWindowText, "Wedgie Compiler %s (%s)", WEDGIE_VERSION, __DATE__);
+	SetWindowText(pcWindowText);
+
+	return 0;
+} // OnCreate
 
 void CWedgieDlg::OnSysCommand(UINT nID, LPARAM lParam) {
 	if ((nID & 0xFFF0) == IDM_ABOUTBOX) {
@@ -172,7 +190,7 @@ void CWedgieDlg::OnStart() {
 	// Ope the file
 	fstream oFile;
 	oFile.open(strWJEName, ios::out|ios::binary|ios::trunc);
-	if (oFile.bad())
+	if (oFile.fail())
 		return;
 	CWedgie oWedgie;
 	oWedgie.Open(&oFile, m_strDirName, true, false);
@@ -180,3 +198,4 @@ void CWedgieDlg::OnStart() {
 	strMessage.Format("%s created containing %d files", strWJEName, oWedgie.Files());
 	AfxMessageBox(strMessage, MB_OK);
 } // OnStart
+
