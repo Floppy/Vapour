@@ -9,7 +9,7 @@
 //! file      = "Control/BeamElement.cpp
 //! author    = "James Smith"
 //! date      = "19/3/2002"
-//! rcsid     = "$Id: BeamElement.cpp,v 1.32 2002/04/05 08:56:21 vap-warren Exp $"
+//! rcsid     = "$Id: BeamElement.cpp,v 1.33 2002/04/22 10:42:04 vap-james Exp $"
 
 #include "stdafx.h"
 #include "BeamElement.h"
@@ -66,7 +66,7 @@ const char pcBeamStart[] = " \
 bool CBeamElement::Display(const char* pcURL) const {
    // Calculate colours
    float pfColours[6];
-   CalculateColours(pfColours);
+   if (m_bDirtyColour) CalculateColours(pfColours);
    // Calculate node positions
    float pfNodes[6];
    CalculateNodePositions(pfNodes);
@@ -96,6 +96,7 @@ bool CBeamElement::Display(const char* pcURL) const {
       strBeam << " colours [ ";
       for (int c=0; c<6; c++) strBeam << " " << pfColours[c];
       strBeam << " ] ";
+      m_bDirtyColour = false;
       // Setup node positions
       strBeam << " nodes [ ";
       for (int n=0; n<6; n++) strBeam << " " << pfNodes[n];
@@ -137,12 +138,15 @@ bool CBeamElement::Display(const char* pcURL) const {
       }
 
       //#===--- Update colours
-      // Set values
-      if (m_ppoField[1]) {
-         bOK = m_ppoField[1]->SetMFColor(pfColours, 2);
-         // Send event
-         if (bOK && !m_poNodePtr->AssignEventIn("set_colours", *(m_ppoField[1])))
-            bOK = false;
+      if (m_bDirtyColour) {
+         // Set values
+         if (m_ppoField[1]) {
+            bOK = m_ppoField[1]->SetMFColor(pfColours, 2);
+            // Send event
+            if (bOK && !m_poNodePtr->AssignEventIn("set_colours", *(m_ppoField[1])))
+               bOK = false;
+         }
+         m_bDirtyColour = false;
       }
 
       // Done
@@ -177,6 +181,7 @@ void CBeamElement::SetNodes(const unsigned int* piNodes) {
 
 void CBeamElement::SetStresses (const float* pfStresses) const {
    memcpy(m_pfStresses,pfStresses,2*sizeof(float));
+   if (m_oColourScheme == COLOUR_STRESS) m_bDirtyColour = true;
    return;
 }
 

@@ -9,7 +9,7 @@
 //! file      = "Control/Element.h"
 //! author    = "James Smith"
 //! date      = "19/3/2002"
-//! rcsid     = "$Id: Element.h,v 1.25 2002/04/08 00:56:46 vap-warren Exp $"
+//! rcsid     = "$Id: Element.h,v 1.26 2002/04/22 10:42:04 vap-james Exp $"
 
 #ifndef __VTSTRUCVIS_ELEMENT__
 #define __VTSTRUCVIS_ELEMENT__
@@ -52,6 +52,7 @@ public:
       m_iGroup(0),
       m_fMinStress(0.0f),
       m_fMaxStress(1000000.0f),
+      m_bDirtyColour(true),
       m_oColourScheme(COLOUR_GROUP)
    {
          m_pfColour[0] = m_pfColour[1] = m_pfColour[2] = 0.5;
@@ -122,12 +123,16 @@ public:
 
    void SetColour(const float* pfColour) const {
       memcpy(m_pfColour,pfColour,3*sizeof(float));
+      m_bDirtyColour = true;
    }
    //: Manually set a solid colour for the element.
    // This colour is used for the COLOUR_GROUP colouring scheme
 
    void SetColourScheme(TColourScheme oScheme) const {
-      m_oColourScheme = oScheme;
+      if (oScheme != m_oColourScheme) {
+         m_bDirtyColour = true;
+         m_oColourScheme = oScheme;
+      }
    }
    //: Set which colour scheme to use.
 
@@ -162,6 +167,9 @@ protected:
 
    mutable float m_pfColour[3];
    //: A colour for the element
+
+   mutable bool m_bDirtyColour;
+   //: Do we need to change the element colour?
 
    mutable TColourScheme m_oColourScheme;
    //: Which colouring scheme to use

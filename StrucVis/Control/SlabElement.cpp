@@ -9,7 +9,7 @@
 //! file      = "Control/SlabElement.cpp"
 //! author    = "James Smith"
 //! date      = "19/3/2002"
-//! rcsid     = "$Id: SlabElement.cpp,v 1.32 2002/04/05 08:56:21 vap-warren Exp $"
+//! rcsid     = "$Id: SlabElement.cpp,v 1.33 2002/04/22 10:42:05 vap-james Exp $"
 
 #include "stdafx.h"
 #include "SlabElement.h"
@@ -65,7 +65,7 @@ const char pcSlabStart[] = " \
 bool CSlabElement::Display(const char* pcURL) const {
    // Calculate colours
    float pfColours[27];
-   CalculateColours(pfColours);
+   if (m_bDirtyColour) CalculateColours(pfColours);
    // Calculate node positions
    float pfNodes[27];
    CalculateNodePositions(pfNodes);
@@ -92,6 +92,7 @@ bool CSlabElement::Display(const char* pcURL) const {
       strSlab << " colours [ ";
       for (int c=0; c<27; c++) strSlab << " " << pfColours[c];
       strSlab << " ] ";
+      m_bDirtyColour = false;
       // Setup node positions
       strSlab << " nodes [ ";
       for (int n=0; n<27; n++) strSlab << " " << pfNodes[n];
@@ -154,12 +155,15 @@ bool CSlabElement::Display(const char* pcURL) const {
 
       //#===--- Update colours
       // Set values
-      if (m_ppoField[2]) {
-         bOK = m_ppoField[2]->SetMFColor(pfColours, 9);
-         // Send event
-         if (bOK && !m_poNodePtr->AssignEventIn("set_colours", *(m_ppoField[2])))
-            bOK = false;
-      }
+      if (m_bDirtyColour) {
+         if (m_ppoField[2]) {
+            bOK = m_ppoField[2]->SetMFColor(pfColours, 9);
+            // Send event
+            if (bOK && !m_poNodePtr->AssignEventIn("set_colours", *(m_ppoField[2])))
+               bOK = false;
+         }
+         m_bDirtyColour = false;
+      }  
 
       // Done
       return bOK;
@@ -178,6 +182,7 @@ void CSlabElement::SetCracks(unsigned int iLayer, const unsigned char* pcCracks)
 
 void CSlabElement::SetStresses (const float* pfStresses) const {
    memcpy(m_pfStresses, pfStresses, 9*sizeof(float));
+   if (m_oColourScheme == COLOUR_STRESS) m_bDirtyColour = true;
    return;
 }
 
