@@ -6,7 +6,7 @@
 // SlabElement.cpp
 // 19/03/2002 - James Smith
 //
-// $Id: SlabElement.cpp,v 1.7 2002/03/21 14:32:08 vap-warren Exp $
+// $Id: SlabElement.cpp,v 1.8 2002/03/21 14:43:52 vap-james Exp $
 
 #include "stdafx.h"
 #include "SlabElement.h"
@@ -40,6 +40,7 @@ const char pcSlabStart[] = " \
    ] \
    [ \
       \"file://D:\\Vapour\\Dev\\Src\\Research\\CortonaBase\\SlabElement.wrl\" \
+      \"file://D:\\James\\vapour\\dev.local\\src\\Research\\CortonaBase\\SlabElement.wrl\" \
    ] \
    SlabElement { \
 ";
@@ -80,17 +81,7 @@ bool CSlabElement::Display(void) const {
       else return false;
    }
    else {
-      CCortonaField* poTranslation;
-      if (poTranslation = m_poCortona->GetField(*m_poNodePtr,"translation")) {
-         float fX, fY, fZ;
-         poTranslation->GetSFVec3f(fX, fY, fZ);
-         fX += 0.1f;
-         poTranslation->SetSFVec3f(fX, fY, fZ);
-         poTranslation->Release();
-         delete poTranslation;
-         return true;
-      }      
-      return false;
+      return true;
    }
 }
 
@@ -163,7 +154,19 @@ void CSlabElement::CalculateNodePositions(float* pfNodes) const {
    return;
 }
 
-void CSlabElement::SetVisible(bool bVisible) const {
-   // Send eventIn
-   return;
+bool CSlabElement::SetVisible(bool bVisible) const {
+   if (m_poNodePtr!=NULL) {
+      // Create boolean field
+      CCortonaField* pSFBool = m_poCortona->CreateField("SFBool");
+      if (pSFBool==NULL) return false;
+      // Set value
+      pSFBool->SetSFBool(bVisible);
+      // Send event
+      if (!m_poCortona->AssignEventIn(*m_poNodePtr,"set_visible",*pSFBool)) return false;
+      // Done!
+      pSFBool->Release();
+      delete pSFBool;
+      return true;
+   }
+   else return false;
 }

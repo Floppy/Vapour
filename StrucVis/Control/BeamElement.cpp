@@ -6,7 +6,7 @@
 // BeamElement.cpp
 // 19/03/2002 - James Smith
 //
-// $Id: BeamElement.cpp,v 1.7 2002/03/21 14:32:07 vap-warren Exp $
+// $Id: BeamElement.cpp,v 1.8 2002/03/21 14:43:52 vap-james Exp $
 
 #include "stdafx.h"
 #include "BeamElement.h"
@@ -48,6 +48,7 @@ const char pcBeamStart[] = " \
    ] \
    [ \
       \"file://D:\\Vapour\\Dev\\Src\\Research\\CortonaBase\\BeamElement.wrl\" \
+      \"file://D:\\James\\vapour\\dev.local\\src\\Research\\CortonaBase\\BeamElement.wrl\" \
    ] \
    BeamElement { \
 ";
@@ -91,18 +92,7 @@ bool CBeamElement::Display(void) const {
       else return false;
    }
    else {
-      CCortonaField* poField;
-      if (poField = m_poCortona->GetField(*m_poNodePtr,"nodes")) {
-         poField->GetMFVec3f();
-         float fX, fY, fZ;
-         poField->GetMFVec3f(0, fX, fY, fZ);
-         fY -= 0.1f;
-         poField->SetMFVec3f(0, fX, fY, fZ);
-         poField->Release();
-         delete poField;
-         return true;
-      }      
-      return false;
+      return true;
    }
 }
 
@@ -160,7 +150,19 @@ void CBeamElement::CalculateNodePositions(float* pfNodes) const {
    return;
 }
 
-void CBeamElement::SetVisible(bool bVisible) const {
-   // Send eventIn
-   return;
+bool CBeamElement::SetVisible(bool bVisible) const {
+   if (m_poNodePtr!=NULL) {
+      // Create boolean field
+      CCortonaField* pSFBool = m_poCortona->CreateField("SFBool");
+      if (pSFBool==NULL) return false;
+      // Set value
+      pSFBool->SetSFBool(bVisible);
+      // Send event
+      if (!m_poCortona->AssignEventIn(*m_poNodePtr,"set_visible",*pSFBool)) return false;
+      // Done!
+      pSFBool->Release();
+      delete pSFBool;
+      return true;
+   }
+   else return false;
 }
