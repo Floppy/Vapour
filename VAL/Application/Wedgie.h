@@ -7,7 +7,7 @@
 // Wedgie.h - 02/07/2000 - Warren Moore
 //	Creation and reading of compressed Wedgie files
 //
-// $Id: Wedgie.h,v 1.5 2000/07/22 23:23:31 waz Exp $
+// $Id: Wedgie.h,v 1.6 2000/07/31 17:40:58 waz Exp $
 //
 
 #ifndef _VAL_WEDGIE_
@@ -104,9 +104,9 @@ public:
 	WJERESULT Extract(const char *pcEntryName, ofstream &oFileOut);
 
 	//#===--- Read data from a selected file
-	// Opens the selected file. Returns a handle ID
+	// Opens the selected file. Returns a handle ID (-1 if failed)
 	int Open(unsigned int uEntry);
-	// Opens the selected file. Returns a handle ID
+	// Opens the selected file. Returns a handle ID (-1 if failed)
 	int Open(const char *pcEntryName);
 	// Read a block of data from the open file. Returns amount of data read
 	unsigned int Read(int iHandle, unsigned char *pcData, unsigned int uSize);
