@@ -7,7 +7,7 @@
 // SGAToSims.h - 12/06/2000 - Warren Moore
 //	SGA Avatar to The Sims converter wrapper 
 //
-// $Id: SgatoSims.h,v 1.6 2000/08/29 12:47:54 waz Exp $
+// $Id: SgatoSims.h,v 1.7 2000/10/23 19:39:11 waz Exp $
 //
 
 #ifndef _WRAP_SGATOSIMS_
@@ -16,30 +16,7 @@
 #pragma once
 
 #include "Wrapper.h"
-
-//#===--- Defines
-
-// Definitions of class options and arguments
-// Option IDs
-#define SIMS_AGE					5
-#define SIMS_SEX					6
-#define SIMS_SKINTONE			7
-#define SIMS_BUILD				8
-// Option values
-// SIMS_AGE
-#define SIMS_ADULT				1
-#define SIMS_CHILD				2
-// SIMS_SEX
-#define SIMS_MALE					1
-#define SIMS_FEMALE				2
-// SIMS_SKIN
-#define SIMS_LIGHT				1
-#define SIMS_MEDIUM				2
-#define SIMS_DARK					3
-// SIMS_BUILD
-#define SIMS_FIT					1
-#define SIMS_FAT					2
-#define SIMS_SKINNY				3
+#include "AvatarFileSimsOptions.h"
 
 //#===--- Data types
 

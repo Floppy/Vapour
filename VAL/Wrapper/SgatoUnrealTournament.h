@@ -7,7 +7,7 @@
 // SGAToUnrealTournament.h - 12/06/2000 - Warren Moore
 //	SGA Avatar to Unreal Tournament converter wrapper 
 //
-// $Id: SgatoUnrealTournament.h,v 1.4 2000/08/29 13:49:30 waz Exp $
+// $Id: SgatoUnrealTournament.h,v 1.5 2000/10/23 19:39:10 waz Exp $
 //
 
 #ifndef _WRAP_SGATOUNREALTOURNAMENT_
@@ -16,16 +16,7 @@
 #pragma once
 
 #include "Wrapper.h"
-
-//#===--- Defines
-
-// Definitions of class options and arguments
-// Option IDs
-#define UNREAL_SEX			   5
-// Option values
-// UNREAL_SEX
-#define UNREAL_MALE		      1
-#define UNREAL_FEMALE			2
+#include "AvatarFileUnrealOptions.h"
 
 //#===--- Data types
 

@@ -7,7 +7,7 @@
 // AvatarFileSims.h - 5/4/2000 - James Smith
 //	Sims export filter header
 //
-// $Id: AvatarFileSims.h,v 1.4 2000/08/02 18:05:07 waz Exp $
+// $Id: AvatarFileSims.h,v 1.5 2000/10/23 19:39:11 waz Exp $
 //
 
 #pragma once
@@ -17,7 +17,7 @@
 
 #include "AvatarFileStore.h"
 #include "ImageFileStore.h"
-#include "SGAToSims.h"
+#include "AvatarFileSimsOptions.h"
 
 #include <fstream.h>
 

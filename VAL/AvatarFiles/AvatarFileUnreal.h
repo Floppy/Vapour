@@ -7,7 +7,7 @@
 // AvatarFileUnreal.h - 5/4/2000 - James Smith
 //	Unreal export filter header
 //
-// $Id: AvatarFileUnreal.h,v 1.7 2000/08/29 12:48:41 waz Exp $
+// $Id: AvatarFileUnreal.h,v 1.8 2000/10/23 19:39:10 waz Exp $
 //
 
 #pragma once
@@ -16,7 +16,7 @@
 #define _VAL_AVATARFILEUNREAL_
 
 #include "AvatarFileStore.h"
-#include "SGAToUnrealTournament.h"
+#include "AvatarFileUnrealOptions.h"
 #include "Palette.h"
 
 #include <fstream.h>
