@@ -7,7 +7,7 @@
 // WedgieCreate.h - 12/04/2000 - Warren Moore
 //	Wedgie creation class 
 //
-// $Id: WedgieCreate.h,v 1.2 2000/06/17 10:42:03 waz Exp $
+// $Id: WedgieCreate.h,v 1.3 2000/06/17 12:13:17 waz Exp $
 //
 
 #ifndef _VAL_WEDGIECREATE_
@@ -15,9 +15,10 @@
 
 #pragma once
 
+#include "Defs.h"
+
 #include <iostream.h>
 #include <fstream.h>
-#include "ProgressControl.h"
 
 //#===--- Defines
 
@@ -25,6 +26,9 @@
 #define WEDGIE_VER_LOW			0x00
 #define READ_BLOCK_SIZE			1024
 #define HEADER_SIZE						14
+
+#define WJE_TOTAL						"WJECreateTotal"
+#define WJE_FILE						"WJECreateFile"
 
 //////////////////
 // CWedgieCreate
@@ -38,7 +42,7 @@ public:
 	void SetBaseName(const char *pBase);
 	CString GetName();
 	int GetFiles();
-	FRESULT Generate(CProgress &oDlg);
+	FRESULT Generate();
 
 protected:
 //#===--- Internal Structures
@@ -60,7 +64,7 @@ protected:
 	FRESULT GenerateTOC(CString strDir);
 	void DeleteFileList();
 	FRESULT WriteHeader(ofstream &oFile);
-	FRESULT ProcessFiles(ofstream &oFile, CProgress &oDlg);
+	FRESULT ProcessFiles(ofstream &oFile);
 	FRESULT UpdateHeader(ofstream &oFile);
 
 //#===--- Internal Data

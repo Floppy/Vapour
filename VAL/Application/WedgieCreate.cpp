@@ -7,7 +7,7 @@
 // WedgieCreate.cpp - 12/04/2000 - Warren Moore
 //	Wedgie creation class implementation
 //
-// $Id: WedgieCreate.cpp,v 1.2 2000/06/17 10:42:03 waz Exp $
+// $Id: WedgieCreate.cpp,v 1.3 2000/06/17 12:13:17 waz Exp $
 //
 
 #include "stdafx.h"
@@ -16,12 +16,15 @@
 
 #include <string.h>
 #include "CompressDeflate.h"
+#include "ProgressControl.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
 #endif
+
+extern CProgressControl g_oProgressControl;
 
 //////////////////
 // CWedgieCreate
@@ -84,7 +87,7 @@ int CWedgieCreate::Count(CString strDir) {
 	return iCount;
 } // Count
 
-FRESULT CWedgieCreate::Generate(CProgress &oDlg) {
+FRESULT CWedgieCreate::Generate() {
 	ASSERT(m_iFiles > 0);
 // Allocate TOC
 	FRESULT eResult = F_OK;
@@ -120,7 +123,7 @@ FRESULT CWedgieCreate::Generate(CProgress &oDlg) {
 
 // Process the files
 	if (eResult == F_OK) {
-		eResult = ProcessFiles(oFile, oDlg);
+		eResult = ProcessFiles(oFile);
 	}
 
 // Update the header
@@ -218,20 +221,21 @@ FRESULT CWedgieCreate::WriteHeader(ofstream &oFile) {
 	return eResult;
 } // WriteHeader
 
-FRESULT CWedgieCreate::ProcessFiles(ofstream &oFile, CProgress &oDlg) {
+FRESULT CWedgieCreate::ProcessFiles(ofstream &oFile) {
 	FRESULT eResult = F_OK;
 	unsigned char pBuffer[READ_BLOCK_SIZE];
 
 // Process each file in time
 	unsigned int iPos = 0;
 	unsigned long iTotal = 0;
-	oDlg.SetTotalSize(m_iTotalSize);
+
+	g_oProgressControl.SetMaxProgress(WJE_TOTAL, m_iTotalSize);
 	for (int i = 0; i < m_iFiles; i++) {
 	// Set the dialog info
 		iPos = 0;
-		oDlg.SetFileName(m_pFile[i].m_pName);
-		oDlg.SetFileSize(m_pFile[i].m_iOrigSize);
-		oDlg.SetFilePos(iPos);
+		g_oProgressControl.SetText(WJE_FILE, m_pFile[i].m_pName); 
+		g_oProgressControl.SetProgress(WJE_FILE, iPos);
+		g_oProgressControl.SetMaxProgress(WJE_FILE, m_pFile[i].m_iOrigSize);
 	// Set the file offset
 		m_pFile[i].m_iOffset = m_iOffset;
 	// Create the path name
@@ -254,8 +258,8 @@ FRESULT CWedgieCreate::ProcessFiles(ofstream &oFile, CProgress &oDlg) {
 				oDeflate.Input(pBuffer, iRead);
 				iPos += iRead;
 				iTotal += iRead;
-				oDlg.SetFilePos(iPos);
-				oDlg.SetTotalPos(iTotal);
+				g_oProgressControl.SetProgress(WJE_FILE, iPos);
+				g_oProgressControl.SetProgress(WJE_TOTAL, iTotal);
 			}
 		// Finish it all off
 			oDeflate.End();
