@@ -14,7 +14,7 @@
 //! author 		= "Warren Moore"
 //! date 		= "17/10/2001"
 //! lib 			= libVALETimage
-//! rcsid 		= "$Id: image.h,v 1.5 2001/10/21 15:53:22 vap-warren Exp $"
+//! rcsid 		= "$Id: image.h,v 1.6 2001/10/24 22:02:00 vap-warren Exp $"
 //! userlevel 	= Normal
 //! docentry 	= "VALET.Image"
 //! example 	= VALET/image/image.test.cpp
@@ -23,7 +23,7 @@
 #include "VALET/valet.h"
 #include "VALET/palette.h"
 
-namespace NValet {
+namespace NVALET {
 
    enum IMAGE_TYPE {
       IT_UNKNOWN = 0,

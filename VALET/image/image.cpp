@@ -15,9 +15,9 @@
 //! author		= "Warren Moore"
 //! date			= "17/10/2001"
 //! lib 			= libVALETimage
-//! rcsid		= "$Id: image.cpp,v 1.3 2001/10/24 17:37:19 vap-warren Exp $"
+//! rcsid		= "$Id: image.cpp,v 1.4 2001/10/24 22:02:00 vap-warren Exp $"
 
-namespace NValet {
+namespace NVALET {
 
    //#===--- CImage
 
