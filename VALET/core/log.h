@@ -14,13 +14,13 @@
 //! author 		= "Warren Moore"
 //! date 		= "23/09/2001"
 //! lib 			= libVALETcore
-//! rcsid 		= "$Id: log.h,v 1.2 2001/10/09 20:44:30 vap-james Exp $"
+//! rcsid 		= "$Id: log.h,v 1.3 2001/10/17 00:22:46 vap-warren Exp $"
 //! userlevel 	= Normal
 //! docentry 	= "VALET.Core.Log"
 //! example 	= VALET/core/log.test.cpp
 
 //#===--- Includes
-#include "../arch/valet.h"
+#include "valet.h"
 #include "logmanager.h"
 
 #include <string.h>

@@ -10,11 +10,10 @@
 //! file 		= "VALET/core/log.test.cpp"
 //! author 		= "Warren Moore"
 //! date 		= "23/09/2001"
-//! lib 			= libVALETcore
-//! rcsid 		= "$Id: log.test.cpp,v 1.2 2001/10/09 20:44:30 vap-james Exp $"
+//! rcsid 		= "$Id: log.test.cpp,v 1.3 2001/10/17 00:22:47 vap-warren Exp $"
 
 //#===--- Includes
-#include "../arch/valet.h"
+#include "log_test.h"
 #include "logmanager.h"
 #include "log.h"
 
@@ -24,7 +23,7 @@
 using namespace NValet;
 	
 //#===--- Defines
-#define LOOP_MAX 1000
+#define LOOP_MAX 5
 
 //#===--- Globals
 // Instance of the global log manager (located in namespace NValet)
@@ -32,7 +31,7 @@ NValet::CLogManager NValet::g_oLogManager(true);
 
 //#===--- Test Functions
 
-void AddOne(int &x) {
+void AddOne(int x) {
 	CLog oLog("test", "AddOne");
 	register int i = LOOP_MAX;
 	while (i--) {
@@ -45,15 +44,24 @@ void AddOne(int &x) {
 
 int main(int argc, char *argv[]) {
 
+	// Init
+	if (!test_init()) {
+		return -1;
+	}
+	
 	// Set the log attributes
 	NValet::g_oLogManager.SetLog("test", true, 0);
 
 	// Start the loop test
-	printf("Starting test...\n");
 	int x = 0;
 	AddOne(x);
 
-	// Don't cause 'make test' to fail the test
-	return 0;
+	bool bOk = true;
+	// Confirm the log results output
+
+	// Shutdown
+	test_exit();
+	
+	return bOk ? 0 : -1;
 }
 

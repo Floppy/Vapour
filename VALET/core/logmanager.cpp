@@ -11,7 +11,7 @@
 //! author		= "Warren Moore"
 //! date			= "23/09/2001"
 //! lib 			= libVALETcore
-//! rcsid		= "$Id: logmanager.cpp,v 1.2 2001/10/09 20:44:30 vap-james Exp $"
+//! rcsid		= "$Id: logmanager.cpp,v 1.3 2001/10/17 00:22:47 vap-warren Exp $"
 
 //#===--- Includes
 #include "logmanager.h"
@@ -64,7 +64,6 @@ namespace NValet {
 
 	int CLogManager::CheckType(const char *pcType) {
 		ASSERT(pcType);
-		printf("Checking...\n");
 		// Loop through each entry
 		register int i = LMGR_MAX;
 		int iFound = -1, iFree = -1;
@@ -125,7 +124,6 @@ namespace NValet {
 		// Copy it over
 		strcpy(m_ppcType[iID], pcType);
 		// Return the handle
-		printf("LogManager::Open '%s' (%d)\n", pcType, iID);
 		return iID;
 	} // CLogManager::Open
 
@@ -133,7 +131,6 @@ namespace NValet {
 		ASSERT((iID >= 0) && (iID < LMGR_MAX));
 		ASSERT(m_ppcType[iID] != NULL);
 		ASSERT(m_poHandle[iID] != NULL);
-		printf("LogManager::Close (%d)\n", iID);
 		// Delete the allocate memory
 		delete [] m_ppcType[iID];
 		delete m_poHandle[iID];
