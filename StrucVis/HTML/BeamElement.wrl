@@ -21,6 +21,7 @@ PROTO BeamElement [
          coord DEF COORD Coordinate {}
          color DEF COLOR Color {}             
          colorPerVertex TRUE
+         solid FALSE
          coordIndex [
             0 12 1 -1
             1 12 13 -1
