@@ -43,18 +43,18 @@ BEGIN
     LTEXT           "http://www.vapourtech.com/",IDC_VAPOUR_URL,32,61,169,8
 END
 
-IDD_WJESFX_DIALOG DIALOGEX 0, 0, 203, 62
+IDD_WJESFX_DIALOG DIALOGEX 0, 0, 211, 63
 STYLE DS_MODALFRAME | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
 EXSTYLE WS_EX_APPWINDOW
 CAPTION "Vapour Technology Installer"
 FONT 8, "MS Sans Serif"
 BEGIN
-    DEFPUSHBUTTON   "&Install",IDOK,76,41,50,14
-    PUSHBUTTON      "&Quit",IDCANCEL,145,41,50,14
-    PUSHBUTTON      "&About",IDC_ABOUT,7,41,50,14
+    DEFPUSHBUTTON   "&Install",IDOK,80,42,50,14
+    PUSHBUTTON      "&Quit",IDCANCEL,154,42,50,14
+    PUSHBUTTON      "&About",IDC_ABOUT,7,42,50,14
     CTEXT           "Click Install to install your avatar into a game",
-                    IDC_MAIN_TEXT,24,18,156,10
-    GROUPBOX        "A Game Avatar Installer",IDC_MAIN_BOX,7,6,189,27
+                    IDC_MAIN_TEXT,13,18,184,9
+    GROUPBOX        "A Game Avatar Installer",IDC_MAIN_BOX,7,6,197,27
 END
 
 
@@ -119,9 +119,9 @@ BEGIN
     IDD_WJESFX_DIALOG, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 196
+        RIGHTMARGIN, 204
         TOPMARGIN, 6
-        BOTTOMMARGIN, 55
+        BOTTOMMARGIN, 56
     END
 END
 #endif    // APSTUDIO_INVOKED
@@ -160,20 +160,19 @@ LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_UK
 // Dialog
 //
 
-IDD_CREDITS_DIALOG DIALOG DISCARDABLE  0, 0, 170, 103
+IDD_CREDITS_DIALOG DIALOG DISCARDABLE  0, 0, 178, 103
 STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Credits..."
 FONT 8, "MS Sans Serif"
 BEGIN
-    DEFPUSHBUTTON   "OK",IDOK2,59,87,50,14
-    CTEXT           "James Smith and Warren Moore",IDC_STATIC,19,26,130,8
-    CTEXT           "AvatarMe to A Game Convertor",IDC_CREDITS_EXPORT,19,16,
-                    130,8
-    CTEXT           "Installer uses zlib compression",IDC_STATIC,19,65,130,8
-    CTEXT           "Warren Moore",IDC_STATIC,19,50,130,8
-    CTEXT           "A Game Avatar Installer",IDC_CREDITS_INSTALL,19,40,130,
-                    8
-    GROUPBOX        "Vapour Technology Ltd.",IDC_STATIC,2,2,166,80
+    DEFPUSHBUTTON   "OK",IDOK2,63,87,50,14
+    CTEXT           "James Smith and Warren Moore",IDC_STATIC,23,26,130,8
+    CTEXT           "AvatarMe to A Game Converter",IDC_CREDITS_EXPORT,8,16,
+                    162,8
+    CTEXT           "Installer uses zlib compression",IDC_STATIC,23,65,130,8
+    CTEXT           "Warren Moore",IDC_STATIC,23,50,130,8
+    CTEXT           "A Game Avatar Installer",IDC_CREDITS_INSTALL,8,40,162,8
+    GROUPBOX        "Vapour Technology Ltd.",IDC_STATIC,2,2,174,80
 END
 
 IDD_PROGRESS DIALOG DISCARDABLE  0, 0, 186, 39
@@ -199,7 +198,7 @@ BEGIN
     IDD_CREDITS_DIALOG, DIALOG
     BEGIN
         LEFTMARGIN, 2
-        RIGHTMARGIN, 168
+        RIGHTMARGIN, 176
         TOPMARGIN, 2
         BOTTOMMARGIN, 101
     END

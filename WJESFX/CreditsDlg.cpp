@@ -7,7 +7,7 @@
 // CreditsDlg.cpp - 11/07/2000 - Warren Moore
 //	Credits dialog box
 //
-// $Id: CreditsDlg.cpp,v 1.2 2000/07/11 19:20:27 waz Exp $
+// $Id: CreditsDlg.cpp,v 1.3 2000/07/14 19:56:45 waz Exp $
 //
 
 #include "stdafx.h"
@@ -45,7 +45,7 @@ BOOL CCreditsDialog::OnInitDialog() {
 	
 	// Set the correct game text
 	CString strTemp;
-	strTemp.Format("AvatarMe to '%s' Avatar Convertor", GAME_NAME);
+	strTemp.Format("AvatarMe to '%s' Avatar Converter", GAME_NAME);
 	SetDlgItemText(IDC_CREDITS_EXPORT, strTemp);
 	strTemp.Format("'%s' Avatar Installer", GAME_NAME);
 	SetDlgItemText(IDC_CREDITS_INSTALL, strTemp);
