@@ -7,7 +7,7 @@
 // DataManager.h
 // 19/03/2002 - James Smith
 //
-// $Id: DataManager.h,v 1.7 2002/03/27 01:34:04 vap-james Exp $
+// $Id: DataManager.h,v 1.8 2002/03/27 02:20:38 vap-james Exp $
 
 #ifndef __VTSTRUCVIS_DATAMANAGER__
 #define __VTSTRUCVIS_DATAMANAGER__
@@ -135,10 +135,13 @@ protected:
    // The root chunk of the file. 
    // Contains the complete TOC.
 
+   CChunk* m_pChunk;
+   // Temporary chunk storage
+
    enum TIOState {
       INIT,
       VALID,
-      SETUP,
+      LOADING,
       READY
    } m_oState;
 

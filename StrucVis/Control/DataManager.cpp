@@ -7,7 +7,7 @@
 // DataManager.cpp
 // 19/03/2002 - James Smith
 //
-// $Id: DataManager.cpp,v 1.11 2002/03/27 01:34:04 vap-james Exp $
+// $Id: DataManager.cpp,v 1.12 2002/03/27 02:20:38 vap-james Exp $
 
 #include "stdafx.h"
 #include "DataManager.h"
@@ -293,7 +293,8 @@ float g_fMaxStress = 100;
 typedef std::vector<CDataManager::CGroup>::iterator grpIter;
 
 CDataManager::CDataManager() :
-   m_oState(INIT)
+   m_oState(INIT),
+   m_pChunk(NULL)
 {
 }
 
@@ -332,21 +333,26 @@ bool CDataManager::Setup(const unsigned char* pcData, unsigned int iLength) {
       else {
          pcData += iUsed;
          iLength -= iUsed;
-         m_oState = SETUP;
+         m_oState = LOADING;
       }
    }
 
 
    // Read setup data
-   if (m_oState == SETUP) {
-      //if (m_pChunk == NULL) m_pChunk = new CChunk();
-      //if (!m_pChunk.CreateChunk(pcData,iLength)) return false;
-      // else
-      m_oState = READY;
+   if (m_oState == LOADING) {
+      if (m_pChunk == NULL) m_pChunk = new CChunk();
+      if (!m_pChunk->CreateChunk(pcData,iLength)) return false;
+      else m_oState = READY;
    }
 
    // Load data if we're ready to
    if (m_oState == READY) {
+
+      if (m_pChunk->Type() != SETUP) {
+         delete m_pChunk;
+         m_pChunk = NULL;
+         return false;
+      }
 
       // Create groups
       for (int i=0; i<g_iNumGroups; i++) {
@@ -359,8 +365,8 @@ bool CDataManager::Setup(const unsigned char* pcData, unsigned int iLength) {
          m_oGroups.push_back(oGroup);
       }
 
-      //delete m_pChunk;
-      //m_pChunk = NULL;
+      delete m_pChunk;
+      m_pChunk = NULL;
    }
 
    /*// Is this the first lump of data?
@@ -428,13 +434,21 @@ bool CDataManager::FrameInfo(unsigned int iFrame, unsigned int& iOffset, unsigne
 
 bool CDataManager::LoadFrame(const unsigned char* pcData, unsigned int iLength) {
    // Load frame data from passed memory chunk
-   //m_pcBuffer = new unsigned char
+   if (m_pChunk == NULL) m_pChunk = new CChunk();
+   if (!m_pChunk->CreateChunk(pcData,iLength) || m_pChunk->Type() != FRAME) {
+      delete m_pChunk;
+      m_pChunk = NULL;
+      return false;
+   }
 
    // Load temperature data
    for (int i=0; i<g_iNumGroups; i++) {
       m_oGroups[i].m_fTemperature = g_pfGroupTemps[m_iCurrentFrame][i];
    }
-   
+
+   delete m_pChunk;
+   m_pChunk = NULL;
+
    // Done
    return true;
 }
