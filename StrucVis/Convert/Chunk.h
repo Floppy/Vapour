@@ -9,7 +9,7 @@
 //! file      = "Convert/Chunk.h"
 //! author    = "James Smith"
 //! date      = "19/3/2002"
-//! rcsid     = "$Id: Chunk.h,v 1.6 2002/04/03 11:15:11 vap-james Exp $"
+//! rcsid     = "$Id: Chunk.h,v 1.7 2002/04/03 23:06:44 vap-james Exp $"
 
 #ifndef __VTSTRUCVIS_CHUNK__
 #define __VTSTRUCVIS_CHUNK__
@@ -20,6 +20,7 @@
 
 using namespace std;
 
+//: Chunk Types
 enum TChunkType {
    CHUNK_NONE     = 0xFF,
    CHUNK_ROOT     = 0x00,
@@ -45,101 +46,150 @@ enum TChunkType {
    CHUNK_CRACKS   = 0x26,
 };
 
+//: A data chunk
+// This class provides an interface to a VSV file data chunk.
+
 class CChunk {
 
 public:
 
+   //:-------------------------
+   //: Construction/Destruction
+
    CChunk(TChunkType oType = CHUNK_NONE);
-   // Constructor
-   // If type is specified, a chunk of that type is created.
-   // Otherwise, the chunk will take on the type of the 
-   // data loaded into it.
+   //: Constructor
+   //!param: oType - if specified, a chunk of that type is created. Otherwise, the chunk takes it's type from the data loaded into it.
 
    CChunk(const CChunk& oChunk);
-   // Copy constructor
+   //: Copy constructor
    // Copies chunk data into a new chunk.
    // Does NOT perform a deep copy of subchunks.
+   //!param: oChunk - The chunk to copy.
 
    ~CChunk();
-   // Destructor
+   //: Destructor
+
+   //:---------
+   //: Data I/O
 
    bool Read(CInputData& oInput);
-   // Reads chunk data from the input file
+   //: Read chunk data from the input file
+   // The chunk will load the next set of data from the file as appropriate.
+   //!param: oInput - The input data class.
 
    TChunkType Type(void) const {return m_oType;}
-   // The type of the chunk
+   //: The type of the chunk
 
    unsigned int Length(void) const {return m_iLength;}
-   // Gets the length of the chunk
+   //: The length of the chunk data
 
    bool AddSubChunk(const CChunk* pSubChunk);
-   // Adds a subchunk to this chunk.
+   //: Add a subchunk.
+   //!param: pSubChunk - the subchunk to add
+   //!param: return - true if successful
 
    const CChunk* SubChunk(TChunkType oType) const;
-   // Get a subchunk with the specified type
+   //: Get a subchunk with the specified type
 
    bool Write(ofstream& oOutput) const;
+   //: Write to stream
    // Writes the chunk and it's children to the output stream.
    // The output stream should have ios:binary set.
 
    unsigned int Frame(void) const {return m_iFrame;}
-   // Gets the frame number
+   //: The frame number of the chunk
 
    bool CreateFrameInfoChunk(CInputData& oInput);
-   // Creates a frame info chunk using the input data
+   //: Creates a frame info chunk from the input data
+   //!param: oInput - The input data class.
 
    bool CreateGroupChunk(CInputData& oInput);
-   // Creates a group info chunk using the input data
+   //: Creates a group info chunk using the input data
+   //!param: oInput - The input data class.
 
    bool CreateStressChunk(CInputData& oInput);
-   // Creates a stress range chunk using the input data
+   //: Creates a stress range chunk using the input data
+   //!param: oInput - The input data class.
+
+   //:----------------
+   //: Data Processing
 
    void AddDisplacements(float* pfDisplacements);
+   //: Add node displacments
    // Adds the passed displacements onto the displacements stored in the chunk.
    // Only works on CHUNK_NODEDISP chunks.
-   // After the addition, the resultant data is stored in pfDisplacements.
+   //!param: pfDisplacements - and array of floating-point values to add to the chunk data. After the addition, the resultant data is stored back into pfDisplacements.
 
    unsigned int NumNodes(void) const;
-   // How many nodes are there in the chunk?
-   // Only works on CHUNK_NODES chunks
+   //: How many nodes are there in the chunk?
+   // Only works on CHUNK_NODES chunks.
 
    void ZeroDisplacements(void);
-   // Zeroes displacement values for CHUNK_NODEDISP chunks.
+   //: Zeroes displacement values 
+   // Only works on CHUNK_NODEDISP chunks.
 
 private:
 
    TChunkType TranslateType(const char* pcType);
-   // Translates a string into a chunk type
+   //: Translates a string into a chunk type
 
    bool ReadNodes(CInputData& oInput);
+   //: Read a CHUNK_NODES chunk from input
+   //!param: oInput - The input data class.
+
    bool ReadBeamSizes(CInputData& oInput);
+   //: Read a CHUNK_BEAMSIZE chunk from input
+   //!param: oInput - The input data class.
+
    bool ReadSlabSizes(CInputData& oInput);
+   //: Read a CHUNK_SLABSIZE chunk from input
+   //!param: oInput - The input data class.
+
    bool ReadBeams(CInputData& oInput);
+   //: Read a CHUNK_BEAMS chunk from input
+   //!param: oInput - The input data class.
+
    bool ReadSlabs(CInputData& oInput);
+   //: Read a CHUNK_SLABS chunk from input
+   //!param: oInput - The input data class.
+
    bool ReadTemps(CInputData& oInput);
+   //: Read a CHUNK_TEMP chunk from input
+   //!param: oInput - The input data class.
+
    bool ReadNodeDisplacements(CInputData& oInput);
+   //: Read a CHUNK_NODEDISP chunk from input
+   //!param: oInput - The input data class.
+
    bool ReadBeamForces(CInputData& oInput);
+   //: Read a CHUNK_BEAMFORC chunk from input
+   //!param: oInput - The input data class.
+
    bool ReadSlabForces(CInputData& oInput);
+   //: Read a CHUNK_SLABFORC chunk from input
+   //!param: oInput - The input data class.
+
    bool ReadCracks(CInputData& oInput);
-   // Read a particular type of chunk data from the current input data section
+   //: Read a CHUNK_CRACKS chunk from input
+   //!param: oInput - The input data class.
 
 protected:
 
    vector<const CChunk*> m_oSubChunks;
-   // A list of subchunks
+   //: A list of subchunks
 
    TChunkType m_oType;
-   // The type of the chunk.
+   //: The type of the chunk.
    
    int m_iFrame;
-   // The frame number of the chunk
+   //: The frame number of the chunk
    // A value of 0 means this is a setup chunk.
 
    unsigned char* m_pcData;
-   // Raw chunk data
+   //: Raw chunk data
 
    unsigned int m_iLength;
-   // Length of chunk data
+   //: Length of chunk data
 };
 
 #endif //__VTSTRUCVIS_CHUNK__
