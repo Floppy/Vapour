@@ -7,7 +7,7 @@
 // ColourQuant.cpp - 26/12/1999 - Warren Moore
 //	Colour quantiser implementation
 //
-// $Id: ColourQuant.cpp,v 1.2 2000/06/17 10:42:19 waz Exp $
+// $Id: ColourQuant.cpp,v 1.3 2000/08/06 19:21:47 waz Exp $
 //
 
 #include "StdAfx.h"
@@ -22,34 +22,37 @@ static char THIS_FILE[]=__FILE__;
 #define new DEBUG_NEW
 #endif
 
+/////////////////
+// CColourQuant
+
 CColourQuant::CColourQuant() {
 	m_oPalette.SetSize(0);
 	m_iColours = 0;
-	m_pOctree = NULL;
+	m_poOctree = NULL;
 	m_bGenerated = false;
 } // Constructor
 
 CColourQuant::~CColourQuant() {
-	if (m_pOctree)
-		delete m_pOctree;
+	if (m_poOctree)
+		delete m_poOctree;
 } // Destructor
 
 //#===--- Setup
+
 void CColourQuant::SetSize(int iNum) {
-	ASSERT(m_pOctree == NULL);
-// Set the palette size
+	// Clear the quantiser
+	if (m_poOctree)
+		Clear();
+	// Set the palette size
 	m_oPalette.SetSize(iNum);
-// Create the colour octree
+	// Create the colour octree
 	NEWBEGIN
-	m_pOctree = new CColourOctree();
+	m_poOctree = new CColourOctree();
 	NEWEND("CColourQuant::SetSize - Colour octree")
-	if (m_pOctree) {
+	if (m_poOctree) {
 		m_iColours = 0;
 		m_bGenerated = false;
 	}
-// Clear the lists
-	for (int i = 0; i < 8; i++)
-		m_oJointList[i].Clear();
 } // SetSize
 
 int CColourQuant::GetSize() const {
@@ -57,19 +60,16 @@ int CColourQuant::GetSize() const {
 } // GetSize
 
 void CColourQuant::Clear() {
-// Clear the palette
+	// Clear the palette
 	m_oPalette.Clear();
-// Set the params
+	// Set the params
 	m_iColours = 0;
 	m_bGenerated = false;
-// Delete the colour octree
-	if (m_pOctree) {
-		delete m_pOctree;
-		m_pOctree = NULL;
+	// Delete the colour octree
+	if (m_poOctree) {
+		delete m_poOctree;
+		m_poOctree = NULL;
 	}
-// Clear the lists
-	for (int i = 0; i < 8; i++)
-		m_oJointList[i].Clear();
 } // Clear
 
 CImagePalette *CColourQuant::GetPalette() {
@@ -81,79 +81,57 @@ void CColourQuant::AddColour(unsigned long uColour) {
 	if (m_bGenerated)
 		return;
 
-	ASSERT(m_pOctree);
-// Add the colour to the colour cube (and reverse pixel format)
+	ASSERT(m_poOctree);
+	// Add the colour to the colour cube (and reverse pixel format)
 	m_cR = (unsigned char)uColour;
 	m_cG = (unsigned char)(uColour >> 8);
 	m_cB = (unsigned char)(uColour >> 16);
-	PlaceColour(*m_pOctree);
+	PlaceColour(*m_poOctree);
+	// Keep to the set amount of colours
+	if (m_iColours > m_oPalette.GetSize())
+		ReduceColour();
 } // AddColour
-
-void CColourQuant::CreateLists() {
-	if (m_bGenerated)
-		return;
-
-	ASSERT(m_pOctree);
-// Clear list
-	for (unsigned char c = 0; c < 8; c++) 
-		m_oJointList[c].Clear();
-
-// Traverse tree
-	FindJoint(128, *m_pOctree);
-} // CreateLists
-
-void CColourQuant::ClearLists() {
-// Clear list
-	for (unsigned char c = 0; c < 8; c++) 
-		m_oJointList[c].Clear();
-} // ClearLists
 
 void CColourQuant::ReduceColour() {
 	if (m_bGenerated)
 		return;
 
-	unsigned char cLevel = 7;
-// Find the lowest joint list with entries
-	while (m_oJointList[cLevel].Empty()) {
-//		ASSERT(cLevel != 0);
-		cLevel--;
-	}
+	// Find the most suitable colour to remove
+	CColourOctree *poBest = m_poOctree;
+	FindBest(*m_poOctree, poBest);
+	ASSERT(poBest != m_poOctree);
 
-// Get the best octant
-	int iLowest = 0;
-	CColourOctree &oOctant = m_oJointList[cLevel].FindBest(iLowest);
-	m_iColours -= (oOctant.NumSet() - 1);
+	// Set the correct number of colours left
+	m_iColours -= (poBest->SumSet() - 1);
 
-// Remove the best option from the octree
-	unsigned char cNode = 255;
-	CColourOctree &oParent = oOctant.GetParent(cNode);
-	ASSERT(&oParent != m_pOctree);
-	if (&oParent != m_pOctree) {
-		ASSERT(iLowest > 0);
-		oParent.Kill(cNode);
-		oParent.SetVal(cNode, iLowest);
-	}
+	// Get the octants parent
+	unsigned char cNode = 255; // An invalid node number
+	CColourOctree &oParent = poBest->GetParent(cNode);
+	// Find the number of hits to set
+	int iHits = poBest->SumVals();
+	oParent.Kill(cNode);
+	oParent.SetVal(cNode, iHits);
 } // Reduce
 
 int CColourQuant::MatchColour(unsigned long uColour) {
 	if (!m_bGenerated)
 		return 0;
 
-	ASSERT(m_pOctree);
-// Find the colour in the cube (and reverse pixel format)
+	ASSERT(m_poOctree);
+	// Find the colour in the cube (and reverse pixel format)
 	m_cR = (unsigned char)uColour;
 	m_cG = (unsigned char)(uColour >> 8);
 	m_cB = (unsigned char)(uColour >> 16);
-	return FindColour(*m_pOctree);
+	return FindColour(*m_poOctree);
 } // MatchColour
 
 void CColourQuant::GeneratePalette() {
 	if (m_bGenerated == true)
 		return;
 
-	ASSERT(m_pOctree);
-// Generate the palette entries
-	GenerateColour(*m_pOctree);
+	ASSERT(m_poOctree);
+	// Generate the palette entries
+	GenerateColour(*m_poOctree);
 
 	m_bGenerated = true;
 } // GeneratePalette
@@ -163,46 +141,39 @@ void CColourQuant::GeneratePalette() {
 void CColourQuant::PlaceColour(CColourOctree &oOctant) {
 	unsigned char cNode = oOctant.GetNode(m_cR, m_cG, m_cB);
 	unsigned char cSize = oOctant.Size();
-// If not at max level, reach the furthest possible depth
-	if ((cSize > 1)) {
-	// If the child isn't active, inc value (if set), or spawn new child
+	// Try to reach the furthest possible depth, unless colours already set
+	if (cSize > 1) {
+		// If the child isn't active, inc value (if set), or spawn new child
 		if (!oOctant.NodeActive(cNode)) {
 			if (!oOctant.IsSet(cNode)) {
-			// Spawn a new octant and follow it down
+				// Spawn a new octant and follow it down
 				oOctant.Spawn(cNode);
 				PlaceColour(oOctant.GetChild(cNode));
 			}
 		}
-	// If the child is active, follow it down
+		// If the child is active, follow it down
 		else {
 			PlaceColour(oOctant.GetChild(cNode));
 		}
 	}
-// If at bottom of tree, add a hit
+	// If at bottom of tree, add a hit
 	else {
-	// Add a colour if first hit on new segment
-		if (!oOctant.IsSet(cNode)) {
+		// Add a colour if first hit on new segment
+		if (!oOctant.IsSet(cNode))
 			m_iColours++;
-			oOctant.SetVal(cNode, 1);
-		// Keep to the set amount of colours
-			if (m_iColours > m_oPalette.GetSize()) {
-				CreateLists();
-				ReduceColour();
-				ClearLists();
-			}
-		}
+		// Increment the colour value
+		oOctant.IncVal(cNode);
 	}
 } // PlaceColour
 
 void CColourQuant::GenerateColour(CColourOctree &oOctant) {
 	unsigned char cMask = 0x01;
-
 	for (unsigned char cNode = 0; cNode < 8; cNode++) {
-	// Follow the octree down
+		// Follow the octree down
 		if (oOctant.NodeActive(cNode)) {
 			GenerateColour(oOctant.GetChild(cNode));
 		}
-	// Otherwise find the colour of the octant, and set the palette index
+		// Otherwise find the colour of the octant, and set the palette index
 		else {
 			if (oOctant.IsSet(cNode)) {
 				unsigned char cR, cG, cB;
@@ -219,43 +190,50 @@ int CColourQuant::FindColour(CColourOctree &oOctant) {
 	unsigned char cNode = oOctant.GetNode(m_cR, m_cG, m_cB);
 	int iIndex = 0;
 
-// Follow the octree down
+	// Follow the octree down
 	if (oOctant.NodeActive(cNode)) {
 		iIndex = FindColour(oOctant.GetChild(cNode));
 	}
-// Otherwise get the palette index entry
+	// Otherwise get the palette index entry
 	else {
-//		ASSERT(oOctant.IsSet(cNode));
 		iIndex = oOctant.GetVal(cNode) - 1;
-//		ASSERT(iIndex < m_iSize);
 	}
 
 	return iIndex;
 } // FindColour
 
-void CColourQuant::FindJoint(unsigned char cSize, CColourOctree &oOctant) {
-	unsigned char cMask = 0x01;
-	for (unsigned char cNode = 0; cNode < 8; cNode++) {
-		if (oOctant.Reducible()) {
-			AddJoint(cSize, oOctant);
-		}
-		if (oOctant.NodeActive(cNode)) {
-			FindJoint(cSize >> 1, oOctant.GetChild(cNode));
-		}
+void CColourQuant::FindBest(CColourOctree &oOctant, CColourOctree *&poBest) {
+	int iCurSet = oOctant.SumSet();
+	// Is the octant reducible?
+	if (iCurSet > 1) {
+		int iCurSize = oOctant.Size();
+		int iBestSize = poBest->Size();
+		// Only check octants of the same size or smaller
+		if (iCurSize <= iBestSize)
+			// If this octant is smaller, it qualifies
+			if (iCurSize < iBestSize)
+				poBest = &oOctant;
+			else {
+				// Only check octants with same number of hits or less
+				int iBestSet = poBest->SumSet();
+				if (iCurSet <= iBestSet) {
+					// If this octant has less colours, it qualifies
+					if (iCurSet < iBestSet)
+						poBest = &oOctant;
+					else
+						// This octant qualifies if it has less hits
+						if (oOctant.SumVals() < poBest->SumVals())
+							poBest = &oOctant;
+				}
+			}
 	}
-} // FindJoint
 
-//#===--- Joint Functions
-
-void CColourQuant::AddJoint(unsigned char cSize, CColourOctree &oOctant) {
-//	ASSERT(cSize > 0);
-// Calculate level
-	unsigned char cLevel = 7;
-	while ((cSize & 0x01) == 0) {
-		cLevel--;
-		cSize >>= 1;
+	unsigned char cNode = 0;
+	while (cNode < 8) {	
+		// Follow the octree down
+		if (oOctant.NodeActive(cNode))
+			FindBest(oOctant.GetChild(cNode), poBest);
+		cNode++;
 	}
-//	ASSERT(cLevel < 8);
-// Add joint!
-	m_oJointList[cLevel].AddOctant(oOctant);
-} // AddJoint
+} // FindBest
+
