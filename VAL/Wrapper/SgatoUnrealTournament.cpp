@@ -7,7 +7,7 @@
 // SGAToUnrealTournament.cpp - 12/06/2000 - Warren Moore
 //	SGA Avatar to Unreal Tournament converter wrapper 
 //
-// $Id: SgatoUnrealTournament.cpp,v 1.7 2000/09/22 11:42:54 waz Exp $
+// $Id: SgatoUnrealTournament.cpp,v 1.8 2000/10/26 08:49:54 waz Exp $
 //
 
 #include "StdAfx.h"
@@ -24,8 +24,8 @@
 
 //#===--- Internal Defines
 
-#define VEM_GAMENAME				"Unreal Tournament"
-#define VEM_VERSION				"1.0"
+#define VEM_GAMENAME			"Unreal Tournament"
+#define VEM_VERSION				"1.1"
 #define VEM_WJENAME				"utdata.wje"
 #define VEM_SFXNAME				"utsfx.exe"
 
