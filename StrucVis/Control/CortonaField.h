@@ -7,7 +7,7 @@
 // CortonaField.h
 // 12/03/2002 - Warren Moore
 //
-// $Id: CortonaField.h,v 1.7 2002/03/22 10:42:29 vap-james Exp $
+// $Id: CortonaField.h,v 1.8 2002/03/22 12:25:45 vap-warren Exp $
 
 #ifndef __CORTONAFIELD__
 #define __CORTONAFIELD__
@@ -36,7 +36,6 @@ public:
    // Release the field object
 
    //--- MFVec3f Functions
-   // These access functions could be extensively improved
 
    bool GetMFVec3f(const long liIndex, float &fX, float &fY, float &fZ);
    // Returns the X, Y, Z values at the specified index
@@ -51,7 +50,6 @@ public:
    // Appends the X, Y, Z triplet to the end of the vector list
 
    //--- SFVec3f Functions
-   // These access functions could be extensively improved
 
    bool GetSFVec3f(float &fX, float &fY, float &fZ);
    // Returns the X, Y, Z values
@@ -66,6 +64,9 @@ public:
 
    bool SetMFColor(const long liIndex, const float fR, const float fG, const float fB);
    // Sets the RGB colour values
+
+   bool AddMFColor(const float fR, const float fG, const float fB);
+   // Appends the RGB colour values
 
    //--- SFBool
 
@@ -82,6 +83,17 @@ public:
 
    bool SetSFRotation(const float fX, const float fY, const float fZ, const float fAngle);
    // Sets the rotation value
+
+   //--- MFVec3f Functions
+
+   bool GetMFInt32(const long liIndex, long &liValue);
+   // Returns the value at the specified index
+
+   bool SetMFInt32(const long liIndex, const long liValue);
+   // Sets the value at the specified index
+
+   bool AddMFInt32(const long liValue);
+   // Appends the value to the end of the list
 
 protected:
 
