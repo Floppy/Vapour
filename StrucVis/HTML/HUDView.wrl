@@ -1,6 +1,4 @@
 #VRML V2.0 utf8
-
-#VRML V2.0 utf8
 #=============---
 # Arup Simulation Visualisation System
 #-------------
@@ -9,7 +7,7 @@
 # HUDView.wrl
 # 19/03/2002 - James Smith
 #
-# $Id: HUDView.wrl,v 1.1 2002/03/22 19:05:51 vap-james Exp $
+# $Id: HUDView.wrl,v 1.2 2002/03/22 19:08:36 vap-james Exp $
 
 PROTO HUDView [
    eventIn      SFBool set_bind
