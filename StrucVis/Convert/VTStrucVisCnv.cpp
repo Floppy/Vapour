@@ -7,7 +7,7 @@
 // StrucVisCnv.cpp
 // 19/03/2002 - James Smith
 //
-// $Id: VTStrucVisCnv.cpp,v 1.1 2002/03/26 00:51:54 vap-james Exp $
+// $Id: VTStrucVisCnv.cpp,v 1.2 2002/03/27 15:30:33 vap-james Exp $
 
 #include <iostream>
 #include <vector>
@@ -105,7 +105,7 @@ int main(int argc, char* argv[]) {
 
    // Output root chunk to file
    ofstream oOutput(argv[2],ios::binary);
-   oOutput << "ASV" << static_cast<char>(1);
+   oOutput << "VSV" << static_cast<char>(1);
    oRoot.Write(oOutput);
    oOutput.close();
 
