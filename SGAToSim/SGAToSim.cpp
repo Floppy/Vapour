@@ -8,7 +8,7 @@
 //	Main application source for command-line parsing, 
 //  export and progress bar updates
 //
-// $Id: SGAToSim.cpp,v 1.3 2000/07/11 14:21:48 waz Exp $
+// $Id: SGAToSim.cpp,v 1.4 2000/07/14 19:57:25 waz Exp $
 //
 
 // Pre-compiled header include
@@ -39,7 +39,9 @@ extern CProgressControl g_oProgressControl;
 
 int main(int argc, char **argv) {
 	// Create the VAL management object
+	NEWBEGIN
 	g_poVAL = (CVAL*) new CVALWin32;
+	NEWEND("main() - VAL management object")
 	if (!g_poVAL)
 		return -1;
 
@@ -196,14 +198,20 @@ VARESULT SetOptions(CCommandLine &oCmdLine, CSGAToSims &oSimsExport) {
 	// If none specified, set the working directory
 		char pcWorkingDir[STR_SIZE] = "";
 		if (!pcTemp) {
-			if (GetModuleFileName( NULL, pcWorkingDir, STR_SIZE) == 0)
-				return VA_ERROR;
-			char *pch;
-			pch = (pcWorkingDir + strlen(pcWorkingDir) - 1);
-			while( *pch != '\\' )
-				pch--;
-			*pch = '\0';
-			pcTemp = pcWorkingDir;
+			// Get the app directory
+			pcTemp = g_poVAL->GetAppDir();
+			if (!pcTemp)
+				return VA_DIRECTORY_ERROR;
+
+			// Create the temp path
+			char pcCurrDir[STR_SIZE];
+			strcpy(pcCurrDir, pcTemp);
+			strcat(pcCurrDir, "sims_temp");
+			if (_mkdir(pcCurrDir) == -1 )
+				if (errno != EEXIST)
+					return VA_DIRECTORY_ERROR;
+
+			pcTemp = pcCurrDir;
 		}
 	// Find a suitable working directory
 		char pcPath[STR_SIZE] = "";

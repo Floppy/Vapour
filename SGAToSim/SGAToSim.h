@@ -8,20 +8,19 @@
 //	Main application function definitions for command-line parsing, 
 //  export and progress bar update
 //
-// $Id: SGAToSim.h,v 1.1 2000/06/16 21:56:30 waz Exp $
+// $Id: SGAToSim.h,v 1.2 2000/07/14 19:57:25 waz Exp $
 //
 
-#ifndef _SGATOSIM_EXE_
-#define _SGATOSIM_EXE_
+#ifndef _SGATOSIM_
+#define _SGATOSIM_
 
 #pragma once
 
-// VAL Includes
+//#===--- VAL Includes
 #include "CommandLine.h"
 #include "SGAToSims.h"
 
-// Defines
-#define STR_LENGTH		256
+//#===--- Defines
 #define MAX_PROCESSES	256
 
 // Main application function
@@ -36,4 +35,4 @@ void Output(const char *pcText);
 // An example progress bar updating function
 void Progress(double dPercent);
 
-#endif // _SGATOSIM_EXE_
+#endif // _SGATOSIM_
