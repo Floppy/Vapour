@@ -247,6 +247,7 @@ SOURCE=.\Shelley.idl
 
 !ELSEIF  "$(CFG)" == "VTStrucVis - Win32 Debug"
 
+# PROP Exclude_From_Build 1
 # SUBTRACT MTL /mktyplib203
 
 !ELSEIF  "$(CFG)" == "VTStrucVis - Win32 Unicode Debug"
