@@ -13,13 +13,15 @@
 //! author 		= "James Smith"
 //! date 		= "15/10/2001"
 //! lib 		= libVALET3d
-//! rcsid 		= "$Id: mesh.h,v 1.4 2001/10/15 19:51:38 vap-james Exp $"
+//! rcsid 		= "$Id: mesh.h,v 1.5 2001/10/15 20:08:51 vap-james Exp $"
 //! userlevel 	        = Normal
 //! docentry 	        = "VALET.3D.Surface Representations"
 
 //#===--- Includes
 #include "../arch/valet.h"
 #include "material.h"
+
+#include <vector>
 
 namespace NValet {
 
@@ -32,12 +34,19 @@ namespace NValet {
 
   protected:
 
-    // Predeclare CEdge for the next two classes to use.
+    // Predeclare private classes
     class CEdge;
+    class CFace;
+    class CVertex;
+    
+    // Iterator typedefs
+    typedef vector<CEdge>::iterator   EdgeIter;
+    typedef vector<CFace>::iterator   FaceIter;
+    typedef vector<CVertex>::iterator VertIter;
 
     //: A face in a winged-edge mesh
     class CFace {
-      CEdge* m_pEdge;
+      EdgeIter m_pEdge;
       //: The first incident edge on this face
     };
     
@@ -45,29 +54,38 @@ namespace NValet {
     class CVertex {
       int m_iIndex;
       //: Vertex index
-      CEdge* m_pEdge;
+      EdgeIter m_pEdge;
       //: The first incident edge on this vertex
     };
 
     //: An edge in a winged-edge mesh
     class CEdge {
-      CVertex* m_pStart;
+      VertIter m_pStart;
       //: The starting vertex
-      CVertex* m_pEnd;
+      VertIter m_pEnd;
       //: The ending vertex
-      CFace*   m_pLeft;
+      FaceIter m_pLeft;
       //: The left face
-      CFace*   m_pRight;
+      FaceIter m_pRight;
       //: The right face
-      CEdge*   m_pPrevLeft;
+      EdgeIter m_pPrevLeft;
       //: The previous edge in a left traverse
-      CEdge*   m_pNextLeft;
+      EdgeIter m_pNextLeft;
       //: The next edge in a left traverse
-      CEdge*   m_pPrevRight;
+      EdgeIter m_pPrevRight;
       //: The previous edge in a right traverse
-      CEdge*   m_pNextRight;
+      EdgeIter m_pNextRight;
       //: The next edge in a right traverse
     };
+
+    vector<CEdge> m_oEdgeList;
+    //: The edge list.
+    
+    vector<CFace> m_oFaceList;
+    //: The face list.
+
+    vector<CVertex> m_oVertexList;
+    //: The vertex list.
 
     CMaterial m_oMaterial;
     //: Surface material
