@@ -9,7 +9,7 @@
 //! file      = "Control/VTStrucVisCtl.cpp"
 //! author    = "Warren Moore"
 //! date      = "5/3/2002"
-//! rcsid     = "$Id: VTStrucVisCtl.cpp,v 1.27 2002/04/04 11:01:38 vap-warren Exp $"
+//! rcsid     = "$Id: VTStrucVisCtl.cpp,v 1.28 2002/04/05 08:56:22 vap-warren Exp $"
 
 #include "stdafx.h"
 #include "VTStrucVis.h"
@@ -346,6 +346,8 @@ CVTStrucVisCtl::CVTStrucVisCtl() :
 // Destructor
 CVTStrucVisCtl::~CVTStrucVisCtl() {
    ExitCortona();
+   if (m_pbVisibleGroup)
+      delete [] m_pbVisibleGroup;
 }
 
 /////////////////////

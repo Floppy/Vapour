@@ -9,7 +9,7 @@
 //! file      = "Control/SlabElement.cpp"
 //! author    = "James Smith"
 //! date      = "19/3/2002"
-//! rcsid     = "$Id: SlabElement.cpp,v 1.31 2002/04/04 11:01:37 vap-warren Exp $"
+//! rcsid     = "$Id: SlabElement.cpp,v 1.32 2002/04/05 08:56:21 vap-warren Exp $"
 
 #include "stdafx.h"
 #include "SlabElement.h"
@@ -135,9 +135,7 @@ bool CSlabElement::Display(const char* pcURL) const {
       //#===--- Update node positions
       // Set values
       if (m_ppoField[0]) {
-         for (int i=0; i<9 && bOK; i++) {
-            bOK = m_ppoField[0]->SetMFVec3f(i, pfNodes[(i*3)], pfNodes[(i*3)+1], pfNodes[(i*3)+2]);
-         }      
+         bOK = m_ppoField[0]->SetMFVec3f(pfNodes, 9);
          // Send event
          if (bOK && !m_poNodePtr->AssignEventIn("set_nodes", *(m_ppoField[0])))
             bOK = false;
@@ -157,9 +155,7 @@ bool CSlabElement::Display(const char* pcURL) const {
       //#===--- Update colours
       // Set values
       if (m_ppoField[2]) {
-         for (int i=0; i<9 && bOK; i++) {
-            bOK = m_ppoField[2]->SetMFColor(i, pfColours[(i*3)], pfColours[(i*3)+1], pfColours[(i*3)+2]);
-         }      
+         bOK = m_ppoField[2]->SetMFColor(pfColours, 9);
          // Send event
          if (bOK && !m_poNodePtr->AssignEventIn("set_colours", *(m_ppoField[2])))
             bOK = false;

@@ -9,7 +9,7 @@
 //! file      = "Control/CortonaField.h"
 //! author    = "Warren Moore"
 //! date      = "12/3/2002"
-//! rcsid     = "$Id: CortonaField.h,v 1.15 2002/04/04 19:55:03 vap-warren Exp $"
+//! rcsid     = "$Id: CortonaField.h,v 1.16 2002/04/05 08:56:21 vap-warren Exp $"
 
 #ifndef __VTSTRUCVIS_CORTONAFIELD__
 #define __VTSTRUCVIS_CORTONAFIELD__
@@ -68,7 +68,7 @@ public:
    //!param: fZ - Reference to Z value returned
    //!return: true if successful
 
-   bool GetMFVec3f();
+   bool TestMFVec3f();
    //: Get all MFVec3f values
    // Experimental function using an undocumented interface to manipulate entire MF field array
    //!todo: Add return parameters - Not implemented as not used enough
@@ -81,6 +81,14 @@ public:
    //!param: fX - X value
    //!param: fY - Y value
    //!param: fZ - Z value
+   //!return: true if successful
+
+   bool SetMFVec3f(const float *pfVal, const unsigned int uLen);
+   //: Set all MFVec3f values
+   // Try to speed up SetMFVec3f by passing an entire array to the function at once,
+   // although triplets are passed individually internally
+   //!param: pfVal - Pointer to array of X,Y,Z triplets
+   //!param: uLen - Numer of colours in array
    //!return: true if successful
 
    bool AddMFVec3f(const float fX, const float fY, const float fZ);
@@ -125,6 +133,14 @@ public:
    //!param: fR - Red value
    //!param: fG - Blue value
    //!param: fB - Green value
+   //!return: true if successful
+
+   bool SetMFColor(const float *pfVal, const unsigned int uLen);
+   //: Set all MFColor values
+   // Try to speed up SetMFColor by passing an entire array to the function at once,
+   // although triplets are passed individually internally
+   //!param: pfVal - Pointer to array of color triplets
+   //!param: uLen - Numer of colours in array
    //!return: true if successful
 
    bool AddMFColor(const float fR, const float fG, const float fB);
@@ -209,6 +225,16 @@ protected:
 
    IFieldObject *m_pField;       //: The field interface
    FTYPE m_eType;                //: The field type
+
+   union TUInterface {
+      IMFColorObject *m_pMFColor;
+      IMFVec3fObject *m_pMFVec3f;
+      ISFVec3fObject *m_pSFVec3f;
+      IMFInt32Object *m_pMFInt32;
+      ISFBoolObject *m_pSFBool;
+      ISFRotationObject *m_pSFRotation;
+      IMFStringObject *m_pMFString;
+   } m_uInterface;               //: Specific field interfaces
 
 };
 
