@@ -4,12 +4,19 @@
 #include "stdafx.h"
 #include "Dizzy.h"
 #include "DizzyDialog.h"
+#include "Registry.h"
+
+// VAL
+#include "Val.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
 #endif
+
+// VAL management object
+CVAL *g_poVAL = NULL;
 
 /////////////////////////////////////////////////////////////////////////////
 // CDizzyApp
@@ -39,36 +46,47 @@ CDizzyApp theApp;
 /////////////////////////////////////////////////////////////////////////////
 // CDizzyApp initialization
 
-BOOL CDizzyApp::InitInstance()
-{
-	// Standard initialization
-	// If you are not using these features and wish to reduce the size
-	//  of your final executable, you should remove from the following
-	//  the specific initialization routines you do not need.
+BOOL CDizzyApp::InitInstance() {
 
+   // Enable 3D Controls
 #ifdef _AFXDLL
-	Enable3dControls();			// Call this when using MFC in a shared DLL
+	Enable3dControls();
 #else
-	Enable3dControlsStatic();	// Call this when linking to MFC statically
+	Enable3dControlsStatic();
 #endif
 
-	// Set registry key
-	SetRegistryKey("vapourtech");
-	const char* pszAppName = "Dizzy";
+	CRegistry oReg;
+   int iPrecision, iOnTop;
 
-	CDizzyDialog dlg;
+	// Load registry settings
+   oReg.OpenKey(CURRENT_USER, "Software\\vapourtech\\Dizzy", true);
+   iPrecision = oReg.ReadInt("Precision", 2);
+   iOnTop = oReg.ReadInt("OnTop", 0);
+	oReg.CloseKey();
+	
+   // Create dialog
+   CDizzyDialog dlg;
 	m_pMainWnd = &dlg;
 
-	dlg.SetSettings(GetProfileInt(pszAppName, "Precision", 2),GetProfileInt(pszAppName, "OnTop", 0));
+   // Set information in main dialog
+	dlg.SetSettings(iPrecision,iOnTop);
 
+   // Display dialog
 	dlg.DoModal();
 
-	// Save precision to registry
-	int iPrecision, iOnTop;
-	dlg.GetSettings(&iPrecision, &iOnTop);
-	int success = WriteProfileInt(pszAppName, "Precision", iPrecision);
-	success &= WriteProfileInt(pszAppName, "OnTop", iOnTop);
-	if (!success) AfxMessageBox("Could not save settings!");
+   // Retrieve settings from dialog
+   dlg.GetSettings(&iPrecision, &iOnTop);
 
+	// Save registry settings
+   if (oReg.OpenKey(CURRENT_USER, "Software\\vapourtech\\Dizzy", false)) {
+      oReg.WriteInt("Precision", iPrecision);
+      oReg.WriteInt("OnTop", iOnTop);
+	   oReg.CloseKey();
+   }
+   else {
+      ::AfxMessageBox("Could not save registry settings!",MB_ICONERROR|MB_OK);
+   }
+	
+   // Finised, so return false
 	return FALSE;
 }
