@@ -7,7 +7,7 @@
 // Scalar.cpp - 18/05/2000 - James Smith
 //	Scalar value class implementation
 //
-// $Id: NumericEdit.cpp,v 1.1 2000/08/13 11:05:43 waz Exp $
+// $Id: NumericEdit.cpp,v 1.2 2000/11/29 17:28:10 james Exp $
 //
 
 // Windows includes/defines
@@ -31,11 +31,13 @@ static char THIS_FILE[]=__FILE__;
 /////////////////
 // CNumericEdit
 
-CNumericEdit::CNumericEdit() {
-	iNumEntries = 1;
-} //CNumericEdit()
+CNumericEdit::CNumericEdit(int iNumEntries) {
+	SetOptions(iNumEntries);
+   return;
+} //CNumericEdit(int iNumEntries)
 
 CNumericEdit::~CNumericEdit() {
+   return;
 } //~CNumericEdit()
 
 //#===--- MFC Message Handling
@@ -43,12 +45,12 @@ CNumericEdit::~CNumericEdit() {
 BEGIN_MESSAGE_MAP(CNumericEdit, CEdit)
 	//{{AFX_MSG_MAP(CNumericEdit)
 	ON_WM_CHAR()
+   ON_MESSAGE(WM_PASTE, OnPaste)
 	//}}AFX_MSG_MAP
-    ON_MESSAGE(WM_PASTE, OnPaste)
 END_MESSAGE_MAP()
 
 void CNumericEdit::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags) {
-	if (validChar(nChar)) {
+	if (IsValid(nChar)) {
 		CEdit::OnChar(nChar, nRepCnt, nFlags);
 	}
 } //OnChar(UINT nChar, UINT nRepCnt, UINT nFlags)
@@ -69,7 +71,7 @@ LRESULT CNumericEdit::OnPaste(WPARAM Wparam, LPARAM LParam) {
 					char cInput = str.GetAt(i);
 					int startPos, endPos;
 					GetSel(startPos, endPos);
-					if (validChar(cInput)) {
+					if (IsValid(cInput)) {
 						CString newString(cInput);
 						ReplaceSel(newString);
 					}
@@ -80,7 +82,7 @@ LRESULT CNumericEdit::OnPaste(WPARAM Wparam, LPARAM LParam) {
 	return 1;
 } //OnPaste(WPARAM Wparam, LPARAM LParam)
 
-bool CNumericEdit::validChar(char cInput) {
+bool CNumericEdit::IsValid(char cInput) {
 	bool bReturn = false;
 	int startPos, endPos;
 	GetSel(startPos, endPos);
@@ -92,7 +94,7 @@ bool CNumericEdit::validChar(char cInput) {
 	if (isdigit(cInput)) bReturn =  true;
 	// Allow cut(3), copy(22), paste(24) and delete(8) keypresses through.
 	else if ((cInput == 3) || (cInput == 22) || (cInput == 24) || (cInput == 8)) bReturn =  true;
-	else if (iNumEntries == 1) {
+	else if (m_iNumEntries == 1) {
 		if ((cInput == '-') && ((startPos == 0) || (cPrevious == 'e') || (cPrevious == 'E')) && (cNext != '-')) {
 			bReturn =  true;
 		}
@@ -150,14 +152,14 @@ bool CNumericEdit::validChar(char cInput) {
 			for (int i=0; i<str.GetLength(); i++) {
 				if (str.GetAt(i) == ' ') numSpaces++;
 			}
-			if (numSpaces < (iNumEntries-1)) bReturn = true;
+			if (numSpaces < (m_iNumEntries-1)) bReturn = true;
 			else bReturn = false;
 		}
 	}
 	return bReturn;
-} //validChar(char cInput)
+} //IsValid(char cInput)
 
-void CNumericEdit::setNumEntries(int num) {
-	iNumEntries = num;
+void CNumericEdit::SetOptions(int iNumEntries) {
+	m_iNumEntries = iNumEntries;
 	return;
-} //setNumEntries(int num)
+} //SetOptions(int iNumEntries)

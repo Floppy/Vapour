@@ -7,7 +7,7 @@
 // NumericEdit.h - 13/01/2000 - Warren Moore
 //	Numeric Edit control definition
 //
-// $Id: NumericEdit.h,v 1.1 2000/08/13 11:05:43 waz Exp $
+// $Id: NumericEdit.h,v 1.2 2000/11/29 17:28:10 james Exp $
 //
 
 #ifndef _VAL_NUMERICEDIT_
@@ -25,21 +25,25 @@
 
 class CNumericEdit : public CEdit {
 public:
-	CNumericEdit();
+	CNumericEdit(int iNumEntries = 1);
 
 	//{{AFX_VIRTUAL(CNumericEdit)
 	//}}AFX_VIRTUAL
 
-	void setNumEntries(int num);
+	void SetOptions(int iNumEntries = 1);
+
 	virtual ~CNumericEdit();
 
 protected:
-	int iNumEntries;
-	bool validChar(char cInput);
+
+	int m_iNumEntries;
+
+	bool IsValid(char cInput);
+
 	//{{AFX_MSG(CNumericEdit)
 	afx_msg void OnChar(UINT nChar, UINT nRepCnt, UINT nFlags);
+   afx_msg LRESULT OnPaste(WPARAM Wparam, LPARAM LParam);
 	//}}AFX_MSG
-    afx_msg LRESULT OnPaste(WPARAM Wparam, LPARAM LParam);
 
 	DECLARE_MESSAGE_MAP()
 };
