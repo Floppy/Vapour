@@ -16,11 +16,7 @@
 		<A HREF="$(docroot)/bugs.php">Known Bugs</A>
 		</P>
 		</TD></TR>
-		<TR><TD BGCOLOR="#C0C0C0">
-		<P CLASS=MENUITEM>
-      <A HREF="$(MakeFilename:../../$(if:$viewmode=developer:developer)$(else:user)/class/%.html)">View $(if:$viewmode=developer:Dev)$(else:User) Doc</A>
-		<A HREF="/internal/">Internal Site</A>
-		</P>
+	   $(ifset:title:<TR><TD BGCOLOR="#C0C0C0"><P CLASS=MENUITEM>$(title)</P></TD></TR>)
 		<TR><TD BGCOLOR="#C0C0F0">
 		<P CLASS=MENUITEM>
 		<A HREF="/internal/">Internal Site</A>

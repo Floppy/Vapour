@@ -1,6 +1,6 @@
 $(FileObject:docnode)$(FilePattern:user/tree/%.html)
 $(silent:
-	$(set:title=<A HREF="$(MakeFilename:../../developer/tree/%.html)">User Documentation</A>)
+	$(set:title=<A HREF="$(MakeFilename:../../developer/tree/%.html)">View Dev Document</A>)
 	$(set:viewmode=user)
 	$(set:methodtype=scope_user)
 	$(define:checkview:$(if:$access=public:%arg%))

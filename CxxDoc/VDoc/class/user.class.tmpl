@@ -1,6 +1,6 @@
 $(FileObject:class)$(FilePattern:user/class/%.php)
 $(silent:
-	$(set:title=<A HREF="$(MakeFilename:../../developer/class/%.php)">User Documentation</A>)
+	$(set:title=<A HREF="$(MakeFilename:../../developer/class/%.php)">View Dev Doc</A>)
 	$(set:viewmode=user)
 	$(set:methodtype=scope_user)
 	$(define:checkview:$(if:$access=public:%arg%))

@@ -1,6 +1,6 @@
 $(FileObject:namespace)$(FilePattern:user/class/%.html)
 $(silent:
-	$(set:title=<A HREF="$(MakeFilename:../../developer/class/%.html)">User Documentation</A>)
+	$(set:title=<A HREF="$(MakeFilename:../../developer/class/%.html)">View Dev Document</A>)
 	$(set:viewmode=user)
 	$(set:methodtype=scope_user)
 	$(define:checkview:$(if:$userlevel!=Develop&$userlevel!=Obsolete:%arg%))
