@@ -7,7 +7,7 @@
 // VTStructVisCtl.cpp
 // 05/03/2002 - Warren Moore
 //
-// $Id: VTStrucVisCtl.h,v 1.13 2002/03/25 13:15:58 vap-warren Exp $
+// $Id: VTStrucVisCtl.h,v 1.14 2002/03/25 15:57:03 vap-warren Exp $
 
 #ifndef __VTSTRUCTVIS_CONTROL__
 #define __VTSTRUCTVIS_CONTROL__
@@ -121,6 +121,9 @@ protected:
    void UIControl();
    // Update the UI state when UI event happens
 
+   bool Interactive();
+   // Checks all possible conditions to see if we are interactive
+
 //#===--- Private Data Types
 protected:
 
@@ -169,7 +172,8 @@ protected:
    ECortonaResult m_eCortonaResult;          // GetCortona result
    EUIResult m_eUIResult;                    // UIDataPath result
    ESimResult m_eSimResult;                  // SimDataPath result
-   DWORD m_uiAsyncFlags;                     // Asynchronous data flags
+   unsigned int m_uiAsyncFlags;              // Asynchronous data flags
+   CString m_oWRLPath;                       // Scene WRL path
 
    // UI vars
    bool m_bLButtonDown;                      // Left mouse button down indicator
@@ -230,6 +234,8 @@ protected:
 	afx_msg void SetSimData(LPCTSTR lpszNewValue);
 	afx_msg BSTR GetUIData();
 	afx_msg void SetUIData(LPCTSTR lpszNewValue);
+	afx_msg BSTR GetWRLPath();
+	afx_msg void SetWRLPath(LPCTSTR lpszNewValue);
 	//}}AFX_DISPATCH
 	DECLARE_DISPATCH_MAP()
 
@@ -246,6 +252,7 @@ public:
 	//{{AFX_DISP_ID(CVTStrucVisCtl)
    dispidSimData = 1L,
    dispidUIData = 2L,
+	dispidWRLPath = 3L,
 	//}}AFX_DISP_ID
 	};
 };

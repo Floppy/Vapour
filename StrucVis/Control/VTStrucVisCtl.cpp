@@ -7,7 +7,7 @@
 // VTStructVisCtl.cpp
 // 05/03/2002 - Warren Moore
 //
-// $Id: VTStrucVisCtl.cpp,v 1.14 2002/03/25 13:15:58 vap-warren Exp $
+// $Id: VTStrucVisCtl.cpp,v 1.15 2002/03/25 15:57:03 vap-warren Exp $
 
 #include "stdafx.h"
 #include "VTStrucVis.h"
@@ -171,6 +171,7 @@ BEGIN_DISPATCH_MAP(CVTStrucVisCtl, COleControl)
 	//{{AFX_DISPATCH_MAP(CVTStrucVisCtl)
 	DISP_PROPERTY_EX(CVTStrucVisCtl, "SimData", GetSimData, SetSimData, VT_BSTR)
 	DISP_PROPERTY_EX(CVTStrucVisCtl, "UIData", GetUIData, SetUIData, VT_BSTR)
+	DISP_PROPERTY_EX(CVTStrucVisCtl, "WRLPath", GetWRLPath, SetWRLPath, VT_BSTR)
 	DISP_STOCKFUNC_REFRESH()
 	DISP_STOCKPROP_READYSTATE()
 	DISP_STOCKPROP_BACKCOLOR()
@@ -179,7 +180,7 @@ BEGIN_DISPATCH_MAP(CVTStrucVisCtl, COleControl)
 	DISP_STOCKPROP_ENABLED()
 	DISP_STOCKPROP_APPEARANCE()
 	DISP_STOCKPROP_BORDERSTYLE()
-   //}}AFX_DISPATCH_MAP
+	//}}AFX_DISPATCH_MAP
 	DISP_FUNCTION_ID(CVTStrucVisCtl, "AboutBox", DISPID_ABOUTBOX, AboutBox, VT_EMPTY, VTS_NONE)
 END_DISPATCH_MAP()
 
@@ -334,6 +335,9 @@ bool CVTStrucVisCtl::InitCortona() {
 
          // Create the scene manager
          m_poScene = (CSceneManager*) new CSceneManager(m_poCortonaUtil);
+
+         // Set the WRL path
+         m_poScene->SetBaseURL(m_oWRLPath);
 
          // Setup viewpoint location
          float pfPosition[3] = {5.0f, 5.0f, 5.0f};
@@ -589,6 +593,10 @@ void CVTStrucVisCtl::DrawPlaceholder(CDC *pDC, const CRect &rcBounds, bool bRun)
                   break;
             }
 
+      // Check to see that the WRL path is set
+      if (m_oWRLPath == "")
+         oStr += "WRL path not set\n";
+
       // Display the error text
       pDC->SetTextColor(TranslateColor(GetEnabled() ? RGB(0xFF, 0x00, 0x00): RGB(0xFF, 0xC0, 0xC0)));
       pDC->DrawText(oStr, oTextRect, DT_CENTER | DT_WORDBREAK);
@@ -623,13 +631,13 @@ void CVTStrucVisCtl::DrawUI(CDC *pDC, const CRect &rcBounds, bool bRun) {
       m_oBackBuffer.DeleteObject();
       m_oBackBuffer.CreateCompatibleBitmap(pDC, rcBounds.Width(), rcBounds.Height());
    }
+   // Initialise the buffers with bitmaps
+   CBitmap *pRemoteBitmap = oDCRemote.SelectObject(&m_oUIBitmap);
+   CBitmap *pBufferBitmap = oDCBuffer.SelectObject(&m_oBackBuffer);
    // Set the background to the background colour
    CBrush oBrush;
    oBrush.CreateSolidBrush(TranslateColor(GetBackColor()));
    oDCBuffer.FillRect(rcBounds, &oBrush);
-   // Initialise the buffers with bitmaps
-   CBitmap *pRemoteBitmap = oDCRemote.SelectObject(&m_oUIBitmap);
-   CBitmap *pBufferBitmap = oDCBuffer.SelectObject(&m_oBackBuffer);
 
    // Get the bitmap params
 	BITMAP sBitmap;
@@ -784,7 +792,7 @@ void CVTStrucVisCtl::FrameControl() {
    // Get the max number of frames
    unsigned int uiFrames = m_poScene->NumFrames();
    // Set the fast forward/ rewind step
-   const unsigned int uiStep = 5;
+   const unsigned int uiStep = 2;
    // Store the current frame
    const unsigned int uiCurrent = m_uiFrame;
    // Update dependent on the run mode
@@ -888,6 +896,21 @@ void CVTStrucVisCtl::UIControl() {
    }
 }
 
+bool CVTStrucVisCtl::Interactive() {
+   // In interactive state
+   bool bOk = (GetReadyState() == READYSTATE_INTERACTIVE) || (GetReadyState() == READYSTATE_COMPLETE);
+   // UI loaded
+   bOk &= (m_eUIResult == UI_OK);
+   // Sim data valid
+   bOk &= (m_eSimResult == SD_OK);
+   // WRL Path set
+   bOk &= (m_oWRLPath != "");
+   // Scene object created
+   bOk &= (m_poScene != NULL);
+
+   return bOk;
+}
+
 void CVTStrucVisCtl::UILoading() {
    // Set the async data flags
    m_uiAsyncFlags &= AD_UIMASK;
@@ -975,13 +998,9 @@ void CVTStrucVisCtl::GoInteractive() {
 void CVTStrucVisCtl::OnDraw(CDC* pdc, const CRect& rcBounds, const CRect& rcInvalid) {
    // Check our operating mode
    bool bRun = AmbientUserMode() && !AmbientUIDead();
-   bool bInteractive = (GetReadyState() == READYSTATE_INTERACTIVE) || (GetReadyState() == READYSTATE_COMPLETE);
    // If we're in run mode, the UI is loaded and the ready state is marked interactive
    // render the full-on interface
-   if (bRun && 
-      (m_eUIResult == UI_OK) &&
-      (m_eSimResult == SD_OK) && 
-      bInteractive) {
+   if (bRun && Interactive()) {
       // Draw the full-on interface
       DrawUI(pdc, rcBounds, bRun);
    }
@@ -1001,6 +1020,9 @@ void CVTStrucVisCtl::OnDrawMetafile(CDC* pDC, const CRect& rcBounds) {
 void CVTStrucVisCtl::DoPropExchange(CPropExchange* pPX) {
 	ExchangeVersion(pPX, MAKELONG(_wVerMinor, _wVerMajor));
 	COleControl::DoPropExchange(pPX);
+
+   // Sort out the WRL path first
+   PX_String(pPX, _T("WRLPath"), m_oWRLPath, "");
 
    // Reset the async data flags if loading
    if (pPX->IsLoading()) {
@@ -1025,7 +1047,7 @@ void CVTStrucVisCtl::DoPropExchange(CPropExchange* pPX) {
       m_bDirty = true;
    }
 
-   // Mark the other persistant properties with PX_ calls
+   // Start the asynchronous downloads
    PX_DataPath(pPX, _T("UIData"), m_oUIData);
    PX_DataPath(pPX, _T("SimData"), m_oSimData);
 }
@@ -1084,7 +1106,7 @@ void CVTStrucVisCtl::OnLButtonUp(UINT nFlags, CPoint point) {
    bool bRun = AmbientUserMode() && !AmbientUIDead();
    bool bInteractive = (GetReadyState() == READYSTATE_INTERACTIVE) || (GetReadyState() == READYSTATE_COMPLETE);
    // If we have a scene and we're interactive and running, process the event
-   if (bRun && bInteractive && m_poScene)
+   if (bRun && Interactive())
       UIControl();
    // Refresh the display
    InvalidateControl();
@@ -1191,5 +1213,15 @@ void CVTStrucVisCtl::SetSimData(LPCTSTR lpszNewValue) {
    SetModifiedFlag();
 }
 
+BSTR CVTStrucVisCtl::GetWRLPath() {
+	CString strResult = m_oWRLPath;
 
+	return strResult.AllocSysString();
+}
 
+void CVTStrucVisCtl::SetWRLPath(LPCTSTR lpszNewValue) {
+   // Save the value
+   m_oWRLPath = lpszNewValue;
+
+	SetModifiedFlag();
+}
