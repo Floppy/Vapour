@@ -14,7 +14,7 @@
 //! author 		= "Warren Moore"
 //! date 		= "23/09/2001"
 //! lib 			= libVALETcore
-//! rcsid 		= "$Id: logmanager.h,v 1.9 2001/10/21 15:51:48 vap-warren Exp $"
+//! rcsid 		= "$Id: logmanager.h,v 1.10 2001/10/24 14:23:33 vap-warren Exp $"
 //! userlevel 	= Develop
 //! docentry 	= "VALET.Core.Log"
 //! example 	= VALET/core/log.test.cpp
@@ -117,7 +117,7 @@ namespace NValet {
 //#===--- Inline Functions
 
 #ifdef VALET_INLINE
-#include "logmanager_inline.cpp"
+#include "VALET/logmanager_inline.cpp"
 #endif // VALET_INLINE
 
 #endif // _VALET_CORE_LOGMANAGER_
