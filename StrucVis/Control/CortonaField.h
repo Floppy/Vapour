@@ -9,7 +9,7 @@
 //! file      = "Control/CortonaField.h"
 //! author    = "Warren Moore"
 //! date      = "12/3/2002"
-//! rcsid     = "$Id: CortonaField.h,v 1.20 2002/04/22 15:03:25 vap-warren Exp $"
+//! rcsid     = "$Id: CortonaField.h,v 1.21 2002/04/24 14:56:33 vap-warren Exp $"
 
 #ifndef __VTSTRUCVIS_CORTONAFIELD__
 #define __VTSTRUCVIS_CORTONAFIELD__
@@ -73,7 +73,10 @@ public:
    //!return: true if successful
 
    bool TestMFVec3f0();
+   //: Test function for profiling
+
    bool TestMFVec3f1();
+   //: Test function for profiling
 
    bool SetMFVec3f(const long liIndex, const float fX, const float fY, const float fZ);
    //: Set MFVec3f values
@@ -86,8 +89,7 @@ public:
 
    bool SetMFVec3f(const float *pfVal, const unsigned int uLen);
    //: Set all MFVec3f values
-   // Try to speed up SetMFVec3f by passing an entire array to the function at once,
-   // although triplets are passed individually internally
+   // Speed up SetMFVec3f by passing an entire array to the function at once
    //!param: pfVal - Pointer to array of X,Y,Z triplets
    //!param: uLen - Numer of colours in array
    //!return: true if successful
@@ -138,8 +140,7 @@ public:
 
    bool SetMFColor(const float *pfVal, const unsigned int uLen);
    //: Set all MFColor values
-   // Try to speed up SetMFColor by passing an entire array to the function at once,
-   // although triplets are passed individually internally
+   // Speed up SetMFColor by passing an entire array to the function at once
    //!param: pfVal - Pointer to array of color triplets
    //!param: uLen - Numer of colours in array
    //!return: true if successful
@@ -197,6 +198,13 @@ public:
    // Sets the value at the specified index
    //!param: liIndex - Index of field value
    //!param: liValue - Field value
+   //!return: true if successful
+
+   bool SetMFInt32(const long *plVal, const unsigned int uLen);
+   //: Set all MFInt32 values
+   // Speed up SetMFInt32 by passing an entire array to the function at once,
+   //!param: pfVal - Pointer to array of color triplets
+   //!param: uLen - Numer of colours in array
    //!return: true if successful
 
    bool AddMFInt32(const long liValue);

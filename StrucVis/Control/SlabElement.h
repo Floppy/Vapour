@@ -9,7 +9,7 @@
 //! file      = "Control/SlabElement.h"
 //! author    = "James Smith"
 //! date      = "19/3/2002"
-//! rcsid     = "$Id: SlabElement.h,v 1.19 2002/04/23 11:33:24 vap-james Exp $"
+//! rcsid     = "$Id: SlabElement.h,v 1.20 2002/04/24 14:56:34 vap-warren Exp $"
 
 #ifndef __VTSTRUCVIS_SLABELEMENT__
 #define __VTSTRUCVIS_SLABELEMENT__
@@ -95,7 +95,7 @@ protected:
    mutable float m_pfStresses[9];
    //: Per-node stress values
    
-   mutable unsigned char m_pcCracks[9];
+   mutable long m_plCracks[9];
    //: Crack values
 
    float m_fThickness;

@@ -9,7 +9,7 @@
 //! file      = "Control/BeamElement.cpp
 //! author    = "James Smith"
 //! date      = "19/3/2002"
-//! rcsid     = "$Id: BeamElement.cpp,v 1.35 2002/04/23 11:33:23 vap-james Exp $"
+//! rcsid     = "$Id: BeamElement.cpp,v 1.36 2002/04/24 14:56:33 vap-warren Exp $"
 
 #include "stdafx.h"
 #include "BeamElement.h"
@@ -154,6 +154,7 @@ bool CBeamElement::Display(const char* pcURL) const {
 
 void CBeamElement::SetTemp(float fTemp) const {
    m_fTemp = fTemp;
+   /*
    // Update description
    if (m_poNodePtr) {
       CCortonaField* poString = m_poNodePtr->GetField("description");
@@ -163,6 +164,7 @@ void CBeamElement::SetTemp(float fTemp) const {
       poString->Release();
       delete poString;
    }
+   */
 }
 
 void CBeamElement::SetSize(float fHeight, float fWidth, float fFlangeThickness, float fWebThickness) {

@@ -9,7 +9,7 @@
 //! file      = "Control/SlabElement.cpp"
 //! author    = "James Smith"
 //! date      = "19/3/2002"
-//! rcsid     = "$Id: SlabElement.cpp,v 1.34 2002/04/23 11:33:24 vap-james Exp $"
+//! rcsid     = "$Id: SlabElement.cpp,v 1.35 2002/04/24 14:56:34 vap-warren Exp $"
 
 #include "stdafx.h"
 #include "SlabElement.h"
@@ -33,7 +33,7 @@ CSlabElement::CSlabElement(CCortonaUtil *poCortona, CNodeSet* poNodeSet) :
 {
    memset(m_pfStresses, 0, 9*sizeof(float));
    memset(m_piNodes, 0, 9*sizeof(unsigned int));
-   memset(m_pcCracks, 0, 9*sizeof(unsigned char));
+   memset(m_plCracks, 0, 9*sizeof(long));
    memset(m_ppoField, 0, 4*sizeof(CCortonaField*));
 }
 
@@ -97,7 +97,7 @@ bool CSlabElement::Display(const char* pcURL) const {
       strSlab << " ] ";
       // Setup cracks
       strSlab << " cracks [ ";
-      for (int cr=0; cr<9; cr++) strSlab << " " << static_cast<int>(m_pcCracks[cr]);
+      for (int cr=0; cr<9; cr++) strSlab << " " << static_cast<int>(m_plCracks[cr]);
       strSlab << " ] ";
       // Close the SlabElement
       strSlab << "}";
@@ -135,9 +135,7 @@ bool CSlabElement::Display(const char* pcURL) const {
       //#===--- Update cracks
       // Set values
       if (m_ppoField[1]) {
-         for (int i=0; i<9 && bOK; i++) {
-            bOK = m_ppoField[1]->SetMFInt32(i, m_pcCracks[i]);
-         }      
+         bOK = m_ppoField[1]->SetMFInt32(m_plCracks, 9);
          // Send event
          if (bOK && !m_poNodePtr->AssignEventIn("set_cracks", *(m_ppoField[1])))
             bOK = false;
@@ -166,7 +164,10 @@ void CSlabElement::SetNodes(const unsigned int* piNodes) {
 }
 
 void CSlabElement::SetCracks(unsigned int iLayer, const unsigned char* pcCracks) const {
-   memcpy(m_pcCracks, pcCracks, 9*sizeof(char));
+   for (int i = 0; i < 9; i++) {
+      m_plCracks[i] = static_cast<long>(pcCracks[i]);
+   }
+//   memcpy(m_pcCracks, pcCracks, 9*sizeof(char));
    return;
 }
 
@@ -178,6 +179,7 @@ void CSlabElement::SetStresses (const float* pfStresses) const {
 
 void CSlabElement::SetTemp(float fTemp) const {
    m_fTemp = fTemp;
+   /*
    // Update description
    if (m_poNodePtr) {
       CCortonaField* poString = m_poNodePtr->GetField("description");
@@ -187,6 +189,7 @@ void CSlabElement::SetTemp(float fTemp) const {
       poString->Release();
       delete poString;
    }
+   */
 }
 
 void CSlabElement::SetSize(float fThickness) {

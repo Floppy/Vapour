@@ -7,7 +7,7 @@
 // CortonaField.cpp
 // 07/03/2002 - Warren Moore
 //
-// $Id: CortonaField.cpp,v 1.21 2002/04/22 15:03:25 vap-warren Exp $
+// $Id: CortonaField.cpp,v 1.22 2002/04/24 14:56:33 vap-warren Exp $
 
 #include "stdafx.h"
 
@@ -49,6 +49,9 @@ CCortonaField::CCortonaField(IEngine *pEngine, IFieldObject *pField) :
          case tMFInt32:
             m_pField->QueryInterface(IID_IMFInt32Object, reinterpret_cast<void**>(&m_uInterface.m_pMFInt32));
             m_pField->QueryInterface(IID_IMFieldObject, reinterpret_cast<void**>(&m_pMField));
+            m_pField->QueryInterface(IID_IVariable, reinterpret_cast<void**>(&m_pVariable));
+            if (m_pEngine)
+               m_pEngine->QueryInterface(IID_IUpdateManager, reinterpret_cast<void**>(&m_pUpdateManager));
             break;
          case tMFString:
             m_pField->QueryInterface(IID_IMFStringObject, reinterpret_cast<void**>(&m_uInterface.m_pMFString));
@@ -107,6 +110,10 @@ void CCortonaField::Release() {
                m_uInterface.m_pMFInt32->Release();
                if (m_pMField)
                   m_pMField->Release();
+               if (m_pVariable)
+                  m_pVariable->Release();
+               if (m_pUpdateManager)
+                  m_pUpdateManager->Release();
                break;
             case tMFString:
                m_uInterface.m_pMFString->Release();
@@ -827,6 +834,54 @@ bool CCortonaField::SetMFInt32(const long liIndex, const long liValue) {
 
    // Set the values
    HRESULT hResult = m_uInterface.m_pMFInt32->put_Value(liIndex, liValue);
+
+   return SUCCEEDED(hResult);
+}
+
+bool CCortonaField::SetMFInt32(const long *plVal, const unsigned int uLen) {
+   ASSERT(sizeof(long) == 4);
+   // Check the field pointer
+   if (!m_pField || !m_pUpdateManager || !m_pVariable || !plVal || (uLen == 0))
+      return false;
+
+   // Check the type
+   if (m_eType != tMFInt32)
+      return false;
+
+   // Initialise the variant
+   VARIANT sVarArray; 
+   VariantInit(&sVarArray); 
+   // Create the safe array
+   sVarArray.vt = VT_ARRAY | VT_I4; 
+   sVarArray.parray = SafeArrayCreateVector(VT_I4, 0, uLen); 
+
+   HRESULT hResult = S_OK;
+   // Get access to the values
+   if (sVarArray.parray != NULL) { 
+      // Populate the array
+      void *pVal; 
+      hResult = SafeArrayAccessData(sVarArray.parray, &pVal); 
+      if (SUCCEEDED(hResult)) { 
+         // Populate the array
+         memcpy(pVal, plVal, uLen * sizeof(long));
+         SafeArrayUnaccessData(sVarArray.parray); 
+      }
+
+      // Get te current transacted mode
+      BOOL bTransactedMode = FALSE; 
+      m_pUpdateManager->get_transactedMode(&bTransactedMode); 
+      // Make sure the transacted mode is true
+      if (!bTransactedMode)
+         m_pUpdateManager->put_transactedMode(TRUE);
+      // Put the contents
+      hResult = m_pVariable->put_Contents(&sVarArray); 
+      // Restore the old transacted mode
+      if (!bTransactedMode) 
+         m_pUpdateManager->put_transactedMode(FALSE); 
+   }
+   
+   // Clear the variant
+   VariantClear(&sVarArray);
 
    return SUCCEEDED(hResult);
 }
