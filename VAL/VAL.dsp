@@ -217,11 +217,23 @@ SOURCE=.\Render\RenderContextStore.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\Render\RenderLight.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\Render\RenderObject.cpp
 # End Source File
 # Begin Source File
 
 SOURCE=.\DataTypes\Scalar.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\Render\Scene.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\Render\SceneHLThumbnail.cpp
 # End Source File
 # Begin Source File
 
@@ -454,11 +466,23 @@ SOURCE=.\Render\RenderContextStore.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\Render\RenderLight.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\Render\RenderObject.h
 # End Source File
 # Begin Source File
 
 SOURCE=.\DataTypes\Scalar.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\Render\Scene.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\Render\SceneHLThumbnail.h
 # End Source File
 # Begin Source File
 
