@@ -7,7 +7,7 @@
 // VTStructVisCtl.cpp
 // 05/03/2002 - Warren Moore
 //
-// $Id: VTStrucVisCtl.cpp,v 1.19 2002/03/27 16:28:57 vap-warren Exp $
+// $Id: VTStrucVisCtl.cpp,v 1.20 2002/04/02 00:16:10 vap-warren Exp $
 
 #include "stdafx.h"
 #include "VTStrucVis.h"
@@ -406,14 +406,14 @@ CVTStrucVisCtl::CVTStrucVisCtl() :
    m_iUIZone(-1),
    m_oBufferSize(0, 0),
    m_uiFrame(0),
-   m_eRunMode(RM_PLAY),
+   m_eRunMode(RM_PAUSE),
    m_bLoop(false),
    m_bStep(false),
    m_bStressColour(false),
    m_uiUITab(0),
    m_bRunning(false),
    m_fXScale(1.0f), 
-   m_fYScale(1.0f), 
+   m_fYScale(25.0f), 
    m_fZScale(1.0f),
    m_uiAnimSpeed(5),
    m_uiStartGroup(0),
@@ -438,20 +438,20 @@ CVTStrucVisCtl::CVTStrucVisCtl() :
    // X scale slider
    m_oSXScale.SetPos(0, 185);
    m_oSXScale.SetSize(180, 10);
-   m_oSXScale.SetLimitF(1.0f, 10.0f, m_fXScale);
-   m_oSXScale.SetSteps(9);
+   m_oSXScale.SetLimitF(1.0f, 50.0f, m_fXScale);
+   m_oSXScale.SetSteps(49);
 
    // Y scale slider
    m_oSYScale.SetPos(0, 210);
    m_oSYScale.SetSize(180, 10);
-   m_oSYScale.SetLimitF(1.0f, 10.0f, m_fYScale);
-   m_oSYScale.SetSteps(9);
+   m_oSYScale.SetLimitF(1.0f, 50.0f, m_fYScale);
+   m_oSYScale.SetSteps(49);
 
    // Z scale slider
    m_oSZScale.SetPos(0, 235);
    m_oSZScale.SetSize(180, 10);
-   m_oSZScale.SetLimitF(1.0f, 10.0f, m_fZScale);
-   m_oSZScale.SetSteps(9);
+   m_oSZScale.SetLimitF(1.0f, 50.0f, m_fZScale);
+   m_oSZScale.SetSteps(49);
 
    // Animation speed slider
    m_oSAnimSpeed.SetPos(0, 185);
@@ -489,15 +489,15 @@ bool CVTStrucVisCtl::InitCortona() {
          m_poScene->SetBaseURL(m_oWRLPath);
 
          // Setup viewpoint location
-         float pfPosition[3] = {20.0f, -0.5f, 20.0f};
-         float pfRotation[4] = {0.0f, 1.0f, 0.0f, 1.3f};
+         float pfPosition[3] = {12.0f, -26.5f, 12.5f};
+         float pfRotation[4] = {0.48f, 0.75f, -0.48f, 1.88f};
          m_poScene->SetViewpoint(pfPosition, pfRotation);
 
          // Set scale factor
-         m_poScene->SetScaleFactor(1, 1, 1);
+         m_poScene->SetScaleFactor(m_fXScale, m_fYScale, m_fZScale);
 
          // Set colour scheme
-         m_poScene->SetColourScheme(GROUP);
+         m_poScene->SetColourScheme(COLOUR_GROUP);
       }
    }
 
@@ -981,7 +981,7 @@ void CVTStrucVisCtl::DrawUI(CDC *pDC, const CRect &rcBounds, bool bRun) {
          unsigned int uiGroupNum = i + m_uiStartGroup;
          TElementType eType = m_poScene->GroupType(uiGroupNum + 1);
          unsigned int uiElements = m_poScene->NumElements(uiGroupNum + 1);
-         oText.Format("%d: %s (%d)", uiGroupNum + 1, (eType == SLAB ? "Slab" : "Beam"), uiElements);
+         oText.Format("%d: %s (%d)", uiGroupNum + 1, (eType == ELEMENT_SLAB ? "Slab" : "Beam"), uiElements);
          // Set the coords
          oDCBuffer.GetTextMetrics(&sTM);
          oTextSize = oDCBuffer.GetTextExtent(oText);
@@ -1498,6 +1498,8 @@ void CVTStrucVisCtl::ShowFrame(const unsigned int uiFrame,
    m_poScene->ShowFrame(pucData, uiLength);
    m_oCortona.Freeze(false);
    m_uiFrame = uiFrame;
+   m_poScene->GetCurrentPosition();
+   m_poScene->GetCurrentOrientation();
    // Refresh the display
    InvalidateControl();
 }
@@ -1560,7 +1562,7 @@ void CVTStrucVisCtl::DoPropExchange(CPropExchange* pPX) {
          KillTimer(TI_ANIMATE);
          m_bRunning = false;
       }
-      m_eRunMode = RM_PLAY;
+      m_eRunMode = RM_PAUSE;
       m_uiFrame = 0;
       ShowFrame(0);
       m_uiStartGroup = 0;
@@ -1591,7 +1593,7 @@ void CVTStrucVisCtl::OnResetState() {
       KillTimer(TI_ANIMATE);
       m_bRunning = false;
    }
-   m_eRunMode = RM_PLAY;
+   m_eRunMode = RM_PAUSE;
    m_uiFrame = 0;
    m_uiStartGroup = 0;
    if (m_pbVisibleGroup) {
@@ -1651,7 +1653,7 @@ void CVTStrucVisCtl::OnLButtonUp(UINT nFlags, CPoint point) {
       // Check for colouring change
       if ((point.y >= 140) && (point.y < 155)) {
          m_bStressColour = !m_bStressColour;
-         m_poScene->SetColourScheme(m_bStressColour ? STRESS : GROUP);
+         m_poScene->SetColourScheme(m_bStressColour ? COLOUR_STRESS : COLOUR_GROUP);
       }
 
       // Check for the tab change
