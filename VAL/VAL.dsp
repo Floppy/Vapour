@@ -173,10 +173,6 @@ SOURCE=.\Image\ImageFileStore.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\Image\JointList.cpp
-# End Source File
-# Begin Source File
-
 SOURCE=.\Image\Palette.cpp
 # End Source File
 # Begin Source File
@@ -367,10 +363,6 @@ SOURCE=.\ImageFiles\ImageFileRaw.h
 # Begin Source File
 
 SOURCE=.\Image\ImageFileStore.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\Image\JointList.h
 # End Source File
 # Begin Source File
 
