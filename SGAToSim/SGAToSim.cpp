@@ -8,7 +8,7 @@
 //	Main application source for command-line parsing, 
 //  export and progress bar updates
 //
-// $Id: SGAToSim.cpp,v 1.4 2000/07/14 19:57:25 waz Exp $
+// $Id: SGAToSim.cpp,v 1.5 2000/07/19 08:52:29 waz Exp $
 //
 
 // Pre-compiled header include
@@ -26,14 +26,9 @@
 #include "SGAToSims.h"
 // Command-line parser object
 #include "CommandLine.h"
-// Progress bar controller
-#include "ProgressControl.h"
 
 // VAL management object
 CVAL *g_poVAL = NULL;
-
-// External progress controller
-extern CProgressControl g_oProgressControl;
 
 //#===--- Main Function
 
@@ -45,36 +40,36 @@ int main(int argc, char **argv) {
 	if (!g_poVAL)
 		return -1;
 
-	// Create the Sims exporter
-	CSGAToSims oSimsExport;
+	// Create the exporter
+	VEM_CLASS oExport;
 
 	// Process command line arguments
 	CCommandLine oCmdLine(argc, argv);
-	SetOptions(oCmdLine, oSimsExport);
+	SetOptions(oCmdLine, oExport);
 
 	// Check for verbose output
 	bool bVerbose = !oCmdLine.FindOption("0");
 
 	// Attach the output handler functions, if verbose output specified
 	if (bVerbose) {
-		g_oProgressControl.SetTextFunction("AMELoad", &Output);
-		g_oProgressControl.SetProgressFunction("AMELoad", &Progress);
-		g_oProgressControl.SetTextFunction("SimsSave", &Output);
-		g_oProgressControl.SetProgressFunction("SimsSave", &Progress);
+		g_poVAL->SetProgressTextFunction("AMELoad", &Output);
+		g_poVAL->SetProgressFunction("AMELoad", &Progress);
+		g_poVAL->SetProgressTextFunction(VEM_PROGRESS, &Output);
+		g_poVAL->SetProgressFunction(VEM_PROGRESS, &Progress);
 	}
 
-	// Export sims model
+	// Export the model
 	int iReturn = 0;
-	VARESULT eResult = oSimsExport.Export();
+	VARESULT eResult = oExport.Export();
 
 	// Report error status
 	switch (eResult) {
 		case VA_OK:
 			if (bVerbose)
-				cout << "The Sims model created successfully." << endl << endl;
+				cout << "Model created successfully." << endl << endl;
 			break;
 		default:
-			cout << "Error encountered : " << oSimsExport.GetErrorString() << endl << endl;
+			cout << "Error encountered : " << oExport.GetErrorString() << endl << endl;
 			iReturn = -1;
 	}
 
@@ -83,7 +78,7 @@ int main(int argc, char **argv) {
 		// Get the model directory
 		const char *pcTemp = NULL;
 		char pcPath[STR_SIZE] = "";
-		pcTemp = oSimsExport.GetOptionString(SIMS_DIRECTORY);
+		pcTemp = oExport.GetOptionString(VEM_DIRECTORY);
 		if (pcTemp)
 			strcpy(pcPath, pcTemp);
 		// Get the application directory
@@ -100,9 +95,9 @@ int main(int argc, char **argv) {
 				strcpy(pcSFXName, pcAppDir);
 			strcat(pcSFXName, pcTemp);
 			// Compress the file
-			eResult = oSimsExport.Compress(pcPath, pcSFXName);
+			eResult = oExport.Compress(pcPath, pcSFXName);
 			if (eResult != VA_OK) {
-				cout << "Error encountered : Unable to create self-extracting avatar" << endl << endl;
+				cout << "Error encountered : " << oExport.GetErrorString() << endl << endl;
 				iReturn = -1;
 			}
 			else
@@ -119,31 +114,31 @@ int main(int argc, char **argv) {
 
 //#===--- Command-line argument processing
 
-VARESULT SetOptions(CCommandLine &oCmdLine, CSGAToSims &oSimsExport) {
+VARESULT SetOptions(CCommandLine &oCmdLine, VEM_CLASS &oExport) {
 /* Command-line argument parsing
 
-	This functions sets the default Sim properteries, then parses the command-line
+	This functions sets the default model properteries, then parses the command-line
 	arguments to find overiding values.
-	This function returns an error if the required avatar and sim filenames are not supplied
-	Once all the Sim properties have been searched for, the properties are passed
-	directly to the Sim exporter object
+	This function returns an error if the required avatar and export filenames are not supplied
+	Once all the model properties have been searched for, the properties are passed
+	directly to the exporter object
 */
 
-// Set export defaults
+	// Set export defaults
+	int iVerbose = VEM_TRUE;
 	int iAge = SIMS_ADULT;
 	int iSex = SIMS_MALE;
 	int iSkinTone = SIMS_LIGHT;
 	int iBuild = SIMS_FIT;
-	int iVerbose = SIMS_TRUE;
 
-// Command line argument vars
+	// Command line argument vars
 	const char *pcTemp = NULL;
 	VARESULT eResult = VA_OK;
 	bool bOk = true;
 
 	// SGA filename
 	if (pcTemp = oCmdLine.GetValue(1)) {
-		oSimsExport.SetOption(SGA_FILENAME, pcTemp);
+		oExport.SetOption(VEM_SGANAME, pcTemp);
 	}
 	else
 		bOk = false;
@@ -156,25 +151,25 @@ VARESULT SetOptions(CCommandLine &oCmdLine, CSGAToSims &oSimsExport) {
 	if (!bOk) 
 		eResult = VA_MISSING_FILENAME;
 
-	// Sims model name
+	// Model name
 	if (bOk) {
 		pcTemp = oCmdLine.GetValue("sim");
 		if (pcTemp)
-			oSimsExport.SetOption(SIMS_MODELNAME, pcTemp);
+			oExport.SetOption(VEM_MODELNAME, pcTemp);
 		else {
 			pcTemp = oCmdLine.GetValue(2);
 			char pcName[STR_SIZE] = "";
 			int iDir = 0;
 			int iExt = strlen(pcTemp);
 			int iCount = 0;
-		// Strip preceeding path
+			// Strip preceeding path
 			while (iCount < (iExt - 1)) {
 				if (pcTemp[iCount] == '\\')
 					iDir = iCount + 1;
 				iCount++;
 			}
 			iCount = iExt;
-		// Strip file extension
+			// Strip file extension
 			while (iCount > 0) {
 				if (pcTemp[iCount] == '.') {
 					iExt = iCount;
@@ -182,20 +177,20 @@ VARESULT SetOptions(CCommandLine &oCmdLine, CSGAToSims &oSimsExport) {
 				}
 				iCount--;
 			}
-		// Copy out the extracted model name
+			// Copy out the extracted model name
 			iCount = iExt - iDir;
 			memcpy(pcName, pcTemp + iDir, iCount);
 			pcName[iCount] = 0;
-		// Set the model name
-			oSimsExport.SetOption(SIMS_MODELNAME, pcName);
+			// Set the model name
+			oExport.SetOption(VEM_MODELNAME, pcName);
 		}
 	}
 
-	// Sims directory name
+	// Temp directory
 	if (bOk) {
-	// Get the base directory
+		// Get the base directory
 		pcTemp = oCmdLine.GetValue("path");
-	// If none specified, set the working directory
+		// If none specified, set the working directory
 		char pcWorkingDir[STR_SIZE] = "";
 		if (!pcTemp) {
 			// Get the app directory
@@ -206,18 +201,18 @@ VARESULT SetOptions(CCommandLine &oCmdLine, CSGAToSims &oSimsExport) {
 			// Create the temp path
 			char pcCurrDir[STR_SIZE];
 			strcpy(pcCurrDir, pcTemp);
-			strcat(pcCurrDir, "sims_temp");
+			strcat(pcCurrDir, "sga_temp");
 			if (_mkdir(pcCurrDir) == -1 )
 				if (errno != EEXIST)
 					return VA_DIRECTORY_ERROR;
 
 			pcTemp = pcCurrDir;
 		}
-	// Find a suitable working directory
+		// Find a suitable working directory
 		char pcPath[STR_SIZE] = "";
 		bool bFound = false;
 		int iCount = 0;
-		while ((!bFound) && (iCount < MAX_PROCESSES)) {
+		while ((!bFound) && (iCount < VEM_MAXPROCESSES)) {
 			pcPath[0] = 0;
 			if (pcTemp) {
 				strcpy(pcPath, pcTemp);
@@ -239,80 +234,80 @@ VARESULT SetOptions(CCommandLine &oCmdLine, CSGAToSims &oSimsExport) {
 				bFound = true;
 			iCount++;
 		}
-	// Make sure we haven't overun the max number of processes
-		if (iCount == MAX_PROCESSES) {
+		// Make sure we haven't overun the max number of processes
+		if (iCount == VEM_MAXPROCESSES) {
 			eResult = VA_DIRECTORY_ERROR;
 			bOk = false;
 		}
-		oSimsExport.SetOption(SIMS_DIRECTORY, pcPath);
+		oExport.SetOption(VEM_DIRECTORY, pcPath);
 	}
+
+	// Set converter verbose output
+	if (bOk && (oCmdLine.FindOption("0")))
+		iVerbose = VEM_FALSE;
+	oExport.SetOption(VEM_VERBOSE, iVerbose);
+
+//#===--- Sims specific options
 
 	// Set Sim age
 	if (bOk && (pcTemp = oCmdLine.GetValue("age"))) {
 		if (pcTemp) {
-		// Check for adult
+			// Check for adult
 			if (stricmp(pcTemp, "adult") == 0)
 				iAge = SIMS_ADULT;
-		// Check for child
+			// Check for child
 			if (stricmp(pcTemp, "child") == 0)
 				iAge = SIMS_CHILD;
 		}
 	}
-// Set option
-	oSimsExport.SetOption(SIMS_AGE, iAge);
+	// Set option
+	oExport.SetOption(SIMS_AGE, iAge);
 
 	// Set Sim sex
 	if (bOk && (pcTemp = oCmdLine.GetValue("sex"))) {
 		if (pcTemp) {
-		// Check for adult
+			// Check for adult
 			if (stricmp(pcTemp, "male") == 0)
 				iSex = SIMS_MALE;
-		// Check for child
+			// Check for child
 			if (stricmp(pcTemp, "female") == 0)
 				iSex = SIMS_FEMALE;
 		}
 	}
-// Set option
-	oSimsExport.SetOption(SIMS_SEX, iSex);
+	oExport.SetOption(SIMS_SEX, iSex);
 
 	// Set Sim skin tone
 	if (bOk && (pcTemp = oCmdLine.GetValue("skin"))) {
 		if (pcTemp) {
-		// Check for light skin
+			// Check for light skin
 			if (stricmp(pcTemp, "light") == 0)
 				iSkinTone = SIMS_LIGHT;
-		// Check for medium skin
+			// Check for medium skin
 			if (stricmp(pcTemp, "medium") == 0)
 				iSkinTone = SIMS_MEDIUM;
-		// Check for dark skin
+			// Check for dark skin
 			if (stricmp(pcTemp, "dark") == 0)
 				iSkinTone = SIMS_DARK;
 		}
 	}
-// Set option
-	oSimsExport.SetOption(SIMS_SKINTONE, iSkinTone);
+	oExport.SetOption(SIMS_SKINTONE, iSkinTone);
 
-// Set Sim build
+	// Set Sim build
 	if (bOk && (pcTemp = oCmdLine.GetValue("build"))) {
 		if (pcTemp) {
-		// Check for fit build
+			// Check for fit build
 			if (stricmp(pcTemp, "fit") == 0)
 				iBuild = SIMS_FIT;
-		// Check for fat build
+			// Check for fat build
 			if (stricmp(pcTemp, "fat") == 0)
 				iBuild = SIMS_FAT;
-		// Check for skinny build
+			// Check for skinny build
 			if (stricmp(pcTemp, "skinny") == 0)
 				iBuild = SIMS_SKINNY;
 		}
 	}
-// Set option
-	oSimsExport.SetOption(SIMS_BUILD, iBuild);
+	oExport.SetOption(SIMS_BUILD, iBuild);
 
-// Set converter verbose output
-	if (bOk && (oCmdLine.FindOption("0")))
-		iVerbose = SIMS_FALSE;
-	oSimsExport.SetOption(SIMS_VERBOSE, iVerbose);
 	return eResult;
 } // SetOptions
 
@@ -322,7 +317,7 @@ void Output(const char *pcText) {
 /* Example text status report function
 
 	This function receives text output of the current status of the avatar load and
-	Sims save functions. In this example, the string values passed back by the exporter
+	export save functions. In this example, the string values passed back by the exporter
 	modules are echoed directly to standard output.
 */
 
@@ -334,7 +329,7 @@ void Progress(double dPercent) {
 /* Example function description
 
 	The export process is in two parts, 1) loading and processing the avatar and 2)
-	processing and saving the avatar in the Sims format. As such, each part returns
+	processing and saving the avatar in the exported format. As such, each part returns
 	a progress update value from 0.0 to 1.0, once for loading then again for saving.
 	This function converts the two ranges to one range from 0.0 to 1.0 by initially
 	scaling the input value by 50 (to give a range between 0 and 50). After the load
@@ -345,14 +340,14 @@ void Progress(double dPercent) {
 */
 
 	static int iOffset = 0;						// Percentage offset - 0 for load, 50 for save
-// Calculate an integer percentage (from 0 to 50) from the 
-// floating point value given from the load or save modules
+	// Calculate an integer percentage (from 0 to 50) from the 
+	// floating point value given from the load or save modules
 	int iPercent = int(dPercent * 50.0) + iOffset;
-// Uncomment the following line if you wish to display the percentage progress
+	// Uncomment the following line if you wish to display the percentage progress
 /*
 	cout << iPercent << " complete" << endl;
 */
-// If the load reaches the end (dPercent == 1.0), then set the offset to prepare for the save
+	// If the load reaches the end (dPercent == 1.0), then set the offset to prepare for the save
 	if ((iPercent == 50) && (iOffset == 0))
 		iOffset = 50;
 } // Progress

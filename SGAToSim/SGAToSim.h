@@ -8,7 +8,7 @@
 //	Main application function definitions for command-line parsing, 
 //  export and progress bar update
 //
-// $Id: SGAToSim.h,v 1.2 2000/07/14 19:57:25 waz Exp $
+// $Id: SGAToSim.h,v 1.3 2000/07/19 08:52:29 waz Exp $
 //
 
 #ifndef _SGATOSIM_
@@ -21,13 +21,15 @@
 #include "SGAToSims.h"
 
 //#===--- Defines
-#define MAX_PROCESSES	256
+#define VEM_CLASS					CSGAToSims
+#define VEM_PROGRESS			"SimsSave"
+#define VEM_MAXPROCESSES	256
 
 // Main application function
 int main(int argc, char **argv);
 
 // Command-line option specification
-VARESULT SetOptions(CCommandLine &oCmdLine, CSGAToSims &oSimsExport);
+VARESULT SetOptions(CCommandLine &oCmdLine, VEM_CLASS &oSimsExport);
 
 // An example progress text output function
 void Output(const char *pcText);
