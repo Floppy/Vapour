@@ -9,7 +9,7 @@
 //! file      = "Convert/OChunk.cpp"
 //! author    = "James Smith"
 //! date      = "19/3/2002"
-//! rcsid     = "$Id: OChunk.cpp,v 1.1 2002/04/04 10:03:06 vap-james Exp $"
+//! rcsid     = "$Id: OChunk.cpp,v 1.2 2002/04/04 10:20:25 vap-warren Exp $"
 
 #include "OChunk.h"
 
@@ -18,7 +18,7 @@
 
 #define SCALE_FACTOR 0.01;
 
-COChunk::COChunk(TChunkType oType) :
+COChunk::COChunk(TOChunkType oType) :
    m_iFrame(0),
    m_oType(oType),
    m_pcData(NULL),
@@ -783,7 +783,7 @@ bool COChunk::Write(ofstream& oOutput) const {
    }
 }
 
-const COChunk* COChunk::SubChunk(TChunkType oType) const {
+const COChunk* COChunk::SubChunk(TOChunkType oType) const {
    for (std::vector<const COChunk*>::const_iterator pEntry=m_oSubChunks.begin(); pEntry!=m_oSubChunks.end(); pEntry++) {
       if ((*pEntry)->m_oType == oType) return *pEntry;
    }

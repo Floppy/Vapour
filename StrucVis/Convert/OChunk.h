@@ -9,7 +9,7 @@
 //! file      = "Convert/Chunk.h"
 //! author    = "James Smith"
 //! date      = "19/3/2002"
-//! rcsid     = "$Id: OChunk.h,v 1.1 2002/04/04 10:03:06 vap-james Exp $"
+//! rcsid     = "$Id: OChunk.h,v 1.2 2002/04/04 10:20:26 vap-warren Exp $"
 
 #ifndef __VTSTRUCVIS_CHUNK__
 #define __VTSTRUCVIS_CHUNK__
@@ -21,7 +21,7 @@
 using namespace std;
 
 //: Chunk Types
-enum TChunkType {
+enum TOChunkType {
    CHUNK_NONE     = 0xFF,
    CHUNK_ROOT     = 0x00,
    //-------------
@@ -43,7 +43,7 @@ enum TChunkType {
    CHUNK_NODEDISP = 0x23,
    CHUNK_BEAMFORC = 0x24,
    CHUNK_SLABFORC = 0x25,
-   CHUNK_CRACKS   = 0x26,
+   CHUNK_CRACKS   = 0x26
 };
 
 //: A output-specific data chunk
@@ -56,7 +56,7 @@ public:
    //:-------------------------
    //: Construction/Destruction
 
-   COChunk(TChunkType oType = CHUNK_NONE);
+   COChunk(TOChunkType oType = CHUNK_NONE);
    //: Constructor
    //!param: oType - if specified, a chunk of that type is created. Otherwise, the chunk takes it's type from the data loaded into it.
 
@@ -77,7 +77,7 @@ public:
    // The chunk will load the next set of data from the file as appropriate.
    //!param: oInput - The input data class.
 
-   TChunkType Type(void) const {return m_oType;}
+   TOChunkType Type(void) const {return m_oType;}
    //: The type of the chunk
 
    unsigned int Length(void) const {return m_iLength;}
@@ -88,7 +88,7 @@ public:
    //!param: pSubChunk - the subchunk to add
    //!param: return - true if successful
 
-   const COChunk* SubChunk(TChunkType oType) const;
+   const COChunk* SubChunk(TOChunkType oType) const;
    //: Get a subchunk with the specified type
 
    bool Write(ofstream& oOutput) const;
@@ -130,7 +130,7 @@ public:
 
 private:
 
-   TChunkType TranslateType(const char* pcType);
+   TOChunkType TranslateType(const char* pcType);
    //: Translates a string into a chunk type
 
    bool ReadNodes(CInputData& oInput);
@@ -178,7 +178,7 @@ protected:
    vector<const COChunk*> m_oSubChunks;
    //: A list of subchunks
 
-   TChunkType m_oType;
+   TOChunkType m_oType;
    //: The type of the chunk.
    
    int m_iFrame;
