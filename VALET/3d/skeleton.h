@@ -13,7 +13,7 @@
 //! author 		= "James Smith"
 //! date 		= "18/10/2001"
 //! lib 		= libVALET3d
-//! rcsid 		= "$Id: skeleton.h,v 1.1 2001/10/18 15:45:17 vap-james Exp $"
+//! rcsid 		= "$Id: skeleton.h,v 1.2 2001/10/18 20:57:32 vap-james Exp $"
 //! userlevel 	        = Normal
 //! docentry 	        = "VALET.3D.Animation"
 
@@ -32,6 +32,9 @@ namespace NValet {
 
    protected:
 
+      CVector3D m_vecTranslation;
+      //: The translation of the root joint.
+
       vector<CJoint> m_lJoints;
       //: A list of joints.
 
@@ -46,6 +49,18 @@ namespace NValet {
       ~CSkeleton();
       //: Destructor
       
+      //:-----------------
+      //: Access functions
+
+      const CVector3D& Translation(void) const {return m_vecTranslation;}
+      //: Access to the root translation.
+      //!param: return = a reference to the translation.
+
+      CVector3D& Translation(void) {return m_vecTranslation;}
+      //: Non-const access to the root translation.
+      // This can be used to translate the model.
+      //!param: return = a reference to the translation.
+
    };
 
 }
