@@ -41,7 +41,7 @@ RSC=rc.exe
 # PROP Intermediate_Dir "Release"
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_MBCS" /D "_LIB" /Yu"stdafx.h" /FD /c
-# ADD CPP /nologo /MT /W3 /GX /O2 /I "Application" /I "Avatar" /I "AvatarFiles" /I "DataTypes" /I "Image" /I "ImageFiles" /D "WIN32" /D "NDEBUG" /D "_MBCS" /D "_LIB" /D "VAL_BUILD" /Yu"stdafx.h" /FD /c
+# ADD CPP /nologo /MT /W3 /GX /O2 /I "Application" /I "Avatar" /I "AvatarFiles" /I "DataTypes" /I "Image" /I "ImageFiles" /I "Wrapper" /D "WIN32" /D "NDEBUG" /D "_MBCS" /D "_LIB" /D "VAL_BUILD" /Yu"stdafx.h" /FD /c
 # ADD BASE RSC /l 0x809 /d "NDEBUG"
 # ADD RSC /l 0x809 /d "NDEBUG"
 BSC32=bscmake.exe
@@ -181,7 +181,7 @@ SOURCE=.\Application\SFX.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\Application\SgatoSims.cpp
+SOURCE=.\Wrapper\SgatoSims.cpp
 # End Source File
 # Begin Source File
 
@@ -354,7 +354,7 @@ SOURCE=.\Application\SFX.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\Application\SgatoSims.h
+SOURCE=.\Wrapper\SgatoSims.h
 # End Source File
 # Begin Source File
 
@@ -383,6 +383,10 @@ SOURCE=.\DataTypes\Vector3D.h
 # Begin Source File
 
 SOURCE=.\Application\Wedgie.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\Wrapper\Wrapper.h
 # End Source File
 # End Group
 # End Target
