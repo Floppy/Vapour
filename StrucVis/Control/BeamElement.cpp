@@ -6,7 +6,7 @@
 // BeamElement.cpp
 // 19/03/2002 - James Smith
 //
-// $Id: BeamElement.cpp,v 1.17 2002/03/22 19:52:42 vap-james Exp $
+// $Id: BeamElement.cpp,v 1.18 2002/03/23 10:59:33 vap-james Exp $
 
 #include "stdafx.h"
 #include "BeamElement.h"
@@ -144,6 +144,7 @@ void CBeamElement::SetTemp(float fTemp) const {
       sprintf(pcBuffer,"%.2f",m_fTemp);
       poString->SetMFString(3,pcBuffer);
       poString->Release();
+      delete poString;
    }
 }
 
