@@ -1,0 +1,70 @@
+Microsoft Developer Studio Workspace File, Format Version 6.00
+# WARNING: DO NOT EDIT OR DELETE THIS WORKSPACE FILE!
+
+###############################################################################
+
+Project: "SGAToHL"=.\SGAToHL.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+    Begin Project Dependency
+    Project_Dep_Name VAL
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name VALWin32
+    End Project Dependency
+}}}
+
+###############################################################################
+
+Project: "VAL"=..\VAL\VAL.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+    begin source code control
+    VAL
+    ..\val
+    end source code control
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
+Project: "VALWin32"=..\VALWin32\VALWin32.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+    begin source code control
+    VALWin32
+    ..\valwin32
+    end source code control
+}}}
+
+Package=<4>
+{{{
+    Begin Project Dependency
+    Project_Dep_Name VAL
+    End Project Dependency
+}}}
+
+###############################################################################
+
+Global:
+
+Package=<5>
+{{{
+}}}
+
+Package=<3>
+{{{
+}}}
+
+###############################################################################
+
