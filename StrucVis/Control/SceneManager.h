@@ -9,7 +9,7 @@
 //! file      = "Control/SceneManager.h"
 //! author    = "James Smith"
 //! date      = "19/3/2002"
-//! rcsid     = "$Id: SceneManager.h,v 1.15 2002/04/03 16:20:03 vap-james Exp $"
+//! rcsid     = "$Id: SceneManager.h,v 1.16 2002/04/04 00:03:55 vap-james Exp $"
 
 #ifndef __VTSTRUCVIS_SCENEMANAGER__
 #define __VTSTRUCVIS_SCENEMANAGER__
@@ -102,6 +102,7 @@ public:
 
    void SetViewpoint(float pfPosition[3], float pfRotation[4]);
    //: Set viewpoint position.
+   // Method for generating parameters for this function are outlined in the description of the HUDView node in the "VRML Nodes" section of this documentation.
    //!param: pfPosition - an array of 3 floats defining the viewpoint position.
    //!param: pfRotation - an array of 4 floats defining the viewpoint orientation, in axis-angle notation.
 

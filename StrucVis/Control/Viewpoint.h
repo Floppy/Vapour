@@ -9,7 +9,7 @@
 //! file      = "Control/Viewpoint.h"
 //! author    = "James Smith"
 //! date      = "19/3/2002"
-//! rcsid     = "$Id: Viewpoint.h,v 1.11 2002/04/03 16:20:03 vap-james Exp $"
+//! rcsid     = "$Id: Viewpoint.h,v 1.12 2002/04/04 00:03:55 vap-james Exp $"
 
 #ifndef __VTSTRUCVIS_VIEWPOINT__
 #define __VTSTRUCVIS_VIEWPOINT__
@@ -53,6 +53,7 @@ public:
 
    bool Set(const char* pcURL, float* pfPosition = NULL, float* pfRotation = NULL);
    //: Set viewpoint position.
+   // Method for generating parameters for this function are outlined in the description of the HUDView node in the "VRML Nodes" section of this documentation.
    //!param: pcURL - a URL for the directory containing HUDView.wrl (i.e. excluding the filename).
    //!param: pfPosition - an array of 3 floats defining the viewpoint position. If this is NULL, 0 0 10 is used.
    //!param: pfRotation - an array of 4 floats defining the viewpoint orientation, in axis-angle notation. If this is NULL, 0 1 0 0 is used.
