@@ -7,7 +7,7 @@
 // ProgressControl.h - 01/06/2000 - Warren Moore
 //	Class for the callback of external progress updates functions
 //
-// $Id: ProgressControl.h,v 1.2 2000/06/17 10:42:05 waz Exp $
+// $Id: ProgressControl.h,v 1.3 2000/07/19 08:50:11 waz Exp $
 //
 
 #ifndef _VAL_PROGRESSCONTROL_
@@ -50,19 +50,19 @@ public:
 
 // Constructor/destructor
 	CProgressControl();		
-	~CProgressControl();
+	virtual ~CProgressControl();
 
 // Client functions
-	void SetTextFunction(const char *pcName, TEXT_FUNC pText);
-	void SetProgressFunction(const char *pcName, HANDLER_FUNC pHandler);
+	virtual void SetTextFunction(const char *pcName, TEXT_FUNC pText);
+	virtual void SetProgressFunction(const char *pcName, HANDLER_FUNC pHandler);
 
 // Server functions
 	// Text output
-	void SetText(const char *pcName, const char *pcText);
+	virtual void SetText(const char *pcName, const char *pcText);
 	// Progress output
-	void SetMaxProgress(const char *pcName, unsigned int uMax);
-	void SetProgress(const char *pcName, unsigned int uPercent);
-	void Step(const char *pcName);
+	virtual void SetMaxProgress(const char *pcName, unsigned int uMax);
+	virtual void SetProgress(const char *pcName, unsigned int uPercent);
+	virtual void Step(const char *pcName);
 
 //#===--- Internal Functions
 private:
@@ -72,4 +72,4 @@ private:
 	VecProgress m_oProgressTable;				// Progress name and function table
 };
 
-#endif // _VAL_COMMANDLINE_
+#endif // _VAL_PROGRESSCONTROL_
