@@ -1,8 +1,5 @@
-// stdafx.cpp : source file that includes just the standard includes
-//	InterVAL.pch will be the pre-compiled header
-//	stdafx.obj will contain the pre-compiled type information
-
-#include "stdafx.h"
+// Used to generate InterVAL.pch precompiled header. StdAfx.obj store precompiled type information
+#include "StdAfx.h"
 
 
 

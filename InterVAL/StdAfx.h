@@ -1,28 +1,32 @@
-// stdafx.h : include file for standard system include files,
-//  or project specific include files that are used frequently, but
-//      are changed infrequently
+//=========---
+// InterVAL
+//---------
+// Vapour Technology VAL Development Platform
+// Copyright 2000 Vapour Technology Ltd.
+//
+// StdAfx.h - 23/11/2000 - Warren Moore
+//	  Standard include files
+//
+// $Id: StdAfx.h,v 1.2 2000/11/29 15:49:38 warren Exp $
 //
 
-#if !defined(AFX_STDAFX_H__020E79FC_C14E_11D4_BFF6_005004F55D99__INCLUDED_)
-#define AFX_STDAFX_H__020E79FC_C14E_11D4_BFF6_005004F55D99__INCLUDED_
+#ifndef _INTERVAL_STDAFX_
+#define _INTERVAL_STDAFX_
 
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
 
-#define VC_EXTRALEAN		// Exclude rarely-used stuff from Windows headers
+#define VC_EXTRALEAN					// Exclude rarely-used stuff from Windows headers
 
-#include <afxwin.h>         // MFC core and standard components
-#include <afxext.h>         // MFC extensions
-#include <afxdisp.h>        // MFC Automation classes
-#include <afxdtctl.h>		// MFC support for Internet Explorer 4 Common Controls
+#include <afxwin.h>					// MFC core and standard components
+#include <afxext.h>					// MFC extensions
+#include <afxdisp.h>					// MFC Automation classes
+#include <afxdtctl.h>				// MFC support for Internet Explorer 4 Common Controls
 #ifndef _AFX_NO_AFXCMN_SUPPORT
-#include <afxcmn.h>			// MFC support for Windows Common Controls
+#include <afxcmn.h>					// MFC support for Windows Common Controls
 #endif // _AFX_NO_AFXCMN_SUPPORT
 
-#include <afxsock.h>		// MFC socket extensions
+#include <afxsock.h>					// MFC socket extensions
 
 //{{AFX_INSERT_LOCATION}}
-// Microsoft Visual C++ will insert additional declarations immediately before the previous line.
 
-#endif // !defined(AFX_STDAFX_H__020E79FC_C14E_11D4_BFF6_005004F55D99__INCLUDED_)
+#endif // _INTERVAL_STDAFX_
