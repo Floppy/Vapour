@@ -8,7 +8,7 @@
 //	Main application source for command-line parsing, 
 //  export and progress bar updates
 //
-// $Id: SGAToSim.cpp,v 1.2 2000/07/03 04:56:38 waz Exp $
+// $Id: SGAToSim.cpp,v 1.3 2000/07/11 14:21:48 waz Exp $
 //
 
 // Pre-compiled header include
@@ -18,6 +18,8 @@
 #include <direct.h>
 #include <process.h>
 
+// VAL
+#include "VALWin32.h"
 // Executable include
 #include "SGAToSim.h"
 // Exporter class include
@@ -26,23 +28,32 @@
 #include "CommandLine.h"
 // Progress bar controller
 #include "ProgressControl.h"
-extern CProgressControl g_oProgressControl;
 
+// VAL management object
+CVAL *g_poVAL = NULL;
+
+// External progress controller
+extern CProgressControl g_oProgressControl;
 
 //#===--- Main Function
 
 int main(int argc, char **argv) {
-// Create the Sims exporter
+	// Create the VAL management object
+	g_poVAL = (CVAL*) new CVALWin32;
+	if (!g_poVAL)
+		return -1;
+
+	// Create the Sims exporter
 	CSGAToSims oSimsExport;
 
-// Process command line arguments
+	// Process command line arguments
 	CCommandLine oCmdLine(argc, argv);
 	SetOptions(oCmdLine, oSimsExport);
 
-// Check for verbose output
+	// Check for verbose output
 	bool bVerbose = !oCmdLine.FindOption("0");
 
-// Attach the output handler functions, if verbose output specified
+	// Attach the output handler functions, if verbose output specified
 	if (bVerbose) {
 		g_oProgressControl.SetTextFunction("AMELoad", &Output);
 		g_oProgressControl.SetProgressFunction("AMELoad", &Progress);
@@ -50,11 +61,11 @@ int main(int argc, char **argv) {
 		g_oProgressControl.SetProgressFunction("SimsSave", &Progress);
 	}
 
-// Export sims model
+	// Export sims model
 	int iReturn = 0;
 	VARESULT eResult = oSimsExport.Export();
 
-// Report error status
+	// Report error status
 	switch (eResult) {
 		case VA_OK:
 			if (bVerbose)
@@ -65,99 +76,41 @@ int main(int argc, char **argv) {
 			iReturn = -1;
 	}
 
-// Package the output files into a self-extracting zip
+	// Package the output files into a self-extracting zip
 	if (eResult == VA_OK) {
-	// Get the model directory
+		// Get the model directory
 		const char *pcTemp = NULL;
-		char pcPath[STR_LENGTH] = "";
+		char pcPath[STR_SIZE] = "";
 		pcTemp = oSimsExport.GetOptionString(SIMS_DIRECTORY);
-		if (pcPath)
+		if (pcTemp)
 			strcpy(pcPath, pcTemp);
-	// Get the model name
-		char pcName[STR_LENGTH] = "";
-		pcTemp = oSimsExport.GetOptionString(SIMS_MODELNAME);
-		if (!pcTemp) {
-			cout << "Error encountered : Unable to retrieve model name" << endl << endl;
-			return -1;
+		// Get the application directory
+		const char *pcAppDir = g_poVAL->GetAppDir();
+		if (!pcAppDir) {
+			cout << "Error encountered : Unable to get application directory" << endl << endl;
+			iReturn = -1;
 		}
-	// Save the current directory
-		char pcWorkingDir[STR_LENGTH];
-		if (GetModuleFileName( NULL, pcWorkingDir, STR_LENGTH) == 0) {
-			cout << "Error encountered : Unable to store working directory" << endl << endl;
-			return -1;
-		}
-		char *pch;
-		pch = (pcWorkingDir + strlen(pcWorkingDir) - 1);
-		while( *pch != '\\' )
-			pch--;
-		*pch = '\0';
-	// Get the self-extracting zip filename
-		pcTemp = oCmdLine.GetValue(2);
-		char pcZipfile[STR_LENGTH] = "";
-		if ((pcTemp[0] != '\\') && (pcTemp[1] != ':')) {
-			strcpy(pcZipfile, pcWorkingDir);
-			strcat(pcZipfile, "\\");
-		}
-		strcat(pcZipfile, pcTemp);
-	// Change into the model directory
-		if (_chdir(pcPath)) {
-			cout << "Error encountered : Unable to change to model directory" << endl << endl;
-			return -1;
-		}
-	// Run pkzip to create a self-extracting zip file
-		// Get the path to PKZip
-		char pcPKZip[STR_LENGTH] = "";
-		strcpy(pcPKZip, pcWorkingDir);
-		strcat(pcPKZip, "\\pkzip25.exe");
-		if (bVerbose) 
-			cout << "Creating self-extracting zip file : " << pcZipfile << endl;
-		// Create the include filenames strings
-		char pcCMX[STR_LENGTH] = "-include=*";
-		strcat(pcCMX, pcName);
-		strcat(pcCMX, ".cmx");
-		char pcBMP[STR_LENGTH] = "-include=*";
-		strcat(pcBMP, pcName);
-		strcat(pcBMP, ".bmp");
-		char pcSKN[STR_LENGTH] = "-include=*";
-		strcat(pcSKN, pcName);
-		strcat(pcSKN, "*.skn");
-		// Run PKZip
-		int iResult = _spawnlp(_P_WAIT, pcPKZip, pcPKZip, "-add", "-move", "-sfx", 
-											 "-dir=current", "-max", "-nozipextension", "-silent",
-											 pcCMX, pcBMP, pcSKN, pcZipfile, NULL);
-		if (iResult == -1) {
-			cout << "Error encountered : Unable to create self-extracting zip file" << endl << endl;
-			return -1;
-		}
-	// Return to the working directory
-		_chdir(pcWorkingDir);
-	// Delete the temp model directory
-		const char *pcModeldir = oSimsExport.GetOptionString(SIMS_DIRECTORY);
-		if (!pcModeldir) {
-			cout << "Error encountered : Unable to delete temporary model directory" <<  endl << endl;
-			return -1;
-		}
-		iResult = _rmdir(pcModeldir);
-		if (iResult == -1) {
-			cout << "Error encountered : ";
-			switch (errno) {
-				case ENOTEMPTY:
-					cout << "Process error - cannot delete temporary model directory as not empty";
-					break;
-				case ENOENT:
-					cout << "Unable to delete temporary model directory";
-					break;
-				default:
-					cout << "Unknown error deleting temporary model directory";
+		if (iReturn == 0) {
+			// Get the self-extracting zip filename
+			pcTemp = oCmdLine.GetValue(2);
+			char pcSFXName[STR_SIZE] = "";
+			if ((pcTemp[0] != '\\') && (pcTemp[1] != ':'))
+				strcpy(pcSFXName, pcAppDir);
+			strcat(pcSFXName, pcTemp);
+			// Compress the file
+			eResult = oSimsExport.Compress(pcPath, pcSFXName);
+			if (eResult != VA_OK) {
+				cout << "Error encountered : Unable to create self-extracting avatar" << endl << endl;
+				iReturn = -1;
 			}
-			cout << endl << endl;
-			return -1;
-		}
-	// We are done
-		if (bVerbose) {
-			cout << "Created successfully" << endl << endl;
+			else
+				if (bVerbose)
+					cout << "Model compressed successfully" << endl << endl;
 		}
 	}
+
+	// Delete the VAL management object
+	delete g_poVAL;
 
 	return iReturn;
 }
@@ -208,7 +161,7 @@ VARESULT SetOptions(CCommandLine &oCmdLine, CSGAToSims &oSimsExport) {
 			oSimsExport.SetOption(SIMS_MODELNAME, pcTemp);
 		else {
 			pcTemp = oCmdLine.GetValue(2);
-			char pcName[STR_LENGTH] = "";
+			char pcName[STR_SIZE] = "";
 			int iDir = 0;
 			int iExt = strlen(pcTemp);
 			int iCount = 0;
@@ -241,9 +194,9 @@ VARESULT SetOptions(CCommandLine &oCmdLine, CSGAToSims &oSimsExport) {
 	// Get the base directory
 		pcTemp = oCmdLine.GetValue("path");
 	// If none specified, set the working directory
-		char pcWorkingDir[STR_LENGTH] = "";
+		char pcWorkingDir[STR_SIZE] = "";
 		if (!pcTemp) {
-			if (GetModuleFileName( NULL, pcWorkingDir, STR_LENGTH) == 0)
+			if (GetModuleFileName( NULL, pcWorkingDir, STR_SIZE) == 0)
 				return VA_ERROR;
 			char *pch;
 			pch = (pcWorkingDir + strlen(pcWorkingDir) - 1);
@@ -253,7 +206,7 @@ VARESULT SetOptions(CCommandLine &oCmdLine, CSGAToSims &oSimsExport) {
 			pcTemp = pcWorkingDir;
 		}
 	// Find a suitable working directory
-		char pcPath[STR_LENGTH] = "";
+		char pcPath[STR_SIZE] = "";
 		bool bFound = false;
 		int iCount = 0;
 		while ((!bFound) && (iCount < MAX_PROCESSES)) {

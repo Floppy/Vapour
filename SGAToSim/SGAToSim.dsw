@@ -19,6 +19,22 @@ Package=<4>
 
 ###############################################################################
 
+Project: "VALWin32"=..\VALWin32\VALWin32.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+    begin source code control
+    VALWin32
+    ..\valwin32
+    end source code control
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
 Project: "sgatosim"=.\sgatosim.dsp - Package Owner=<4>
 
 Package=<5>
@@ -29,6 +45,9 @@ Package=<4>
 {{{
     Begin Project Dependency
     Project_Dep_Name VAL
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name VALWin32
     End Project Dependency
 }}}
 
