@@ -7,7 +7,7 @@
 // VAL.h - 03/07/2000 - Warren Moore
 //	VAL management object for OS independent functions
 //
-// $Id: VAL.h,v 1.3 2000/07/10 22:16:59 waz Exp $
+// $Id: VAL.h,v 1.4 2000/07/19 08:52:02 waz Exp $
 //
 
 #ifndef _VAL_
@@ -26,6 +26,9 @@
 #define STR_SIZE				1024
 
 //#===--- Data types
+
+//#===--- Includes
+#include "ProgressControl.h"
 
 // Generic File Return Codes
 enum FRESULT {
@@ -52,15 +55,29 @@ public:
 	virtual ~CVAL();
 
 //#===--- External Functions
+	//#===--- Application system calls
 	// Returns a pointer to a const string containing the working directory
 	virtual const char *GetAppDir() = 0;
 	// Return a pointer to a const string containing the exe name and complete path
 	virtual const char *GetAppName() = 0;
 
+	//#===--- Progress control calls
+	// Set handler functions
+	virtual void SetProgressTextFunction(const char *pcName, TEXT_FUNC pText);
+	virtual void SetProgressFunction(const char *pcName, HANDLER_FUNC pHandler);
+	// Progress management functions
+	// Text output
+	virtual void SetProgressText(const char *pcName, const char *pcText);
+	// Progress output
+	virtual void SetProgressMax(const char *pcName, unsigned int uMax);
+	virtual void SetProgressPos(const char *pcName, unsigned int uPercent);
+	virtual void StepProgress(const char *pcName);
+
 protected:
 //#===--- Internal Functions
 
 //#===--- Internal Data
+	CProgressControl *m_poProgressCtrl;
 
 };
 
