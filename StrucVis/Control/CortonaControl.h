@@ -9,7 +9,7 @@
 //! file      = "Control/CortonaControl.h"
 //! author    = "Warren Moore"
 //! date      = "17/3/2002"
-//! rcsid     = "$Id: CortonaControl.h,v 1.8 2002/04/04 11:01:33 vap-warren Exp $"
+//! rcsid     = "$Id: CortonaControl.h,v 1.9 2002/04/04 19:55:02 vap-warren Exp $"
 
 #ifndef __VTSTRUCVIS_CORTONACONTROL__
 #define __VTSTRUCVIS_CORTONACONTROL__
@@ -21,53 +21,68 @@
 // Automation interfaces for Cortona
 #include "shelley.h"
 
-class CCortonaControl {
-//#===--- Construction/Destruction
-public:
-   CCortonaControl();
-   // Constructor must be called with a valid IEngine interface
-   ~CCortonaControl();
+//: Cortona control access
+// Wrapper around Cortona Automation interfaces
 
-//#===--- Member Functions
+class CCortonaControl {
+//:-----
+//: Construction/Destruction
+public:
+
+   CCortonaControl();
+   //: Constructor
+
+   ~CCortonaControl();
+   //: Destructor
+
+//:-----
+//: Control Interface Management
 
    bool Attach(LPOLEOBJECT pOleObject);
-   // Attachs the dispatch driver for the local Cortona control
+   //: Specify a Cortona dispatch driver for the object
+   //!param: pOleObject - Pointer to an IOleObject interface for the active Cortona control
+   //!return: true if attached ok
 
    bool Attached() const;
-   // Returns whether the driver is attached
+   //: Cortona object attached indicator
+   //!return: true if driver attached
 
    void Release();
-   // Releases the attached control
+   //: Releases the attached driver
+
+//:-----
+//: Cortona Functions
+// Requires an attached dispatch driver
 
    IEngine *GetEngine();
-   // Returns a pointer to the controls IEngine interface
+   //: Get the Cortona IEngine interface
+   //!return: Pointer to the control's IEngine interface, null if not attached
 
    void NavBar(bool bVal);
-   // Turns the navigation bar on(1) or off(0)
+   //: Enable the navigation bars
 
    void ContextMenu(bool bVal);
-   // Turns the context menu on(1) or off(0)
+   //: Enable the context menu (right-mouse click)
 
    void Headlight(bool bVal);
-   // Sets the headlight 
+   //: Enable the headlight
 
    void Edit();
-   // Enables direct scene modication
+   //: Enable direct editing of an empty scene
 
    void Freeze(bool bVal);
-   // Freezes the Cortona rendering
+   //: Disable the renderer
 
    void Refresh();
-   // Refreshes the Cortona render pipeline
+   //: Force one execution of the render pipeline
 
    void Trace(const char *pcText);
-   // Outputs a string to the Cortona console
+   //: Send output to the Cortona console
 
-//#===--- Member Variables
 protected:
-   LPDISPATCH m_pDispatch;          // Raw dispatch interface
-   COleDispatchDriver m_oDispatch;  // Dispatch driver for Cortona control
-   bool m_bAttached;                // IDispatch interface attached indicator
+   LPDISPATCH m_pDispatch;          //: Raw dispatch driver interface
+   COleDispatchDriver m_oDispatch;  //: Dispatch driver for Cortona control
+   bool m_bAttached;                //: Dispatch driver attached indicator
 
 };
 

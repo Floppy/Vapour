@@ -9,7 +9,7 @@
 //! file      = "Control/CortonaField.cpp"
 //! author    = "Warren Moore"
 //! date      = "7/3/2002"
-//! rcsid     = "$Id: CortonaField.cpp,v 1.17 2002/04/04 11:01:33 vap-warren Exp $"
+//! rcsid     = "$Id: CortonaField.cpp,v 1.18 2002/04/04 19:55:03 vap-warren Exp $"
 
 #include "stdafx.h"
 
@@ -33,6 +33,12 @@ CCortonaField::CCortonaField(IFieldObject *pField) : m_pField(pField) {
 }
 
 CCortonaField::~CCortonaField() {
+}
+
+void CCortonaField::Release() {
+   // If we have a field, set it free
+   if (m_pField)
+      m_pField->Release();
 }
 
 long CCortonaField::GetMFCount() {
@@ -74,12 +80,6 @@ bool CCortonaField::SetMFCount(const long liCount) {
    pMField->Release();
 
    return SUCCEEDED(hResult);
-}
-
-void CCortonaField::Release() {
-   // If we have a field, set it free
-   if (m_pField)
-      m_pField->Release();
 }
 
 bool CCortonaField::GetMFVec3f(const long liIndex, float &fX, float &fY, float &fZ) {

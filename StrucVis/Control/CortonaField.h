@@ -9,7 +9,7 @@
 //! file      = "Control/CortonaField.h"
 //! author    = "Warren Moore"
 //! date      = "12/3/2002"
-//! rcsid     = "$Id: CortonaField.h,v 1.14 2002/04/04 11:01:33 vap-warren Exp $"
+//! rcsid     = "$Id: CortonaField.h,v 1.15 2002/04/04 19:55:03 vap-warren Exp $"
 
 #ifndef __VTSTRUCVIS_CORTONAFIELD__
 #define __VTSTRUCVIS_CORTONAFIELD__
@@ -21,105 +21,194 @@
 // Automation interfaces for Cortona
 #include "shelley.h"
 
+//: Cortona field access
+// Wrapper around Cortona field Automation interfaces
+
 class CCortonaField {
-//#===--- Construction/Destruction
+//:-----
+//: Construction/Destruction
 public:
+
    CCortonaField(IFieldObject *pField);
-   // Create from another field
+   //: Constructor
+   // Creates a field object from a field interface
+   //!param: pField - IFieldObject interface to Cortona field - must not be null
 
    ~CCortonaField();
+   //: Destructor
+   // Release must be called first for new (not copied) objects
 
-//#===--- Member Functions
-
-   FTYPE Type() const;
-   // Returns the field type
-
-   long GetMFCount();
-   // Returns the number of fields in the MF object
-
-   bool SetMFCount(const long liCount);
-   // Creates the number of fields within the MF object
+//:-----
+//: Field Functions
 
    void Release();
-   // Release the field object
+   //: Release the field object
 
-   //--- MFVec3f Functions
+   FTYPE Type() const;
+   //: Get the field type
+   // Returns the field type. FTYPE is declared in Shelley.h
+
+   long GetMFCount();
+   //: Get the number of MF field values
+   //!return: Number of fields in the MF field, 0 if not a suitable type
+
+   bool SetMFCount(const long liCount);
+   //: Set the number of MF field values
+   // Only suitable for MF field types
+   //!return: true if successful
+
+//:-----
+//: MFVec3f Functions
 
    bool GetMFVec3f(const long liIndex, float &fX, float &fY, float &fZ);
-   // Returns the X, Y, Z values at the specified index
+   //: Get MFVec3f values
+   //!param: liIndex - Index of field value
+   //!param: fX - Reference to X value returned
+   //!param: fY - Reference to Y value returned
+   //!param: fZ - Reference to Z value returned
+   //!return: true if successful
 
    bool GetMFVec3f();
-   // Returns an array of the X, Y, Z values
+   //: Get all MFVec3f values
+   // Experimental function using an undocumented interface to manipulate entire MF field array
+   //!todo: Add return parameters - Not implemented as not used enough
+   //!return: true if successful
 
    bool SetMFVec3f(const long liIndex, const float fX, const float fY, const float fZ);
-   // Sets the X, Y, Z values at the specified index
+   //: Set MFVec3f values
+   //!todo: This function is an application bottleneck
+   //!param: liIndex - Index of field value
+   //!param: fX - X value
+   //!param: fY - Y value
+   //!param: fZ - Z value
+   //!return: true if successful
 
    bool AddMFVec3f(const float fX, const float fY, const float fZ);
-   // Appends the X, Y, Z triplet to the end of the vector list
+   //: Add a new value to the end of the field
+   //!param: fX - X value
+   //!param: fY - Y value
+   //!param: fZ - Z value
+   //!return: true if successful
 
-   //--- SFVec3f Functions
+//:-----
+//: SFVec3f Functions
 
    bool GetSFVec3f(float &fX, float &fY, float &fZ);
-   // Returns the X, Y, Z values
+   //: Get SFVec3f values
+   //!param: fX - Reference to X value returned
+   //!param: fY - Reference to Y value returned
+   //!param: fZ - Reference to Z value returned
+   //!return: true if successful
 
    bool SetSFVec3f(const float fX, const float fY, const float fZ);
-   // Sets the X, Y, Z values
+   //: Set SFVec3f values
+   //!param: fX - X value
+   //!param: fY - Y value
+   //!param: fZ - Z value
+   //!return: true if successful
 
-   //--- MFColor
+//:-----
+//: MFColor Functions
 
    bool GetMFColor(const long liIndex, float &fR, float &fG, float &fB);
-   // Gets the RGB colour values
+   //: Get MFVec3f values
+   //!param: liIndex - Index of field value
+   //!param: fR - Reference to red value returned
+   //!param: fG - Reference to green value returned
+   //!param: fB - Reference to blue value returned
+   //!return: true if successful
 
    bool SetMFColor(const long liIndex, const float fR, const float fG, const float fB);
-   // Sets the RGB colour values
+   //: Set MFColor values
+   //!todo: This function is an application bottleneck
+   //!param: liIndex - Index of field value
+   //!param: fR - Red value
+   //!param: fG - Blue value
+   //!param: fB - Green value
+   //!return: true if successful
 
    bool AddMFColor(const float fR, const float fG, const float fB);
-   // Appends the RGB colour values
-   // NOTE: For some damn reason, it won't use the blue value - Use SetMFCount and SetMFColor instead
+   //: Add a new value to the end of the field
+   //!bug: For some unknown reason, it won't use the blue value - Use SetMFCount and SetMFColor instead
+   //!param: fR - Red value
+   //!param: fG - Green value
+   //!param: fB - Blue value
+   //!return: true if successful
 
-   //--- SFBool
+//:-----
+//: SFBool Functions
 
    bool GetSFBool(bool &bVal);
-   // Returns the bool value
+   //: Get the SFBool value
+   //!param: bVal - Reference to bool value returned
+   //!return: true if successful
 
    bool SetSFBool(const bool bVal);
-   // Sets the bool value
+   //: Set the SFBool value
+   //!param: bVal - Bool value
+   //!return: true if successful
 
-   //--- SFRotation
+//:-----
+//: SFRotation Functions
 
    bool GetSFRotation(float &fX, float &fY, float &fZ, float &fAngle);
-   // Gets the rotation value
+   //: Get the SFRotation
+   //!param: fX - Reference to X axis value returned
+   //!param: fY - Reference to Y axis value returned
+   //!param: fZ - Reference to Z axis value returned
+   //!param: fAngle - Reference to rotation angle value returned
+   //!return: true if successful
 
    bool SetSFRotation(const float fX, const float fY, const float fZ, const float fAngle);
-   // Sets the rotation value
+   //: Set the SFRotation
+   //!param: fX - X axis value
+   //!param: fY - Y axis value
+   //!param: fZ - Z axis value
+   //!param: fAngle - Rotation angle value
+   //!return: true if successful
 
-   //--- MFVec3f Functions
+//:-----
+//: MFVec3f Functions
 
    bool GetMFInt32(const long liIndex, long &liValue);
-   // Returns the value at the specified index
+   //: Get the MFInt32 value
+   //!param: liIndex - Index of field value
+   //!param: liValue - Reference to value returned
+   //!return: true if successful
 
    bool SetMFInt32(const long liIndex, const long liValue);
    // Sets the value at the specified index
+   //!param: liIndex - Index of field value
+   //!param: liValue - Field value
+   //!return: true if successful
 
    bool AddMFInt32(const long liValue);
-   // Appends the value to the end of the list
+   //: Add a new value to the end of the field
+   //!param: liValue - Field value
+   //!return: true if successful
 
-   //--- MFString Functions
+//:-----
+//: MFString Functions
 
    bool SetMFString(const long liIndex, const char* pcString);
+   //: Set the MFString value
+   //!param: liIndex - Index of field value
+   //!param: pcString - Pointer to string
+   //!return: true if successful
 
 protected:
 
    IFieldObject *Interface() const;
-   // Returns the field object interface
+   //: Get the field object interface
+   // Only to be called by friend classes
 
-   // Friend class for protected functions
    friend class CCortonaNode;
+   //: Friend class for protected functions
 
-//#===--- Member Variables
 protected:
-   IFieldObject *m_pField;       // The field interface
-   FTYPE m_eType;                // The field type
+
+   IFieldObject *m_pField;       //: The field interface
+   FTYPE m_eType;                //: The field type
 
 };
 
