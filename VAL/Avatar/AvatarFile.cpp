@@ -4,10 +4,10 @@
 // Vapour Technology All-Purpose Library
 // Copyright 2000 Vapour Technology Ltd.
 //
-// AvatarFile.cpp - James Smith
+// AvatarFile.cpp - 16/06/2000 - James Smith
 //	Import/Export filter base class implementation
 //
-// $Id: AvatarFile.cpp,v 1.1 2000/06/16 21:58:15 waz Exp $
+// $Id: AvatarFile.cpp,v 1.2 2000/06/17 10:42:08 waz Exp $
 //
 
 #include "stdafx.h"

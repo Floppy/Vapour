@@ -7,11 +7,11 @@
 // Compress.h - 12/06/2000 - Warren Moore
 //  Compression base class
 //
-// $Id: Compress.h,v 1.1 2000/06/16 21:57:44 waz Exp $
+// $Id: Compress.h,v 1.2 2000/06/17 10:42:06 waz Exp $
 //
 
-#ifndef _COMPRESS_
-#define _COMPRESS_
+#ifndef _VAL_COMPRESS_
+#define _VAL_COMPRESS_
 
 #pragma once
 
@@ -33,4 +33,4 @@ public:
 	virtual int Retrieve(unsigned char *pData, int iSize) = 0;
 };
 
-#endif // _COMPRESS_
+#endif // _VAL_COMPRESS_

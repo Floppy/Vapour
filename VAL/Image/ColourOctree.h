@@ -7,11 +7,11 @@
 // ColourOctree.h - 26/12/1999 - Warren Moore
 //	Octree colour cube declaration
 //
-// $Id: ColourOctree.h,v 1.2 2000/06/17 09:30:53 waz Exp $
+// $Id: ColourOctree.h,v 1.3 2000/06/17 10:42:21 waz Exp $
 //
 
-#ifndef _COLOUROCTREE_
-#define _COLOUROCTREE_
+#ifndef _VAL_COLOUROCTREE_
+#define _VAL_COLOUROCTREE_
 
 #pragma once
 
@@ -81,4 +81,4 @@ inline unsigned char CColourOctree::Size() const {
 	return m_cSize;
 } // Size
 
-#endif // _COLOUROCTREE_
+#endif // _VAL_COLOUROCTREE_

@@ -7,11 +7,11 @@
 // Palette.h - 19/03/2000 - Warren Moore
 //	Palette header
 //
-// $Id: Palette.h,v 1.1 2000/06/16 21:59:40 waz Exp $
+// $Id: Palette.h,v 1.2 2000/06/17 10:42:17 waz Exp $
 //
 
-#ifndef _PALETTE_
-#define _PALETTE_
+#ifndef _VAL_PALETTE_
+#define _VAL_PALETTE_
 
 #pragma once
 
@@ -56,5 +56,5 @@ inline int CImagePalette::GetSize() const {
 	return m_iSize;
 } // GetSize
 
-#endif // _PALETTE_
+#endif // _VAL_PALETTE_
 

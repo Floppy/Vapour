@@ -7,11 +7,11 @@
 // ImageFileProxy.h - 21/12/1999 - Warren Moore
 //	Header file for image file format self-registering mechanism
 //
-// $Id: ImageFileProxy.h,v 1.1 2000/06/16 21:59:45 waz Exp $
+// $Id: ImageFileProxy.h,v 1.2 2000/06/17 10:42:19 waz Exp $
 //
 
-#ifndef _IMAGEFILEPROXY_
-#define _IMAGEFILEPROXY_
+#ifndef _VAL_IMAGEFILEPROXY_
+#define _VAL_IMAGEFILEPROXY_
 
 #pragma once
 
@@ -61,4 +61,4 @@ inline CImageFileProxyBase::CImageFileProxyBase() {
 	g_oImageFileStore.Register(this);
 } // Constructor
 
-#endif // _IMAGEFILEPROXY_
+#endif // _VAL_IMAGEFILEPROXY_

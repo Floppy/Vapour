@@ -4,10 +4,10 @@
 // Vapour Technology All-Purpose Library
 // Copyright 2000 Vapour Technology Ltd.
 //
-// SGAToSim.cpp - 12/06/2000 - James Smith
+// SGAToSim.cpp - 12/06/2000 - Warren Moore
 //	SGA Avatar to Sim converter wrapper 
 //
-// $Id: SgatoSims.cpp,v 1.1 2000/06/16 21:57:47 waz Exp $
+// $Id: SgatoSims.cpp,v 1.2 2000/06/17 10:42:03 waz Exp $
 //
 
 #include "StdAfx.h"

@@ -7,11 +7,11 @@
 // AxisRotation.h - 12/04/2000 - James Smith
 //	Axis-Angle rotation header
 //
-// $Id: AxisRotation.h,v 1.1 2000/06/16 21:59:16 waz Exp $
+// $Id: AxisRotation.h,v 1.2 2000/06/17 10:42:15 waz Exp $
 //
 
-#ifndef _VAPOUR_AXISROTATION_
-#define _VAPOUR_AXISROTATION_
+#ifndef _VAL_AXISROTATION_
+#define _VAL_AXISROTATION_
 
 #pragma once
 
@@ -112,4 +112,4 @@ protected:
 };
 
 
-#endif // _VAPOUR_AXISROTATION_
+#endif // _VAL_AXISROTATION_

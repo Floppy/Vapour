@@ -7,13 +7,13 @@
 // AvatarFile.h - 18/05/2000 - James Smith
 //	Import/Export filter base class header
 //
-// $Id: AvatarFile.h,v 1.1 2000/06/16 21:58:15 waz Exp $
+// $Id: AvatarFile.h,v 1.2 2000/06/17 10:42:11 waz Exp $
 //
 
 #pragma once
 
-#ifndef _VAPOUR_AVATARFILE_
-#define _VAPOUR_AVATARFILE_
+#ifndef _VAL_AVATARFILE_
+#define _VAL_AVATARFILE_
 
 #include "Avatar.h"
 #include <fstream.h>
@@ -67,4 +67,4 @@ public:
 
 };
 
-#endif // _VAPOUR_AVATARFILE_
+#endif // _VAL_AVATARFILE_

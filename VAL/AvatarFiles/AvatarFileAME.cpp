@@ -4,10 +4,10 @@
 // Avatar editor and exporter
 // Copyright 2000 Vapour Technology Ltd.
 //
-// AvatarFileAME.cpp - James Smith
+// AvatarFileAME.cpp - 17/06/2000 - James Smith
 //	AME import filter implementation
 //
-// $Id: AvatarFileAME.cpp,v 1.1 2000/06/16 21:59:04 waz Exp $
+// $Id: AvatarFileAME.cpp,v 1.2 2000/06/17 10:42:08 waz Exp $
 //
 
 #include "stdafx.h"

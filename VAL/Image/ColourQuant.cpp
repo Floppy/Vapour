@@ -7,12 +7,11 @@
 // ColourQuant.cpp - 26/12/1999 - Warren Moore
 //	Colour quantiser implementation
 //
-// $Id: ColourQuant.cpp,v 1.1 2000/06/16 21:59:43 waz Exp $
+// $Id: ColourQuant.cpp,v 1.2 2000/06/17 10:42:19 waz Exp $
 //
 
 #include "StdAfx.h"
 
-#define _COLOURQUANT_INTERNAL_
 #include "ColourQuant.h"
 
 #include <math.h>
@@ -87,8 +86,7 @@ void CColourQuant::AddColour(unsigned long uColour) {
 	m_cR = (unsigned char)uColour;
 	m_cG = (unsigned char)(uColour >> 8);
 	m_cB = (unsigned char)(uColour >> 16);
-	CColourOctantPos oPos;
-	PlaceColour(oPos, *m_pOctree);
+	PlaceColour(*m_pOctree);
 } // AddColour
 
 void CColourQuant::CreateLists() {
@@ -101,8 +99,7 @@ void CColourQuant::CreateLists() {
 		m_oJointList[c].Clear();
 
 // Traverse tree
-	CColourOctantPos oPos;
-	FindJoint(128, oPos, *m_pOctree);
+	FindJoint(128, *m_pOctree);
 } // CreateLists
 
 void CColourQuant::ClearLists() {
@@ -130,6 +127,7 @@ void CColourQuant::ReduceColour() {
 // Remove the best option from the octree
 	unsigned char cNode = 255;
 	CColourOctree &oParent = oOctant.GetParent(cNode);
+	ASSERT(&oParent != m_pOctree);
 	if (&oParent != m_pOctree) {
 		ASSERT(iLowest > 0);
 		oParent.Kill(cNode);
@@ -146,8 +144,7 @@ int CColourQuant::MatchColour(unsigned long uColour) {
 	m_cR = (unsigned char)uColour;
 	m_cG = (unsigned char)(uColour >> 8);
 	m_cB = (unsigned char)(uColour >> 16);
-	CColourOctantPos oPos;
-	return FindColour(oPos, *m_pOctree);
+	return FindColour(*m_pOctree);
 } // MatchColour
 
 void CColourQuant::GeneratePalette() {
@@ -156,34 +153,29 @@ void CColourQuant::GeneratePalette() {
 
 	ASSERT(m_pOctree);
 // Generate the palette entries
-	CColourOctantPos oPos;
-	GenerateColour(oPos, *m_pOctree);
+	GenerateColour(*m_pOctree);
 
 	m_bGenerated = true;
 } // GeneratePalette
 
 //#===--- Recursive Functions
 
-void CColourQuant::PlaceColour(CColourOctantPos &oPos, CColourOctree &oOctant) {
-	unsigned char cNode = oPos.GetNode(m_cR, m_cG, m_cB);
-	unsigned char cSize = oPos.Size();
+void CColourQuant::PlaceColour(CColourOctree &oOctant) {
+	unsigned char cNode = oOctant.GetNode(m_cR, m_cG, m_cB);
+	unsigned char cSize = oOctant.Size();
 // If not at max level, reach the furthest possible depth
 	if ((cSize > 1)) {
 	// If the child isn't active, inc value (if set), or spawn new child
 		if (!oOctant.NodeActive(cNode)) {
 			if (!oOctant.IsSet(cNode)) {
 			// Spawn a new octant and follow it down
-				CColourOctantPos &oNewPos = oPos.Spawn(cNode);
 				oOctant.Spawn(cNode);
-				PlaceColour(oNewPos, oOctant.GetChild(cNode));
-				delete &oNewPos;
+				PlaceColour(oOctant.GetChild(cNode));
 			}
 		}
 	// If the child is active, follow it down
 		else {
-			CColourOctantPos &oNewPos = oPos.Spawn(cNode);
-			PlaceColour(oNewPos, oOctant.GetChild(cNode));
-			delete &oNewPos;
+			PlaceColour(oOctant.GetChild(cNode));
 		}
 	}
 // If at bottom of tree, add a hit
@@ -202,21 +194,19 @@ void CColourQuant::PlaceColour(CColourOctantPos &oPos, CColourOctree &oOctant) {
 	}
 } // PlaceColour
 
-void CColourQuant::GenerateColour(CColourOctantPos &oPos, CColourOctree &oOctant) {
+void CColourQuant::GenerateColour(CColourOctree &oOctant) {
 	unsigned char cMask = 0x01;
 
 	for (unsigned char cNode = 0; cNode < 8; cNode++) {
 	// Follow the octree down
 		if (oOctant.NodeActive(cNode)) {
-			CColourOctantPos &oNewPos = oPos.Spawn(cNode);
-			GenerateColour(oNewPos, oOctant.GetChild(cNode));
-			delete &oNewPos;
+			GenerateColour(oOctant.GetChild(cNode));
 		}
 	// Otherwise find the colour of the octant, and set the palette index
 		else {
 			if (oOctant.IsSet(cNode)) {
 				unsigned char cR, cG, cB;
-				oPos.GetColour(cNode, cR, cG, cB);
+				oOctant.GetColour(cNode, cR, cG, cB);
 				unsigned long uColour = (cR << 16) | (cG << 8) | cB;
 				int iEntry = m_oPalette.AddEntry(uColour);
 				oOctant.SetVal(cNode, iEntry + 1);
@@ -225,15 +215,13 @@ void CColourQuant::GenerateColour(CColourOctantPos &oPos, CColourOctree &oOctant
 	}
 } // GenerateColour
 
-int CColourQuant::FindColour(CColourOctantPos &oPos, CColourOctree &oOctant) {
-	unsigned char cNode = oPos.GetNode(m_cR, m_cG, m_cB);
+int CColourQuant::FindColour(CColourOctree &oOctant) {
+	unsigned char cNode = oOctant.GetNode(m_cR, m_cG, m_cB);
 	int iIndex = 0;
 
 // Follow the octree down
 	if (oOctant.NodeActive(cNode)) {
-		CColourOctantPos &oNewPos = oPos.Spawn(cNode);
-		iIndex = FindColour(oNewPos, oOctant.GetChild(cNode));
-		delete &oNewPos;
+		iIndex = FindColour(oOctant.GetChild(cNode));
 	}
 // Otherwise get the palette index entry
 	else {
@@ -245,16 +233,14 @@ int CColourQuant::FindColour(CColourOctantPos &oPos, CColourOctree &oOctant) {
 	return iIndex;
 } // FindColour
 
-void CColourQuant::FindJoint(unsigned char cSize, CColourOctantPos &oPos, CColourOctree &oOctant) {
+void CColourQuant::FindJoint(unsigned char cSize, CColourOctree &oOctant) {
 	unsigned char cMask = 0x01;
 	for (unsigned char cNode = 0; cNode < 8; cNode++) {
 		if (oOctant.Reducible()) {
 			AddJoint(cSize, oOctant);
 		}
 		if (oOctant.NodeActive(cNode)) {
-			CColourOctantPos &oNewPos = oPos.Spawn(cNode);
-			FindJoint(cSize >> 1, oNewPos, oOctant.GetChild(cNode));
-			delete &oNewPos;
+			FindJoint(cSize >> 1, oOctant.GetChild(cNode));
 		}
 	}
 } // FindJoint

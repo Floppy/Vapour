@@ -7,11 +7,11 @@
 // ImageFile.h - 21/12/1999 - Warren Moore
 //	Abstract image file format header
 //
-// $Id: ImageFile.h,v 1.1 2000/06/16 21:59:45 waz Exp $
+// $Id: ImageFile.h,v 1.2 2000/06/17 10:42:19 waz Exp $
 //
 
-#ifndef _IMAGEFILE_
-#define _IMAGEFILE_
+#ifndef _VAL_IMAGEFILE_
+#define _VAL_IMAGEFILE_
 
 #pragma once
 
@@ -40,4 +40,4 @@ public:
 		const unsigned char *pData) const = 0;
 };
 
-#endif // _IMAGEFILE_
+#endif // _VAL_IMAGEFILE_

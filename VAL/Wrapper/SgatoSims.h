@@ -7,11 +7,11 @@
 // SGAToSims.h - 01/06/2000 - Warren Moore
 //	Sims export class
 //
-// $Id: SgatoSims.h,v 1.1 2000/06/16 21:57:47 waz Exp $
+// $Id: SgatoSims.h,v 1.2 2000/06/17 10:42:05 waz Exp $
 //
 
-#ifndef _SGATOSIMS_
-#define _SGATOSIMS_
+#ifndef _WRAP_SGATOSIMS_
+#define _WRAP_SGATOSIMS_
 
 #pragma once
 
@@ -102,4 +102,4 @@ private:
 	static const char *m_pcError[];								// Status/error string table
 };
 
-#endif // _SGATOSIMS_
+#endif // _WRAP_SGATOSIMS_

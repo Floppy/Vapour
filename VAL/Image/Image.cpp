@@ -7,12 +7,11 @@
 // Image.h - 21/12/1999 - Warren Moore
 //	Image implementation
 //
-// $Id: Image.cpp,v 1.2 2000/06/17 08:24:40 waz Exp $
+// $Id: Image.cpp,v 1.3 2000/06/17 10:42:20 waz Exp $
 //
 
 #include "stdafx.h"
 
-#define _IMAGE_INTERNAL_
 #include "Image.h"
 
 #include <fstream.h>

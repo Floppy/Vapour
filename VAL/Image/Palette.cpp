@@ -7,12 +7,11 @@
 // Palette.cpp - 19/03/2000 - Warren Moore
 //	Palette implementation
 //
-// $Id: Palette.cpp,v 1.1 2000/06/16 21:59:48 waz Exp $
+// $Id: Palette.cpp,v 1.2 2000/06/17 10:42:17 waz Exp $
 //
 
 #include "stdafx.h"
 
-#define _PALETTE_INTERNAL_
 #include "Palette.h"
 
 #ifdef _DEBUG

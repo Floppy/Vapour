@@ -7,11 +7,11 @@
 // CRC32.h - 12/06/2000 - Warren Moore
 //  32 bit CRC declaration
 //
-// $Id: CRC32.h,v 1.1 2000/06/16 21:57:45 waz Exp $
+// $Id: CRC32.h,v 1.2 2000/06/17 10:42:07 waz Exp $
 //
 
-#ifndef _CRC32_
-#define _CRC32_
+#ifndef _VAL_CRC32_
+#define _VAL_CRC32_
 
 #pragma once
 
@@ -49,4 +49,4 @@ inline unsigned long CCRC32::CRC() const {
 	return m_lCRC;
 } // CRC (Get)
 
-#endif // _CRC32_
+#endif // _VAL_CRC32_

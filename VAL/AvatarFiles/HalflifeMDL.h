@@ -7,11 +7,11 @@
 // HalflifeMDL.h - 16/02/2000 - James Smith
 //	Structures and definitions for halflife MDL export
 //
-// $Id: HalflifeMDL.h,v 1.1 2000/06/16 21:58:14 waz Exp $
+// $Id: HalflifeMDL.h,v 1.2 2000/06/17 10:42:07 waz Exp $
 //
 
-#ifndef _VAPOUR_HALFLIFEMDL_
-#define _VAPOUR_HALFLIFEMDL_
+#ifndef _VAL_HALFLIFEMDL_
+#define _VAL_HALFLIFEMDL_
 
 #include "MathConstants.h"
 
@@ -100,4 +100,4 @@ struct HlMDLHeader {
 
 };
 
-#endif //_VAPOUR_HALFLIFEMDL_
+#endif //_VAL_HALFLIFEMDL_

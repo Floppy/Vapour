@@ -7,11 +7,11 @@
 // EulerRotation.h - 12/04/2000 - James Smith
 //	Euler rotation class header
 //
-// $Id: EulerRotation.h,v 1.1 2000/06/16 21:59:17 waz Exp $
+// $Id: EulerRotation.h,v 1.2 2000/06/17 10:42:15 waz Exp $
 //
 
-#ifndef _VAPOUR_EULERROTATION_
-#define _VAPOUR_EULERROTATION_
+#ifndef _VAL_EULERROTATION_
+#define _VAL_EULERROTATION_
 
 #pragma once
 
@@ -153,4 +153,4 @@ protected:
 
 };
 
-#endif // _VAPOUR_EULERROTATION_
+#endif // _VAL_EULERROTATION_

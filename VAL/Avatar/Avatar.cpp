@@ -4,10 +4,10 @@
 // Avatar editor and exporter
 // Copyright 2000 Vapour Technology Ltd.
 //
-// Avatar.cpp - James Smith
+// Avatar.cpp - 17/06/2000 - James Smith
 //	Avatar class implementation
 //
-// $Id:
+// $Id: Avatar.cpp,v 1.2 2000/06/17 10:42:09 waz Exp $
 //
 
 #include "stdafx.h"

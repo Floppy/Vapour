@@ -7,11 +7,11 @@
 // MathConstants.h - 18/05/2000 - James Smith
 //	Various mathematical constant definitions
 //
-// $Id: MathConstants.h,v 1.1 2000/06/16 21:59:19 waz Exp $
+// $Id: MathConstants.h,v 1.2 2000/06/17 10:42:14 waz Exp $
 //
 
-#ifndef _VAPOUR_MATHCONSTANTS_
-#define _VAPOUR_MATHCONSTANTS_
+#ifndef _VAL_MATHCONSTANTS_
+#define _VAL_MATHCONSTANTS_
 
 #pragma once
 
@@ -23,5 +23,5 @@
 #define V_DEGTORAD 0.0174532925199432957692369076848861
 #define V_RADTODEG 57.2957795130823208767981548141052
 
-#endif //_VAPOUR_MATHCONSTANTS_
+#endif //_VAL_MATHCONSTANTS_
 

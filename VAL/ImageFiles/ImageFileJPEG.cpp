@@ -7,12 +7,11 @@
 // ImageFileJPEG.cpp - 21/12/1999 - Warren Moore
 //	JPEG file format image implementation
 //
-// $Id: ImageFileJPEG.cpp,v 1.1 2000/06/16 22:00:32 waz Exp $
+// $Id: ImageFileJPEG.cpp,v 1.2 2000/06/17 10:42:22 waz Exp $
 //
 
 #include "stdafx.h"
 
-#define _IMAGEFILEJPEG_INTERNAL_
 #include "ImageFileJPEG.h"
 #include "ImageFileProxy.h"
 

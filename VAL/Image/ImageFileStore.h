@@ -7,11 +7,11 @@
 // ImageFileStore.h - 21/12/1999 - Warren Moore
 //	Header file for image file format self-registering mechanism
 //
-// $Id: ImageFileStore.h,v 1.1 2000/06/16 21:59:46 waz Exp $
+// $Id: ImageFileStore.h,v 1.2 2000/06/17 10:42:18 waz Exp $
 //
 
-#ifndef _IMAGEFILESTORE_
-#define _IMAGEFILESTORE_
+#ifndef _VAL_IMAGEFILESTORE_
+#define _VAL_IMAGEFILESTORE_
 
 #pragma once
 
@@ -67,4 +67,4 @@ public:
 
 };
 
-#endif // _IMAGEFILESTORE_
+#endif // _VAL_IMAGEFILESTORE_

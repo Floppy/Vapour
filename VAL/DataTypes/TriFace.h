@@ -7,15 +7,15 @@
 // TriFace.h - 04/03/2000 - James Smith
 //	3D Trianglular Face structure header
 //
-// $Id: TriFace.h,v 1.1 2000/06/16 21:59:21 waz Exp $
+// $Id: TriFace.h,v 1.2 2000/06/17 10:42:12 waz Exp $
 //
 
-#ifndef _VAPOUR_TRIFACE_
-#define _VAPOUR_TRIFACE_
+#ifndef _VAL_TRIFACE_
+#define _VAL_TRIFACE_
 
 #pragma once
 
-// libVapour includes
+// Includes
 #include "TexCoord.h"
 
 struct STriFace
@@ -26,4 +26,4 @@ struct STriFace
 	STexCoord m_sTexCoords[3]; // texture coords
 };
 
-#endif // _VAPOUR_TRIFACE_
+#endif // _VAL_TRIFACE_

@@ -7,11 +7,11 @@
 // Image.h - 21/12/1999 - Warren Moore
 //	Image header
 //
-// $Id: Image.h,v 1.1 2000/06/16 21:59:45 waz Exp $
+// $Id: Image.h,v 1.2 2000/06/17 10:42:20 waz Exp $
 //
 
-#ifndef _IMAGE_
-#define _IMAGE_
+#ifndef _VAL_IMAGE_
+#define _VAL_IMAGE_
 
 #pragma once
 
@@ -122,5 +122,5 @@ inline void CImage::GetSize(int &iWidth, int &iHeight) const {
 	iHeight = m_iHeight;
 }
 
-#endif // _IMAGE_
+#endif // _VAL_IMAGE_
 

@@ -7,11 +7,11 @@
 // DList.h - 28/05/2000 - James Smith
 //	Doubly Linked list class header
 //
-// $Id: DList.h,v 1.1 2000/06/16 21:59:17 waz Exp $
+// $Id: DList.h,v 1.2 2000/06/17 10:42:15 waz Exp $
 //
 
-#ifndef _VAPOUR_LIST_
-#define _VAPOUR_LIST_
+#ifndef _VAL_LIST_
+#define _VAL_LIST_
 
 #pragma once
 
@@ -157,4 +157,4 @@ CDList<T>::~CDList() {
    return;
 } //~CDList()
 
-#endif //_VAPOUR_LIST_
+#endif //_VAL_LIST_

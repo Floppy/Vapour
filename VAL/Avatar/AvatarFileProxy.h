@@ -7,13 +7,13 @@
 // AvatarFileProxy.h - 04/03/2000 - James Smith
 //	Avatar import/export speciality store proxy header
 //
-// $Id: AvatarFileProxy.h,v 1.1 2000/06/16 21:58:16 waz Exp $
+// $Id: AvatarFileProxy.h,v 1.2 2000/06/17 10:42:11 waz Exp $
 //
 
 #pragma once
 
-#ifndef _VAPOUR_AVATARFILEPROXY_
-#define _VAPOUR_AVATARFILEPROXY_
+#ifndef _VAL_AVATARFILEPROXY_
+#define _VAL_AVATARFILEPROXY_
 
 #include <stdio.h>
 
@@ -94,4 +94,4 @@ inline CAvatarFileProxyBase::CAvatarFileProxyBase() {
 	g_oAvatarFileStore.Register(this);
 } // Constructor
 
-#endif // _VAPOUR_AVATARFILEPROXY_
+#endif // _VAL_AVATARFILEPROXY_

@@ -7,11 +7,11 @@
 // CompressDeflate.h - 12/06/2000 - Warren Moore
 //  Derived class for Deflate compression algorithm
 //
-// $Id: CompressDeflate.h,v 1.1 2000/06/16 21:57:44 waz Exp $
+// $Id: CompressDeflate.h,v 1.2 2000/06/17 10:42:06 waz Exp $
 //
 
-#ifndef _COMPRESS_DEFLATE_
-#define _COMPRESS_DEFLATE_
+#ifndef _VAL_COMPRESS_DEFLATE_
+#define _VAL_COMPRESS_DEFLATE_
 
 #pragma once
 
@@ -71,4 +71,4 @@ private:
 	int m_iQueueSize;
 };
 
-#endif // _COMPRESS_DEFLATE_
+#endif // _VAL_COMPRESS_DEFLATE_

@@ -7,11 +7,11 @@
 // JointList.h - 28/12/1999 - Warren Moore
 //	Octree colour cube joint manager declaration
 //
-// $Id: JointList.h,v 1.1 2000/06/16 21:59:47 waz Exp $
+// $Id: JointList.h,v 1.2 2000/06/17 10:42:18 waz Exp $
 //
 
-#ifndef _JOINTLIST_
-#define _JOINTLIST_
+#ifndef _VAL_JOINTLIST_
+#define _VAL_JOINTLIST_
 
 #pragma once
 
@@ -58,4 +58,4 @@ inline bool CJointList::Empty() const {
 	return (m_pList == NULL);
 } // Empty
 
-#endif // _JOINTLIST_
+#endif // _VAL_JOINTLIST_

@@ -4,10 +4,10 @@
 // Vapour Technology All-Purpose Library
 // Copyright 2000 Vapour Technology Ltd.
 //
-// AvatarFileStore.cpp - James Smith
+// AvatarFileStore.cpp - 16/06/2000 - James Smith
 //	Avatar import/export filter speciality store implementation
 //
-// $Id: AvatarFileStore.cpp,v 1.1 2000/06/16 21:58:16 waz Exp $
+// $Id: AvatarFileStore.cpp,v 1.2 2000/06/17 10:42:04 waz Exp $
 //
 
 #include "stdafx.h"

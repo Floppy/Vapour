@@ -7,13 +7,13 @@
 // AvatarFileAME.h - 18/05/2000 - James Smith
 //	AME import filter header
 //
-// $Id: AvatarFileAME.h,v 1.1 2000/06/16 21:59:03 waz Exp $
+// $Id: AvatarFileAME.h,v 1.2 2000/06/17 10:42:23 waz Exp $
 //
 
 #pragma once
 
-#ifndef _VAPOUR_AVATARFILEAME_
-#define _VAPOUR_AVATARFILEAME_
+#ifndef _VAL_AVATARFILEAME_
+#define _VAL_AVATARFILEAME_
 
 #include "AvatarFileStore.h"
 
@@ -62,4 +62,4 @@ public:
 
 };
 
-#endif // _VAPOUR_AVATARFILEAME_
+#endif // _VAL_AVATARFILEAME_

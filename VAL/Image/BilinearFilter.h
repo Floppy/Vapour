@@ -7,11 +7,11 @@
 // BilinearFilter.h - 29/03/2000 - Warren Moore
 //	Bilinear filter class declartion
 //
-// $Id: BilinearFilter.h,v 1.1 2000/06/16 21:59:41 waz Exp $
+// $Id: BilinearFilter.h,v 1.2 2000/06/17 10:42:16 waz Exp $
 //
 
-#ifndef _BILINEARFILTER_
-#define _BILINEARFILTER_
+#ifndef _VAL_BILINEARFILTER_
+#define _VAL_BILINEARFILTER_
 
 #pragma once
 
@@ -36,5 +36,5 @@ inline double CBilinearFilter::Filter(double dVal) {
 	return (dVal < m_dWidth ? m_dWidth - dVal : 0.0);
 } // Filter
 
-#endif // _BILINEARFILTER_
+#endif // _VAL_BILINEARFILTER_
 

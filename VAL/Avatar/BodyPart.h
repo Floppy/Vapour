@@ -4,14 +4,14 @@
 // Avatar editor and exporter
 // Copyright 2000 Vapour Technology Ltd.
 //
-// BodyPart.h - James Smith
+// BodyPart.h - 17/06/2000 - James Smith
 //	Body Part information structures and types
 //
-// $Id:
+// $Id: BodyPart.h,v 1.2 2000/06/17 10:42:10 waz Exp $
 //
 
-#ifndef _VAPOUR_BODYPART_
-#define _VAPOUR_BODYPART_
+#ifndef _VAL_BODYPART_
+#define _VAL_BODYPART_
 
 // libVapour includes
 #include "Point3D.h"
@@ -192,4 +192,4 @@ struct SBodyPart {
 
 };
 
-#endif //_VAPOUR_BODYPART_
+#endif //_VAL_BODYPART_

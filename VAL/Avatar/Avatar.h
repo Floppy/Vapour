@@ -4,14 +4,14 @@
 // Avatar editor and exporter
 // Copyright 2000 Vapour Technology Ltd.
 //
-// Avatar.h - James Smith
+// Avatar.h - 16/06/2000 - James Smith
 //	Avatar class header
 //
-// $Id: Avatar.h,v 1.1 2000/06/16 21:58:14 waz Exp $
+// $Id: Avatar.h,v 1.2 2000/06/17 10:42:09 waz Exp $
 //
 
-#ifndef _VAPOUR_AVATAR_
-#define _VAPOUR_AVATAR_
+#ifndef _VAL_AVATAR_
+#define _VAL_AVATAR_
 
 //Standard includes
 #include <vector>
@@ -349,4 +349,4 @@ private:
 
 };
 
-#endif //_VAPOUR_AVATAR_
+#endif //_VAL_AVATAR_

@@ -7,11 +7,11 @@
 // BoxFilter.h - 29/03/2000 - Warren Moore
 //	Box filter class declartion
 //
-// $Id: BoxFilter.h,v 1.1 2000/06/16 21:59:41 waz Exp $
+// $Id: BoxFilter.h,v 1.2 2000/06/17 10:42:16 waz Exp $
 //
 
-#ifndef _BOXFILTER_
-#define _BOXFILTER_
+#ifndef _VAL_BOXFILTER_
+#define _VAL_BOXFILTER_
 
 #pragma once
 

@@ -1,10 +1,13 @@
-///////////////////////////////
-// Wedgie - WJE file compiler
+//====---
+// VAL
+//----
+// Vapour Technology All-Purpose Library
+// Copyright 2000 Vapour Technology Ltd.
 //
-// Copyright 2000 Vapour Technology
-// 12/04/2000 - Warren Moore
-// 
-// TOC.h
+// WedgieCreate.h - 12/04/2000 - Warren Moore
+//	Wedgie creation class 
+//
+// $Id: WedgieCreate.h,v 1.2 2000/06/17 10:42:03 waz Exp $
 //
 
 #ifndef _VAL_WEDGIECREATE_
@@ -14,7 +17,7 @@
 
 #include <iostream.h>
 #include <fstream.h>
-#include "Progress.h"
+#include "ProgressControl.h"
 
 //#===--- Defines
 
@@ -31,12 +34,14 @@ public:
 	CWedgieCreate();
 	virtual ~CWedgieCreate();
 
+//#===--- External Functions
 	void SetBaseName(const char *pBase);
 	CString GetName();
 	int GetFiles();
 	FRESULT Generate(CProgress &oDlg);
 
 protected:
+//#===--- Internal Structures
 	typedef struct sFileDataStruct {
 		char *m_pName;
 		unsigned int m_iOffset;
@@ -50,6 +55,7 @@ protected:
 
 	} sFileData;
 
+//#===--- Internal Functions
 	int Count(CString strDir);
 	FRESULT GenerateTOC(CString strDir);
 	void DeleteFileList();
@@ -57,6 +63,7 @@ protected:
 	FRESULT ProcessFiles(ofstream &oFile, CProgress &oDlg);
 	FRESULT UpdateHeader(ofstream &oFile);
 
+//#===--- Internal Data
 	CString m_strBase;
 	CString m_strName;
 	int m_iBaseLength;

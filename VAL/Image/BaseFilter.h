@@ -7,11 +7,11 @@
 // BaseFilter.h - 29/03/2000 - Warren Moore
 //	Base filter class declartion
 //
-// $Id: BaseFilter.h,v 1.1 2000/06/16 22:00:16 waz Exp $
+// $Id: BaseFilter.h,v 1.2 2000/06/17 10:42:17 waz Exp $
 //
 
-#ifndef _BASEFILTER_
-#define _BASEFILTER_
+#ifndef _VAL_BASEFILTER_
+#define _VAL_BASEFILTER_
 
 #pragma once
 
@@ -44,4 +44,4 @@ inline double CBaseFilter::Width() const {
 	return m_dWidth;
 } // Width (Get)
 
-#endif // _BASEFILTER_
+#endif // _VAL_BASEFILTER_

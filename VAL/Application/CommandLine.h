@@ -7,11 +7,11 @@
 // CommandLine.h - 01/06/2000 - Warren Moore
 //	Command line parsing class 
 //
-// $Id: CommandLine.h,v 1.1 2000/06/16 21:57:43 waz Exp $
+// $Id: CommandLine.h,v 1.2 2000/06/17 10:42:06 waz Exp $
 //
 
-#ifndef _COMMANDLINE_
-#define _COMMANDLINE_
+#ifndef _VAL_COMMANDLINE_
+#define _VAL_COMMANDLINE_
 
 #pragma once
 
@@ -50,4 +50,4 @@ private:
 	char **m_pcData;		// list of arguments
 };
 
-#endif // _COMMANDLINE_
+#endif // _VAL_COMMANDLINE_

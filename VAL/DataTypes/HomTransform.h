@@ -7,11 +7,11 @@
 // HomTransform.h - 12/04/2000 - James Smith
 //	Homogeneous transformation matrix header
 //
-// $Id: HomTransform.h,v 1.1 2000/06/16 21:59:18 waz Exp $
+// $Id: HomTransform.h,v 1.2 2000/06/17 10:42:14 waz Exp $
 //
 
-#ifndef _VAPOUR_HOMTRANSFORM_
-#define _VAPOUR_HOMTRANSFORM_
+#ifndef _VAL_HOMTRANSFORM_
+#define _VAL_HOMTRANSFORM_
 
 #pragma once
 
@@ -87,4 +87,4 @@ protected:
 
 };
 
-#endif // _VAPOUR_HOMTRANSFORM_
+#endif // _VAL_HOMTRANSFORM_

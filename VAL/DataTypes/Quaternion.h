@@ -7,11 +7,11 @@
 // Quaternion.h - 12/04/2000 - James Smith
 //	Quaternion class header
 //
-// $Id: Quaternion.h,v 1.1 2000/06/16 21:59:20 waz Exp $
+// $Id: Quaternion.h,v 1.2 2000/06/17 10:42:13 waz Exp $
 //
 
-#ifndef _VAPOUR_QUATERNION_
-#define _VAPOUR_QUATERNION_
+#ifndef _VAL_QUATERNION_
+#define _VAL_QUATERNION_
 
 #pragma once
 
@@ -69,4 +69,4 @@ public:
 	CVector3D GetVector(void) const;
 };
 
-#endif // _VAPOUR_QUATERNION_
+#endif // _VAL_QUATERNION_

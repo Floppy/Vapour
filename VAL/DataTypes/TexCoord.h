@@ -7,11 +7,11 @@
 // TexCoord.h - 04/03/2000 - James Smith
 //	Texture coordinate structure header
 //
-// $Id: TexCoord.h,v 1.1 2000/06/16 21:59:20 waz Exp $
+// $Id: TexCoord.h,v 1.2 2000/06/17 10:42:13 waz Exp $
 //
 
-#ifndef _VAPOUR_TEXCOORD_
-#define _VAPOUR_TEXCOORD_
+#ifndef _VAL_TEXCOORD_
+#define _VAL_TEXCOORD_
 
 #pragma once
 
@@ -21,4 +21,4 @@ struct STexCoord
 	double dV;
 };
 
-#endif // _VAPOUR_TEXCOORD_
+#endif // _VAL_TEXCOORD_

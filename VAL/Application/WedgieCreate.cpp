@@ -1,10 +1,13 @@
-///////////////////////////////
-// Wedgie - WJE file compiler
+//====---
+// VAL
+//----
+// Vapour Technology All-Purpose Library
+// Copyright 2000 Vapour Technology Ltd.
 //
-// Copyright 2000 Vapour Technology
-// 12/04/2000 - Warren Moore
-// 
-// TOC.cpp
+// WedgieCreate.cpp - 12/04/2000 - Warren Moore
+//	Wedgie creation class implementation
+//
+// $Id: WedgieCreate.cpp,v 1.2 2000/06/17 10:42:03 waz Exp $
 //
 
 #include "stdafx.h"

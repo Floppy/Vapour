@@ -7,11 +7,11 @@
 // AvatarPose.h - 21/2/2000 - James Smith
 //	Avatar pose class header
 //
-// $Id: AvatarPose.h,v 1.1 2000/06/16 21:58:17 waz Exp $
+// $Id: AvatarPose.h,v 1.2 2000/06/17 10:42:10 waz Exp $
 //
 
-#ifndef _VAPOUR_AVATARPOSE_
-#define _VAPOUR_AVATARPOSE_
+#ifndef _VAL_AVATARPOSE_
+#define _VAL_AVATARPOSE_
 
 #pragma once
 
@@ -108,4 +108,4 @@ protected:
 
 };
 
-#endif //_VAPOUR_AVATARPOSE_
+#endif //_VAL_AVATARPOSE_

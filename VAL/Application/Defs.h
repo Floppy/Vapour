@@ -7,11 +7,11 @@
 // Defs.h - 21/12/1999 - Warren Moore
 //	Global Definitions for VAL
 //
-// $Id: Defs.h,v 1.1 2000/06/16 21:57:46 waz Exp $
+// $Id: Defs.h,v 1.2 2000/06/17 10:42:05 waz Exp $
 //
 
-#ifndef _DEFS_
-#define _DEFS_
+#ifndef _VAL_DEFS_
+#define _VAL_DEFS_
 
 #pragma once
 
@@ -80,4 +80,4 @@ enum FRESULT {
 	F_ERROR,
 };
 
-#endif // _DEFS_
+#endif // _VAL_DEFS_

@@ -7,11 +7,11 @@
 // Vector3d.h - 18/05/2000 - James Smith
 //	3D vector class header
 //
-// $Id: Vector3D.h,v 1.1 2000/06/16 21:59:16 waz Exp $
+// $Id: Vector3D.h,v 1.2 2000/06/17 10:42:12 waz Exp $
 //
 
-#ifndef _VAPOUR_VECTOR3D_
-#define _VAPOUR_VECTOR3D_
+#ifndef _VAL_VECTOR3D_
+#define _VAL_VECTOR3D_
 
 #pragma once
 
@@ -82,4 +82,4 @@ public:
 	void ToDouble(double &dX, double &dY, double &dZ) const;
 };
 
-#endif // _VAPOUR_VECTOR3D_
+#endif // _VAL_VECTOR3D_

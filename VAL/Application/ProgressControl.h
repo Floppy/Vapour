@@ -7,11 +7,11 @@
 // ProgressControl.h - 01/06/2000 - Warren Moore
 //	Class for the callback of external progress updates functions
 //
-// $Id: ProgressControl.h,v 1.1 2000/06/16 21:57:47 waz Exp $
+// $Id: ProgressControl.h,v 1.2 2000/06/17 10:42:05 waz Exp $
 //
 
-#ifndef _PROGRESSCONTROL_
-#define _PROGRESSCONTROL_
+#ifndef _VAL_PROGRESSCONTROL_
+#define _VAL_PROGRESSCONTROL_
 
 #pragma once
 
@@ -72,4 +72,4 @@ private:
 	VecProgress m_oProgressTable;				// Progress name and function table
 };
 
-#endif // _COMMANDLINE_
+#endif // _VAL_COMMANDLINE_

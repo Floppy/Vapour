@@ -7,13 +7,13 @@
 // AvatarFileSims.h - 5/4/2000 - James Smith
 //	Sims export filter header
 //
-// $Id: AvatarFileSims.h,v 1.1 2000/06/16 21:59:03 waz Exp $
+// $Id: AvatarFileSims.h,v 1.2 2000/06/17 10:42:23 waz Exp $
 //
 
 #pragma once
 
-#ifndef _VAPOUR_AVATARFILESIMS_
-#define _VAPOUR_AVATARFILESIMS_
+#ifndef _VAL_AVATARFILESIMS_
+#define _VAL_AVATARFILESIMS_
 
 #include "AvatarFileStore.h"
 #include "ImageFileStore.h"
@@ -70,4 +70,4 @@ public:
 
 };
 
-#endif // _VAPOUR_AVATARFILESIMS_
+#endif // _VAL_AVATARFILESIMS_

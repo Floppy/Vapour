@@ -7,11 +7,11 @@
 // Point3d.h - 04/03/2000 - James Smith
 //	3D Point structure header
 //
-// $Id: Point3D.h,v 1.1 2000/06/16 21:59:19 waz Exp $
+// $Id: Point3D.h,v 1.2 2000/06/17 10:42:13 waz Exp $
 //
 
-#ifndef _VAPOUR_POINT3D_
-#define _VAPOUR_POINT3D_
+#ifndef _VAL_POINT3D_
+#define _VAL_POINT3D_
 
 #pragma once
 
@@ -20,4 +20,4 @@ struct SPoint3D
 	double m_dComponents[3];
 };
 
-#endif // _VAPOUR_POINT3D_
+#endif // _VAL_POINT3D_

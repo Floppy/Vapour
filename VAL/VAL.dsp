@@ -23,8 +23,8 @@ CFG=VAL - Win32 Debug
 
 # Begin Project
 # PROP AllowPerConfigDependencies 0
-# PROP Scc_ProjName ""
-# PROP Scc_LocalPath ""
+# PROP Scc_ProjName "VAL"
+# PROP Scc_LocalPath "."
 CPP=cl.exe
 RSC=rc.exe
 
@@ -124,10 +124,6 @@ SOURCE=.\DataTypes\AxisRotation.cpp
 # Begin Source File
 
 SOURCE=.\Avatar\BodyPart.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\Image\ColourOctantPos.cpp
 # End Source File
 # Begin Source File
 
@@ -261,10 +257,6 @@ SOURCE=.\Avatar\BodyPart.h
 # Begin Source File
 
 SOURCE=.\Image\boxfilter.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\Image\ColourOctantPos.h
 # End Source File
 # Begin Source File
 

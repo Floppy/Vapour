@@ -7,11 +7,11 @@
 // TimeLimit.h - 07/06/2000 - Warren Moore
 //	Time limit validation class 
 //
-// $Id: TimeLimit.h,v 1.1 2000/06/16 21:57:43 waz Exp $
+// $Id: TimeLimit.h,v 1.2 2000/06/17 10:42:04 waz Exp $
 //
 
-#ifndef _TIMELIMIT_
-#define _TIMELIMIT_
+#ifndef _VAL_TIMELIMIT_
+#define _VAL_TIMELIMIT_
 
 #pragma once
 
@@ -40,4 +40,4 @@ private:
 private:
 };
 
-#endif // _TIMELIMIT_
+#endif // _VAL_TIMELIMIT_

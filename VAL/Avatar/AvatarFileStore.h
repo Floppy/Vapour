@@ -7,13 +7,13 @@
 // AvatarFileStore.h - 16/03/2000 - James Smith
 //	Avatar import/export filter speciality store header
 //
-// $Id: AvatarFileStore.h,v 1.1 2000/06/16 21:58:17 waz Exp $
+// $Id: AvatarFileStore.h,v 1.2 2000/06/17 10:42:10 waz Exp $
 //
 
 #pragma once
 
-#ifndef _VAPOUR_AVATARFILESTORE_
-#define _VAPOUR_AVATARFILESTORE_
+#ifndef _VAL_AVATARFILESTORE_
+#define _VAL_AVATARFILESTORE_
 
 #include <stdio.h>
 #include <vector>
@@ -73,4 +73,4 @@ public:
 
 };
 
-#endif // _VAPOUR_AVATARFILESTORE_
+#endif // _VAL_AVATARFILESTORE_

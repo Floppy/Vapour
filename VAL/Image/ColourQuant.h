@@ -7,15 +7,14 @@
 // ColourQuant.h - 26/12/1999 - Warren Moore
 //	Colour quantiser declaration
 //
-// $Id: ColourQuant.h,v 1.1 2000/06/16 21:59:44 waz Exp $
+// $Id: ColourQuant.h,v 1.2 2000/06/17 10:42:21 waz Exp $
 //
 
-#ifndef _COLOURQUANT_
-#define _COLOURQUANT_
+#ifndef _VAL_COLOURQUANT_
+#define _VAL_COLOURQUANT_
 
 #pragma once
 
-#include "ColourOctantPos.h"
 #include "ColourOctree.h"
 #include "JointList.h"
 #include <vector>
@@ -45,10 +44,10 @@ public:
 //#===--- Internal Functions
 protected:
 // Recursive Functions
-	void PlaceColour(CColourOctantPos &oPos, CColourOctree &oOctant);
-	void GenerateColour(CColourOctantPos &oPos, CColourOctree &oOctant);
-	int FindColour(CColourOctantPos &oPos, CColourOctree &oOctant);
-	void FindJoint(unsigned char cSize, CColourOctantPos &oPos, CColourOctree &oOctant);
+	void PlaceColour(CColourOctree &oOctant);
+	void GenerateColour(CColourOctree &oOctant);
+	int FindColour(CColourOctree &oOctant);
+	void FindJoint(unsigned char cSize, CColourOctree &oOctant);
 
 // Joint Functions
 	void AddJoint(unsigned char cSize, CColourOctree &oOctant);
@@ -65,4 +64,4 @@ protected:
 	CImagePalette m_oPalette;
 };
 
-#endif // _COLOURQUANT_
+#endif // _VAL_COLOURQUANT_
