@@ -2,6 +2,17 @@
 : Compilation Notes
 
 <P CLASS=HEADING>
+Requirements
+</P>
+<P>
+These packages are required for compilation of the control
+</P>
+<UL>
+<LI>Microsoft Visual Studio 6 (SP5)</LI>
+<LI>Parallel Graphics Cortona SDK 2.6</LI>
+</UL>
+
+<P CLASS=HEADING>
 Cannot open include file: 'shelley.h'
 </P>
 <P>
