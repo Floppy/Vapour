@@ -7,7 +7,7 @@
 // AvatarFileGeneric.cpp - 04/10/2000 - James Smith
 //	Generic avatar import filter implementation
 //
-// $Id: AvatarFileGeneric.cpp,v 1.4 2000/12/02 07:24:58 warren Exp $
+// $Id: AvatarFileGeneric.cpp,v 1.5 2000/12/02 13:51:19 james Exp $
 //
 
 #include "stdafx.h"
@@ -98,21 +98,6 @@ CAvatar* CAvatarFileGeneric::Load(const char* pszFilename) const {
       pNewAvatar->SetAge(CAvatar::AGE_UNKNOWN);
       //Create a material
       int iMaterial = pNewAvatar->AddMaterial();
-		// Set the material defaults
-		if (iMaterial != -1) {
-			CSurfaceMaterial *poMaterial = pNewAvatar->Material(iMaterial);
-			if (poMaterial) {
-				const CColour oAmbient(0.4F, 1.0F);
-				poMaterial->SetAmbient(oAmbient);
-				const CColour oDiffuse(0.9F, 1.0F);
-				poMaterial->SetDiffuse(oDiffuse);
-				const CColour oSpecular(0.0F, 1.0F);
-				poMaterial->SetSpecular(oSpecular);
-				const CColour oEmissive(0.0F, 1.0F);
-				poMaterial->SetEmissive(oEmissive);
-				poMaterial->SetShininess(0.0F);
-			}
-		}
       
       //Load all data into "current" fields, ready for unposing
 		

@@ -7,7 +7,7 @@
 // AvatarFileAME.cpp - 17/06/2000 - James Smith
 //	AME import filter implementation
 //
-// $Id: AvatarFileAME.cpp,v 1.13 2000/12/02 07:24:58 warren Exp $
+// $Id: AvatarFileAME.cpp,v 1.14 2000/12/02 13:51:19 james Exp $
 //
 
 #include "stdafx.h"
@@ -150,19 +150,6 @@ CAvatar* CAvatarFileAME::Load(const char* pszFilename) const {
             // Create new material
             int iNewMaterial = pNewAvatar->AddMaterial();
             if (iNewMaterial > -1) {
-					// Set the material defaults
-					CSurfaceMaterial *poMaterial = pNewAvatar->Material(iNewMaterial);
-					if (poMaterial) {
-						const CColour oAmbient(0.4F, 1.0F);
-						poMaterial->SetAmbient(oAmbient);
-						const CColour oDiffuse(0.9F, 1.0F);
-						poMaterial->SetDiffuse(oDiffuse);
-						const CColour oSpecular(0.0F, 1.0F);
-						poMaterial->SetSpecular(oSpecular);
-						const CColour oEmissive(0.0F, 1.0F);
-						poMaterial->SetEmissive(oEmissive);
-						poMaterial->SetShininess(0.0F);
-					}
 					// Create the texture
                CImage* pNewImage = NULL;
                NEWBEGIN
@@ -392,6 +379,7 @@ CAvatar* CAvatarFileAME::Load(const char* pszFilename) const {
          }
          // Fix vertex associations
          pNewAvatar->FixVertexAssociations();
+
          // Associate faces
          for (i=0; i<16; i++) {
             BodyPart bpPart = bpParts[i];
