@@ -7,7 +7,7 @@
 // CortonaControl.h
 // 17/03/2002 - Warren Moore
 //
-// $Id: CortonaControl.h,v 1.2 2002/03/22 16:54:43 vap-warren Exp $
+// $Id: CortonaControl.h,v 1.3 2002/03/23 21:18:35 vap-warren Exp $
 
 #ifndef __VTSTRUCVIS_CORTONACONTROL__
 #define __VTSTRUCVIS_CORTONACONTROL__
@@ -33,6 +33,9 @@ public:
 
    bool Attached() const;
    // Returns whether the driver is attached
+
+   void Release();
+   // Releases the attached control
 
    IEngine *GetEngine();
    // Returns a pointer to the controls IEngine interface

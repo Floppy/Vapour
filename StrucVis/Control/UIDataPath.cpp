@@ -4,16 +4,14 @@
 // ActiveX Control for structure visualisation
 // Copyright 2000 Vapour Technology Ltd.
 //
-// SimDataPath.cpp
+// UIDataPath.cpp
 // 19/03/2002 - Warren Moore
 //
-// $Id: SimDataPath.cpp,v 1.2 2002/03/23 21:18:35 vap-warren Exp $
+// $Id: UIDataPath.cpp,v 1.1 2002/03/23 21:18:35 vap-warren Exp $
 
 #include "stdafx.h"
 #include "vtstrucvis.h"
-#include "SimDataPath.h"
-
-#include "VTStrucVisCtl.h"
+#include "UIDataPath.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -21,18 +19,18 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-/////////////////
-// CSimDataPath
+////////////////
+// CUIDataPath
 
-CSimDataPath::CSimDataPath() {
+CUIDataPath::CUIDataPath() {
 }
 
-CSimDataPath::~CSimDataPath() {
+CUIDataPath::~CUIDataPath() {
 }
 
 #if 0
-BEGIN_MESSAGE_MAP(CSimDataPath, CDataPathProperty)
-	//{{AFX_MSG_MAP(CSimDataPath)
+BEGIN_MESSAGE_MAP(CUIDataPath, CDataPathProperty)
+	//{{AFX_MSG_MAP(CUIDataPath)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 #endif	// 0
@@ -40,11 +38,8 @@ END_MESSAGE_MAP()
 /////////////////////
 // Message Handlers
 
-void CSimDataPath::OnDataAvailable(DWORD dwSize, DWORD bscfFlag)  {
-   // First call
-   if (bscfFlag & BSCF_FIRSTDATANOTIFICATION > 0) {
-//      ((CVTStrucVisCtl*)GetControl())->InitCortona();
-   }
+void CUIDataPath::OnDataAvailable(DWORD dwSize, DWORD bscfFlag) {
+   // ... insert here ...
 	
 	CDataPathProperty::OnDataAvailable(dwSize, bscfFlag);
 }

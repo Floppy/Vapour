@@ -7,7 +7,7 @@
 // VTStructVisCtl.cpp
 // 05/03/2002 - Warren Moore
 //
-// $Id: VTStrucVisCtl.cpp,v 1.4 2002/03/22 16:54:43 vap-warren Exp $
+// $Id: VTStrucVisCtl.cpp,v 1.5 2002/03/23 21:18:36 vap-warren Exp $
 
 #include "stdafx.h"
 #include "VTStrucVis.h"
@@ -167,6 +167,7 @@ END_MESSAGE_MAP()
 BEGIN_DISPATCH_MAP(CVTStrucVisCtl, COleControl)
 	//{{AFX_DISPATCH_MAP(CVTStrucVisCtl)
 	DISP_PROPERTY_EX(CVTStrucVisCtl, "SimData", GetSimData, SetSimData, VT_BSTR)
+	DISP_PROPERTY_EX(CVTStrucVisCtl, "UIData", GetUIData, SetUIData, VT_BSTR)
 	DISP_STOCKFUNC_REFRESH()
 	DISP_STOCKPROP_READYSTATE()
 	DISP_STOCKPROP_BACKCOLOR()
@@ -267,8 +268,11 @@ BOOL CVTStrucVisCtl::CVTStrucVisCtlFactory::UpdateRegistry(BOOL bRegister) {
 }
 
 // Constructor
-CVTStrucVisCtl::CVTStrucVisCtl() {
-	InitializeIIDs(&IID_DVTStrucVis, &IID_DVTStrucVisEvents);
+CVTStrucVisCtl::CVTStrucVisCtl() :
+   m_eCortonaResult(CR_UNKNOWN),
+   m_uiAsyncFlags(AD_EMPTY) {
+
+   InitializeIIDs(&IID_DVTStrucVis, &IID_DVTStrucVisEvents);
 
    // Set the initial state to loading
 	m_lReadyState = READYSTATE_LOADING;
@@ -278,91 +282,46 @@ CVTStrucVisCtl::CVTStrucVisCtl() {
 
    // Set the initial window size
    SetInitialSize(200, 200);
-
-   // Set the initial draw text
-   m_oDrawText = "Loading\n";
 }
 
 // Destructor
 CVTStrucVisCtl::~CVTStrucVisCtl() {
-}
-
-// Drawing function
-void CVTStrucVisCtl::OnDraw(CDC* pdc, const CRect& rcBounds, const CRect& rcInvalid) {
-   // Check if we're enabled - set the background accordingly
-   CBrush bkBrush;
-   if (GetEnabled())
-      bkBrush.CreateSolidBrush(TranslateColor(GetBackColor()));
-   else
-      bkBrush.CreateHatchBrush(HS_DIAGCROSS, TranslateColor(GetBackColor()));
-   pdc->FillRect(rcBounds, &bkBrush);
-   // Draw the text from the member string
-   pdc->SetBkMode(TRANSPARENT);
-   pdc->SetTextColor(RGB(0x00, 0x00, 0x00));
-   pdc->DrawText(m_oDrawText, -1, CRect(rcBounds), DT_LEFT | DT_WORDBREAK);
-}
-
-// Persistence support
-void CVTStrucVisCtl::DoPropExchange(CPropExchange* pPX) {
-	ExchangeVersion(pPX, MAKELONG(_wVerMinor, _wVerMajor));
-	COleControl::DoPropExchange(pPX);
-
-   // Mark the other persistant properties with PX_ calls
-   PX_DataPath(pPX, _T("SimData"), m_oSimData);
-
-   // If it's loading the property data, set the ready state to loaded
-   // to indicate that all the synchronous data is in
-   if(pPX->IsLoading())
-      InternalSetReadyState(READYSTATE_LOADED);
-}
-
-// Reset control to default state
-void CVTStrucVisCtl::OnResetState() {
-	COleControl::OnResetState();  // Resets defaults found in DoPropExchange
-
-	// TODO: Reset any other control state here.
-}
-
-// Display an "About" box to the user
-void CVTStrucVisCtl::AboutBox() {
-	CDialog dlgAbout(IDD_ABOUTBOX_VTSTRUCVIS);
-	dlgAbout.DoModal();
-}
-
-// Enable flicker free activation
-DWORD CVTStrucVisCtl::GetControlFlags() {
-	return COleControl::GetControlFlags() | noFlickerActivate;
+   ExitCortona();
 }
 
 /////////////////////
 // Member Functions
 
 bool CVTStrucVisCtl::InitCortona() {
-   // Find the control
-   bool bFound = GetCortona();
-   if (bFound) {
-
-      m_oDrawText += "Loading " + m_oSimData.GetPath() + "\n";
-
-      // Found the control, so initialise it
-      m_oDrawText += "Setting up the control\n";
-      m_oControl.NavBar(1);
-      m_oControl.Trace("Turned on the nav bar\n");
-      m_oControl.Headlight(true);
-      m_oControl.Trace("Turned on the headlight\n");
-      m_oControl.Edit();
-      m_oControl.Trace("Prepared the engine for direct editing\n");
-      m_oControl.Refresh();
-   }
-   else {
-      // Control not found, so not much we can do
-      m_oDrawText += "Control not found";
+   TRACE("CVTStrucVisCtl::InitCortona\n");
+   // Initialise Cortona
+   if (!m_oCortona.Attached()) {
+      m_eCortonaResult = CR_UNKNOWN;
+      if (GetCortona()) {
+         // Found the control, so initialise it
+         m_oCortona.NavBar(1);
+         m_oCortona.Trace("Turned on the nav bar\n");
+         m_oCortona.Headlight(true);
+         m_oCortona.Trace("Turned on the headlight\n");
+         m_oCortona.Edit();
+         m_oCortona.Trace("Prepared the engine for direct editing\n");
+         m_oCortona.Refresh();
+      }
    }
 
    // Repaint
    InvalidateControl();
 
-   return bFound;
+   return (m_eCortonaResult == CR_OK);
+}
+
+void CVTStrucVisCtl::ExitCortona() {
+   TRACE("CVTStrucVisCtl::ExitCortona\n");
+
+   // Release Cortona
+   m_eCortonaResult = CR_UNKNOWN;
+   if (m_oCortona.Attached())
+      m_oCortona.Release();
 }
 
 bool CVTStrucVisCtl::GetCortona() {
@@ -396,53 +355,221 @@ bool CVTStrucVisCtl::GetCortona() {
 			            = { 0x86a88967, 0x7a20, 0x11d2, { 0x8e, 0xda, 0x0, 0x60, 0x8, 0x18, 0xed, 0xb1 } };
                   if (clsid == IID_CortonaControl) {
                      // Get the Cortona Engine interface
-                     m_oDrawText += "Found Cortona control\n";
-                     if (m_oControl.Attach(pOleObject)) {
-                        m_oDrawText += "Attached dispatch driver\n";
+                     if (m_oCortona.Attach(pOleObject)) {
+                        TRACE("Found Cortona control\n");
+                        m_eCortonaResult = CR_OK;
                         bNext = false;
                      }
-                     else
-                        m_oDrawText += "Unable to get dispatch interface\n";
                   }
+#ifdef _DEBUG
                   else {
+                     // Trace the found controls
                      LPOLESTR pClsid = NULL;
                      StringFromCLSID(clsid, &pClsid);
-                     m_oDrawText += "Found control CLSID: ";
-                     m_oDrawText += pClsid;
-                     m_oDrawText += "\n";
+                     TRACE("Found control CLSID: %s\n", pClsid);
                   }
+#endif // _DEBUG
                }
-               else
-                  m_oDrawText += "Found a control without CLSID\n";
                // Release the OLE object
                pOleObject->Release();
             }
-            else
-               m_oDrawText += "Found control but no OLE object\n";
             pNextControl->Release();
          }
          // Release the EnumUnknown interface
          pEnumUnknown->Release();
       }
       else
-         m_oDrawText = "Failed to enum objects";
+         m_eCortonaResult = CR_NOENUMOBJECTS;
       // Release the container interface
       pContainer->Release();
    }
    else
-      m_oDrawText = "Failed to get container";
+      m_eCortonaResult = CR_NOCONTAINER;
 
-   return m_oControl.Attached();
+   // If no other errors encountered, but we don't have a control, it can't be there
+   bool bFound = m_oCortona.Attached();
+   if (m_eCortonaResult == CR_OK && !bFound)
+      m_eCortonaResult = CR_NOCONTROL;
+
+   return bFound;
+}
+
+void CVTStrucVisCtl::DrawPlaceholder(CDC* pDC, const CRect& rcBounds, bool bRun) {
+   // Set the background white
+   CBrush oBrush;
+   oBrush.CreateSolidBrush(TranslateColor(RGB(0xFF, 0xFF, 0xFF)));
+   pDC->FillRect(rcBounds, &oBrush);
+   // Set the draw height
+   CRect oTextRect(rcBounds);
+   // Draw the icon
+   HICON hIcon = AfxGetApp()->LoadIcon(IDI_ABOUTDLL);
+   if (hIcon) {
+      pDC->DrawIcon(CPoint((rcBounds.Width() / 2) - 16, 0), hIcon);
+      oTextRect.SetRect(oTextRect.left, oTextRect.top + 32, oTextRect.right, oTextRect.bottom);
+   }
+   // Store the old font and select the stock font
+   pDC->SetBkMode(TRANSPARENT);
+   CFont *pOldFont = SelectStockFont(pDC);
+   // Set the text colour on the enabled state
+   pDC->SetTextColor(TranslateColor(GetEnabled() ? RGB(0x00, 0x00, 0x00): RGB(0xC0, 0xC0, 0xC0)));
+   // Display the title text
+   const char pcTitle[] = "Vapour Technology\nArup Visualisation Control\n";
+   pDC->DrawText(pcTitle, oTextRect, DT_CENTER | DT_WORDBREAK);
+   // Calculate the remaining text room
+   const int iTextHeight = pDC->DrawText(pcTitle, oTextRect, DT_CENTER | DT_WORDBREAK);
+   oTextRect.SetRect(oTextRect.left, oTextRect.top + iTextHeight, oTextRect.right, oTextRect.bottom);
+   // If we're in run mode, write errors along with the text
+   if (bRun) {
+      // Check the Cortona result
+      CString oStr = "";
+      switch (m_eCortonaResult) {
+         case CR_NOCONTAINER:
+            oStr = "Unable to query container\n";
+            break;
+         case CR_NOENUMOBJECTS:
+            oStr = "Unable to query other containers\n";
+            break;
+         case CR_NOCONTROL:
+            oStr = "No Cortona control found\n";
+            break;
+         case CR_OK:
+            break;
+         case CR_UNKNOWN:
+         default:
+            oStr = "Cortona status unknown\n";
+      }
+
+      // Check to see if the UI data param set
+      if (m_oUIData.GetPath() == "")
+         oStr += "UIData param not set\n";
+      else
+         // Data set but is it loading?
+         if ((m_uiAsyncFlags & AD_UIACTIVE) == 0)
+            oStr += "Error loading UI data\n";
+
+      // Check to see if the simulation data param set
+      if (m_oSimData.GetPath() == "")
+         oStr += "SimData param not set\n";
+      else
+         // Data set but is it loading?
+         if ((m_uiAsyncFlags & AD_SIMACTIVE) == 0)
+            oStr += "Error loading simulation data\n";
+
+      // Display the error text
+      pDC->SetTextColor(TranslateColor(GetEnabled() ? RGB(0xFF, 0x00, 0x00): RGB(0xFF, 0xC0, 0xC0)));
+      pDC->DrawText(oStr, oTextRect, DT_CENTER | DT_WORDBREAK);
+   }
+   // Restore the old font
+   pDC->SelectObject(pOldFont);
+}
+
+void CVTStrucVisCtl::UILoading() {
+   m_uiAsyncFlags &= AD_UIMASK;
+   m_uiAsyncFlags |= AD_UILOADING;
+}
+
+void CVTStrucVisCtl::UILoaded() {
+   m_uiAsyncFlags &= AD_UIMASK;
+   m_uiAsyncFlags |= AD_UILOADED;
+}
+
+void CVTStrucVisCtl::SimLoading() {
+   m_uiAsyncFlags &= AD_SIMMASK;
+   m_uiAsyncFlags |= AD_SIMLOADING;
+}
+
+void CVTStrucVisCtl::SimLoaded() {
+   m_uiAsyncFlags &= AD_SIMMASK;
+   m_uiAsyncFlags |= AD_SIMLOADED;
 }
 
 /////////////////////
 // Message handlers
 
+// Drawing function
+void CVTStrucVisCtl::OnDraw(CDC* pdc, const CRect& rcBounds, const CRect& rcInvalid) {
+   // Check our operating mode
+   bool bRun = AmbientUserMode() && !AmbientUIDead();
+   if (bRun && (m_uiAsyncFlags & AD_UILOADED > 0)) {
+      // Draw the full-on interface
+   }
+   else {
+      // Draw the placeholder
+      DrawPlaceholder(pdc, rcBounds, bRun);
+   }
+}
+
+// Persistence support
+void CVTStrucVisCtl::DoPropExchange(CPropExchange* pPX) {
+	ExchangeVersion(pPX, MAKELONG(_wVerMinor, _wVerMajor));
+	COleControl::DoPropExchange(pPX);
+
+   // Reset the async data flags if loading
+   if (pPX->IsLoading())
+      m_uiAsyncFlags = AD_EMPTY;
+
+   // Mark the other persistant properties with PX_ calls
+   PX_DataPath(pPX, _T("UIData"), m_oUIData);
+   PX_DataPath(pPX, _T("SimData"), m_oSimData);
+
+   // If it's loading the property data, set the ready state to loaded
+   // to indicate that all the synchronous data is in
+   // and initialise the control
+   if(pPX->IsLoading()) {
+      InternalSetReadyState(READYSTATE_LOADED);
+      // Check if we are in run or dev operating mode
+      if (AmbientUserMode() && !AmbientUIDead())
+         InitCortona();
+   }
+}
+
+// Reset control to default state
+void CVTStrucVisCtl::OnResetState() {
+	COleControl::OnResetState();  // Resets defaults found in DoPropExchange
+
+}
+
+// Display an "About" box to the user
+void CVTStrucVisCtl::AboutBox() {
+	CDialog dlgAbout(IDD_ABOUTBOX_VTSTRUCVIS);
+	dlgAbout.DoModal();
+}
+
+// Enable flicker free activation
+DWORD CVTStrucVisCtl::GetControlFlags() {
+	return COleControl::GetControlFlags() | noFlickerActivate;
+}
+
+// Check for changes in ambient properties
+void CVTStrucVisCtl::OnAmbientPropertyChange(DISPID dispid) {
+   // Check here to see if we've changed operating mode
+	
+	COleControl::OnAmbientPropertyChange(dispid);
+}
+
+// Check for mouse clicks
 void CVTStrucVisCtl::OnLButtonDown(UINT nFlags, CPoint point) {
 
    COleControl::OnLButtonDown(nFlags, point);
 }
 
+// UIData property
+BSTR CVTStrucVisCtl::GetUIData() {
+	CString strResult = m_oUIData.GetPath();
+
+	return strResult.AllocSysString();
+}
+
+void CVTStrucVisCtl::SetUIData(LPCTSTR lpszNewValue) {
+   // Reset the UI data flags
+   m_uiAsyncFlags &= AD_UIMASK;
+   // Load the new data
+   Load(lpszNewValue, m_oUIData);
+
+   SetModifiedFlag();
+}
+
+// SimData property
 BSTR CVTStrucVisCtl::GetSimData() {
 	CString strResult = m_oSimData.GetPath();
 
@@ -450,8 +577,11 @@ BSTR CVTStrucVisCtl::GetSimData() {
 }
 
 void CVTStrucVisCtl::SetSimData(LPCTSTR lpszNewValue) {
+   // Reset the simulatio data flags
+   m_uiAsyncFlags &= AD_SIMMASK;
+   // Load the new data
    Load(lpszNewValue, m_oSimData);
 
-	SetModifiedFlag();
+   SetModifiedFlag();
 }
 

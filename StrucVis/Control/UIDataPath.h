@@ -4,25 +4,25 @@
 // ActiveX Control for structure visualisation
 // Copyright 2000 Vapour Technology Ltd.
 //
-// SimDataPath.h
+// UIDataPath.h
 // 19/03/2002 - Warren Moore
 //
-// $Id: SimDataPath.h,v 1.2 2002/03/23 21:18:35 vap-warren Exp $
+// $Id: UIDataPath.h,v 1.1 2002/03/23 21:18:35 vap-warren Exp $
 
-#ifndef __VTSTUCVIS_SIMDATAPATH__
-#define __VTSTUCVIS_SIMDATAPATH__
+#ifndef __VTSTUCVIS_UIDATAPATH__
+#define __VTSTUCVIS_UIDATAPATH__
 
 #if _MSC_VER > 1000
 #pragma once
 #endif // _MSC_VER > 1000
 
-/////////////////
-// CSimDataPath
+////////////////
+// CUIDataPath
 
-class CSimDataPath : public CDataPathProperty {
+class CUIDataPath : public CDataPathProperty {
 public:
-	CSimDataPath();
-	virtual ~CSimDataPath();
+	CUIDataPath();
+	virtual ~CUIDataPath();
 
 //#===--- Member Functions
 public:
@@ -33,17 +33,16 @@ protected:
 //#===--- Windows Mappings
 
 public:
-	//{{AFX_VIRTUAL(CSimDataPath)
-   public:
+	//{{AFX_VIRTUAL(CUIDataPath)
 	protected:
 	virtual void OnDataAvailable(DWORD dwSize, DWORD bscfFlag);
 	//}}AFX_VIRTUAL
 
-	//{{AFX_MSG(CSimDataPath)
+	//{{AFX_MSG(CUIDataPath)
 	//}}AFX_MSG
 
 };
 
 //{{AFX_INSERT_LOCATION}}
 
-#endif // __VTSTUCVIS_SIMDATAPATH__
+#endif // __VTSTUCVIS_UIDATAPATH__

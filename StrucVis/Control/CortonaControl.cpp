@@ -7,7 +7,7 @@
 // CortonaControl.cpp
 // 17/03/2002 - Warren Moore
 //
-// $Id: CortonaControl.cpp,v 1.2 2002/03/22 16:54:43 vap-warren Exp $
+// $Id: CortonaControl.cpp,v 1.3 2002/03/23 21:18:35 vap-warren Exp $
 
 #include "stdafx.h"
 #include "VTStrucVis.h"
@@ -36,11 +36,8 @@ CCortonaControl::CCortonaControl() :
 
 CCortonaControl::~CCortonaControl() {
    // Detach the dispatch driver if attached
-   if (m_bAttached) {
-      m_oDispatch.DetachDispatch();
-      m_pDispatch->Release();
-      m_bAttached = false;
-   }
+   if (m_bAttached)
+      Release();
 }
 
 bool CCortonaControl::Attach(LPOLEOBJECT pOleObject) {
@@ -61,6 +58,16 @@ bool CCortonaControl::Attach(LPOLEOBJECT pOleObject) {
    }
 
    return SUCCEEDED(hResult);
+}
+
+void CCortonaControl::Release() {
+   // Detach the dispatch driver if attached
+   if (m_bAttached) {
+      m_oDispatch.DetachDispatch();
+      m_pDispatch->Release();
+      m_pDispatch = NULL;
+      m_bAttached = false;
+   }
 }
 
 IEngine *CCortonaControl::GetEngine() {
