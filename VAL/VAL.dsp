@@ -41,7 +41,7 @@ RSC=rc.exe
 # PROP Intermediate_Dir "Release"
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_MBCS" /D "_LIB" /Yu"stdafx.h" /FD /c
-# ADD CPP /nologo /MT /W3 /GX /O2 /I "Application" /I "Avatar" /I "AvatarFiles" /I "DataTypes" /I "Image" /I "ImageFiles" /I "Wrapper" /I "Render" /I "..\VALWin32\Render" /D "WIN32" /D "NDEBUG" /D "_MBCS" /D "_LIB" /D "VAL_BUILD" /Yu"stdafx.h" /FD /c
+# ADD CPP /nologo /MT /W3 /GX /O2 /I "Application" /I "Avatar" /I "AvatarFiles" /I "DataTypes" /I "Image" /I "ImageFiles" /I "Wrapper" /I "Render" /D "WIN32" /D "NDEBUG" /D "_MBCS" /D "_LIB" /D "VAL_BUILD" /Yu"stdafx.h" /FD /c
 # ADD BASE RSC /l 0x809 /d "NDEBUG"
 # ADD RSC /l 0x809 /d "NDEBUG"
 BSC32=bscmake.exe
@@ -93,15 +93,31 @@ SOURCE=.\Avatar\AvatarFile.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\AvatarFiles\AvatarFile3DS.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\AvatarFiles\AvatarFileAME.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\AvatarFiles\AvatarFileGeneric.cpp
+SOURCE=.\AvatarFiles\AvatarFileDXF.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\AvatarFiles\avatarfilegeneric.cpp
 # End Source File
 # Begin Source File
 
 SOURCE=.\AvatarFiles\AvatarFileHalflife.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\AvatarFiles\AvatarFileHANIM.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\AvatarFiles\AvatarFileOBJ.cpp
 # End Source File
 # Begin Source File
 
@@ -197,6 +213,10 @@ SOURCE=.\Render\RenderContext.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\Render\RenderContextStore.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\Render\RenderObject.cpp
 # End Source File
 # Begin Source File
@@ -262,15 +282,31 @@ SOURCE=.\Avatar\AvatarFile.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\AvatarFiles\AvatarFile3DS.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\AvatarFiles\AvatarFileAME.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\AvatarFiles\AvatarFileGeneric.h
+SOURCE=.\AvatarFiles\AvatarFileDXF.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\AvatarFiles\avatarfilegeneric.h
 # End Source File
 # Begin Source File
 
 SOURCE=.\AvatarFiles\AvatarFileHalflife.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\AvatarFiles\AvatarFileHANIM.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\AvatarFiles\AvatarFileOBJ.h
 # End Source File
 # Begin Source File
 
@@ -407,6 +443,14 @@ SOURCE=.\Render\RenderAvatar.h
 # Begin Source File
 
 SOURCE=.\Render\RenderContext.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\Render\RenderContextProxy.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\Render\RenderContextStore.h
 # End Source File
 # Begin Source File
 
