@@ -6,7 +6,7 @@
 // Element.h
 // 19/03/2002 - James Smith
 //
-// $Id: Element.h,v 1.3 2002/03/20 13:29:50 vap-james Exp $
+// $Id: Element.h,v 1.4 2002/03/20 14:52:11 vap-james Exp $
 
 #ifndef __ELEMENT__
 #define __ELEMENT__
@@ -92,6 +92,9 @@ public:
       m_oColourScheme = oScheme;
    }
    // Set the colour scheme to use
+
+   virtual void SetVisible(bool bVisible) const = 0;
+   // Set whether the object is visible or not.
 
 //#===--- Member Variables
 protected:

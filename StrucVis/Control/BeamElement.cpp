@@ -6,7 +6,7 @@
 // BeamElement.cpp
 // 19/03/2002 - James Smith
 //
-// $Id: BeamElement.cpp,v 1.3 2002/03/20 13:29:49 vap-james Exp $
+// $Id: BeamElement.cpp,v 1.4 2002/03/20 14:52:11 vap-james Exp $
 
 #include "stdafx.h"
 #include "BeamElement.h"
@@ -39,6 +39,7 @@ const char pcBeamStart[] = " \
    EXTERNPROTO BeamElement [ \
       eventIn MFColor set_colours \
       eventIn MFVec3f set_nodes \
+      eventIn SFBool  set_visible \
       field MFColor colours \
       field SFFloat flange \
       field SFFloat height \
@@ -155,5 +156,10 @@ void CBeamElement::CalculateNodePositions(float* pfNodes) const {
       pfNodes[(i*3) + 1] = pNode[1];
       pfNodes[(i*3) + 2] = pNode[2];
    }
+   return;
+}
+
+void CBeamElement::SetVisible(bool bVisible) const {
+   // Send eventIn
    return;
 }

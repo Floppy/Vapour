@@ -6,7 +6,7 @@
 // SlabElement.cpp
 // 19/03/2002 - James Smith
 //
-// $Id: SlabElement.cpp,v 1.2 2002/03/20 13:29:50 vap-james Exp $
+// $Id: SlabElement.cpp,v 1.3 2002/03/20 14:52:11 vap-james Exp $
 
 #include "stdafx.h"
 #include "SlabElement.h"
@@ -77,5 +77,60 @@ void CSlabElement::SetNodes(int iFirstNode, int iSecondNode, int iThirdNode,
    m_piNodes[6] = iSeventhNode;
    m_piNodes[7] = iEighthNode;
    m_piNodes[8] = iNinthNode;
+   return;
+}
+
+void CSlabElement::SetStresses(float fFirstNode, float fSecondNode, float fThirdNode, 
+                               float fFourthNode, float fFifthNode, float fSixthNode, 
+                               float fSeventhNode, float fEighthNode, float fNinthNode) {
+   m_pfStresses[0] = fFirstNode;
+   m_pfStresses[1] = fSecondNode;
+   m_pfStresses[2] = fThirdNode;
+   m_pfStresses[3] = fFourthNode;
+   m_pfStresses[4] = fFifthNode;
+   m_pfStresses[5] = fSixthNode;
+   m_pfStresses[6] = fSeventhNode;
+   m_pfStresses[7] = fEighthNode;
+   m_pfStresses[8] = fNinthNode;
+   return;
+}
+
+void CSlabElement::CalculateColours(float* pfColours) const {
+   switch (m_oColourScheme) {
+   case SOLID:
+      {
+         for (int i=0; i<9; i++) {
+            pfColours[(i*3) + 0] = m_pfColour[0];
+            pfColours[(i*3) + 1] = m_pfColour[1];
+            pfColours[(i*3) + 2] = m_pfColour[2];
+         }
+      }
+      break;
+   case STRESS:
+      {
+         for (int i=0; i<9; i++) {
+            float fStress = (m_pfStresses[i] - m_fMinStress) / (m_fMaxStress - m_fMinStress);
+            pfColours[(i*3) + 0] = fStress * 2;
+            pfColours[(i*3) + 1] = 2 - (fStress * 2);
+            pfColours[(i*3) + 2] = 0;
+         }
+      }
+      break;
+   }
+   return;
+}
+
+void CSlabElement::CalculateNodePositions(float* pfNodes) const {
+   for (int i=0; i<9; i++) {
+      const float* pNode = m_pNodeSet->Node(m_piNodes[i]);
+      pfNodes[(i*3) + 0] = pNode[0];
+      pfNodes[(i*3) + 1] = pNode[1];
+      pfNodes[(i*3) + 2] = pNode[2];
+   }
+   return;
+}
+
+void CSlabElement::SetVisible(bool bVisible) const {
+   // Send eventIn
    return;
 }

@@ -3,17 +3,18 @@
 PROTO BeamElement [
    eventIn MFColor set_colours
    eventIn MFVec3f set_nodes
-   field MFColor colours [ 1 1 1, 1 1 1]
-   field SFFloat flange 0.1
-   field SFFloat height 1
-   field SFFloat web    0.2
-   field SFFloat width  1
-   field MFVec3f nodes   [ 0 0 0.5, 0 0 -0.5]
+   eventIn SFBool  set_visible
+   field   MFColor colours [ 1 1 1, 1 1 1]
+   field   SFFloat flange  0.1
+   field   SFFloat height  1
+   field   SFFloat web     0.2
+   field   SFFloat width   1
+   field   MFVec3f nodes   [ 0 0 0.5, 0 0 -0.5]   
 ]
 {
    Shape {
       appearance Appearance {
-         material Material {
+         material DEF MATERIAL Material {
             diffuseColor 1 1 1
          }
       }
@@ -67,6 +68,7 @@ PROTO BeamElement [
       mustEvaluate TRUE
       eventIn MFColor set_colours IS set_colours
       eventIn MFVec3f set_nodes IS set_nodes
+      eventIn SFBool  set_visible IS set_visible
       field MFColor colours IS colours
       field SFFloat flange IS flange
       field SFFloat height IS height
@@ -75,6 +77,7 @@ PROTO BeamElement [
       field MFVec3f nodes  IS nodes
       field MFVec3f crossSection []
       field SFNode  beam USE BEAM
+      field SFNode  material USE MATERIAL
       url "javascript:
          function initialize() {
             // Work out horizontal and vertical coordinate values
@@ -122,6 +125,10 @@ PROTO BeamElement [
             for (i=0; i<12; i++) {
                beam.coord.point[i+12] = nodeset[1].add(crossSection[i]);
             }
+         }
+         function set_visible(value,time) {
+            if (value == true) material.transparency = 0;
+            else material.transparency = 0.9;
          }
       "
    }
