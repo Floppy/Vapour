@@ -14,7 +14,7 @@
 //! author 		= "James Smith"
 //! date 		= "12/10/2001"
 //! lib 		= libVALET3d
-//! rcsid 		= "$Id: surface.h,v 1.6 2001/10/18 13:07:00 vap-james Exp $"
+//! rcsid 		= "$Id: surface.h,v 1.7 2001/10/23 22:42:14 vap-james Exp $"
 //! userlevel 	        = Normal
 //! docentry 	        = "VALET.3D.Surface Representations"
 
@@ -22,6 +22,7 @@
 #include "VALET/valet.h"
 
 #include <vector>
+using namespace std;
 
 namespace NValet {
   

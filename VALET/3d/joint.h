@@ -13,7 +13,7 @@
 //! author 		= "James Smith"
 //! date 		= "18/10/2001"
 //! lib 		= libVALET3d
-//! rcsid 		= "$Id: joint.h,v 1.2 2001/10/18 19:32:45 vap-james Exp $"
+//! rcsid 		= "$Id: joint.h,v 1.3 2001/10/23 22:42:14 vap-james Exp $"
 //! userlevel 	        = Normal
 //! docentry 	        = "VALET.3D.Animation"
 
@@ -24,6 +24,7 @@
 #include "VALET/axisrotation.h"
 
 #include <vector>
+using namespace std;
 
 namespace NValet {
 
@@ -77,8 +78,8 @@ namespace NValet {
 
       //:-------------------------
       //: Construction/Destruction
-      
-      CJoint(CVector3D vecCentre, JointPtr pParent = NULL);
+
+      CJoint(CVector3D vecCentre, JointPtr pParent = JointPtr());
       //: Default constructor
       //!param: vecCentre = the joint's centre of rotation.
       //!param: pParent = a pointer/iterator to the joint's parent.

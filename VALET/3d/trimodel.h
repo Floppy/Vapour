@@ -13,7 +13,7 @@
 //! author 		= "James Smith"
 //! date 		= "10/10/2001"
 //! lib 			= libVALET3d
-//! rcsid 		= "$Id: trimodel.h,v 1.4 2001/10/18 13:07:01 vap-james Exp $"
+//! rcsid 		= "$Id: trimodel.h,v 1.5 2001/10/23 22:42:14 vap-james Exp $"
 //! userlevel 	= Normal
 //! docentry 	= "VALET.3D.Surface Representations"
 
@@ -24,6 +24,7 @@
 #include "VALET/mesh.h"
 
 #include <vector>
+using namespace std;
 
 namespace NValet {
 

@@ -13,7 +13,7 @@
 //! author 		= "James Smith"
 //! date 		= "18/10/2001"
 //! lib 		= libVALET3d
-//! rcsid 		= "$Id: skeleton.h,v 1.2 2001/10/18 20:57:32 vap-james Exp $"
+//! rcsid 		= "$Id: skeleton.h,v 1.3 2001/10/23 22:42:14 vap-james Exp $"
 //! userlevel 	        = Normal
 //! docentry 	        = "VALET.3D.Animation"
 
@@ -22,6 +22,7 @@
 #include "VALET/joint.h"
 
 #include <vector>
+using namespace std;
 
 namespace NValet {
 

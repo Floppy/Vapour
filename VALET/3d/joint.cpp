@@ -11,7 +11,7 @@
 //! author 		= "James Smith"
 //! date 		= "18/10/2001"
 //! lib 		= libVALET3d
-//! rcsid 		= "$Id: joint.cpp,v 1.2 2001/10/18 19:32:45 vap-james Exp $"
+//! rcsid 		= "$Id: joint.cpp,v 1.3 2001/10/23 22:42:13 vap-james Exp $"
 //! userlevel 	        = Normal
 //! docentry 	        = "VALET.3D.Animation"
 
@@ -78,7 +78,7 @@ namespace NValet {
       m_bDirtyAngle = true;
       m_bDirtyShape = true;
       // Notify parents and children of dirtyness.
-      if (m_pParent != NULL) m_pParent->m_bDirtyShape = true;
+      if (m_pParent != JointPtr()) m_pParent->m_bDirtyShape = true;
       for (int i=0; i<NumChildren(); i++) {
          Child(i)->m_bDirtyShape = true;
       }
