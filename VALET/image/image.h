@@ -14,7 +14,7 @@
 //! author 		= "Warren Moore"
 //! date 		= "17/10/2001"
 //! lib 			= libVALETimage
-//! rcsid 		= "$Id: image.h,v 1.8 2001/10/27 09:43:05 vap-warren Exp $"
+//! rcsid 		= "$Id: image.h,v 1.9 2001/10/28 16:52:22 vap-warren Exp $"
 //! userlevel 	= Normal
 //! docentry 	= "VALET.Image"
 //! example 	= VALET/image/image.test.cpp
@@ -58,6 +58,7 @@ namespace NVALET {
       IR_OUT_OF_RANGE,
       IR_INVALID_PARAM,
       IR_INCORRECT_TYPE,
+      IR_INCOMPATIBLE_IMAGE,
       IR_UNSUPPORTED_TYPE,
       IR_NO_IMAGE,
       IR_NO_PALETTE,
@@ -85,55 +86,158 @@ namespace NVALET {
    //!classtodo: Sort out image loading/saving
 
    class CImage {
-   public:
 
 	//:------
    //: Image Creation
 
+   public:
+   
       explicit CImage();
       //: Empty constructor
-      explicit CImage(EImageType eType);
+      
+      explicit CImage(const EImageType eType);
       //: Empty typed constructor
-      explicit CImage(EImageType eType = IT_UNKNOWN, unsigned int uiWidth = 0,
-             unsigned int uiHeight = 0);
+      
+      explicit CImage(const EImageType eType = IT_UNKNOWN, 
+                      const unsigned int uiWidth = 0,
+                      const unsigned int uiHeight = 0);
       //: Allocating constructor
-      CImage(const CImage &oCopy);
+
+      explicit CImage(const CImage &oCopy);
       //: Copy constructor
+
       ~CImage();
       //: Destructor
+      
+   //:------
+   //: Allocation Functions
+ 
+   protected:
 
-	//:------ 
+      EImageResult CreateImage();
+      //: Image memory allocation
+      // This image will take the image width and height, calculate the
+      // required memory requirements and allocate the image planes
+      
+      EImageResult CreatePlane(const EImagePlane ePlane) {
+         return CreatePlane(m_pucPlaneNum[ePlane]);
+      }
+      //: Allocates an individual image plane
+      // m_uiDataSize must be set before this function is called
+      //!param: ePlane = Name of plane to be allocated
+      
+      EImageResult CreatePlane(const unsigned char ucPlane);
+      //: Allocates an individual image plane
+      // m_uiDataSize must be set before this function is called
+      //!param: ucPlane = Number of plane to be allocated
+      
+      void DeleteImage();
+      //: Deletes entire image content and set member vars appropriately
+      
+      void DeletePlane(const EImagePlane ePlane) {
+         DeletePlane(m_pucPlaneNum[ePlane]);
+      }
+      //: Deletes an image plane
+      //!param: ePlane = Name of plane to be deleted
+
+      void DeletePlane(const unsigned char ucPlane);
+      //: Deletes an image plane
+      //!param: uiPlane = Number of plane to be deleted
+
+   //:------ 
    //: Manipulation Functions
 
+   public:
+   
       EImageType GetType() const {
          return m_eImageType;
       }
-      // Returns the current image type
+      //: Returns the current image type
+
+      EImageResult ChangeType(const EImageType eType);
+      //: Change the type of the current image
+      // This will perform all the relevant memory management and manipulations
+      // to generate as close a copy of the previous image in the new type.
+      // <B>NOTE: If converting to IT_PALETTE, set the number of palette entries first</B>
+      //!param: eType = Type of image to convert to
+      //!bug: Doesn't handle conversion to IT_PALETTE images yet
+      //!bug: Can't convert to IT_GREY from any RGB-based format yet
+      
+      EImageResult ForceType(const EImageType eType);
+      //: Change the type of the current image
+      // This will perform all the relevant memory management, but will leave
+      // image planes untouched.
+      //!param: eType = Type of image to convert to
+      //!bug: Doesn't handle conversion to IT_PALETTE images yet
+      
       void GetSize(unsigned int &uiWidth, unsigned int &uiHeight) const {
          uiWidth = m_uiWidth; uiHeight = m_uiHeight;
       }
-      // Returns the image size
-      EImageResult SetSize(unsigned int uiWidth, unsigned int uiHeight);
-      // Change the size of the image (reallocating memory if necessary)
-      //!todo: Copy over previous image contents
-      void SetClearColour(EImagePlane ePlane, unsigned char ucCol);
-      // Sets the clear colour for a plane
+      //: Returns the image size
+
+      EImageResult SetSize(const unsigned int uiWidth, const unsigned int uiHeight);
+      //: Change the size of the image
+      // Change the size of the image and reallocate memory accordingly.
+      // Will either crop the image, or fill in gaps with the specified clear colour.
+      //!bug: Doesn't keep the previous image contents
+
+      void SetClearColour(const EImagePlane ePlane, const unsigned char ucCol);
+      //: Sets the clear colour for a plane
+      //!param: ePlane = Name of plane
+      //!param: ucCol = 8-bit clear colour value
+
       void Clear();
-      // Clears the image using the table of plane clear colours
+      //: Clears the image
+      // Clears all image planes using the table of plane clear colours
+      
+      void ClearPlane(const EImagePlane ePlane) {
+         ClearPlane(m_pucPlaneNum[ePlane]);
+      }
+      //: Clears a single image plane
+      // Clears the specified image plane using the table of plane clear colours
+      //!param: ePlane = Name of plane to be cleared
+      
+      EImageResult CopyPlane(const EImagePlane eDest, const EImagePlane eSrc);
+      //: Copies the contents of an image plane to another
+      //!param: eDest = Name of destination plane
+      //!param: eSrc = Name of source plane
+      
+      EImageResult CopyPlane(const EImagePlane eDest, const EImagePlane eSrc,
+                             const CImage &oImg);
+      //: Copies the contents of animage plane to from another image
+      //!param: eDest = Name of destination plane
+      //!param: eSrc = Name of source plane
+      //!param: oImg = Source image
+      
+   protected:
+   
+      void ClearPlane(const unsigned char ucPlane);
+      //: Clears a single image plane using the table of plane clear colours
+      //!param: ucPlane = Number of plane to be cleared
       
 	//:------
    //:  Image Importing
+   
+   public:
 
-      EImageResult ImportRawRGB(unsigned char *pcRaw, bool bWordAlign = false,
-                                bool bReversePixels = false, bool bFlip = false);
-      // Import raw RGB888 image data
-      // Image must already be created with the correct size
+      EImageResult ImportRaw(unsigned char *pcRaw, bool bWordAlign = false,
+                             bool bReversePixels = false, bool bFlip = false);
+      //: Import raw image data
+      // Imports raw 8-bit image data into a pre-created image
+      // The amount of data read is calculated from the image type and size set
+      // Data is considered as palette indices if type is IT_PALETTE
       //<B>NOTE: Does not bounds check the raw data</B>
       //!bug: Currently reverse and flip are considered false, even if set otherwise
       //!param: pucRaw = Pointer to start of raw data
       //!param: bWordAlign = Lines are 32-bit word aligned
       //!param: bReversePixels = Data is BGR formatted
       //!param: bFlip = Lines are arranged bottom first
+
+      EImageResult ImportAlpha(CImage &oImg);
+      //: Imports an alpha channel from another image
+      // Only works on IT_RGB and IT_RGBA images. 
+      // Convert unsupported image type prior to adding with ChangeType or ForceType
+      //!param: oImg = Reference to same-sized single channel (IT_GREY) image
 
 	//:------
    //: Type Conversion Functions
@@ -146,25 +250,13 @@ namespace NVALET {
 	//:------
    //: Loading and Saving
 
-   protected:
-
    //:------
-   //: Allocation Functions
- 
-      EImageResult CreateImage();
-      // Image memory allocation
-      
-      EImageResult CreatePlane(unsigned char ucPlane);
-      // Allocates an individual image plane
-      // m_uiDataSize must be set before this function is called
-      //!param: uiPlane = Number of plane to be allocated
-      
-      void DeleteImage();
-      // Deletes image memory and set member vars appropriately
-      
-      void DeletePlane(unsigned char ucPlane);
-      // Deletes an image plane
-      //!param: uiPlane = Number of plane to be deleted
+   // Friends
+
+   public:
+   
+      friend unsigned int generate_texture_rgb(CImage &oImg);
+      friend unsigned int generate_texture_argb(CImage &oImg, bool bFourBit);
       
    protected:
 
