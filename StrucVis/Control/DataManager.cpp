@@ -6,7 +6,7 @@
 // DataManager.cpp
 // 19/03/2002 - James Smith
 //
-// $Id: DataManager.cpp,v 1.4 2002/03/22 19:08:13 vap-james Exp $
+// $Id: DataManager.cpp,v 1.5 2002/03/23 11:21:31 vap-james Exp $
 
 #include "stdafx.h"
 #include "DataManager.h"
@@ -254,6 +254,8 @@ const float g_pfSlabStresses[g_iNumFrames][g_iNumSlabs][27] = {
 ///////////
 // CDataManager
 
+typedef std::vector<CDataManager::CGroup>::iterator grpIter;
+
 CDataManager::CDataManager() :
    m_pcBuffer(NULL),
    m_iNumFrames(0)
@@ -268,18 +270,40 @@ bool CDataManager::Setup(const unsigned char* pcData, unsigned int iLength) {
    // Read in setup data
    // Initialise frame counters.
    m_iNumFrames = g_iNumFrames;
+
+   // Create groups
+   for (int i=0; i<g_iNumGroups; i++) {
+      CGroup oGroup;
+      oGroup.m_fTemperature = 0;
+      oGroup.m_oType = g_ptGroupTypes[i];
+      oGroup.m_pfColour[0] = (float)rand() / (float)RAND_MAX;
+      oGroup.m_pfColour[1] = (float)rand() / (float)RAND_MAX;
+      oGroup.m_pfColour[2] = (float)rand() / (float)RAND_MAX;
+      m_oGroups.push_back(oGroup);
+   }
+
    return true;
 }
 
-void CDataManager::FrameInfo(unsigned int iFrame, unsigned int& iOffset, unsigned int& iLength) {
-   iOffset = 0;
-   iLength = 0;
-   m_iCurrentFrame = iFrame;
+bool CDataManager::FrameInfo(unsigned int iFrame, unsigned int& iOffset, unsigned int& iLength) {
+   if (iFrame < m_iNumFrames) {
+      iOffset = 0;
+      iLength = 0;
+      m_iCurrentFrame = iFrame;
+      return true;
+   }
+   else return false;
 }
 
 bool CDataManager::LoadFrame(const unsigned char* pcData, unsigned int iLength) {
    if (true) {
       // Load frame data from passed memory chunk
+
+      // Load temperature data
+      for (int i=0; i<g_iNumGroups; i++) {
+         m_oGroups[i].m_fTemperature = g_pfGroupTemps[m_iCurrentFrame][i];
+      }
+      
       // Done
       return true;
    }
@@ -307,11 +331,15 @@ unsigned int CDataManager::NumGroups(void) {
 }
 
 float CDataManager::GroupTemp(unsigned int iGroup) {
-   return g_pfGroupTemps[m_iCurrentFrame][iGroup-1];
+   return m_oGroups[iGroup-1].m_fTemperature;
 }
 
 TElementType CDataManager::GroupType(unsigned int iGroup) {
-   return g_ptGroupTypes[iGroup-1];
+   return m_oGroups[iGroup-1].m_oType;
+}
+
+const float* CDataManager::GroupColour(unsigned int iGroup) {
+   return m_oGroups[iGroup-1].m_pfColour;
 }
 
 void CDataManager::StressRange(float& fMin, float& fMax) {

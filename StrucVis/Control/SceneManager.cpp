@@ -6,7 +6,7 @@
 // SceneManager.cpp
 // 19/03/2002 - James Smith
 //
-// $Id: SceneManager.cpp,v 1.18 2002/03/23 11:00:14 vap-james Exp $
+// $Id: SceneManager.cpp,v 1.19 2002/03/23 11:21:30 vap-james Exp $
 
 #include "stdafx.h"
 #include "SceneManager.h"
@@ -24,7 +24,6 @@ static char THIS_FILE[] = __FILE__;
 // CSceneManager
 
 typedef std::vector<CElement*>::iterator elemIter;
-typedef std::vector<CSceneManager::CGroup>::iterator grpIter;
 
 CSceneManager::CSceneManager(CCortonaUtil *poCortona) :
    m_poCortona(poCortona),
@@ -63,25 +62,14 @@ void CSceneManager::Load(void) {
    m_oNodeSet.SetSize(m_oDataMgr.NumNodes());
    m_oNodeSet.SetDefault(m_oDataMgr.NodePositions());
 
-   // Create groups
-   for (int i=1; i<=m_oDataMgr.NumGroups(); i++) {
-      CGroup oGroup;
-      oGroup.m_fTemperature = 0;
-      oGroup.m_oType = m_oDataMgr.GroupType(i);
-      oGroup.m_pfColour[0] = (float)rand() / (float)RAND_MAX;
-      oGroup.m_pfColour[1] = (float)rand() / (float)RAND_MAX;
-      oGroup.m_pfColour[2] = (float)rand() / (float)RAND_MAX;
-      m_oGroups.push_back(oGroup);
-   }
-
    // Create some beams
-   for (i=1; i<=m_oDataMgr.NumBeams(); i++) {
+   for (int i=1; i<=m_oDataMgr.NumBeams(); i++) {
       // Create beam
       CBeamElement* pBeam = new CBeamElement(m_poCortona,&m_oNodeSet);
       // Set info
       pBeam->SetID(i);
       pBeam->SetGroup(m_oDataMgr.BeamGroup(pBeam->ID()));
-      pBeam->SetTemp(m_oGroups[pBeam->Group()-1].m_fTemperature);
+      pBeam->SetTemp(m_oDataMgr.GroupTemp(pBeam->Group()));
       // Set sizes
       float fHeight, fWidth, fFlange, fWeb;
       m_oDataMgr.BeamSizes(pBeam->Group(),fHeight, fWidth, fFlange, fWeb);
@@ -90,9 +78,7 @@ void CSceneManager::Load(void) {
       pBeam->SetNodes(m_oDataMgr.BeamNodes(pBeam->ID()));
       // Set other info
       pBeam->SetColourScheme(m_tColourScheme);
-      pBeam->SetColour(m_oGroups[pBeam->Group()-1].m_pfColour[0],
-                       m_oGroups[pBeam->Group()-1].m_pfColour[1],
-                       m_oGroups[pBeam->Group()-1].m_pfColour[2]);
+      pBeam->SetColour(m_oDataMgr.GroupColour(pBeam->Group()));
       float fMin,fMax;
       m_oDataMgr.StressRange(fMin,fMax);
       pBeam->SetStressRange(fMin,fMax);
@@ -107,7 +93,7 @@ void CSceneManager::Load(void) {
       // Set info
       pSlab->SetID(i);
       pSlab->SetGroup(m_oDataMgr.SlabGroup(pSlab->ID()));
-      pSlab->SetTemp(m_oGroups[pSlab->Group()-1].m_fTemperature);
+      pSlab->SetTemp(m_oDataMgr.GroupTemp(pSlab->Group()));
       // Set sizes
       float fThickness;
       m_oDataMgr.SlabSizes(pSlab->Group(),fThickness);
@@ -116,9 +102,7 @@ void CSceneManager::Load(void) {
       pSlab->SetNodes(m_oDataMgr.SlabNodes(pSlab->ID()));
       // Set other info
       pSlab->SetColourScheme(m_tColourScheme);
-      pSlab->SetColour(m_oGroups[pSlab->Group()-1].m_pfColour[0],
-                       m_oGroups[pSlab->Group()-1].m_pfColour[1],
-                       m_oGroups[pSlab->Group()-1].m_pfColour[2]);
+      pSlab->SetColour(m_oDataMgr.GroupColour(pSlab->Group()));
       float fMin,fMax;
       m_oDataMgr.StressRange(fMin,fMax);
       pSlab->SetStressRange(fMin,fMax);
@@ -133,12 +117,12 @@ void CSceneManager::Load(void) {
    }      
 }
 
-void CSceneManager::FrameInfo(unsigned int iFrame, unsigned int& iOffset, unsigned int& iLength) {
-   m_oDataMgr.FrameInfo(iFrame,iOffset,iLength);
+bool CSceneManager::FrameInfo(unsigned int iFrame, unsigned int& iOffset, unsigned int& iLength) {
+   return m_oDataMgr.FrameInfo(iFrame,iOffset,iLength);
 }
 
 unsigned int CSceneManager::NumGroups(void) {
-   return m_oGroups.size();
+   return m_oDataMgr.NumGroups();
 }
 
 unsigned int CSceneManager::NumElements(unsigned int iGroup) {
@@ -154,11 +138,11 @@ unsigned int CSceneManager::NumElements(unsigned int iGroup) {
 }
 
 TElementType CSceneManager::GroupType(unsigned int iGroup) {
-   return m_oGroups[iGroup].m_oType;
+   return m_oDataMgr.GroupType(iGroup);
 }
 
 float CSceneManager::Temperature(unsigned int iGroup) {
-   return m_oGroups[iGroup].m_fTemperature;
+   return m_oDataMgr.GroupTemp(iGroup);
 }
 
 void CSceneManager::SetVisibility(unsigned int iGroup, bool bVisible) {
@@ -187,16 +171,12 @@ bool CSceneManager::ShowFrame(const unsigned char* pcData, unsigned int iLength)
    if (!m_oDataMgr.LoadFrame(pcData,iLength)) {
       return false;
    }
-   // Load temperatures into groups
-   for (int g=0; g<m_oGroups.size(); g++) {
-      m_oGroups[g].m_fTemperature = m_oDataMgr.GroupTemp(g);
-   }
    // Load node displacements
    m_oNodeSet.Displace(m_oDataMgr.NodeDisplacements());
    // Load per-element data
    for (elemIter pElem = m_oElements.begin(); pElem != m_oElements.end(); pElem++) {
       // Set new temperature
-      (*pElem)->SetTemp(m_oGroups[(*pElem)->Group()-1].m_fTemperature);
+      (*pElem)->SetTemp(m_oDataMgr.GroupTemp((*pElem)->Group()));
       // Load node stresses
       if ((*pElem)->Type() == BEAM) {
          // Enter beam node stresses

@@ -6,7 +6,7 @@
 // SceneManager.h
 // 19/03/2002 - James Smith
 //
-// $Id: SceneManager.h,v 1.7 2002/03/23 11:00:13 vap-james Exp $
+// $Id: SceneManager.h,v 1.8 2002/03/23 11:21:30 vap-james Exp $
 
 #ifndef __SCENEMANAGER__
 #define __SCENEMANAGER__
@@ -41,9 +41,10 @@ public:
    unsigned int NumFrames(void) {return m_oDataMgr.NumFrames();}
    // The number of frames
 
-   void FrameInfo(unsigned int iFrame, unsigned int& iOffset, unsigned int& iLength);
+   bool FrameInfo(unsigned int iFrame, unsigned int& iOffset, unsigned int& iLength);
    // Gets frame location information
    // Frame offset and length for iFrame are returned in the parameters.
+   // Returns false if an invalid frame is requested
 
    unsigned int NumGroups(void);
    // How many groups are there?
@@ -76,14 +77,6 @@ public:
 
 private:
 
-   class CGroup {
-   public:
-      TElementType m_oType;
-      float m_fTemperature;
-      float m_pfColour[3];
-   };
-   // Group information type
-   
    void Empty(void);
    // Deletes all information from the scene
 
@@ -107,9 +100,6 @@ protected:
 
    std::vector<CElement*> m_oElements;
    // Element list
-
-   std::vector<CGroup> m_oGroups;
-   // Group information
 
    CViewpoint m_oViewpoint;
    // The virtual camera

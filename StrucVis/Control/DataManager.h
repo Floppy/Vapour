@@ -6,12 +6,13 @@
 // DataManager.h
 // 19/03/2002 - James Smith
 //
-// $Id: DataManager.h,v 1.4 2002/03/22 17:04:37 vap-james Exp $
+// $Id: DataManager.h,v 1.5 2002/03/23 11:21:30 vap-james Exp $
 
 #ifndef __DATAMANAGER__
 #define __DATAMANAGER__
 
 #include "Element.h"
+#include <vector>
 
 #if _MSC_VER > 1000
 #pragma once
@@ -34,9 +35,10 @@ public:
    // Returns true if setup is complete.
    // NO other data will be available until Setup returns true.
 
-   void FrameInfo(unsigned int iFrame, unsigned int& iOffset, unsigned int& iLength);
+   bool FrameInfo(unsigned int iFrame, unsigned int& iOffset, unsigned int& iLength);
    // Gets frame location information
    // Frame offset and length for iFrame are returned in the parameters.
+   // Returns false if an invalid frame is requested
 
    bool LoadFrame(const unsigned char* pcData, unsigned int iLength);
    // Loads frame data from the passed memory chunk
@@ -66,6 +68,9 @@ public:
 
    TElementType GroupType(unsigned int iGroup);
    // Returns the type of element that the group contains.
+
+   const float* GroupColour(unsigned int iGroup);
+   // Returns the colour assigned to the group.
 
    void StressRange(float& fMin, float& fMax);
    // Return the minimum and maximum stress values.
@@ -109,6 +114,17 @@ public:
 
 //#===--- Member Variables
 protected:
+
+   class CGroup {
+   public:
+      TElementType m_oType;
+      float m_fTemperature;
+      float m_pfColour[3];
+   };
+   // Group information type
+   
+   std::vector<CGroup> m_oGroups;
+   // Group information
 
    unsigned char* m_pcBuffer;
    // Data buffer
