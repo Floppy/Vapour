@@ -14,7 +14,7 @@
 //! author 		= "James Smith"
 //! date 		= "01/10/2001"
 //! lib 		= libVALETmath
-//! rcsid 		= "$Id: vector3d.h,v 1.5 2001/10/03 10:41:17 vap-james Exp $"
+//! rcsid 		= "$Id: vector3d.h,v 1.6 2001/10/09 18:32:31 vap-james Exp $"
 //! userlevel 	        = Normal
 //! docentry 	        = "VALET.Math.Geometry"
 
@@ -25,7 +25,7 @@ namespace VALET {
 //#===--- Includes
 #include "../arch/valet.h"
 
-namespace VALET {
+namespace NValet {
 
   //: 3D Vector
   // A class representing a 3D vector - 3 components, X Y and Z.

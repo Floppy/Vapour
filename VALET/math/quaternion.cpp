@@ -11,7 +11,7 @@
 //! author 		= "James Smith"
 //! date 		= "02/10/2001"
 //! lib 		= libVALETmath
-//! rcsid 		= "$Id: quaternion.cpp,v 1.4 2001/10/03 10:40:59 vap-james Exp $"
+//! rcsid 		= "$Id: quaternion.cpp,v 1.5 2001/10/09 18:32:30 vap-james Exp $"
 //! userlevel 	        = Normal
 //! docentry 	        = "VALET.Math.Geometry"
 
@@ -27,7 +27,7 @@
 #define Y_AXIS 0x1
 #define Z_AXIS 0x2
 
-namespace VALET {
+namespace NValet {
 
   CQuaternion::CQuaternion() {
     m_dScalar = 0.0F;

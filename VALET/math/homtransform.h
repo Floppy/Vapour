@@ -14,11 +14,11 @@
 //! author 		= "James Smith"
 //! date 		= "02/10/2001"
 //! lib 		= libVALETmath
-//! rcsid 		= "$Id: homtransform.h,v 1.2 2001/10/03 10:44:42 vap-james Exp $"
+//! rcsid 		= "$Id: homtransform.h,v 1.3 2001/10/09 18:32:30 vap-james Exp $"
 //! userlevel 	        = Normal
 //! docentry 	        = "VALET.Math.Geometry"
 
-namespace VALET {
+namespace NValet {
   class CHomTransform;
 }
 
@@ -28,7 +28,7 @@ namespace VALET {
 #include "quaternion.h"
 #include "axisrotation.h"
 
-namespace VALET {
+namespace NValet {
     
   //: Homogeneous Transformation Matrix
   class CHomTransform {

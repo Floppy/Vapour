@@ -11,7 +11,7 @@
 //! author              = "James Smith"
 //! date                = "02/10/2001"
 //! lib                 = libVALETmath
-//! rcsid               = "$Id: axisrotation.cpp,v 1.3 2001/10/03 10:44:05 vap-james Exp $"
+//! rcsid               = "$Id: axisrotation.cpp,v 1.4 2001/10/09 18:32:29 vap-james Exp $"
 //! userlevel           = Normal
 //! docentry            = "VALET.Math.Geometry"
 
@@ -26,7 +26,7 @@
 #include <alloc.h>
 #include <ctype.h>
 
-namespace VALET {
+namespace NValet {
 
   CAxisRotation::CAxisRotation() :
     m_dAngle(0.0F),

@@ -14,11 +14,11 @@
 //! author 		= "James Smith"
 //! date 		= "02/10/2001"
 //! lib 		= libVALETmath
-//! rcsid 		= "$Id: quaternion.h,v 1.4 2001/10/03 10:40:59 vap-james Exp $"
+//! rcsid 		= "$Id: quaternion.h,v 1.5 2001/10/09 18:32:30 vap-james Exp $"
 //! userlevel 	        = Normal
 //! docentry 	        = "VALET.Math.Geometry"
 
-namespace VALET {
+namespace NValet {
   class CQuaternion;
 }
 
@@ -28,7 +28,7 @@ namespace VALET {
 #include "axisrotation.h"
 #include "eulerrotation.h"
 
-namespace VALET {
+namespace NValet {
 
   //: Quaternion
   // A class representing a quaternion, a representation of a rotation.

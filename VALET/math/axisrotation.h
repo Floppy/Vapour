@@ -14,11 +14,11 @@
 //! author 		= "James Smith"
 //! date 		= "02/10/2001"
 //! lib 		= libVALETmath
-//! rcsid 		= "$Id: axisrotation.h,v 1.3 2001/10/03 10:44:22 vap-james Exp $"
+//! rcsid 		= "$Id: axisrotation.h,v 1.4 2001/10/09 18:32:30 vap-james Exp $"
 //! userlevel 	        = Normal
 //! docentry 	        = "VALET.Math.Geometry"
 
-namespace VALET {
+namespace NValet {
   class CAxisRotation;
 }
 
@@ -28,7 +28,7 @@ namespace VALET {
 #include "quaternion.h"
 #include "eulerrotation.h"
 
-namespace VALET {
+namespace NValet {
   
   //: 3D Axis-Angle rotation
   // A class representing a rotation about an arbitrary axis.

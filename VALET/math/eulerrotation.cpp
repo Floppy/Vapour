@@ -11,7 +11,7 @@
 //! author 	= "James Smith"
 //! date	= "02/10/2001"
 //! lib 	= libVALETmath
-//! rcsid 	= "$Id: eulerrotation.cpp,v 1.1 2001/10/02 22:08:30 vap-james Exp $"
+//! rcsid 	= "$Id: eulerrotation.cpp,v 1.2 2001/10/09 18:32:29 vap-james Exp $"
 //! userlevel	= Normal
 //! docentry	= "VALET.Math.Geometry"
 
@@ -28,7 +28,7 @@
 #define Y_AXIS 0x1
 #define Z_AXIS 0x2
 
-namespace VALET {
+namespace NValet {
 
   CEulerRotation::CEulerRotation() {
     m_uType.m_eID = XYZs;

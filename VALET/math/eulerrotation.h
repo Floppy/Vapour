@@ -14,11 +14,11 @@
 //! author 		= "James Smith"
 //! date 		= "02/10/2001"
 //! lib 		= libVALETmath
-//! rcsid 		= "$Id: eulerrotation.h,v 1.2 2001/10/03 10:46:51 vap-james Exp $"
+//! rcsid 		= "$Id: eulerrotation.h,v 1.3 2001/10/09 18:32:30 vap-james Exp $"
 //! userlevel 	        = Normal
 //! docentry 	        = "VALET.Math.Geometry"
 
-namespace VALET {
+namespace NValet {
   class CEulerRotation;
 }
 
@@ -27,7 +27,7 @@ namespace VALET {
 #include "quaternion.h"
 #include "homtransform.h"
 
-namespace VALET {
+namespace NValet {
     
   //: Euler Rotation
   // A class representing an euler rotation.

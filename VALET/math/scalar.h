@@ -14,14 +14,14 @@
 //! author 		= "James Smith"
 //! date 		= "01/10/2001"
 //! lib 		= libVALETmath
-//! rcsid 		= "$Id: scalar.h,v 1.1 2001/10/03 10:38:30 vap-james Exp $"
+//! rcsid 		= "$Id: scalar.h,v 1.2 2001/10/09 18:32:31 vap-james Exp $"
 //! userlevel 	        = Normal
 //! docentry 	        = "VALET.Math.Geometry"
 
 //#===--- Includes
 #include "../arch/valet.h"
 
-namespace VALET {
+namespace NValet {
 
   //: Scalar value
   // A class representing a double-precision number.

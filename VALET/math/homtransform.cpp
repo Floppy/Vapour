@@ -11,7 +11,7 @@
 //! author 	= "James Smith"
 //! date	= "02/10/2001"
 //! lib 	= libVALETmath
-//! rcsid 	= "$Id: homtransform.cpp,v 1.2 2001/10/03 10:46:36 vap-james Exp $"
+//! rcsid 	= "$Id: homtransform.cpp,v 1.3 2001/10/09 18:32:29 vap-james Exp $"
 //! userlevel	= Normal
 //! docentry	= "VALET.Math.Geometry"
 
@@ -23,7 +23,7 @@
 #include <math.h>
 #include <string.h>
 
-namespace VALET {
+namespace NValet {
 
   CHomTransform::CHomTransform() {
     memset(m_dMatrix,0,12*sizeof(double));
