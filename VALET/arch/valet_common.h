@@ -13,7 +13,7 @@
 //! file 		= "VALET/arch/valet_common.h""
 //! author 		= "Warren Moore"
 //! date 		= "23/09/2001"
-//! rcsid 		= "$Id: valet_common.h,v 1.8 2001/10/21 14:56:06 vap-warren Exp $"
+//! rcsid 		= "$Id: valet_common.h,v 1.9 2001/10/24 14:21:09 vap-warren Exp $"
 //! userlevel 	= Normal
 //! docentry 	= "VALET.Arch"
 //! maindoc		= 1
@@ -54,8 +54,6 @@ namespace NValet {
 }
 
 /*#===--- Debug settings */
-
-#define VDEBUG
 
 #ifdef VDEBUG
 #define NDEBUG
