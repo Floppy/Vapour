@@ -6,7 +6,7 @@
 // DataManager.h
 // 19/03/2002 - James Smith
 //
-// $Id: DataManager.h,v 1.1 2002/03/22 14:56:26 vap-james Exp $
+// $Id: DataManager.h,v 1.2 2002/03/22 14:59:36 vap-james Exp $
 
 #ifndef __DATAMANAGER__
 #define __DATAMANAGER__
@@ -27,7 +27,7 @@ public:
    ~CDataManager();
    // Destructor
 
-//#===--- Member Functions
+//#===--- Data I/O
 
    bool Setup(const unsigned char* pcData, unsigned int iLength);
    // Accepts setup data
